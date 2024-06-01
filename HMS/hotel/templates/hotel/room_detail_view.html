@@ -28,7 +28,7 @@
 
             <!-- Div 1: Back to Home -->
             <div class="home">
-                <a href="{% url 'hotel:RoomList' %}"><i class="fas fa-arrow-alt-circle-left">Home</i></a>
+                <a href="{% url 'hotel:roomlist' %}"><i class="fas fa-arrow-alt-circle-left">Home</i></a>
             </div>
 
             <!-- Div 2: Room Information -->
@@ -47,14 +47,12 @@
 
                 <!-- Input Div -->
                 <div class="input-div">
-                    <label for="id_check_in">Check In : </label>
-                    <input type="datetime-local" id="id_check_in" name="check_in">
+                    {{form.check_in}}
                 </div>
 
                 <!-- Input Div -->
                 <div class="input-div">
-                    <label for="id_check_out">Check Out : </label>
-                    <input type="datetime-local" id="id_check_out" name="check_out">
+                   {{form.check_out}}
                 </div>
 
                 <!-- Input Div -->
@@ -63,6 +61,8 @@
                 </div>
 
             </form>
+
+
 
         </div> <!-- END Room Div -->
 
