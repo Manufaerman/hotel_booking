@@ -8,7 +8,7 @@
     <script src="https://kit.fontawesome.com/692189991f.js" crossorigin="anonymous"></script>
 
     <!-- Main StyleSheet -->
-    <link rel="stylesheet" href="{% static 'hotel/css/detail.css' %}">
+    <link rel="stylesheet" href="{% static 'room_detail_view.css' %}">
 
 </head>
 
@@ -28,7 +28,7 @@
 
             <!-- Div 1: Back to Home -->
             <div class="home">
-                <a href="{% url 'hotel:RoomList' %}"><i class="fas fa-arrow-alt-circle-left">Home</i></a>
+                <a href="{% url 'hotel:roomlist' %}"><i class="fas fa-arrow-alt-circle-left">Home</i></a>
             </div>
 
             <!-- Div 2: Room Information -->
@@ -45,24 +45,18 @@
 
                 {% csrf_token %}
 
-                <!-- Input Div -->
-                <div class="input-div">
-                    <label for="id_check_in">Check In : </label>
-                    <input type="datetime-local" id="id_check_in" name="check_in">
-                </div>
 
+                <h2>Are you sure you want to cancel this booking {{booking}}</h2>
+                <h2>{{booking.get_room_category}}</h2>
+                <h3>The number of the room is {{booking.room.number}}</h3>
                 <!-- Input Div -->
                 <div class="input-div">
-                    <label for="id_check_out">Check Out : </label>
-                    <input type="datetime-local" id="id_check_out" name="check_out">
-                </div>
-
-                <!-- Input Div -->
-                <div class="input-div">
-                    <button type="submit">Book the Room</button>
+                    <button type="submit">Cancel the booking</button>
                 </div>
 
             </form>
+
+
 
         </div> <!-- END Room Div -->
 

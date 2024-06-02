@@ -1,7 +1,7 @@
 from django.http import request
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.shortcuts import render, HttpResponse
-from django.views.generic import ListView, FormView, View
+from django.views.generic import ListView, FormView, View, DeleteView
 from .models import Room, Booking
 from .forms import AvailibilityForm
 from .booking_functions.availability import check_availability
@@ -85,15 +85,9 @@ class RoomDetailView(View):
             else:
                 return HttpResponse('no room available')
 
-class BookingView(FormView):
-    form_class = AvailibilityForm
-    template_name = 'availability_form.html'
-
-
-
-
-    """
-    """
-
+class CancelBookingView(DeleteView):
+    model = Booking
+    template_name = 'booking_cancel_view.html'
+    success_url = reverse_lazy('hotel:bookinglist')
 
 
