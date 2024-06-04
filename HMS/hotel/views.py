@@ -6,24 +6,27 @@ from .models import Room, Booking
 from .forms import AvailibilityForm
 from .booking_functions.availability import check_availability
 
+def home(request):
+    return render(request, 'home.html')
 
-def RoomListView(request):
-    room = Room.objects.all()
-    room2 = Room.objects.all()[0]
-    room_categories = dict(room2.ROOM_CATEGORIES)
-    room_values = room_categories.values()
-    room_list = []
-    for room in room_categories:
-        room2 = room_categories.get(room)
-        room_url = reverse('hotel:roomdetailview', kwargs={'category': room})
-        room_list.append((room2, room_url))
 
-    context = {'room': room,
-               'room_list': room_list,
+def roomlistview(request):
+    if request.user.is_staff:
+        room = Room.objects.all()
+        room2 = Room.objects.all()[0]
+        room_categories = dict(room2.ROOM_CATEGORIES)
+        room_values = room_categories.values()
+        room_list = []
+        for room in room_categories:
+            room2 = room_categories.get(room)
+            room_url = reverse('hotel:roomdetailview', kwargs={'category': room})
+            room_list.append((room2, room_url))
 
-               }
+        context = {'room': room,
+                   'room_list': room_list,
+                   }
+        return render(request, 'room_list_view.html', context)
 
-    return render(request, 'room_list_view.html', context)
 
 
 class BookingList(ListView):
