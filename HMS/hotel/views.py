@@ -1,40 +1,74 @@
+from django.contrib.auth.decorators import login_required
 from django.http import request
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import render, HttpResponse
 from django.views.generic import ListView, FormView, View, DeleteView
-from .models import Room, Booking
-from .forms import AvailibilityForm
+from .models import Room, Booking, Price
+from .forms import AvailibilityForm, AddBooking
 from .booking_functions.availability import check_availability
+from .booking_functions.get_room_list import get_room_list
+from .booking_functions.calculates_everithing import CalculatesAll
+from .booking_functions.save_many_prices import save_price
 
+
+@login_required
 def home(request):
     return render(request, 'home.html')
 
 
 def roomlistview(request):
-    if request.user.is_staff:
-        room = Room.objects.all()
-        room2 = Room.objects.all()[0]
-        room_categories = dict(room2.ROOM_CATEGORIES)
-        room_values = room_categories.values()
-        room_list = []
-        for room in room_categories:
-            room2 = room_categories.get(room)
-            room_url = reverse('hotel:roomdetailview', kwargs={'category': room})
-            room_list.append((room2, room_url))
 
-        context = {'room': room,
-                   'room_list': room_list,
-                   }
-        return render(request, 'room_list_view.html', context)
+    room = Room.objects.all()
+    room_list = get_room_list()
+    calculos = CalculatesAll()
+    calculadora = calculos.current_month_bookings()
+    cleanings = calculos.number_bookings_current_month()
+    form = AddBooking()
+    context = {'room': room,
+               'room_list': room_list,
+               'calculadora': calculadora,
+               'cleanings': cleanings,
+               'form': form, }
 
+    if request.method == 'POST':
+        form = AddBooking(request.POST)
+        if form.is_valid():
+            post = True
+            data = form.cleaned_data
+            print(data['name'])
+            room = Room.objects.filter(id=data['name'])[0]
+            if check_availability(room, data['check_in'], data['check_out']):
+
+                price = save_price(data['check_in'], data['check_out'], 80)
+
+                booking = Booking.objects.create(
+                    user=request.user,
+                    room=room,
+                    price=Price.objects.filter(day=''),
+                    check_in=data['check_in'],
+                    check_out=data['check_out']
+                )
+                booking.save()
+
+                context = {'post': post,
+                           'booking': booking,
+                           'price': price}
+                return render(request, 'room_list_view.html', context)
+            else:
+                no_room = True
+                context = {'no_room': no_room}
+                return render(request, 'room_list_view.html', context)
+    return render(request, 'room_list_view.html', context)
 
 
 class BookingList(ListView):
     model = Booking
     def get_queryset(self, *args, **kwargs):
+
         if self.request.user.is_staff:
+            print(kwargs)
             booking_list = Booking.objects.all()
-            return  booking_list
+            return booking_list
         else:
             booking_list = Booking.objects.filter(user=self.request.user)
             return booking_list

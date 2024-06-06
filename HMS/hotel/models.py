@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.urls import reverse, reverse_lazy
+from datetime import date, timedelta
 # Create your models here.
 
 class Room(models.Model):
@@ -20,10 +21,19 @@ class Room(models.Model):
     def __str__(self):
         return f'{self.name} has {self.category}whit {self.bed} bed and with capacity for {self.capacity}'
 
+class Price(models.Model):
+    day = models.DateField()
+    price = models.IntegerField()
+
+    def total_price(self, check_in, check_out):
+        total_price = 0
+        return total_price
 
 class Booking(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE,)
+    price = models.ForeignKey(Price, on_delete=models.CASCADE,)
+    day = models.DateField()
     check_in = models.DateField()
     check_out = models.DateField()
 
@@ -37,3 +47,6 @@ class Booking(models.Model):
 
     def get_cancel_booking_url(self):
         return reverse_lazy('hotel:cancelbookingview', args=[self.pk,])
+
+
+
