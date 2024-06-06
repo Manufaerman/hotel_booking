@@ -33,7 +33,7 @@ class Booking(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE,)
     price = models.ForeignKey(Price, on_delete=models.CASCADE,)
-    day = models.DateField()
+    day = models.DateField(default='2024-07-01')
     check_in = models.DateField()
     check_out = models.DateField()
 
@@ -49,4 +49,7 @@ class Booking(models.Model):
         return reverse_lazy('hotel:cancelbookingview', args=[self.pk,])
 
 
-
+class day(models.Model):
+    day = models.IntegerField(max_length=33)
+    month = models.IntegerField(max_length=13)
+    year =models.IntegerField(max_length=3000)

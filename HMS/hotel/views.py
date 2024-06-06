@@ -8,7 +8,7 @@ from .forms import AvailibilityForm, AddBooking
 from .booking_functions.availability import check_availability
 from .booking_functions.get_room_list import get_room_list
 from .booking_functions.calculates_everithing import CalculatesAll
-from .booking_functions.save_many_prices import save_price
+from .booking_functions.save_many_prices import save_price, total_month_price
 
 
 @login_required
@@ -24,11 +24,14 @@ def roomlistview(request):
     calculadora = calculos.current_month_bookings()
     cleanings = calculos.number_bookings_current_month()
     form = AddBooking()
+    total_price = total_month_price()
     context = {'room': room,
                'room_list': room_list,
                'calculadora': calculadora,
                'cleanings': cleanings,
-               'form': form, }
+               'form': form,
+               'total_price': total_price,
+               }
 
     if request.method == 'POST':
         form = AddBooking(request.POST)
@@ -39,20 +42,22 @@ def roomlistview(request):
             room = Room.objects.filter(id=data['name'])[0]
             if check_availability(room, data['check_in'], data['check_out']):
 
-                price = save_price(data['check_in'], data['check_out'], 80)
-
-                booking = Booking.objects.create(
-                    user=request.user,
-                    room=room,
-                    price=Price.objects.filter(day=''),
-                    check_in=data['check_in'],
-                    check_out=data['check_out']
-                )
-                booking.save()
+                prices = save_price(data['check_in'], data['check_out'], data['price'])
+                total_price = 0
+                for price in prices:
+                    booking = Booking.objects.create(
+                        user=request.user,
+                        room=room,
+                        price=Price.objects.filter(day=price.day)[0],
+                        day=price.day,
+                        check_in=data['check_in'],
+                        check_out=data['check_out']
+                    )
+                    booking.save()
 
                 context = {'post': post,
                            'booking': booking,
-                           'price': price}
+                           'total_price': total_price}
                 return render(request, 'room_list_view.html', context)
             else:
                 no_room = True
