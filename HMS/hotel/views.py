@@ -1,14 +1,17 @@
+import datetime
+
 from django.contrib.auth.decorators import login_required
 from django.http import request
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import render, HttpResponse
 from django.views.generic import ListView, FormView, View, DeleteView
-from .models import Room, Booking, Price
+from .models import Room, Booking, Price, Day
 from .forms import AvailibilityForm, AddBooking
 from .booking_functions.availability import check_availability
 from .booking_functions.get_room_list import get_room_list
 from .booking_functions.calculates_everithing import CalculatesAll
-from .booking_functions.save_many_prices import save_price, total_month_price
+from .booking_functions.save_many_prices import save_price, total_actual_month_price, \
+    total_previous_month_price, calendar_widget
 
 
 @login_required
@@ -24,13 +27,18 @@ def roomlistview(request):
     calculadora = calculos.current_month_bookings()
     cleanings = calculos.number_bookings_current_month()
     form = AddBooking()
-    total_price = total_month_price()
+    total_price = total_actual_month_price()
+    total_price_previous_month = total_previous_month_price()
+    calendarwidget = calendar_widget()
+
     context = {'room': room,
                'room_list': room_list,
                'calculadora': calculadora,
                'cleanings': cleanings,
                'form': form,
                'total_price': total_price,
+               'total_price_previous_month': total_price_previous_month,
+               'calendarwidget': calendarwidget,
                }
 
     if request.method == 'POST':
@@ -45,11 +53,18 @@ def roomlistview(request):
                 prices = save_price(data['check_in'], data['check_out'], data['price'])
                 total_price = 0
                 for price in prices:
+                    ready_to_strip = datetime.datetime.strptime(str(data['check_in']), '%Y-%m-%d')
+                    day = Day.objects.create(
+                        day=ready_to_strip.day,
+                        month=ready_to_strip.month,
+                        year=ready_to_strip.year)
+                    day.save()
+
                     booking = Booking.objects.create(
                         user=request.user,
                         room=room,
                         price=Price.objects.filter(day=price.day)[0],
-                        day=price.day,
+                        day=day,
                         check_in=data['check_in'],
                         check_out=data['check_out']
                     )

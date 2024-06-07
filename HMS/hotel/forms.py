@@ -22,7 +22,6 @@ class AddBooking(forms.Form):
 
     rooms = Room.objects.all()
     room_names = ((room.id, room.name)for room in rooms)
-    print(room_names)
 
     name = forms.ChoiceField(choices=room_names, required=True)
 
@@ -39,3 +38,6 @@ class AddBooking(forms.Form):
     )
 
     price = forms.IntegerField(max_value=150)
+
+class CheckRoom(forms.Form):
+    pass

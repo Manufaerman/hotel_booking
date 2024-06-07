@@ -1,14 +1,11 @@
-import calendar
 import datetime
-
-from ..views import Room
 from ..models import Price, Booking
 from datetime import timedelta
+import calendar
 
 
 def save_price(check_in, check_out, price):
     date_list = [(check_in + timedelta(days=d)).strftime("%Y-%m-%d") for d in range((check_out.day - check_in.day) + 1)]
-    list_dates = []
     list_objects = []
     for d in date_list:
         x = Price.objects.create(
@@ -26,20 +23,30 @@ def all_date_between_dates(check_in, check_out):
 
     return date_list
 
-def total_month_price():
-    string_date = '2024-06-08'
-    check_out = '2024-06-08'
-    check_in = datetime.datetime.strptime(string_date,"%Y-%m-%d" )
-    current_month_start = check_in.day-1
-    current_month_start = check_in - timedelta(current_month_start)
+def total_actual_month_price():
+    string_date = datetime.date.today()
+    bookings = Booking.objects.filter(day__month=string_date.month)
 
-    experimento = calendar.monthrange(check_in.year, check_in.month)[1]
-    experimento = experimento-1
-
-    current_month_end = current_month_start + timedelta(experimento)
+    price = sum(int(book.price.price) for book in bookings)
 
 
-    #objeto = [(check_in + timedelta(days=d)).strftime("%Y-%m-%d") for d in range((check_out.day - check_in.day) + 1)]
-    today = datetime.datetime.now()
-    month = today.month
-    return f' from {current_month_start} to {current_month_end}'
+    return f' {price} Euros'
+
+def total_previous_month_price():
+    string_date = datetime.date.today()-timedelta(weeks=4)
+    string_date = string_date.month
+    bookings = Booking.objects.filter(day__month=string_date)
+    price = sum(int(book.price.price) for book in bookings)
+
+    return f' {price} Euros'
+
+def calendar_widget():
+    string_date = datetime.date.today()
+    bookings = Booking.objects.filter(day__month=string_date.month)
+    actual_day = string_date.day-1
+    start_month = string_date - timedelta(actual_day)
+    res = calendar.monthrange(string_date.year, string_date.month)[1]
+    end_month = start_month + timedelta(res-1)
+    lis_of_dates = all_date_between_dates(start_month, end_month)
+
+    return lis_of_dates

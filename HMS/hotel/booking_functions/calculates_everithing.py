@@ -1,8 +1,6 @@
 import datetime
-
-
 from ..models import Booking
-from datetime import date
+
 
 class CalculatesAll:
 

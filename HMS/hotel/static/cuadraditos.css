@@ -1,0 +1,18 @@
+.green{
+        width: 10%;           /* Ancho de 150 píxeles */
+        height: 40px;          /* Alto de 150 píxeles */
+        background: green;        /* Fondo de color rojo */
+        margin :10px 10px 10px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px 10px 10px 10px;
+
+}
+.red{
+        width: 30px;           /* Ancho de 150 píxeles */
+        height: 30px;          /* Alto de 150 píxeles */
+        background: red;        /* Fondo de color rojo */
+        margin :10px 10px 10px 10px;
+
+}
