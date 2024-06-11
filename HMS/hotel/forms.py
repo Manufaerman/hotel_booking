@@ -39,5 +39,4 @@ class AddBooking(forms.Form):
 
     price = forms.IntegerField(max_value=150)
 
-class CheckRoom(forms.Form):
-    pass
+

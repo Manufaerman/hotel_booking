@@ -40,7 +40,7 @@ def total_previous_month_price():
 
     return f' {price} Euros'
 
-def calendar_widget():
+def list_days_month():
     string_date = datetime.date.today()
     bookings = Booking.objects.filter(day__month=string_date.month)
     actual_day = string_date.day-1
@@ -49,4 +49,22 @@ def calendar_widget():
     end_month = start_month + timedelta(res-1)
     lis_of_dates = all_date_between_dates(start_month, end_month)
 
+
     return lis_of_dates
+
+def list_true_false_calendar(data):
+    days_month = list_days_month()
+    booking_objects = Booking.objects.filter(room__id=data)
+    print(booking_objects)
+    string_bookings_days = [repr(book.day).strip('<Day: >') for book in booking_objects]
+    string_bookings_days = [datetime.datetime.strptime(b, '%Y-%m-%d') for b in string_bookings_days]
+    string_bookings_days = [b.strftime('%Y-%m-%d') for b in string_bookings_days]
+    lista = []
+    for b in days_month:
+        if b in string_bookings_days:
+            print(string_bookings_days)
+            lista.append(True)
+        else:
+            lista.append(False)
+
+    return lista

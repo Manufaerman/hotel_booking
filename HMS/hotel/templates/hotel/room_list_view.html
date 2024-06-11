@@ -20,15 +20,37 @@
 {% block content %}
 {% if user.is_staff %}
 <div class="container mt-4">
+
     <div class="row align-items-start">
         <div class="col">
 
+            <h1>Enter a new booking </h1>
+
+            <div class="btn-group">
+              <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Property
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="{% url 'hotel:roomlist' '1'%}">Haro 0</a></li>
+                <li><a class="dropdown-item" href="{% url 'hotel:roomlist' '2'%}">Garaje</a></li>
+                <li><a class="dropdown-item" href="{% url 'hotel:roomlist' '3'%}">Room 3</a></li>
+                <li><a class="dropdown-item" href="{% url 'hotel:roomlist' '4'%}">Room 4</a></li>
+                <li><a class="dropdown-item" href="{% url 'hotel:roomlist' '5'%}">San Luis</a></li>
+                <li><a class="dropdown-item" href="{% url 'hotel:roomlist' '6'%}">Barichara</a></li>
+                <li><a class="dropdown-item" href="{% url 'hotel:roomlist' '7'%}">Tolima</a></li>
+              </ul>
+            </div>
+
+
+
+
             <form id="booking-form" action="" method="POST">
                 {% csrf_token %}
-                <h1>Enter a new booking </h1>
+                 <!-- Input Div -->
                 <div class="input-div row me-2 mt-2">
                     {{form.name}}
                 </div>
+
                 <!-- Input Div -->
                 <div class="input-div row me-2 mt-2">
                     {{form.check_in}}
@@ -43,10 +65,13 @@
                    {{form.price}}
                 </div>
 
-                <!-- Input Div -->
+                <!-- Button submit  Div -->
                 <div class="input-div row me-2 mt-2">
-                    <button type="submit" class="btn btn-primary"> book </button>
+                    <button type="submit" class="btn btn-primary" name="{{form.prefix}}" value="Submit"> book </button>
                 </div>
+
+                </form>
+
                 <div class="mt-3">
                     <h1>total cleanings:</h1><br>
                     <h1>{{cleanings}}</h1>
@@ -63,9 +88,6 @@
                 </div>
 
 
-
-
-            </form>
 
         </div>
         <div class="col">

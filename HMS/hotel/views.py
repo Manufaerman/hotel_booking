@@ -1,17 +1,17 @@
 import datetime
+from time import strftime
 
 from django.contrib.auth.decorators import login_required
-from django.http import request
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import render, HttpResponse
-from django.views.generic import ListView, FormView, View, DeleteView
+from django.views.generic import ListView, FormView, View, DeleteView, TemplateView
 from .models import Room, Booking, Price, Day
 from .forms import AvailibilityForm, AddBooking
 from .booking_functions.availability import check_availability
 from .booking_functions.get_room_list import get_room_list
 from .booking_functions.calculates_everithing import CalculatesAll
 from .booking_functions.save_many_prices import save_price, total_actual_month_price, \
-    total_previous_month_price, calendar_widget
+    total_previous_month_price, list_days_month, list_true_false_calendar
 
 
 @login_required
@@ -19,39 +19,45 @@ def home(request):
     return render(request, 'home.html')
 
 
-def roomlistview(request):
+class RoomList(TemplateView):
 
-    room = Room.objects.all()
-    room_list = get_room_list()
-    calculos = CalculatesAll()
-    calculadora = calculos.current_month_bookings()
-    cleanings = calculos.number_bookings_current_month()
-    form = AddBooking()
-    total_price = total_actual_month_price()
-    total_price_previous_month = total_previous_month_price()
-    calendarwidget = calendar_widget()
 
-    context = {'room': room,
-               'room_list': room_list,
-               'calculadora': calculadora,
-               'cleanings': cleanings,
-               'form': form,
-               'total_price': total_price,
-               'total_price_previous_month': total_price_previous_month,
-               'calendarwidget': calendarwidget,
-               }
+    def get(self, request, *args, **kwargs):
+        print(args, kwargs)
+        self.template_name = 'room_list_view-html'
+        room = Room.objects.all()
+        # Instansiation of the class to call all the calculations functions
+        calculos = CalculatesAll()
+        list_true_false = list_true_false_calendar(int(kwargs['id']))
+        print(list_true_false)
 
-    if request.method == 'POST':
+        return render(request, 'room_list_view.html', {'form': AddBooking(),
+                            'room': room,
+                            'month_days': list_days_month(),
+                            'total_price_previous_month': total_previous_month_price(),
+                            'total_price': total_actual_month_price(),
+                            'room_list': get_room_list(),
+                            'calculadora': calculos.current_month_bookings(),
+                            'cleanings': calculos.number_bookings_current_month(),
+                            })
+
+    def post(self, request, *args, **kwargs):
         form = AddBooking(request.POST)
+        calculos = CalculatesAll()
+        #this instance of Room is call for the customers side.
+        room = Room.objects.all()
         if form.is_valid():
-            post = True
             data = form.cleaned_data
-            print(data['name'])
+            # is calling a function which returns a list o f true and false items wich represents
+            # the booking in the month.
+            list_true_false = list_true_false_calendar(int(data['name']))
+
+            post = True
             room = Room.objects.filter(id=data['name'])[0]
             if check_availability(room, data['check_in'], data['check_out']):
-
                 prices = save_price(data['check_in'], data['check_out'], data['price'])
-                total_price = 0
+                print(prices)
+
                 for price in prices:
                     ready_to_strip = datetime.datetime.strptime(str(data['check_in']), '%Y-%m-%d')
                     day = Day.objects.create(
@@ -60,6 +66,8 @@ def roomlistview(request):
                         year=ready_to_strip.year)
                     day.save()
 
+                for price in prices:
+                    print(price.day, '---------------------------------------')
                     booking = Booking.objects.create(
                         user=request.user,
                         room=room,
@@ -69,18 +77,32 @@ def roomlistview(request):
                         check_out=data['check_out']
                     )
                     booking.save()
+                    print(booking)
+                    context = {'post': post,
+                               'booking': booking,
+                               'list_true_false': list_true_false,
+                               }
 
-                context = {'post': post,
-                           'booking': booking,
-                           'total_price': total_price}
                 return render(request, 'room_list_view.html', context)
+
             else:
                 no_room = True
                 context = {'no_room': no_room}
                 return render(request, 'room_list_view.html', context)
-    return render(request, 'room_list_view.html', context)
+
+        return render(request, 'room_list_view.html', {'form': form,
+                       'room': room,
+                       'month_days': list_days_month(),
+                       'total_price_previous_month': total_previous_month_price(),
+                       'total_price': total_actual_month_price(),
+                       'room_list': get_room_list(),
+                       'calculadora': calculos.current_month_bookings(),
+                       'cleanings': calculos.number_bookings_current_month(),
+                       })
 
 
+
+#-------------------------------------------------------------------------------------
 class BookingList(ListView):
     model = Booking
     def get_queryset(self, *args, **kwargs):

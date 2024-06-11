@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from django.conf import settings
 from django.urls import reverse, reverse_lazy
@@ -33,6 +35,9 @@ class Day(models.Model):
     day = models.IntegerField()
     month = models.IntegerField()
     year =models.IntegerField()
+
+    def __str__(self):
+        return f'{self.year}-{self.month}-{self.day}'
 
 
 class Booking(models.Model):
