@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'hotel',
     'hotel.booking_functions',
+    'django_extensions',
 
     'allauth',
     'allauth.account',

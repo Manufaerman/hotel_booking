@@ -1,3 +1,5 @@
+import datetime
+from django.core.exceptions import ValidationError
 from django import forms
 from .models import Room
 
@@ -20,10 +22,7 @@ class AvailibilityForm(forms.Form):
 
 class AddBooking(forms.Form):
 
-    rooms = Room.objects.all()
-    room_names = ((room.id, room.name)for room in rooms)
 
-    name = forms.ChoiceField(choices=room_names, required=True)
 
     check_in = forms.DateField(
         required=True,
@@ -39,4 +38,18 @@ class AddBooking(forms.Form):
 
     price = forms.IntegerField(max_value=150)
 
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        check_in = cleaned_data['check_in']
+        check_out = cleaned_data['check_out']
+        today = datetime.date.today()
+
+        if check_in < today:
+            raise ValidationError('Invalid date - renewal in past')
+
+        if check_in > check_out:
+            raise ValidationError('Invalid date - check in greater than check out')
+
+        else:
+            return cleaned_data
 

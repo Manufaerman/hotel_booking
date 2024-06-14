@@ -1,6 +1,5 @@
 
-<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
+
 {% extends 'base.html' %}
 {% load static %}
 
@@ -22,34 +21,35 @@
 <div class="container mt-4">
 
     <div class="row align-items-start">
+
         <div class="col">
+            <div class="m-4">
+                <h1>Enter a new booking </h1>
+            </div>
 
-            <h1>Enter a new booking </h1>
 
-            <div class="btn-group">
-              <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <div class="btn-group ms-1">
+              <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
                 Property
               </button>
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="{% url 'hotel:roomlist' '1'%}">Haro 0</a></li>
-                <li><a class="dropdown-item" href="{% url 'hotel:roomlist' '2'%}">Garaje</a></li>
-                <li><a class="dropdown-item" href="{% url 'hotel:roomlist' '3'%}">Room 3</a></li>
-                <li><a class="dropdown-item" href="{% url 'hotel:roomlist' '4'%}">Room 4</a></li>
-                <li><a class="dropdown-item" href="{% url 'hotel:roomlist' '5'%}">San Luis</a></li>
-                <li><a class="dropdown-item" href="{% url 'hotel:roomlist' '6'%}">Barichara</a></li>
-                <li><a class="dropdown-item" href="{% url 'hotel:roomlist' '7'%}">Tolima</a></li>
+                  {% for r in room %}
+                    <li><a class="dropdown-item" href="{% url 'hotel:roomlist' r.id%}">{{r.name}}</a></li>
+                  {% endfor %}
               </ul>
             </div>
 
 
-
-
-            <form id="booking-form" action="" method="POST">
-                {% csrf_token %}
-                 <!-- Input Div -->
-                <div class="input-div row me-2 mt-2">
-                    {{form.name}}
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ form.non_field_errors }}
                 </div>
+                {{ form.non_field_errors }}
+
+            {% endif %}
+            <div class="me-2 ms-3">
+                <form id="booking-form" action="" method="POST">
+                {% csrf_token %}
 
                 <!-- Input Div -->
                 <div class="input-div row me-2 mt-2">
@@ -71,29 +71,24 @@
                 </div>
 
                 </form>
-
-                <div class="mt-3">
-                    <h1>total cleanings:</h1><br>
-                    <h1>{{cleanings}}</h1>
                 </div>
-
-                <div class="mt-3">
-                    <h1>total bookings:</h1><br>
-                    <h1>{{total_price}}</h1>
+                <div class="mt-2 me-3 ms-1">
+                    <ol class="list-group list-group-numbered">
+                        <li class="list-group-item">Total reservas: {{total_booking_current_month}}</li>
+                        <li class="list-group-item">limpiezas: {{total_price_cleanings_current_month}}</li>
+                        <li class="list-group-item">A list item</li>
+                    </ol>
                 </div>
-
-                <div class="mt-3">
-                    <h1>total previous month </h1><br>
-                    <h1>{{total_price_previous_month}}</h1>
-                </div>
-
-
 
         </div>
+
+        <!-- right column -->
+
         <div class="col">
              <h1>Estas son las reservas para este mes  <span class="badge bg-secondary"></span></h1>
             <div class="row">
 
+                <!--
                 {% for d in calendarwidget %}
                     <div class="green"><span class="margin-auto__content">{{d}}</span></div>
                 {% endfor %}
@@ -106,29 +101,11 @@
                 {% endfor %}
             </ul>
 
-
+                -->
         </div>
     </div>
 
 </div>
-                {% if post %}
-                <div class="container mt-2">
-                      <div class="alert alert-success" role="alert">
-                            <h1>genial Dale a book para añadir otra !</h1><br>
-                            {{booking}}
-                        </div>
-                </div>
-
-
-                {% endif %}
-                {% if no_room %}
-                <div class="container mt-2">
-                      <div class="alert alert-secondary" role="alert">
-                           Lo siento pero no esta disponible
-                      </div>
-                </div>
-
-                {% endif %}
 
 
 {% else %}
@@ -157,6 +134,6 @@
 {% endblock %}
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-</body>
+
 
 </html>

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+{% if not no_room %}
+<div class="container mt-3">
+    <div class="alert alert-success" role="alert">
+        <h1>genial Dale a book para añadir otra !</h1><br>
+    </div>
+
+    <div class="mt-2">
+            <ol class="list-group list-group-numbered">
+                <li class="list-group-item">Cleanings:</li>
+                <li class="list-group-item">A list item</li>
+                <li class="list-group-item">Total Bookings: {{total_booking}}</li>
+                <a href="{% url 'hotel:roomlist' %" class="list-group-item list-group-item-action">Another book ? come on that's all little pussy ? </a>
+            </ol>
+    </div>
+</div>
+{% endif %}
+{% if no_room %}
+    <div class="container mt-3">
+        <div class="alert alert-secondary" role="alert">
+            Lo siento pero no esta disponible
+        </div>
+
+        <div class="mt-2">
+            <ol class="list-group list-group-numbered">
+                <li class="list-group-item">Cleanings:</li>
+                <li class="list-group-item">Total current Booking:  <span>{{total_booking}}</span> Euros</li>
+                <li class="list-group-item">A list item</li>
+                <a href="{% url 'hotel:roomlist' %" class="list-group-item list-group-item-action">Search another date</a>
+            </ol>
+    </div>
+    </div>
+
+{% endif %}
+
+{% endblock %}
