@@ -3,13 +3,11 @@ from django.urls import reverse, reverse_lazy
 import datetime
 from datetime import timedelta
 from django.db import models
-from .booking_functions.save_many_prices import all_dates_between_dates, first_day_month, last_day_month
 
 
 
-class PriceDate(models.Model):
-    price = models.IntegerField()
-    fecha = models.DateField()
+
+
 
 
 class Room(models.Model):
@@ -32,11 +30,20 @@ class Room(models.Model):
     def get_absolute_url(self):
         return reverse('roomlist', args=[str(self.id)])
 
+
+
+class Price(models.Model):
+    price = models.IntegerField()
+    date_price = models.DateField()
+    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+
+
 class Booking(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE,)
-    check_in = models.ForeignKey(PriceDate, on_delete=models.CASCADE, related_name='check_in')
-    check_out = models.ForeignKey(PriceDate, on_delete=models.CASCADE, related_name='check_out')
+    check_in = models.DateField()
+    check_out = models.DateField()
+    price = models.ForeignKey(Price, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.user} has book {self.room} from {self.check_in} to {self.check_out}'

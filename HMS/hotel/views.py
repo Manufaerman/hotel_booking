@@ -1,4 +1,4 @@
-from .models import Room, PriceDate
+from .models import Room, Price
 from .models import Booking
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
@@ -41,14 +41,15 @@ class RoomList(TemplateView):
             post = True
             room = Room.objects.filter(id=kwargs['id'])[0]
             if check_availability(room, data['check_in'], data['check_out']):
-                check_in = PriceDate.objects.get_or_create(price=data['price'], fecha=data['check_in'])
-                check_out = PriceDate.objects.get_or_create(price=data['price'], fecha=data['check_out'])
+                price_book = Price.objects.get_or_create(room=room, price=data['price'], date_price=data['check_in'])
+
 
                 booking = Booking.objects.create(
                     user=request.user,
                     room=room,
-                    check_in=check_in[0],
-                    check_out=check_out[0]
+                    price=price_book[0],
+                    check_in=data['check_in'],
+                    check_out=data['check_out']
                 )
 
                 booking.save()
@@ -117,8 +118,9 @@ class RoomDetailView(View):
             data = form.cleaned_data
             available_room = []
             for room in room_list:
-                check_in = PriceDate.objects.get_or_create(price=data['price'], fecha=data['check_in'])
-                check_out = PriceDate.objects.get_or_create(price=data['price'], fecha=data['check_out'])
+                # problem with the price
+                check_in = Price.objects.get_or_create(price=data['price'], fecha=data['check_in'])
+                check_out = Price.objects.get_or_create(price=data['price'], fecha=data['check_out'])
                 if check_availability(room, data['check_in'], data['check_out']):
                     available_room.append(room)
                     print(available_room, 'this is available room ')

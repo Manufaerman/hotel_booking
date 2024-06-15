@@ -30,14 +30,15 @@
 
             <div class="btn-group ms-1">
               <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
-                Property
+                {{r.name}}
               </button>
-              <ul class="dropdown-menu">
+              <ul  class="dropdown-menu">
                   {% for r in room %}
-                    <li><a class="dropdown-item" href="{% url 'hotel:roomlist' r.id%}">{{r.name}}</a></li>
+                    <li ><a name= 'dropdown' class="dropdown-item" href="{% url 'hotel:roomlist' r.id%}">{{r.name}}</a></li>
                   {% endfor %}
               </ul>
             </div>
+
 
 
             {% if form.non_field_errors %}
