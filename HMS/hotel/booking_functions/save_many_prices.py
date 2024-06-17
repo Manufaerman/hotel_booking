@@ -2,15 +2,7 @@
 from datetime import timedelta, datetime, date
 import calendar
 
-
-
-
-
-
 """
-
-
-
 
 def list_true_false_calendar(data):
 

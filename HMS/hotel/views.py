@@ -1,3 +1,4 @@
+from .booking_functions.save_many_prices import all_dates_between_dates
 from .models import Room, Price
 from .models import Booking
 from django.contrib.auth.decorators import login_required
@@ -5,7 +6,8 @@ from django.urls import reverse_lazy
 from django.shortcuts import render, HttpResponse
 from django.views.generic import ListView, View, DeleteView, TemplateView
 from .forms import AvailibilityForm, AddBooking
-from .booking_functions.availability import check_availability, total_month_bookings, total_price_booking, total_price_cleanings_current_month
+from .booking_functions.availability import check_availability, total_month_bookings, total_price_booking, \
+    total_price_cleanings_current_month, total_days_book_and_not_book_current_month
 from .booking_functions.get_room_list import get_room_list
 
 
@@ -22,15 +24,29 @@ class RoomList(TemplateView):
     def get(self, request, *args, **kwargs):
         room = Room.objects.all()
 
-        return render(request, 'room_list_view.html',
-                      {'form': AddBooking(),
-                        'room': room,
-                        'room_list': get_room_list(),
-                        'total_booking_current_month': total_month_bookings(),
-                        'total_price_cleanings_current_month': total_price_cleanings_current_month(),
+        if kwargs:
+            widget = total_days_book_and_not_book_current_month(kwargs['id'])
+            current_room = Room.objects.get(id=kwargs['id'])
+            return render(request, 'room_list_view.html',
+                          {'form': AddBooking(),
+                           'current_room': current_room,
+                           'room': room,
+                           'widget': widget,
+                           'room_list': get_room_list(),
+                           'total_booking_current_month': total_month_bookings(),
+                           'total_price_cleanings_current_month': total_price_cleanings_current_month(),
+                           })
+
+        else:
+            return render(request, 'room_list_view.html',
+                          {'form': AddBooking(),
+                            'room': room,
+                            'room_list': get_room_list(),
+                            'total_booking_current_month': total_month_bookings(),
+                            'total_price_cleanings_current_month': total_price_cleanings_current_month(),
+                                                           })
 
 
-                                                       })
 
     def post(self, request, *args, **kwargs):
         form = AddBooking(request.POST)
@@ -41,24 +57,25 @@ class RoomList(TemplateView):
             post = True
             room = Room.objects.filter(id=kwargs['id'])[0]
             if check_availability(room, data['check_in'], data['check_out']):
-                price_book = Price.objects.get_or_create(room=room, price=data['price'], date_price=data['check_in'])
-
+                all_dates = all_dates_between_dates(data['check_in'], data['check_out'])
+                for date in all_dates:
+                    price_book = Price.objects.get_or_create(room=room, price=data['price'], date_price=date)
+                    price_book[0].save()
 
                 booking = Booking.objects.create(
                     user=request.user,
                     room=room,
-                    price=price_book[0],
+                    price=Price.objects.get(room=room, date_price=data['check_in']),
                     check_in=data['check_in'],
                     check_out=data['check_out']
                 )
 
                 booking.save()
-                total_booking = total_price_booking(data['check_in'],data['check_out'],data['price'])
-                print(total_booking)
 
                 context = {'post': post,
+                           'id': room,
                            'booking': booking,
-                           'total_booking': total_booking,
+                           'total_booking': total_price_booking(data['check_in'],data['check_out'],data['price']),
                            'total_cleanings': total_price_cleanings_current_month()
                             }
 

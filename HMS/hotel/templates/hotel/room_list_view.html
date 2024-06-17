@@ -15,7 +15,7 @@
 
 </head>
 
-<body>
+
 {% block content %}
 {% if user.is_staff %}
 <div class="container mt-4">
@@ -30,11 +30,12 @@
 
             <div class="btn-group ms-1">
               <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
-                {{r.name}}
+                property:
               </button>
+              <button type="button" class="btn btn-primary">{{current_room.name}}</button>
               <ul  class="dropdown-menu">
                   {% for r in room %}
-                    <li ><a name= 'dropdown' class="dropdown-item" href="{% url 'hotel:roomlist' r.id%}">{{r.name}}</a></li>
+                    <li ><a name= 'dropdown' class="dropdown-item" href="{% url 'hotel:roomlist' r.id %}">{{r.name}}</a></li>
                   {% endfor %}
               </ul>
             </div>
@@ -88,21 +89,25 @@
         <div class="col">
              <h1>Estas son las reservas para este mes  <span class="badge bg-secondary"></span></h1>
             <div class="row">
+                <div class="green"><span class="margin-auto__content"></span></div>
+                <div class=""><p>Available</p></div>
+                <div class="redmini"><span class="margin-auto__content"></span></div>
+                <div class="redmini"><p>Booked</p></div>
+            </div>
 
-                <!--
-                {% for d in calendarwidget %}
-                    <div class="green"><span class="margin-auto__content">{{d}}</span></div>
+
+            <div class="row">
+
+                {% for date, true in widget.items %}
+                    {% if true.1 == False %}
+                        <div class="green"><span class="margin-auto__content">{{date}}</span></div>
+                    {% else %}
+                        <div class="red"><span class="margin-auto__content">{{date}}</span></div>
+                    {% endif %}
                 {% endfor %}
 
             </div>
 
-            <ul class="list-group">
-                {% for calculo in calculadora %}
-                <li class="list-group-item">{{calculo.user}} has a booking in {{calculo.room.name}} from <strong>{{calculo.check_in}}</strong> to <strong>{{calculo.check_out}}</strong></li>
-                {% endfor %}
-            </ul>
-
-                -->
         </div>
     </div>
 
