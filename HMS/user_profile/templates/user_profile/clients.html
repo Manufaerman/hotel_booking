@@ -1,0 +1,53 @@
+{% extends 'base_dashboard.html' %}
+{% load static %}
+{% block extra-head %}
+<link rel="stylesheet" href= "{% static 'user_profile/css/clients.css' %}">
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<body>
+    <div class="content">
+    <div class="container row">
+            {% for user in users %}
+                <div class="card-box">
+                    <div class="member-card pt-2 pb-2">
+                        <div class="thumb-lg member-thumb mx-auto"><img src="https://bootdey.com/img/Content/avatar/avatar2.png" class="rounded-circle img-thumbnail" alt="profile-image"></div>
+                        <div class="">
+                            <h4>{{user}}</h4>
+                            <p class="text-muted" style="font-size:1vw; text-overflow: ellipsis";>@Founder <span>| </span><span><a href="#" class="text-pink">{{user.email}}</a></span></p>
+                        </div>
+
+                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">Recibo</button>
+                        <div class="mt-4">
+                            <div class="row">
+                                <div class="col-4">
+                                    <div class="mt-3">
+                                        <h4>2563</h4>
+                                        <p class="mb-0 text-muted">Wallets Balance</p>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="mt-3">
+                                        <h4>6952</h4>
+                                        <p class="mb-0 text-muted">Income amounts</p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+        {% endfor %}
+
+        <!-- end row -->
+    </div>
+    <!-- container -->
+</div>
+
+</body>
+
+
+
+{% endblock %}

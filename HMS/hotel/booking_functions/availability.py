@@ -1,6 +1,6 @@
 import datetime
 from ..models import Room, Booking, Price
-from .save_many_prices import first_day_month, last_day_month, all_dates_between_dates,\
+from .dates_functions import first_day_month, last_day_month, all_dates_between_dates,\
     list_days_month
 from datetime import date
 
@@ -93,7 +93,7 @@ def total_days_book_and_not_book_current_month(id):
                 prices = Price.objects.get(date_price=day,
                                            room__id=id)
                 print(prices)
-                book_not_book_and_price[day] = prices.price.price, False
+                book_not_book_and_price[day] = prices.price, False
 
             except Price.DoesNotExist:
                 book_not_book_and_price[day] = 0, False

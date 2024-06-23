@@ -1,19 +1,22 @@
 from django.urls import path
-from .views import BookingList, RoomDetailView, CancelBookingView, home, RoomList
-
+from .views import Home, BookRoomClient, \
+    CancelBookingView, RoomList, DashBoardBook, dashboard, roomandflats
 
 app_name = 'hotel'
 
 urlpatterns = [
 
-    path('room_list/', RoomList.as_view(), name='roomlist'),
+    path('kakashka/<str:id>', roomandflats, name='roomandflats'),
     path('room_list/<id>', RoomList.as_view(), name='roomlist'),
-
-    path('', home, name='home'),
-    path('booking_list/', BookingList.as_view(), name='bookinglist'),
-    path('room/<category>', RoomDetailView.as_view(), name='roomdetailview'),
+    path('dashboard/la/la/la', DashBoardBook.as_view(), name='dashboardbook'),
+    path('dashboard/la/la/la/<id>', DashBoardBook.as_view(), name='dashboardbook'),
+    path('dashboard/', dashboard, name='dashboard'),
+    path('booking_list/', Home.as_view(), name='bookinglist'),
+    path('room/<category>', BookRoomClient.as_view(), name='roomdetailview'),
     path('booking/cancel/<pk>', CancelBookingView.as_view(), name='cancelbookingview'),
 
 
+    #not in use
+    path('', RoomList.as_view(), name='home'),
 
 ]

@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import environ
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,10 +20,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-2+@xo)m=q)mg0eauo^b6)n$63i^dio+2-((oy%ugok7q6j8xro'
-
+# es necesario instalar django-environ y crear archivo junto a settings .env
+env = environ.Env() #instacia objeto environ para crear instancias
+environ.Env.read_env()
+SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = []
 
@@ -43,6 +45,9 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+#redirect after log in and sing up
+ACCOUNT_SIGNUP_REDIRECT_URL = "thanks/"
+LOGIN_REDIRECT_URL = "/dashboard/"
 
 
 # Application definition
@@ -83,7 +88,7 @@ ROOT_URLCONF = 'HMS.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates', 'hotel/templates/hotel'],
+        'DIRS': ['templates', 'hotel/templates/hotel', 'user_profile/templates/user_profile'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -142,10 +147,11 @@ USE_I18N = True
 USE_TZ = True
 
 SITE_ID = 1
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = 'hotel/static/'
 
 #importat to add when you are adding email authentication
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

@@ -23,6 +23,8 @@ from django.contrib import admin
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('hotel.urls')),
-    path('accounts/', include('allauth.urls'))
+    path('user_profile/', include('user_profile.urls')),
+
+
 
 ]

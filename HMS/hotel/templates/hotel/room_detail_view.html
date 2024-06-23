@@ -1,17 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html'%}
 {% load static %}
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Room Detail</title>
+
+{% block title %}Room Detail {% endblock %}
+
+    {% block extra-head %}
     <script src="https://kit.fontawesome.com/692189991f.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="{% static 'hotel/css/room_detail_view.css' %}">
+    {% endblock %}
 
-    <!-- Main StyleSheet -->
-    <link rel="stylesheet" href="{% static 'room_detail_view.css' %}">
-
-</head>
-
+{% block content %}
 <body>
 
     <!-- Main Content -->
@@ -25,19 +22,12 @@
 
         <!-- Room Details -->
         <div class="room">
-
-            <!-- Div 1: Back to Home -->
-            <div class="home">
-                <a href="{% url 'hotel:roomlist' %}"><i class="fas fa-arrow-alt-circle-left">Home</i></a>
-            </div>
-
-            <!-- Div 2: Room Information -->
+            <div class="room2">
+                <!-- Div 2: Room Information -->
             <div class="room-info">
-                <h1>{{room_category}}</h1>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Id optio rem saepe culpa architecto tempora
-                    numquam debitis reiciendis! Quaerat laudantium consequuntur doloribus quod placeat consectetur
-                    veniam,
-                    rerum repellendus magnam labore. </p>
+                <h1 style="font: small-caps 100%/200% serif; font-size: 40px; color:white; text-align:center;">Room or Flat</h1>
+                <h2 style="font: small-caps 100%/200% serif; font-size: 20px; color:white; text-align:center;"> Your choice</h2>
+                <h1 style="font: small-caps 100%/200% serif; font-size: 20px; color: white;">{{room_category}}</h1>
             </div>
 
             <!-- Div 3: Room Booking Form -->
@@ -57,17 +47,22 @@
 
                 <!-- Input Div -->
                 <div class="input-div">
-                    <button type="submit">Book the Room</button>
+                    <button type="submit" class="btn btn-light" style="font: small-caps 100%/200% serif; font-size: 20px;">Check availability</button>
+
                 </div>
 
             </form>
 
 
-
         </div> <!-- END Room Div -->
 
+            </div>
+
+
+
     </div> <!-- END Main Content Div -->
+</div>
 
 </body>
 
-</html>
+{% endblock %}

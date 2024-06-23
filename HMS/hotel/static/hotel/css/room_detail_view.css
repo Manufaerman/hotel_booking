@@ -27,14 +27,23 @@ body{
 }
 
 .room{
-    flex:0.5;
-    margin: 2rem;
+    background: #65655F;
+    border-radius:
+    flex:0.3;
+    padding:50px 50px 50px 50px;
+
     display:flex;
     text-align: left;
     align-items: start;
     flex-direction: column;
-}
+    border-radius: 0px 10px 10px 0px;
 
+}
+.room2{
+    background: #65655F;
+    margin:auto;
+    border-radius: 10px 10px 10px 10px;
+}
 /* Sub Divs */
 
 .home{
@@ -42,7 +51,7 @@ body{
 }
 .room-info{
     flex: 0.4;
-    margin: 5rem 1rem;
+    margin: 3rem 1rem;
 
 }
 

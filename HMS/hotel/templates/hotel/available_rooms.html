@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="mt-4"></div>
+<div class="container">
+{% for room in room %}
+        <div class="card" style="width: 18rem;">
+          <img src="..." class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">{{room.name}}</h5>
+            <p class="card-text">{{room}}</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+          </div>
+        </div>
+
+
+{% endfor %}
+
+</div>
+
+
+
+{% endblock %}

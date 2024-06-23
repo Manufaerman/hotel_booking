@@ -3,20 +3,16 @@ from django.urls import reverse, reverse_lazy
 import datetime
 from datetime import timedelta
 from django.db import models
-
-
-
-
-
+from .signal import save_price_signal
 
 
 class Room(models.Model):
     ROOM_CATEGORIES = {
-        ('YAC', 'Double bedroom with AC'),
-        ('NAC', 'Double bedroom without AC'),
-        ('ONE', '1 ROOM flat whit AC'),
-        ('TWO', '2 ROOMS flat without AC'),
-        ('3AC', '3 ROOMS flat whit AC')
+        ('YAC', 'double room with air conditioning'),
+        ('NAC', 'Double bedroom without air conditioning'),
+        ('ONE', 'Design apartment of a room with air conditioning'),
+        ('TWO', 'Full two bedroom apartment without air conditioning'),
+        ('3AC', 'Full three bedroom apartment with air conditioning')
     }
     name = models.CharField(max_length=300)
     number = models.IntegerField()
@@ -28,7 +24,8 @@ class Room(models.Model):
         return f'{self.name} has {self.category}whit {self.bed} bed and with capacity for {self.capacity}'
 
     def get_absolute_url(self):
-        return reverse('roomlist', args=[str(self.id)])
+        return reverse('hotel:roomandflats', args=[str(self.id)])
+
 
 
 
@@ -55,6 +52,15 @@ class Booking(models.Model):
 
     def get_cancel_booking_url(self):
         return reverse_lazy('hotel:cancelbookingview', args=[self.pk, ])
+
+
+    # acabo de crear el sender para prices
+
+    """def save_booking_prices(self):
+        save_price_signal.send(sender=self.__class__, room=self.room, price=self.price,
+                               check_in=self.check_in, check_out=self.check_out)"""
+
+
 
 
 

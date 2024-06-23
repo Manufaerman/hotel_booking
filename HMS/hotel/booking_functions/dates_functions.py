@@ -2,31 +2,6 @@
 from datetime import timedelta, datetime, date
 import calendar
 
-"""
-
-def list_true_false_calendar(data):
-
-    days_month = list_days_month()
-    booking_objects = Booking.objects.filter(room__id=data)
-    
-    string_bookings_days = [repr(book.day).strip('<Day: >') for book in booking_objects]
-    string_bookings_days = [datetime.datetime.strptime(b, '%Y-%m-%d') for b in string_bookings_days]
-    string_bookings_days = [b.strftime('%Y-%m-%d') for b in string_bookings_days]
-    lista = []
-    for b in days_month:
-        if b in string_bookings_days:
-            print(string_bookings_days)
-            lista.append(True)
-        else:
-            lista.append(False)
-
-    return lista
-
-
-# required import from datetime import timedelta
-"""
-
-
 def all_dates_between_dates(check_in, check_out):
 
     date_list = [(check_in + timedelta(days=d)).strftime("%Y-%m-%d") for d in range((check_out.day - check_in.day) + 1)]

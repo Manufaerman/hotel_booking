@@ -26,7 +26,7 @@
 <h3>You Are Logged in!</h3>
 <h4> WELCOME TO DASHBOARD!</h4>
     button for log out
-    <a href="{% url 'account_logout' %}"> Log Out</a>
+    <a href="{% url 'user_profile:account_logout' %}"> Log Out</a>
 {% else %}
 <h2>SORRY :/</h2>
 <h3>You Are Logged Out!</h3>
@@ -40,7 +40,6 @@
     <p>using url ->.../accounts/github/login/</p>
     <a href="{% provider_login_url 'github' %}"> LogIn via Github</a>
 {% endif %}
-
 
 </div>
 {% endblock %}
