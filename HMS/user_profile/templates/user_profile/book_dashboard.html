@@ -10,11 +10,13 @@
                 <div class="">
                     <h1>Enter a new booking </h1>
                 </div>
-                <div class="btn-group ms-1">
+
+                <!--  botones   -->
+                <div class="btn-group ms-1" style="margin-bottom:20px; ">
                   <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
                     property:
                   </button>
-                  <button type="button" class="btn btn-primary">{{current_room.name}}</button>
+                  <button style="border-radius:0px 10px 10px 0;" type="button" class="btn btn-primary">{{current_room.name}}</button>
                   <ul  class="dropdown-menu">
                       {% for r in room %}
                         <li ><a name= 'dropdown' class="dropdown-item" href="{% url 'hotel:dashboardbook' r.id %}">{{r.name}}</a></li>
@@ -34,6 +36,30 @@
                 <div class="me-2 ms-3">
                     <form id="booking-form" action="" method="POST">
                     {% csrf_token %}
+
+                     <!-- Input Div -->
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-div row me-0 mt-2">
+                            {{form.name}}
+                            </div>
+                             <!-- Input Div -->
+                            <div class="input-div row me-0 mt-2">
+                                {{form.last_name}}
+                            </div>
+                        </div>
+                        <div class="col">
+                              <!-- Input Div -->
+                            <div class="input-div row me-2 mt-2">
+                                {{form.email}}
+                            </div>
+                            <!-- Input Div -->
+                            <div class="input-div row me-2 mt-2">
+                                {{form.phone}}
+                            </div>
+
+                        </div>
+                    </div>
 
                     <!-- Input Div -->
                     <div class="input-div row me-2 mt-2">

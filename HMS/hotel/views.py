@@ -1,5 +1,7 @@
+from django.contrib.auth.models import User
 from .booking_functions.dates_functions import all_dates_between_dates
 from .models import Room, Price
+from user_profile.models import *
 from .models import Booking
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
@@ -12,6 +14,9 @@ from .booking_functions.get_room_list import get_room_list
 
 
 # workers side
+from ..user_profile.models import UserProfile
+
+
 def roomandflats(request, id):
     print(id)
     id = get_object_or_404(Room, id=id)
@@ -61,12 +66,22 @@ class DashBoardBook(TemplateView):
             room = Room.objects.filter(id=kwargs['id'])[0]
             if check_availability(room, data['check_in'], data['check_out']):
                 all_dates = all_dates_between_dates(data['check_in'], data['check_out'])
+                user = User.objects.create(
+                    first_name=data['name'],
+                    last_name=data['last_name'],
+                    email=data['email'],
+                    )
+                user.save()
+                user_p = UserProfile.objects.create(
+                    user=user,
+                    phone=data['phone'])
+                user_p.save()
                 for date in all_dates:
                     price_book = Price.objects.get_or_create(room=room, price=data['price'], date_price=date)
                     price_book[0].save()
 
                 booking = Booking.objects.create(
-                    user=request.user,
+                    user=user,
                     room=room,
                     price=Price.objects.get(room=room, date_price=data['check_in'], price=data['price']),
                     check_in=data['check_in'],
