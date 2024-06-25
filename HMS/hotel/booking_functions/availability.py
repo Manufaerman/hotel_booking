@@ -3,6 +3,7 @@ from ..models import Room, Booking, Price
 from .dates_functions import first_day_month, last_day_month, all_dates_between_dates,\
     list_days_month
 from datetime import date
+from dateutil.relativedelta import relativedelta
 
 def total_price_booking(check_in, check_out, price):
     all_dates = len(all_dates_between_dates(check_in, check_out)) - 1
@@ -68,6 +69,37 @@ def total_month_bookings():
 
     return sum(list_prices)
 
+
+def previus_month_bookings():
+    first_day = first_day_month()
+    last_day = last_day_month()
+    last_day = last_day + relativedelta(months=-1)
+    first_day = first_day + relativedelta(months=-1)
+    bookings = Booking.objects.filter(check_in__gt=first_day,
+                                      check_in__lt=last_day
+                                      )
+    datos = {}
+
+    for book in bookings:
+        datos[book.id] = {
+            'check_in': book.check_in,
+            'check_out': book.check_out,
+            'price': book.price.price,
+            'room': book.room,
+            'all_dates_book': all_dates_between_dates(book.check_in, book.check_out)
+        }
+    list_prices = []
+    for book in datos.keys():
+        all_dates_books = datos[book].get('all_dates_book')
+        room = datos[book].get('room')
+        price_ = datos[book].get('price')
+
+        for date in all_dates_books:
+            price = Price.objects.get_or_create(room=room, price=price_, date_price=date)
+            list_prices.append(price[0].price)
+
+    return sum(list_prices)
+
 #working  --->
 def total_days_book_and_not_book_current_month(id):
     first_day = first_day_month()
@@ -103,6 +135,7 @@ def total_days_book_and_not_book_current_month(id):
                 pass
 
     res = dict(sorted(book_not_book_and_price.items()))
+    res = {x[8:]: z for x, z in sorted(res.items())}
     return res
 
 

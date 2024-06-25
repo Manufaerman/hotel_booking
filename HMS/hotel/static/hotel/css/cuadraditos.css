@@ -1,7 +1,7 @@
 .green{
         width: 50px;           /* Ancho de 150 píxeles */
         height: 50px;          /* Alto de 150 píxeles */
-        background: green;        /* Fondo de color rojo */
+        background: #FBF8F8;        /* Fondo de color rojo */
         margin :10px 10px 10px 10px;
         display: flex;
         align-items: center;
@@ -12,7 +12,7 @@
 .red{
         width: 50px;           /* Ancho de 150 píxeles */
         height: 50px;          /* Alto de 150 píxeles */
-        background: red;        /* Fondo de color rojo */
+        background: #A19C9C;        /* Fondo de color rojo */
         margin :10px 10px 10px 10px;
         display: flex;
         align-items: center;
@@ -24,7 +24,7 @@
 .redmini{
         width: 20px;           /* Ancho de 150 píxeles */
         height: 20px;          /* Alto de 150 píxeles */
-        background: red;        /* Fondo de color rojo */
+        background: #A19C9C;        /* Fondo de color rojo */
         display: flex;
         margin: 0 10px 0 10px;
         border-radius: 20px 20px 20px 20px;
@@ -33,7 +33,7 @@
 .greenmini{
         width: 20px;           /* Ancho de 150 píxeles */
         height: 20px;          /* Alto de 150 píxeles */
-        background: green;
+        background: #FBF8F8;
         margin: 0 10px;
         display: flex;
         border-radius: 40px 40px 40px 40px;

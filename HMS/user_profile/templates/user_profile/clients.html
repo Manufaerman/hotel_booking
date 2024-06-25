@@ -7,42 +7,17 @@
 
 {% block content %}
 <body>
-    <div class="content">
-    <div class="container row">
-            {% for user in users %}
-                <div class="card-box">
-                    <div class="member-card pt-2 pb-2">
-                        <div class="thumb-lg member-thumb mx-auto"><img src="https://bootdey.com/img/Content/avatar/avatar2.png" class="rounded-circle img-thumbnail" alt="profile-image"></div>
-                        <div class="">
-                            <h4>{{user}}</h4>
-                            <p class="text-muted" style="font-size:1vw; text-overflow: ellipsis";>@Founder <span>| </span><span><a href="#" class="text-pink">{{user.email}}</a></span></p>
-                        </div>
+<h1 style="color:black;">Clients</h1>
 
-                        <button type="button" class="btn btn-primary mt-3 btn-rounded waves-effect w-md waves-light">Recibo</button>
-                        <div class="mt-4">
-                            <div class="row">
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>2563</h4>
-                                        <p class="mb-0 text-muted">Wallets Balance</p>
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="mt-3">
-                                        <h4>6952</h4>
-                                        <p class="mb-0 text-muted">Income amounts</p>
-                                    </div>
-                                </div>
 
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+        {% for user in users %}
+<ul class="list-group list-group-horizontal" style="width:1000px;">
+  <li class="list-group-item">{{user.id}}----{{user}}----{{user.email}}</li>
+  </ul>
         {% endfor %}
 
         <!-- end row -->
-    </div>
+    </h1>
     <!-- container -->
 </div>
 

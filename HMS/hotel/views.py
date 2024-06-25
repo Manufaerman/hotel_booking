@@ -1,7 +1,6 @@
 from django.contrib.auth.models import User
 from .booking_functions.dates_functions import all_dates_between_dates
 from .models import Room, Price
-from user_profile.models import *
 from .models import Booking
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
@@ -9,12 +8,12 @@ from django.shortcuts import render, HttpResponse, get_object_or_404
 from django.views.generic import ListView, View, DeleteView, TemplateView, DetailView
 from .forms import AvailibilityForm, AddBooking
 from .booking_functions.availability import check_availability, total_month_bookings, total_price_booking, \
-    total_price_cleanings_current_month, total_days_book_and_not_book_current_month
+    total_price_cleanings_current_month, total_days_book_and_not_book_current_month, previus_month_bookings
 from .booking_functions.get_room_list import get_room_list
-
+from django.apps import apps
 
 # workers side
-from ..user_profile.models import UserProfile
+
 
 
 def roomandflats(request, id):
@@ -27,7 +26,8 @@ def dashboard(request):
     room = Room.objects.all()
     bookings = total_month_bookings()
     cleanings = total_price_cleanings_current_month()
-    return render(request, 'dashboard.html', {'room': room, 'bookings': bookings, 'cleanings': cleanings})
+    previus_month = previus_month_bookings()
+    return render(request, 'dashboard.html', {'room': room, 'bookings': bookings, 'cleanings': cleanings, 'previus_month':previus_month})
 
 
 
@@ -66,16 +66,15 @@ class DashBoardBook(TemplateView):
             room = Room.objects.filter(id=kwargs['id'])[0]
             if check_availability(room, data['check_in'], data['check_out']):
                 all_dates = all_dates_between_dates(data['check_in'], data['check_out'])
-                user = User.objects.create(
+                user = User.objects.create_user(
+                    username=data['name']+'_'+data['last_name'],
+                    password=None,
                     first_name=data['name'],
                     last_name=data['last_name'],
                     email=data['email'],
                     )
                 user.save()
-                user_p = UserProfile.objects.create(
-                    user=user,
-                    phone=data['phone'])
-                user_p.save()
+
                 for date in all_dates:
                     price_book = Price.objects.get_or_create(room=room, price=data['price'], date_price=date)
                     price_book[0].save()

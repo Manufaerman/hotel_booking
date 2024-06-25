@@ -41,8 +41,8 @@
 
     <div id="sidebar">
       <div class="p-2">
-        <a href="{% url 'hotel:home'%}" class="navbar-brand text-center text-light w-100 p-4 border-bottom">
-          LOL
+        <a href="{% url 'hotel:home'%}" class="navbar-brand text-center text-light w-100 p-4 border-bottom" style="font: small-caps 100%/200% serif; font-size: 30px;">
+          Hotelina
         </a>
       </div>
       <div id="sidebar-accordion" class="accordion">
@@ -57,11 +57,11 @@
             <i class="fa fa-tachometer mr-3" aria-hidden="true"></i>Dashboard
           </a>
           <div id="dashboard-items" class="collapse" data-parent="#sidebar-accordion">
+            <a href="{% url 'hotel:dashboard' %}" class="list-group-item list-group-item-action bg-dark text-light pl-5">
+              dashboard
+            </a>
             <a href="{% url 'user_profile:clients' %}" class="list-group-item list-group-item-action bg-dark text-light pl-5">
               clients
-            </a>
-            <a href="#" class="list-group-item list-group-item-action bg-dark text-light pl-5">
-              Item 2
             </a>
             <a href="#" class="list-group-item list-group-item-action bg-dark text-light pl-5">
               Item 3

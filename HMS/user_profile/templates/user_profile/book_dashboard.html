@@ -106,7 +106,7 @@
 
                     {% for date, true in widget.items %}
                         {% if true.1 == False %}
-                            <div class="green"><span class="margin-auto__content">{{date}}</span></div>
+                            <div class="green"><span class="margin-auto__content" style="color:grey;">{{date}}</span></div>
                         {% else %}
                             <div class="red"><span class="margin-auto__content">{{date}}</span></div>
                         {% endif %}
