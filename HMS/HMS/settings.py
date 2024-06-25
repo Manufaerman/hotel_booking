@@ -9,6 +9,8 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+import os
+
 import environ
 from pathlib import Path
 
@@ -151,7 +153,13 @@ SITE_ID = 1
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'hotel/static/'
+STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [
+    BASE_DIR / 'hotel/static',
+    BASE_DIR / 'user_profile/static',
+]
+
 
 #importat to add when you are adding email authentication
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

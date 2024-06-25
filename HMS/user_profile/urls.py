@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.conf.urls.static import static
 from django.urls import path, include
 from .views import register, contact, ChangeUsername,\
     profile, clients, thanks, login
@@ -13,4 +15,4 @@ urlpatterns = [
     path('login/', login, name='login'),
     path('accounts/signup/thanks/', thanks, name='thanks')
 
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

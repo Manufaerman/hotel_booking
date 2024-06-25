@@ -19,6 +19,9 @@ class Room(models.Model):
     category = models.CharField(max_length=3, choices=ROOM_CATEGORIES)
     bed = models.IntegerField()
     capacity = models.IntegerField()
+    image = models.ImageField(upload_to='img/room', default='img/room/default.jpg')
+    image1 = models.ImageField(upload_to='img/room', default='img/room/default.jpg')
+    image2 = models.ImageField(upload_to='img/room', default='img/room/default.jpg')
 
     def __str__(self):
         return f'{self.name} has {self.category}whit {self.bed} bed and with capacity for {self.capacity}'

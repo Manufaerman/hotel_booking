@@ -28,7 +28,7 @@ class AddBooking(forms.Form):
     )
     last_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'last Name'}),)
     email = forms.EmailField(
-        required=True,
+        required=False,
         widget=forms.TextInput(attrs={'placeholder': 'Email'}),
     )
     phone = forms.IntegerField(

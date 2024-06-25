@@ -74,6 +74,9 @@ class DashBoardBook(TemplateView):
                     email=data['email'],
                     )
                 user.save()
+                profile = apps.get_model('user_profile', 'UserProfile')
+                profile_ = profile(user=user, phone=data['phone'])
+                profile_.save()
 
                 for date in all_dates:
                     price_book = Price.objects.get_or_create(room=room, price=data['price'], date_price=date)
@@ -129,7 +132,6 @@ class RoomList(TemplateView):
     def get(self, request, *args, **kwargs):
         room = Room.objects.all()
         if kwargs:
-            widget = total_days_book_and_not_book_current_month(kwargs['id'])
             current_room = Room.objects.get(id=kwargs['id'])
             return render(request, 'room_list_view.html',
                           {'form': AddBooking(),
@@ -222,6 +224,7 @@ class BookRoomClient(View):
         if form.is_valid():
             data = form.cleaned_data
             available_room = []
+
             for room in room_list:
                 # problem with the price
 
@@ -230,8 +233,9 @@ class BookRoomClient(View):
                     print(available_room, 'this is available room ')
                 if len(available_room) > 0:
                     room = available_room[0]
-
-                    return render(request, 'available_rooms.html', {'room': available_room})
+                    id_room = [str(room.id) for room in available_room]
+                    print(id_room)
+                    return render(request, 'available_rooms.html', {'room': available_room, 'id_room': id_room[0]})
             else:
                 return HttpResponse('no room available')
 

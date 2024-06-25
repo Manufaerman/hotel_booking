@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.conf.urls.static import static
 from django.urls import path
 from .views import Home, BookRoomClient, \
     CancelBookingView, RoomList, DashBoardBook, dashboard, roomandflats
@@ -19,4 +21,4 @@ urlpatterns = [
     #not in use
     path('', RoomList.as_view(), name='home'),
 
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
