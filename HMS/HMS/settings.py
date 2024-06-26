@@ -25,11 +25,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # es necesario instalar django-environ y crear archivo junto a settings .env
 env = environ.Env() #instacia objeto environ para crear instancias
 environ.Env.read_env()
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG')
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['hotelina.herokuapp.com", "127.0.0.1']
 
 SITE_ID = 1
 
@@ -81,7 +81,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     "allauth.account.middleware.AccountMiddleware",
 ]
 
@@ -153,13 +153,13 @@ SITE_ID = 1
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
-    BASE_DIR / 'hotel/static',
-    BASE_DIR / 'user_profile/static',
+    os.path.join(BASE_DIR, 'static'),
 ]
-
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 #importat to add when you are adding email authentication
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
