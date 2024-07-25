@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title%} Login {% endblock %}
+{% block extra-head %}
+        <link rel="stylesheet" href="{% static 'user_profile/css/logout.css' %}">
+{% endblock %}
+{% block content %}
+<body>
+  <div class="espacio"></div>
+  <div class="container">
+    <h2>Login</h2>
+    <form method="post" action="{% url 'user_profile:logout' %}">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Login</button>
+    </form>
+  </div>
+</body>
+
+<h4> WELCOME TO DASHBOARD!</h4>
+    button for log out
+    <a href="{% url 'user_profile:account_logout' %}"> Log Out</a>
+{% endblock %}
+

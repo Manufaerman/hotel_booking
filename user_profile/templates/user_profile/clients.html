@@ -1,0 +1,28 @@
+{% extends 'base_dashboard.html' %}
+{% load static %}
+{% block extra-head %}
+<link rel="stylesheet" href= "{% static 'user_profile/css/clients.css' %}">
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<body>
+<h1 style="color:black;">Clients</h1>
+
+
+        {% for user in users %}
+<ul class="list-group list-group-horizontal" style="width:1000px;">
+  <li class="list-group-item">{{user.id}}----{{user}}----{{user.email}}</li>
+  </ul>
+        {% endfor %}
+
+        <!-- end row -->
+    </h1>
+    <!-- container -->
+</div>
+
+</body>
+
+
+
+{% endblock %}

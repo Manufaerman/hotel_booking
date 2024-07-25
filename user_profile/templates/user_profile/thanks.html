@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+
+
+
+{% block content %}
+<h1 style="size:100;">
+    thanks
+</h1>
+
+
+<script>
+       setTimeout(function(){
+            window.location.href = "{% url 'hotel:home' %}";
+         }, 5000);
+</script>
+{% endblock %}

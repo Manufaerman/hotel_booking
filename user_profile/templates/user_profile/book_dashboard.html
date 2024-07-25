@@ -1,0 +1,122 @@
+{% extends 'base_dashboard.html' %}
+
+{% block content %}
+{% if user.is_staff %}
+    <div class="container ">
+
+        <div class="row align-items-start">
+
+            <div class="">
+                <div class="">
+                    <h1>Enter a new booking </h1>
+                </div>
+
+                <!--  botones   -->
+                <div class="btn-group ms-1" style="margin-bottom:20px; ">
+                  <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                    property:
+                  </button>
+                  <button style="border-radius:0px 10px 10px 0;" type="button" class="btn btn-primary">{{current_room.name}}</button>
+                  <ul  class="dropdown-menu">
+                      {% for r in room %}
+                        <li ><a name= 'dropdown' class="dropdown-item" href="{% url 'hotel:dashboardbook' r.id %}">{{r.name}}</a></li>
+                      {% endfor %}
+                  </ul>
+                </div>
+
+
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ form.non_field_errors }}
+                    </div>
+                        {{ form.non_field_errors }}
+                {% endif %}
+
+                <div class="me-2 ms-3">
+                    <form id="booking-form" action="" method="POST">
+                    {% csrf_token %}
+
+                     <!-- Input Div -->
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-div row me-0 mt-2">
+                            {{form.name}}
+                            </div>
+                             <!-- Input Div -->
+                            <div class="input-div row me-0 mt-2">
+                                {{form.last_name}}
+                            </div>
+                        </div>
+                        <div class="col">
+                              <!-- Input Div -->
+                            <div class="input-div row me-2 mt-2">
+                                {{form.email}}
+                            </div>
+                            <!-- Input Div -->
+                            <div class="input-div row me-2 mt-2">
+                                {{form.phone}}
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Input Div -->
+                    <div class="input-div row me-2 mt-2">
+                        {{form.check_in}}
+                    </div>
+
+                    <!-- Input Div -->
+                    <div class="input-div row me-2 mt-2">
+                       {{form.check_out}}
+                    </div>
+
+                     <div class="input-div row me-2 mt-2">
+                       {{form.price}}
+                    </div>
+
+                    <!-- Button submit  Div -->
+                    <div class="input-div row me-2 mt-2">
+                        <button type="submit" class="btn btn-primary" name="{{form.prefix}}" value="Submit"> book </button>
+                    </div>
+
+                    </form>
+                    </div>
+                    <div class="mt-2 me-3 ms-1">
+                        <ol class="list-group list-group-numbered">
+                            <li class="list-group-item">Total reservas: {{total_booking_current_month}}</li>
+                            <li class="list-group-item">limpiezas: {{total_price_cleanings_current_month}}</li>
+                            <li class="list-group-item">A list item</li>
+                        </ol>
+                    </div>
+
+            </div>
+
+            <!-- right column -->
+            <h1 class="my-4">Currents Bookings </h1>
+            <div class="inline">
+                <span class="greenmini"></span>
+                <span class="">Available</span>
+                <span class="redmini"></span>
+                <span class="">Booked</span>
+            </div>
+
+            <div class="">
+                <div class="row">
+
+                    {% for date, true in widget.items %}
+                        {% if true.1 == False %}
+                            <div class="green"><span class="margin-auto__content" style="color:grey;">{{date}}</span></div>
+                        {% else %}
+                            <div class="red"><span class="margin-auto__content">{{date}}</span></div>
+                        {% endif %}
+                    {% endfor %}
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+{% endif %}
+{% endblock %}

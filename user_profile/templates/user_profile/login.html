@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Login {% endblock %}
+{% block extra-head %}
+<link rel="stylesheet" href="{% static 'user_profile/css/login.css' %}">
+{% endblock %}
+{% block content %}
+<body>
+  <div class="container">
+    <h2>Login</h2>
+    <form method="post" action="{% url 'user_profile:account_login' %}">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Login</button>
+    </form>
+  </div>
+</body>
+</html>
+
+{% endblock %}

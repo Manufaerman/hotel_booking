@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Register</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .espacio {
+      height: 100px
+    }
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f2f2f2;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .container h2 {
+      text-align: center;
+    }
+    .container form {
+      margin-top: 20px;
+    }
+    .container form label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    .container form input[type="text"],
+    .container form input[type="email"],
+    .container form input[type="password"] {
+      width: 90%;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .container form button {
+      width: 100%;
+      padding: 10px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .container form button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="espacio"></div>
+  <div class="container">
+    <h2>Register</h2>
+    <form method="post" action="{% url 'user_profile:account_signup' %}">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Register</button>
+    </form>
+  </div>
+</body>
+</html>
+</html>
