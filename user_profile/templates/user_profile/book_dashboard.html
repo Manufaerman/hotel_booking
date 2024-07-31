@@ -1,99 +1,22 @@
 {% extends 'base_dashboard.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block extra-head %}
+<link rel="stylesheet" href= "{% static 'user_profile/css/book_dashboard.css' %}">
+{% endblock %}
 
 {% block content %}
 {% if user.is_staff %}
-    <div class="container ">
-
-        <div class="row align-items-start">
-
-            <div class="">
-                <div class="">
-                    <h1>Enter a new booking </h1>
-                </div>
-
-                <!--  botones   -->
-                <div class="btn-group ms-1" style="margin-bottom:20px; ">
-                  <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
-                    property:
-                  </button>
-                  <button style="border-radius:0px 10px 10px 0;" type="button" class="btn btn-primary">{{current_room.name}}</button>
-                  <ul  class="dropdown-menu">
-                      {% for r in room %}
-                        <li ><a name= 'dropdown' class="dropdown-item" href="{% url 'hotel:dashboardbook' r.id %}">{{r.name}}</a></li>
-                      {% endfor %}
-                  </ul>
-                </div>
-
-
-
-                {% if form.non_field_errors %}
-                    <div class="alert alert-danger" role="alert">
-                        {{ form.non_field_errors }}
-                    </div>
-                        {{ form.non_field_errors }}
-                {% endif %}
-
-                <div class="me-2 ms-3">
-                    <form id="booking-form" action="" method="POST">
-                    {% csrf_token %}
-
-                     <!-- Input Div -->
-                    <div class="row">
-                        <div class="col">
-                            <div class="input-div row me-0 mt-2">
-                            {{form.name}}
-                            </div>
-                             <!-- Input Div -->
-                            <div class="input-div row me-0 mt-2">
-                                {{form.last_name}}
-                            </div>
-                        </div>
-                        <div class="col">
-                              <!-- Input Div -->
-                            <div class="input-div row me-2 mt-2">
-                                {{form.email}}
-                            </div>
-                            <!-- Input Div -->
-                            <div class="input-div row me-2 mt-2">
-                                {{form.phone}}
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <!-- Input Div -->
-                    <div class="input-div row me-2 mt-2">
-                        {{form.check_in}}
-                    </div>
-
-                    <!-- Input Div -->
-                    <div class="input-div row me-2 mt-2">
-                       {{form.check_out}}
-                    </div>
-
-                     <div class="input-div row me-2 mt-2">
-                       {{form.price}}
-                    </div>
-
-                    <!-- Button submit  Div -->
-                    <div class="input-div row me-2 mt-2">
-                        <button type="submit" class="btn btn-primary" name="{{form.prefix}}" value="Submit"> book </button>
-                    </div>
-
-                    </form>
-                    </div>
-                    <div class="mt-2 me-3 ms-1">
-                        <ol class="list-group list-group-numbered">
-                            <li class="list-group-item">Total reservas: {{total_booking_current_month}}</li>
-                            <li class="list-group-item">limpiezas: {{total_price_cleanings_current_month}}</li>
-                            <li class="list-group-item">A list item</li>
-                        </ol>
-                    </div>
-
-            </div>
-
-            <!-- right column -->
-            <h1 class="my-4">Currents Bookings </h1>
+    <div class=" contenedor">
+        <div class="contenedor_cincuenta">
+            <h1 class="text_title">Currents Bookings </h1>
+            <ol class="list-group list-group-numbered">
+                <li class="list-group-item">Total reservas: {{total_booking_current_month}}</li>
+                <li class="list-group-item">limpiezas: {{total_price_cleanings_current_month}}</li>
+                <li class="list-group-item">A list item</li>
+            </ol>
+            <h1 class="text_title">Currents Bookings </h1>
             <div class="inline">
                 <span class="greenmini"></span>
                 <span class="">Available</span>
@@ -115,8 +38,143 @@
                 </div>
 
             </div>
+
+
+
         </div>
 
+        <div class="contenedor_cincuenta">
+
+            <div class="">
+                <div class="text_title">
+                    <h1 class="text_title">Enter a new booking </h1>
+                </div>
+
+                <!--  botones   -->
+                <div class="btn-group ms-1" style="margin-bottom:20px; ">
+                  <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                      {% if not current_room %}
+                        property
+                      {% else %}
+                        {{current_room.name}}
+                      {% endif %}
+
+                  </button>
+                  <ul  class="dropdown-menu">
+                      {% for r in room %}
+                        <li ><a name= 'dropdown' class="dropdown-item" href="{% url 'hotel:dashboardbookflat' r.id %}">{{r.name}}</a></li>
+                      {% endfor %}
+                  </ul>
+                  <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                     {% if not month %}
+                        month
+                      {% else %}
+                        {{current_month}}
+                      {% endif %}
+
+                  </button>
+                  <ul  class="dropdown-menu">
+                      {% for m in month %}
+                        <li ><a name= 'dropdown' class="dropdown-item" href="{%  url 'hotel:dashboardbookmonth' current_room.id m %}">{{m}}</a></li>
+                      {% endfor %}
+                  </ul>
+                </div>
+
+
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ form.non_field_errors }}
+                    </div>
+                        {{ form.non_field_errors }}
+                {% endif %}
+
+                <div class="me-2 ms-3">
+                    <form id="booking-form" action="" method="POST">
+                    {% csrf_token %}
+
+                     <!-- Input Div -->
+                    <div class="row">
+                        <div class="col">
+                            <div class="input-div row me-0 mt-2">
+                            {{form.name | as_crispy_field }}
+                            </div>
+                             <!-- Input Div -->
+                            <div class="input-div row me-0 mt-2">
+                                {{form.last_name | as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="col">
+                              <!-- Input Div -->
+                            <div class="input-div row me-2 mt-2">
+                                {{form.email | as_crispy_field }}
+                            </div>
+                            <!-- Input Div -->
+                            <div class="input-div row me-2 mt-2">
+                                {{form.phone | as_crispy_field }}
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Input Div -->
+                    <div class="input-div row me-2 mt-2">
+                        {{form.check_in | as_crispy_field }}
+                    </div>
+
+                    <!-- Input Div -->
+                    <div class="input-div row me-2 mt-2">
+                       {{form.check_out | as_crispy_field }}
+                    </div>
+
+                     <div class="input-div row me-2 mt-2">
+                       {{form.price | as_crispy_field }}
+                    </div>
+
+                    <!-- Button submit  Div -->
+                    <div class="input-div row me-2 mt-2">
+                        <button type="submit" class="btn btn-primary" name="{{form.prefix}}" value="Submit"> book </button>
+                    </div>
+
+                    </form>
+                    </div>
+
+
+            </div>
+
+        </div>
+        <div class="contenedor_cincuenta">
+            <div class="text_title">
+                <h1> Bookings </h1>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">User </th>
+                        <th scope="col"> Room </th>
+                        <th scope="col"> check in </th>
+                        <th scope="col"> check out </th>
+                        <th scope="col"> price </th>
+                    </tr>
+                </thead>
+
+                <body>
+                {% for book in bookings %}
+                    <tr>
+                        <th scope="row"> {{book.user}}</th>
+                        <td> {{book.room}}</td>
+                        <td> {{book.check_in}}</td>
+                        <td> {{book.check_out}}</td>
+                        <td> {{book.price.price}}</td>
+                    </tr>
+                {% endfor %}
+                </body>
+
+            </table>
+
     </div>
+
+    </div>
+
 {% endif %}
 {% endblock %}

@@ -34,6 +34,18 @@ def last_day_month():
     end_month = datetime.strptime(end_month, '%Y-%m-%d')
     return end_month
 
+def first_day_month_x(month:str): #format '02'
+    string_date = date.today()
+    year = string_date.strftime('%Y')
+    fecha = year + '-' + month + '-01'
+    return fecha
 
-    
+
+def last_day_month_x(month: str):#format '02'
+    string_date = date.today()
+    res = calendar.monthrange(string_date.year, int(month))[1]
+    end_month = str(string_date.year) + '-' + month + '-' + str(res)
+    end_month = datetime.strptime(end_month, '%Y-%m-%d')
+
+    return end_month
 

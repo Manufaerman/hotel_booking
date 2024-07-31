@@ -1,17 +1,19 @@
 import datetime
 from ..models import Room, Booking, Price
-from .dates_functions import first_day_month, last_day_month, all_dates_between_dates,\
-    list_days_month
+from .dates_functions import first_day_month_x, last_day_month_x, all_dates_between_dates,\
+    list_days_month, first_day_month, last_day_month
 from datetime import date
 from dateutil.relativedelta import relativedelta
+
 
 def total_price_booking(check_in, check_out, price):
     all_dates = len(all_dates_between_dates(check_in, check_out)) - 1
     return price * all_dates
 
-def total_price_cleanings_current_month():
-    first_day = first_day_month()
-    last_day = last_day_month()
+
+def total_price_cleanings_current_month(month='0' + str(date.today().month)):
+    first_day = first_day_month_x(month)
+    last_day = last_day_month_x(month)
     bookings = Booking.objects.filter(check_in__gt=first_day,
                                       check_in__lte=last_day)
 
@@ -41,9 +43,9 @@ def total_price_cleanings_current_month():
 
     return sum(precios.values())
 
-def total_month_bookings():
-    first_day = first_day_month()
-    last_day = last_day_month()
+def total_month_bookings(month='0' + str(date.today().month)):
+    first_day = first_day_month_x(month)
+    last_day = last_day_month_x(month)
     bookings = Booking.objects.filter(check_in__gt=first_day,
                                       check_in__lt=last_day
                                       )
@@ -70,9 +72,9 @@ def total_month_bookings():
     return sum(list_prices)
 
 
-def previus_month_bookings():
-    first_day = first_day_month()
-    last_day = last_day_month()
+def previus_month_bookings(month='0' + str(date.today().month)):
+    first_day = first_day_month_x(month)
+    last_day = last_day_month_x(month)
     last_day = last_day + relativedelta(months=-1)
     first_day = first_day + relativedelta(months=-1)
     bookings = Booking.objects.filter(check_in__gt=first_day,
@@ -94,16 +96,17 @@ def previus_month_bookings():
         room = datos[book].get('room')
         price_ = datos[book].get('price')
 
-        for date in all_dates_books:
-            price = Price.objects.get_or_create(room=room, price=price_, date_price=date)
+        for day in all_dates_books:
+            price = Price.objects.get_or_create(room=room, price=price_, date_price=day)
             list_prices.append(price[0].price)
 
     return sum(list_prices)
 
+
 #working  --->
-def total_days_book_and_not_book_current_month(id):
-    first_day = first_day_month()
-    last_day = last_day_month()
+def total_days_book_and_not_book_current_month(id: str, month: str = '0' + str(date.today().month)):
+    first_day = first_day_month_x(month)
+    last_day = last_day_month_x(month)
     bookings = Booking.objects.filter(check_in__gt=first_day,
                                       check_in__lte=last_day,
                                       room__id=id, )
@@ -156,3 +159,12 @@ def check_availability(room, check_in, check_out):
         avail_list = [True,]
 
     return all(avail_list) #all return True if all items are true (any) does the opposite
+
+
+def booking_month_x(id: str, month: str = '0' + str(date.today().month)):
+    first_day = first_day_month_x(month)
+    last_day = last_day_month_x(month)
+    bookings = Booking.objects.filter(check_in__gt=first_day,
+                                      check_in__lte=last_day,
+                                      room__id=id, )
+    return bookings

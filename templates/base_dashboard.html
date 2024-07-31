@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 {% load static %}
+
 <head>
   <!-- Required meta tags -->
   <meta charset="utf-8">
@@ -16,17 +17,18 @@
   <link rel="stylesheet" href= "{% static 'hotel/css/cuadraditos.css' %}">
 
 
-  <title>Hello, world!</title>
+
+  {% block title %}{% endblock %}
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
   <style>
     #sidebar {
-      width: 20%;
+      width: 10%;
       height: 200vh;
       background: #343a40;
 
     }
     #centerside {
-      width:75%;
+      width:85%;
       height:100vh;
       margin: 5%;
     }
@@ -50,11 +52,11 @@
 
           <!-- book now -->
           <a href="{% url 'hotel:dashboardbook' %}" class="list-group-item list-group-item-action bg-dark text-light">
-            <i class="fa fa-shopping-cart mr-3" aria-hidden="true"></i>book Now!
+            <i class="fa fa-shopping-cart mr-3" aria-hidden="true"></i>
           </a>
           <a href="#dashboard-items" data-toggle="collapse" aria-expanded="false"
             class="list-group-item list-group-item-action bg-dark text-light">
-            <i class="fa fa-tachometer mr-3" aria-hidden="true"></i>Dashboard
+            <i class="fa fa-tachometer mr-3" aria-hidden="true"></i>
           </a>
           <div id="dashboard-items" class="collapse" data-parent="#sidebar-accordion">
             <a href="{% url 'hotel:dashboard' %}" class="list-group-item list-group-item-action bg-dark text-light pl-5">
@@ -71,7 +73,7 @@
           <!-- profile items -->
           <a href="#profile-items" data-toggle="collapse" aria-expanded="false"
             class="list-group-item list-group-item-action bg-dark text-light">
-            <i class="fa fa-user mr-3" aria-hidden="true"></i>Profile
+            <i class="fa fa-user mr-3" aria-hidden="true"></i>
           </a>
           <div id="profile-items" class="collapse" data-parent="#sidebar-accordion">
             <a href="{% url 'user_profile:profile' %}" class="list-group-item list-group-item-action bg-dark text-light pl-5">
@@ -94,7 +96,7 @@
 
           <a href="#setting-items" data-toggle="collapse" aria-expanded="false"
             class="list-group-item list-group-item-action bg-dark text-light">
-            <i class="fa fa-cog mr-3" aria-hidden="true"></i>Settings
+            <i class="fa fa-cog mr-3" aria-hidden="true"></i>
           </a>
           <div id="setting-items" class="collapse" data-parent="#sidebar-accordion">
             <div class="d-flex flex-row text-center">
@@ -110,12 +112,10 @@
       </div>
 
     </div>
-    <div class="flex">
-    <div id="centerside">
+
 
         {% block content %} {% endblock %}
-      </div>
-    </div>
+
   </div>
 
 

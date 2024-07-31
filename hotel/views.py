@@ -1,14 +1,14 @@
+from datetime import date
+
 from django.contrib.auth.models import User
 from .booking_functions.dates_functions import all_dates_between_dates
-from .models import Room, Price
-from .models import Booking
-from django.contrib.auth.decorators import login_required
+from .models import Room, Price, Booking
 from django.urls import reverse_lazy
 from django.shortcuts import render, HttpResponse, get_object_or_404
-from django.views.generic import ListView, View, DeleteView, TemplateView, DetailView
+from django.views.generic import ListView, View, DeleteView, TemplateView
 from .forms import AvailibilityForm, AddBooking
 from .booking_functions.availability import check_availability, total_month_bookings, total_price_booking, \
-    total_price_cleanings_current_month, total_days_book_and_not_book_current_month, previus_month_bookings
+    total_price_cleanings_current_month, total_days_book_and_not_book_current_month, booking_month_x
 from .booking_functions.get_room_list import get_room_list
 from django.apps import apps
 
@@ -26,32 +26,115 @@ def dashboard(request):
     room = Room.objects.all()
     bookings = total_month_bookings()
     cleanings = total_price_cleanings_current_month()
-    previus_month = previus_month_bookings()
-    return render(request, 'dashboard.html', {'room': room, 'bookings': bookings, 'cleanings': cleanings, 'previus_month':previus_month})
 
+    return render(request, 'dashboard.html', {'room': room, 'bookings': bookings, 'cleanings': cleanings})
 
-
-class DashBoardBook(TemplateView):
+class DashboardBookMonth(TemplateView):
     def get(self, request, *args, **kwargs):
+        month = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
         room = Room.objects.all()
         if kwargs:
+            print(kwargs)
+            widget = total_days_book_and_not_book_current_month(kwargs['id'], kwargs['month'])
+            current_room = Room.objects.get(id=kwargs['id'])
+            if kwargs['month']:
+                return render(request, 'book_dashboard.html',
+                              {'form': AddBooking(),
+                               'current_room': current_room,
+                               'room': room,
+                               'current_month': kwargs['month'],
+                               'month': month,
+                               'widget': widget,
+                               'room_list': get_room_list(),
+                               'total_booking_current_month': total_month_bookings(kwargs['month']),
+                               'total_price_cleanings_current_month': total_price_cleanings_current_month(),
+                               })
+
+    def post(self, request, *args, **kwargs):
+        form = AddBooking(request.POST)
+        # this instance of Room is call for the customers side.
+        room = Room.objects.all()
+        if form.is_valid():
+            data = form.clean()
+            post = True
+            room = Room.objects.filter(id=kwargs['id'])[0]
+            if check_availability(room, data['check_in'], data['check_out']):
+                all_dates = all_dates_between_dates(data['check_in'], data['check_out'])
+                user = User.objects.create_user(
+                    username=data['name']+'_'+data['last_name'],
+                    password=None,
+                    first_name=data['name'],
+                    last_name=data['last_name'],
+                    email=data['email'],
+                    )
+                user.save()
+                profile = apps.get_model('user_profile', 'UserProfile')
+                profile_ = profile(user=user, phone=data['phone'])
+                profile_.save()
+
+                for date in all_dates:
+                    price_book = Price.objects.get_or_create(room=room, price=data['price'], date_price=date)
+                    price_book[0].save()
+
+                booking = Booking.objects.create(
+                    user=user,
+                    room=room,
+                    price=Price.objects.get(room=room, date_price=data['check_in'], price=data['price']),
+                    check_in=data['check_in'],
+                    check_out=data['check_out']
+                )
+
+                booking.save()
+
+                context = {'post': post,
+                           'id': room,
+                           'booking': booking,
+                           'total_booking': total_price_booking(data['check_in'], data['check_out'], data['price']),
+                           'total_cleanings': total_price_cleanings_current_month()
+                           }
+
+                return render(request, 'room_list_view_post.html', context)
+
+            else:
+                no_room = True
+                context = {'no_room': no_room}
+                return render(request, 'room_list_view_post.html', context)
+
+        return render(request, 'room_list_view.html', {'form': form,
+                                                       'room': room,
+                                                       'room_list': get_room_list(),
+                                                       })
+
+
+class DashBoardBookFLat(TemplateView):
+    def get(self, request, *args, **kwargs):
+        month = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+        room = Room.objects.all()
+        current_room = Room.objects.filter(id=1)
+        if kwargs:
+            bookings = booking_month_x(id=kwargs['id'])
             widget = total_days_book_and_not_book_current_month(kwargs['id'])
             current_room = Room.objects.get(id=kwargs['id'])
 
             return render(request, 'book_dashboard.html',
                           {'form': AddBooking(),
                            'current_room': current_room,
-                           'room': room,
+                            'room': room,
+                           'bookings':bookings,
+                           'month': month,
                            'widget': widget,
-                           'room_list': get_room_list(),
-                           'total_booking_current_month': total_month_bookings(),
-                           'total_price_cleanings_current_month': total_price_cleanings_current_month(),
-                           })
+                            'room_list': get_room_list(),
+                            'total_booking_current_month': total_month_bookings(),
+                            'total_price_cleanings_current_month': total_price_cleanings_current_month(),
+                               })
+
 
         else:
             return render(request, 'book_dashboard.html',
                           {'form': AddBooking(),
                            'room': room,
+                           'current_room': current_room,
+                           'month': month,
                            'room_list': get_room_list(),
                            'total_booking_current_month': total_month_bookings(),
                            'total_price_cleanings_current_month': total_price_cleanings_current_month(),
@@ -113,6 +196,20 @@ class DashBoardBook(TemplateView):
                                                        })
 
 
+def dashboardbook(request):
+    month = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+    room = Room.objects.all()
+    current_room = Room.objects.get(id=1)
+    print(current_room.id)
+    return render(request, 'book_dashboard.html',
+                              {'form': AddBooking(),
+                               'current_room': current_room,
+                               'room': room,
+                               'month': month,
+                               'room_list': get_room_list(),
+                               'total_booking_current_month': total_month_bookings(),
+                               'total_price_cleanings_current_month': total_price_cleanings_current_month(),
+                               })
 
 class Home(ListView):
     model = Booking

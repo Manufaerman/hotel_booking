@@ -1,5 +1,13 @@
+
+@media screen and (min-width: 900px ) {
+
+.super {
+    width:100%;
+}
 .container{
     margin-top:100px;
+    width:100%;
+    background: white;
 
 }
 
@@ -43,4 +51,5 @@
 .counter-box.colored i,
 .counter-box.colored .counter {
 	color: #fff
+}
 }

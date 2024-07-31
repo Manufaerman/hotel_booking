@@ -1,7 +1,10 @@
 import datetime
 from django.core.exceptions import ValidationError
+from django.forms import ModelForm
 from django import forms
-from .models import Room
+from django.contrib.auth.models import User
+from user_profile.models import UserProfile
+
 
 
 class AvailibilityForm(forms.Form):
@@ -17,7 +20,6 @@ class AvailibilityForm(forms.Form):
         widget=forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}),
         input_formats=["%Y-%m-%d"]
     )
-
 
 
 class AddBooking(forms.Form):

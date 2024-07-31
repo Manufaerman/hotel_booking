@@ -45,14 +45,14 @@
         margin:20px;
 }
 #sidebar {
-      width: 20%;
+      width: 10%;
       height: 100vh;
       background: #343a40;
 
     }
 
 #centerside {
-      width:55%;
+      width:90%;
       height:100vh;
       margin: 5%;
     }

@@ -70,9 +70,12 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.github',
-    'whitenoise.runserver_nostatic'
+    'whitenoise.runserver_nostatic',
+    'crispy_forms',
+    'crispy_bootstrap4',
 
 ]
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

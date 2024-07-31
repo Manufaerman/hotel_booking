@@ -46,7 +46,7 @@ class Booking(models.Model):
     price = models.ForeignKey(Price, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.user} has book {self.room} from {self.check_in} to {self.check_out}'
+        return f'{self.room}'
 
     def get_room_category(self):
         room_categories = dict(self.room.ROOM_CATEGORIES)

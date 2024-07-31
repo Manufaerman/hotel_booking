@@ -1,18 +1,16 @@
 import datetime
-
-from django.urls import reverse
+import os
 import calendar
-from dateutil.relativedelta import relativedelta
+from hotel.booking_functions.dates_functions import first_day_month_x, last_day_month_x, all_dates_between_dates, list_days_month
+from hotel.models import Booking, Price
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "HMS.settings")
 
-from ..booking_functions.availability import total_month_bookings, total_days_book_and_not_book_current_month
-from ..booking_functions.dates_functions import all_dates_between_dates, first_day_month, last_day_month,\
-list_days_month
 from datetime import date, datetime, timedelta
-from ..models import Booking, Price, Room
 
-def run(id=1):
-    first_day = first_day_month()
-    last_day = last_day_month()
+
+def run(id: str, month: str = str(date.month)):
+    first_day = first_day_month_x(month)
+    last_day = last_day_month_x(month)
     bookings = Booking.objects.filter(check_in__gt=first_day,
                                       check_in__lte=last_day,
                                       room__id=id, )
@@ -44,8 +42,14 @@ def run(id=1):
 
     res = dict(sorted(book_not_book_and_price.items()))
     res = {x[8:]: z for x, z in sorted(res.items())}
+    return res
 
-    print(res)
+
+
+mes = '02'
+run(mes)
+
+
 
 
 

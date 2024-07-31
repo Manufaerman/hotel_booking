@@ -1,0 +1,19 @@
+
+.text_title {
+    background:white;
+    color: red;
+    font-family: Times;
+}
+
+
+.contenedor {
+    background:grey;
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+
+}
+.contenedor_cincuenta {
+    width:45%;
+    margin:50px;
+}

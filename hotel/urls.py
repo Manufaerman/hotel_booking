@@ -2,7 +2,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
 from .views import Home, BookRoomClient, \
-    CancelBookingView, RoomList, DashBoardBook, dashboard, roomandflats
+    CancelBookingView, RoomList, DashBoardBookFLat, dashboard, DashboardBookMonth, roomandflats, dashboardbook
 
 app_name = 'hotel'
 
@@ -10,8 +10,9 @@ urlpatterns = [
 
     path('kakashka/<str:id>', roomandflats, name='roomandflats'),
     path('room_list/<id>', RoomList.as_view(), name='roomlist'),
-    path('dashboard/la/la/la', DashBoardBook.as_view(), name='dashboardbook'),
-    path('dashboard/la/la/la/<id>', DashBoardBook.as_view(), name='dashboardbook'),
+    path('dashboard/', dashboardbook, name='dashboardbook'),
+    path('dashboard/la/la/la/<id>', DashBoardBookFLat.as_view(), name='dashboardbookflat'),
+    path('dashboard/la/la/la/<id>/<month>', DashboardBookMonth.as_view(), name='dashboardbookmonth'),
     path('dashboard/', dashboard, name='dashboard'),
     path('booking_list/', Home.as_view(), name='bookinglist'),
     path('room/<category>', BookRoomClient.as_view(), name='roomdetailview'),

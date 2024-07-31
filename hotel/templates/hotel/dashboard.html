@@ -1,57 +1,59 @@
 {% extends 'base_dashboard.html' %}
 {% load static %}
+{% block title %} <title> Dashboard </title> {% endblock %}
 {% block extra-head %}
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-<link rel="stylesheet" href= "{% static 'user_profile/css/dashboard.css' %}">
+<link rel="stylesheet" href= "{% static 'css/dashboard.css' %}">
 <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 {% endblock %}
+
 {% block content %}
 
-<div class="hole">
-	<div class="container">
+<div class="" style="width:100%;">
+	<div class="">
 
-    <div class="row">
+		<div class="row">
 
-	<div class="four col-md-3">
-		<div class="counter-box colored">
-			<i class="fa fa-thumbs-o-up"></i>
-			<span class="counter">{{bookings}} Euros</span>
-			<p>bookings</p>
+			<div class="four col-md-3">
+				<div class="counter-box colored">
+					<i class="fa fa-thumbs-o-up"></i>
+					<span class="counter">{{bookings}} Euros</span>
+					<p>bookings</p>
+				</div>
+			</div>
+			<div class="four col-md-3">
+				<div class="counter-box">
+					<i class="fa fa-group"></i>
+					<span class="counter">{{cleanings}} Euros</span>
+					<p>cleanings</p>
+				</div>
+			</div>
+			<div class="four col-md-3">
+				<div class="counter-box">
+					<i class="fa  fa-shopping-cart"></i>
+					<span class="counter">{{previus_month}}</span>
+					<p>Previus month</p>
+				</div>
+			</div>
+			<div class="four col-md-3">
+				<div class="counter-box">
+					<i class="fa  fa-user"></i>
+					<span class="counter">0</span>
+					<p>One year a go</p>
+				</div>
+			</div>
 		</div>
 	</div>
-	<div class="four col-md-3">
-		<div class="counter-box">
-			<i class="fa fa-group"></i>
-			<span class="counter">{{cleanings}} Euros</span>
-			<p>cleanings</p>
+
+	<div class="" style="width:100%;">
+		<div class="list-group" style="width:100%;">
+		{% for book in room %}
+
+		  <a href="{{book.get_absolute_url}}" class="list-group-item list-group-item-action"> {{book.name}}</a>
+
+		{% endfor%}
 		</div>
 	</div>
-	<div class="four col-md-3">
-		<div class="counter-box">
-			<i class="fa  fa-shopping-cart"></i>
-			<span class="counter">{{previus_month}}</span>
-			<p>Previus month</p>
-		</div>
-	</div>
-	<div class="four col-md-3">
-		<div class="counter-box">
-			<i class="fa  fa-user"></i>
-			<span class="counter">0</span>
-			<p>One year a go</p>
-		</div>
-	</div>
-  </div>
-</div>
-
-<div class="container">
-	<div class="list-group">
-	{% for book in room %}
-
-	  <a href="{{book.get_absolute_url}}" class="list-group-item list-group-item-action"> {{book.name}}</a>
-
-	{% endfor%}
-</div>
-</div>
 
 </div>
 
