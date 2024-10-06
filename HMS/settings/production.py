@@ -5,7 +5,7 @@ DEBUG: False
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.postgresql',
         'PORT': 5432,
         'USER': 'u90caag0ttelim',
         'PASSWORD': 'p3a4e6a563d16cdf7268ceb41bb23533993f2ed91b900f949ece7ed8b0c88c393',

@@ -207,7 +207,7 @@ class DashboardBookMonth(TemplateView):
                               'id': room,
                               'booking': booking,
                               'total_booking': total_price_booking(data['check_in'], data['check_out'], data['price']),
-                              'total_cleanings': total_price_cleanings_current_month(month=mes)
+                              'total_cleanings': total_price_cleanings_current_month()
                               }
 
                     return render(request, 'home_post.html', context)
