@@ -1,5 +1,6 @@
 from .common import *
 
+os.environ["DJANGO_SETTINGS_MODULE"] = "mysite.settings.production"
 DEBUG: False
 
 DATABASES = {

@@ -15,7 +15,7 @@ from pathlib import Path
 import django_heroku
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "HMS.settings.local")
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/

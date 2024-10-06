@@ -2,7 +2,8 @@ from .common import *
 
 DEBUG = True
 ALLOWED_HOSTS = []
-SECRET_KEY ='2+@xo)m=q)mg0eauo^b6)n$63i^dio+2-((oy%ugok7q6j8xro'
+SECRET_KEY = os.environ.get('SECRET_KEY')
+
 DATABASES = {
         'default': {
         'ENGINE': 'django.db.backends.sqlite3',
