@@ -4,6 +4,7 @@ os.environ["DJANGO_SETTINGS_MODULE"] = "HMS.settings.production"
 DEBUG: False
 
 DATABASES = {
+
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'Port': 5432,
