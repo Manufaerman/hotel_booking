@@ -2,14 +2,15 @@ from .common import *
 
 DEBUG: False
 
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'PORT': 5432,
-        'USER': 'u90caag0ttelim',
-        'PASSWORD': 'p3a4e6a563d16cdf7268ceb41bb23533993f2ed91b900f949ece7ed8b0c88c393',
-        'NAME': 'd71fnk6kip2i3c',
+        'Port': 5432,
+        'User': 'u90caag0ttelim',
+        'Password': 'p3a4e6a563d16cdf7268ceb41bb23533993f2ed91b900f949ece7ed8b0c88c393',
+        'Database': 'd71fnk6kip2i3c',
+        'URI': 'postgres://u90caag0ttelim:p3a4e6a563d16cdf7268ceb41bb23533993f2ed91b900f949ece7ed8b0c88c393'
+               '@cd1goc44htrmfn.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/',
         'HOST': 'cd1goc44htrmfn.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com'
     }
 }
