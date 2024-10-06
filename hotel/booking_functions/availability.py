@@ -4,6 +4,7 @@ from .dates_functions import first_day_month_x, last_day_month_x, all_dates_betw
     list_days_month, first_day_month, last_day_month
 from datetime import date
 from dateutil.relativedelta import relativedelta
+from icecream import ic
 
 
 def total_price_booking(check_in, check_out, price):
@@ -43,7 +44,10 @@ def total_price_cleanings_current_month(month='0' + str(date.today().month)):
 
     return sum(precios.values())
 
-def total_month_bookings(month='0' + str(date.today().month)):
+
+# return all the prices of a month
+def total_month_bookings(month: str = '0' + str(date.today().month)):
+    x = 1
     first_day = first_day_month_x(month)
     last_day = last_day_month_x(month)
     bookings = Booking.objects.filter(check_in__gt=first_day,
@@ -167,4 +171,17 @@ def booking_month_x(id: str, month: str = '0' + str(date.today().month)):
     bookings = Booking.objects.filter(check_in__gt=first_day,
                                       check_in__lte=last_day,
                                       room__id=id, )
+
     return bookings
+
+def booking_year():
+    rooms = Room.objects.all()
+    lista = []
+    for room in rooms:
+        bookings = Booking.objects.filter(room)
+        lista.append(bookings)
+    return lista
+
+
+if __name__ == "__main__":
+    ic | booking_year()

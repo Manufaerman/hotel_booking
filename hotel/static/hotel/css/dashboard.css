@@ -1,15 +1,31 @@
 
-@media screen and (min-width: 900px ) {
-
-.super {
-    width:100%;
-}
-.container{
-    margin-top:100px;
-    width:100%;
-    background: white;
+body {
+    display:flex;
+    background:white;
+    flex-direction:column;
 
 }
+.padre {
+    display:flex;
+    background:#DCDCDC;
+}
+
+.hijo {
+    width:25%;
+
+}
+.inside {
+    display: flex;
+    margin-top:5%;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.hijos {
+    width:45%;
+    margin:10px;
+}
+
 
 .counter-box {
 
@@ -41,10 +57,15 @@
 	font-weight: 700;
 	color: #666;
 	line-height: 28px
+
 }
 
 .counter-box.colored {
       background: #3acf87;
+}
+.counter-box.colored-red {
+      background:#F7386C;
+
 }
 
 .counter-box.colored p,
@@ -52,4 +73,29 @@
 .counter-box.colored .counter {
 	color: #fff
 }
+
+
+.container {
+    width:100%;
+    margin: 20px;
+}
+
+.contenedor{
+    width:100%;
+    display:flex;
+    justify-content:apace-around;
+}
+.hijo {
+    width:25%;
+
+}
+.inside {
+    display: flex;
+    margin-top:20px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.hijo {
+    width:45%;
+    margin:10px;
 }

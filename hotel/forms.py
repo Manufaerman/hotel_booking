@@ -1,6 +1,7 @@
 import datetime
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm
+from crispy_forms.helper import FormHelper
 from django import forms
 from django.contrib.auth.models import User
 from user_profile.models import UserProfile
@@ -23,7 +24,7 @@ class AvailibilityForm(forms.Form):
 
 
 class AddBooking(forms.Form):
-
+    
     name = forms.CharField(
         required=True,
         widget=forms.TextInput(attrs={'placeholder': 'Name'}),
@@ -34,7 +35,7 @@ class AddBooking(forms.Form):
         widget=forms.TextInput(attrs={'placeholder': 'Email'}),
     )
     phone = forms.IntegerField(
-        required=True,
+        required=False,
         widget=forms.TextInput(attrs={'placeholder': 'Phone'}),
     )
     check_in = forms.DateField(

@@ -12,13 +12,13 @@
                 <li class="list-group-item">Cleanings: {{total_price_cleanings_current_month}}</li>
                 <li class="list-group-item">A list item</li>
                 <li class="list-group-item">Total Bookings: {{total_booking}}</li>
-                <a href="{% url 'hotel:dashboardbook'  %}" class="list-group-item list-group-item-action">Another book ? come on that's all little pussy ? </a>
+                <a href="{% url 'hotel:dashboardbookmonth'  %}" class="list-group-item list-group-item-action">Another book ? come on that's all little pussy ? </a>
             </ol>
     </div>
 </div>
 <script>
         setTimeout(function(){
-            window.location.href = "{% url 'hotel:dashboardbook' %}";
+            window.location.href = "{% url 'hotel:dashboardbookmonth' %}";
          }, 2000);
 </script>
 {% endif %}
@@ -33,14 +33,14 @@
                 <li class="list-group-item">Cleanings:</li>
                 <li class="list-group-item">Total current Booking:  <span>{{total_booking}}</span> Euros</li>
                 <li class="list-group-item">A list item</li>
-                <a href="{% url 'hotel:dashboardbook' %}" class="list-group-item list-group-item-action">Search another date</a>
+                <a href="{% url 'hotel:dashboardbookmonth' %}" class="list-group-item list-group-item-action">Search another date</a>
             </ol>
     </div>
     </div>
 
 <script>
         setTimeout(function(){
-            window.location.href = "{% url 'hotel:dashboardbook' %}";
+            window.location.href = "{% url 'hotel:dashboardbookmonth' %}";
          }, 2000);
 </script>
 

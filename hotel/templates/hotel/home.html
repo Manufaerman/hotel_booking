@@ -1,50 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
+
+
 {% extends 'base.html' %}
 {% load static %}
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Booking List</title>
-    <script src="https://kit.fontawesome.com/692189991f.js" crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-</head>
 
-<body>
-{% block content %}
-<div class="container">
-{% load socialaccount %}
+{% block title %}Hotelina{% endblock%}
 
-<h1>Example heading <span class="badge bg-secondary">New</span></h1>
-</h1>
-<p>Based on:</p>
-<a href="{% url 'hotel:roomlist' %}"> Lets go make some bookings</a>
+{% block extra-head %}
+<!-- Main StyleSheet -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
-<hr>
-{% if request.user.is_authenticated %}
-<h2>CONGRATS :)</h2>
-<h3>You Are Logged in!</h3>
-<h4> WELCOME TO DASHBOARD!</h4>
-    button for log out
-    <a href="{% url 'user_profile:account_logout' %}"> Log Out</a>
-{% else %}
-<h2>SORRY :/</h2>
-<h3>You Are Logged Out!</h3>
-    <p>Link to log in:
-    <p>By Django Admin Dashboard [w/ username/password or github credentials]:</p>
-    <p>using url -> .../accounts/login/</p>
+<link rel="icon" href="data:;base64,iVBORw0KGgo="> <!-- to avoid favicon error in terminal -->
 
-    <a href="{% url 'account_login' %}"> LogIn</a>
-    <hr>
-    <p>Or via Github:</p>
-    <p>using url ->.../accounts/github/login/</p>
-    <a href="{% provider_login_url 'github' %}"> LogIn via Github</a>
-{% endif %}
-
-</div>
 {% endblock %}
 
+{% block content %}
+
+    <div class="container">
+     <!-- Brand -->
+
+
+    <!-- Main Content -->
+    <div class="row" style="margin-left:25px;">
+        {% for room, url in room_list %}
+
+             <div class="card" style="width: 18rem; margin: 30px;">
+              <img src="https://images.unsplash.com/photo-1519710164239-da123dc03ef4?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60" class="card-img-top" alt="...">
+                <div class="card-body">
+                <p class="card-text">{{room}}</p>
+                <a href="{{url}}" class="btn btn-light" style="font: small-caps 100%/200% serif; font-size: 20px;">Check availability </a>
+              </div>
+
+
+        </div>
+
+
+         {% endfor %}
+    </div>
+
+
+
+
+
+{% endblock %}
+</div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-</body>
+
 
 </html>

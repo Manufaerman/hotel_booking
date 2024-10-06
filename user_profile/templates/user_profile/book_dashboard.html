@@ -4,55 +4,65 @@
 
 {% block extra-head %}
 <link rel="stylesheet" href= "{% static 'user_profile/css/book_dashboard.css' %}">
+<link rel="stylesheet" href= "{% static 'hotel/css/cuadraditos.css' %}">
 {% endblock %}
 
 {% block content %}
 {% if user.is_staff %}
     <div class=" contenedor">
         <div class="contenedor_cincuenta">
-            <h1 class="text_title">Currents Bookings </h1>
-            <ol class="list-group list-group-numbered">
-                <li class="list-group-item">Total reservas: {{total_booking_current_month}}</li>
-                <li class="list-group-item">limpiezas: {{total_price_cleanings_current_month}}</li>
-                <li class="list-group-item">A list item</li>
-            </ol>
-            <h1 class="text_title">Currents Bookings </h1>
-            <div class="inline">
-                <span class="greenmini"></span>
-                <span class="">Available</span>
-                <span class="redmini"></span>
-                <span class="">Booked</span>
+
+            <div class="mesures">
+                <div style="padding:10px;">
+                    <h6> Total reservas </h6>
+                    <h1>{{total_booking_current_month}}</h1>
+                </div>
             </div>
 
-            <div class="">
-                <div class="row">
-
-                    {% for date, true in widget.items %}
-                        {% if true.1 == False %}
-                            <div class="green"><span class="margin-auto__content" style="color:grey;">{{date}}</span></div>
-                        {% else %}
-                            <div class="red"><span class="margin-auto__content">{{date}}</span></div>
-                        {% endif %}
-                    {% endfor %}
-
+            <div class="contenedor_cuarenta">
+                <div class="text_title">
+                    <h3 class="">Currents Bookings </h3>
                 </div>
 
+                <div class="inline">
+                    <span class="greenmini"></span>
+                    <span class="" style="color:grey;">Available</span>
+                    <span class="redmini"></span>
+                    <span class="" style="color:grey;">Booked</span>
+                </div>
+
+                <div style="width: 100%;">
+                    <div class="row" style="width: 90%;margin:auto;">
+
+                        {% for date, true in widget.items %}
+                            {% if true.1 == False %}
+                                <div class="green"><span class="margin-auto__content" style="color:grey;">{{date}}</span></div>
+                            {% else %}
+                                <div class="red"><span class="margin-auto__content">{{date}}</span></div>
+                            {% endif %}
+                        {% endfor %}
+
+                    </div>
+
+                </div>
             </div>
-
-
-
         </div>
 
         <div class="contenedor_cincuenta">
-
-            <div class="">
-                <div class="text_title">
-                    <h1 class="text_title">Enter a new booking </h1>
+            <div class="mesures">
+                <div style="padding:10px;">
+                    <h6> Total limpiezas </h6>
+                    <h1>{{total_price_cleanings_current_month}}</h1>
                 </div>
+            </div>
+            <div class="contenedor_cuarenta">
+                <div class="text_title">
+                <h3 class="">Enter a new booking </h3>
+            </div>
 
                 <!--  botones   -->
-                <div class="btn-group ms-1" style="margin-bottom:20px; ">
-                  <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+            <div class="btn-group ms-1" style="margin-bottom:20px; width:80%; ">
+                  <button type="button" class="widthcincuenta btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
                       {% if not current_room %}
                         property
                       {% else %}
@@ -62,10 +72,10 @@
                   </button>
                   <ul  class="dropdown-menu">
                       {% for r in room %}
-                        <li ><a name= 'dropdown' class="dropdown-item" href="{% url 'hotel:dashboardbookflat' r.id %}">{{r.name}}</a></li>
+                        <li ><a name= 'dropdown' class="dropdown-item" href="{% url 'hotel:dashboardbookmonth' r.id %}">{{r.name}}</a></li>
                       {% endfor %}
                   </ul>
-                  <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                  <button type="button" class=" widthcincuenta btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
                      {% if not month %}
                         month
                       {% else %}
@@ -78,7 +88,7 @@
                         <li ><a name= 'dropdown' class="dropdown-item" href="{%  url 'hotel:dashboardbookmonth' current_room.id m %}">{{m}}</a></li>
                       {% endfor %}
                   </ul>
-                </div>
+            </div>
 
 
 
@@ -96,21 +106,21 @@
                      <!-- Input Div -->
                     <div class="row">
                         <div class="col">
-                            <div class="input-div row me-0 mt-2">
+                            <div class="">
                             {{form.name | as_crispy_field }}
                             </div>
                              <!-- Input Div -->
-                            <div class="input-div row me-0 mt-2">
+                            <div class="">
                                 {{form.last_name | as_crispy_field }}
                             </div>
                         </div>
                         <div class="col">
                               <!-- Input Div -->
-                            <div class="input-div row me-2 mt-2">
+                            <div class="">
                                 {{form.email | as_crispy_field }}
                             </div>
                             <!-- Input Div -->
-                            <div class="input-div row me-2 mt-2">
+                            <div class="">
                                 {{form.phone | as_crispy_field }}
                             </div>
 
@@ -118,61 +128,73 @@
                     </div>
 
                     <!-- Input Div -->
-                    <div class="input-div row me-2 mt-2">
+                    <div class="">
                         {{form.check_in | as_crispy_field }}
                     </div>
 
                     <!-- Input Div -->
-                    <div class="input-div row me-2 mt-2">
+                    <div class="">
                        {{form.check_out | as_crispy_field }}
                     </div>
 
-                     <div class="input-div row me-2 mt-2">
+                     <div class="">
                        {{form.price | as_crispy_field }}
                     </div>
 
                     <!-- Button submit  Div -->
-                    <div class="input-div row me-2 mt-2">
+                    <div class="">
                         <button type="submit" class="btn btn-primary" name="{{form.prefix}}" value="Submit"> book </button>
                     </div>
 
                     </form>
-                    </div>
+                </div>
+            </div>
+        </div>
 
+
+        <div class="contenedor_cincuenta">
+            <div class="mesures">
+                <div style="padding:10px;">
+                    <h6> 2023 </h6>
+                    <h1>{{previous_month}}</h1>
+                </div>
+            </div>
+            <div class="contenedor_cuarenta">
+                <div style="">
+                    <h3 class="text_title"> Bookings </h3>
+                </div>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">User </th>
+                            <th scope="col"> Room </th>
+                            <th scope="col"> checkin </th>
+                            <th scope="col"> checkout </th>
+                            <th scope="col"> price/night  </th>
+                            <th scope="col"> total/price  </th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for book in bookings %}
+                        <tr>
+                            <th scope="row"> {{book.user}}</th>
+                            <td> {{book.room}}</td>
+                            <td> {{book.check_in}}</td>
+                            <td> {{book.check_out}}</td>
+                            <td> {{book.price.price}}</td>
+                            <td> {{book.check_in - book.check_out}}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+
+                </table>
 
             </div>
+
 
         </div>
-        <div class="contenedor_cincuenta">
-            <div class="text_title">
-                <h1> Bookings </h1>
-            </div>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">User </th>
-                        <th scope="col"> Room </th>
-                        <th scope="col"> check in </th>
-                        <th scope="col"> check out </th>
-                        <th scope="col"> price </th>
-                    </tr>
-                </thead>
-
-                <body>
-                {% for book in bookings %}
-                    <tr>
-                        <th scope="row"> {{book.user}}</th>
-                        <td> {{book.room}}</td>
-                        <td> {{book.check_in}}</td>
-                        <td> {{book.check_out}}</td>
-                        <td> {{book.price.price}}</td>
-                    </tr>
-                {% endfor %}
-                </body>
-
-            </table>
-
-    </div>
 
     </div>
 

@@ -24,7 +24,7 @@ class Room(models.Model):
     image2 = models.ImageField(upload_to='img/room', default='img/room/default.jpg')
 
     def __str__(self):
-        return f'{self.name} has {self.category}whit {self.bed} bed and with capacity for {self.capacity}'
+        return f'{self.name}'
 
     def get_absolute_url(self):
         return reverse('hotel:roomandflats', args=[str(self.id)])

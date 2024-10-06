@@ -52,9 +52,9 @@ class CustomLogoutView(LogoutView):
     def get_next_url(self):
         # Check user type and redirect accordingly
         if self.request.user.is_staff:
-            return render(self.request, 'home.html')
+            return render(self.request, '-home.html')
         else:
-            return render(self.request, 'home.html')
+            return render(self.request, '-home.html')
 
 
 

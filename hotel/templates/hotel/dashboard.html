@@ -3,47 +3,74 @@
 {% block title %} <title> Dashboard </title> {% endblock %}
 {% block extra-head %}
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-<link rel="stylesheet" href= "{% static 'css/dashboard.css' %}">
+<link rel="stylesheet" href= "{% static 'hotel/css/dashboard.css' %}">
 <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 {% endblock %}
 
 {% block content %}
+<body>
+	<div>
 
-<div class="" style="width:100%;">
-	<div class="">
+	<div class="padre">
+		<div class="hijo">
+			{% if bookings > bookings2023 %}
+			<div class="counter-box colored">
+				<i class="fa fa-thumbs-o-up"></i>
+				{% else %}
+				<div class="counter-box colored-red">
+					<i class="fa fa-thumbs-down"></i>
+					{% endif %}
+						<i class="fa fa-thumbs-o-up"></i>
+						<span class="counter">{{bookings}} Euros</span>
+						<p>bookings</p>
 
-		<div class="row">
-
-			<div class="four col-md-3">
-				<div class="counter-box colored">
-					<i class="fa fa-thumbs-o-up"></i>
-					<span class="counter">{{bookings}} Euros</span>
-					<p>bookings</p>
-				</div>
-			</div>
-			<div class="four col-md-3">
-				<div class="counter-box">
-					<i class="fa fa-group"></i>
-					<span class="counter">{{cleanings}} Euros</span>
-					<p>cleanings</p>
-				</div>
-			</div>
-			<div class="four col-md-3">
-				<div class="counter-box">
-					<i class="fa  fa-shopping-cart"></i>
-					<span class="counter">{{previus_month}}</span>
-					<p>Previus month</p>
-				</div>
-			</div>
-			<div class="four col-md-3">
-				<div class="counter-box">
-					<i class="fa  fa-user"></i>
-					<span class="counter">0</span>
-					<p>One year a go</p>
-				</div>
 			</div>
 		</div>
+
+		<div class="hijo">
+			<div class="counter-box">
+				<i class="fa  fa-shopping-cart"></i>
+				<span class="counter">{{bookings2023}}</span>
+				<p>2023</p>
+			</div>
+		</div>
+		<div class="hijo">
+			<div class="counter-box">
+				<i class="fa fa-group"></i>
+				<span class="counter">{{usuarios}}</span>
+				<p>Users</p>
+			</div>
+		</div>
+
+		<div class="hijo">
+			<div class="counter-box">
+				<i class="fa  fa-user"></i>
+				<span class="counter">{{cleanings}} Euros</span>
+				<p>Cleanings</p>
+			</div>
+		</div>
+
 	</div>
+
+	<div class="inside">
+		<div class="hijos">
+			<canvas id="myChart"></canvas>
+		</div>
+		<div class="hijos">
+			<canvas id="myChart2"></canvas>
+		</div>
+		<div class="hijos">
+			<canvas id="myChart4"></canvas>
+		</div>
+
+		<div class="hijos">
+			<canvas id="myChart3"></canvas>
+		</div>
+	</div>
+
+
+
+
 
 	<div class="" style="width:100%;">
 		<div class="list-group" style="width:100%;">
@@ -55,14 +82,23 @@
 		</div>
 	</div>
 
-</div>
 
 
-<!--
-   <a href="" class="list-group-item list-group-item-action active" aria-current="true">
-  </a>
-  <a class="list-group-item list-group-item-action disabled" aria-disabled="true">A disabled link item</a>
--->
 
+<!-- this is for Jquery-->
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<!-- this is for CHARTS JS-->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="{% static 'hotel/js/dashboard.js' %}"></script>
+	</div>
+</body>
+{% endblock %}
+
+{% block jquery %}
 
 {% endblock %}
+
+
+
+
