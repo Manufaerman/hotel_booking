@@ -1,8 +1,6 @@
 from .common import *
 
 DEBUG = True
-ALLOWED_HOSTS = []
-SECRET_KEY = os.environ.get('SECRET_KEY')
 
 DATABASES = {
         'default': {
@@ -13,4 +11,3 @@ DATABASES = {
 
 STATIC_URL = '/static/'
 
-django_heroku.settings(locals())

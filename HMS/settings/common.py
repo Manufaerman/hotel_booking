@@ -11,26 +11,19 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
 import environ
+import dj_database_url
+from decouple import config
 from pathlib import Path
-import django_heroku
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-# es necesario instalar django-environ y crear archivo junto a settings .env
-env = environ.Env() #instacia objeto environ para crear instancias
-environ.Env.read_env()
-SECRET_KEY = os.environ.get('SECRET_KEY')
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', 'murmuring-badlands-98880.herokuapp.com']
+SECRET_KEY = config('SECRET_KEY', default='2+@xo)m=q)mg0eauo^b6)n$63i^dio+2-((oy%ugok7q6j8xro')
+DEBUG = config('DJANGO_DEBUG', default=True, cast=bool)
+ALLOWED_HOSTS = ['*']
 
 SITE_ID = 1
 
@@ -112,7 +105,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'HMS.wsgi.application'
 
-
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
 
 
 # Password validation
@@ -163,7 +161,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 #importat to add when you are adding email authentication
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 ACCOUNT_EMAIL_VERIFICATION = "none"
-
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -179,4 +177,5 @@ AUTHENTICATION_BACKENDS = [
 
 ]
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+if config('DJANGO_PRODUCTION_ENV', DEFAULT=False, cast=bool):
+    from .production import *
