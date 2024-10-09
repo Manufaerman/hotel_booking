@@ -15,13 +15,10 @@ import dj_database_url
 from decouple import config
 from pathlib import Path
 
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-
-
 SECRET_KEY = config('SECRET_KEY', default='2+@xo)m=q)mg0eauo^b6)n$63i^dio+2-((oy%ugok7q6j8xro')
+
 DEBUG = config('DJANGO_DEBUG', default=True, cast=bool)
 ALLOWED_HOSTS = ['*']
 
@@ -41,10 +38,9 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
-#redirect after log in and sing up
+# redirect after log in and sing up
 ACCOUNT_SIGNUP_REDIRECT_URL = "thanks/"
 LOGIN_REDIRECT_URL = "/dashboard/"
-
 
 # Application definition
 
@@ -112,7 +108,6 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -131,7 +126,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -149,18 +143,19 @@ SITE_ID = 1
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')# here is where Nginx will search my files in deployment
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # here is where Nginx will search my files in deployment
 
 STATICFILES_DIRS = [
-    #to collect aditional files
+    # to collect aditional files
 ]
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-#importat to add when you are adding email authentication
+# importat to add when you are adding email authentication
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 ACCOUNT_EMAIL_VERIFICATION = "none"
+
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -177,5 +172,5 @@ AUTHENTICATION_BACKENDS = [
 
 ]
 
-if config('DJANGO_PRODUCTION_ENV', DEFAULT=False, cast=bool):
+if config('DJANGO_PRODUCTION', default=False, cast=bool):
     from .production import *
