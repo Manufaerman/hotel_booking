@@ -2,6 +2,7 @@ from ..views import Room
 from django.urls import reverse
 
 def get_room_list():
+
     room2 = Room.objects.all()[0]
     room_categories = dict(room2.ROOM_CATEGORIES)
     room_list = []

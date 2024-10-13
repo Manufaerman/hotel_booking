@@ -11,5 +11,5 @@ class UserProfile(models.Model):
     cp = models.IntegerField(blank=True, null=True)
     city = models.CharField(blank=True, max_length=150, null=True)
     country = models.CharField(blank=True, max_length=150, null=True)
-    birthday = models.DateField(blank=True)
+    birthday = models.DateField(blank=True,null=True)
 

@@ -42,7 +42,8 @@ def dashboard(request):
         bookings2023 = booking_month_allproperties()
         usuarios = len(User.objects.all())
         return render(request, 'dashboard.html',
-                      {'rooms': rooms, 'bookings': bookings, 'cleanings': cleanings, 'bookings2023': bookings2023, 'usuarios': usuarios})
+                      {'rooms': rooms, 'bookings': bookings, 'cleanings': cleanings, 'bookings2023': bookings2023,
+                       'usuarios': usuarios})
 
 
 def get_data(request, *args, **kwargs):
@@ -78,7 +79,8 @@ class DashboardBookMonth(TemplateView):
                                'room': room,
                                'bookings': bookings,
                                'current_month': kwargs['month'],
-                               'previous_month': booking_monthandyear_property(room_id=int(kwargs['id']),                                                     month=kwargs['month']),
+                               'previous_month': booking_monthandyear_property(room_id=int(kwargs['id']),
+                                                                               month=kwargs['month']),
                                'month': month,
                                'widget': widget,
                                'room_list': get_room_list(),
@@ -124,19 +126,24 @@ class DashboardBookMonth(TemplateView):
         else:
             if date.today().month > 9:
                 mes = str(date.today().month)
-                return render(request, 'book_dashboard.html',
-                              {'form': AddBooking(),
-                               'current_room': Room.objects.get(id=1),
-                               'room': room,
-                               'bookings': booking_month_x('01',month=mes),
-                               'previous_month': booking_monthandyear_property(room_id=1),
-                               'current_month': str(date.today().month),
-                               'month': month,
-                               'widget': total_days_book_and_not_book_current_month(id='1', month=mes),
-                               'room_list': get_room_list(),
-                               'total_booking_current_month': total_month_bookings(mes),
-                               'total_price_cleanings_current_month': total_price_cleanings_current_month(month=mes)
-                               })
+                try:
+                    return render(request, 'book_dashboard.html',
+                                  {'form': AddBooking(),
+                                   'current_room': Room.objects.get(id=1),
+                                   'room': room,
+                                   'bookings': booking_month_x('01', month=mes),
+                                   'previous_month': booking_monthandyear_property(room_id=1),
+                                   'current_month': str(date.today().month),
+                                   'month': month,
+                                   'widget': total_days_book_and_not_book_current_month(id='1', month=mes),
+                                   'room_list': get_room_list(),
+                                   'total_booking_current_month': total_month_bookings(mes),
+                                   'total_price_cleanings_current_month': total_price_cleanings_current_month(month=mes)
+                                   })
+
+                except:
+                    return render(request, 'nodatayet.html')
+
             else:
                 return render(request, 'book_dashboard.html',
                               {'form': AddBooking(),
@@ -204,11 +211,11 @@ class DashboardBookMonth(TemplateView):
                     return render(request, 'home_post.html', context)
                 else:
                     context = {'post': post,
-                              'id': room,
-                              'booking': booking,
-                              'total_booking': total_price_booking(data['check_in'], data['check_out'], data['price']),
-                              'total_cleanings': total_price_cleanings_current_month()
-                              }
+                               'id': room,
+                               'booking': booking,
+                               'total_booking': total_price_booking(data['check_in'], data['check_out'], data['price']),
+                               'total_cleanings': total_price_cleanings_current_month()
+                               }
 
                     return render(request, 'home_post.html', context)
 
@@ -239,7 +246,6 @@ class Home(ListView):
 
 # client side
 class home(TemplateView):
-
     def get(self, request, *args, **kwargs):
         room = Room.objects.all()
         if kwargs:
@@ -252,12 +258,15 @@ class home(TemplateView):
                            })
 
         else:
-            return render(request, 'home.html',
-                          {'form': AddBooking(),
-                           'room': room,
-                           'room_list': get_room_list(),
+            try:
+                return render(request, 'home.html',
+                              {'form': AddBooking(),
+                               'room': room,
+                               'room_list': get_room_list(),
 
-                           })
+                               })
+            except IndexError:
+                return render(request, 'nodatayet.html')
 
     def post(self, request, *args, **kwargs):
         form = AddBooking(request.POST)
