@@ -10,6 +10,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 ALLOWED_HOSTS = ['*']
 
 SITE_ID = 1
+SECRET_KEY = config('SECRET_KEY', default='2+@xo)m=q)mg0eauo^b6)n$63i^dio+2-((oy%ugok7q6j8xro')
+DEBUG = config('DJANGO_DEBUG', default=True, cast=bool)
+
 
 DATABASES = {
     'default': {
@@ -17,9 +20,10 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-SECRET_KEY = config('SECRET_KEY', default='2+@xo)m=q)mg0eauo^b6)n$63i^dio+2-((oy%ugok7q6j8xro')
 
-DEBUG = config('DJANGO_DEBUG', default=True, cast=bool)
+
+
+
 
 SOCIALACCOUNT_PROVIDERS = {
     'github': {
@@ -164,6 +168,6 @@ AUTHENTICATION_BACKENDS = [
 
 ]
 
-if config('DJANGO_PRODUCTION', default=False, cast=bool):
+if config('DJANGO_PRODUCTION_ENV', default=False, cast=bool):
     from .settings_production import *
 
