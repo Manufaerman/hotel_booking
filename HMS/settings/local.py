@@ -169,5 +169,9 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 if config('DJANGO_PRODUCTION_ENV', default=False, cast=bool):
-    from .settings_production import *
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=config('DATABASE_URL')
+        )
+    }
 
