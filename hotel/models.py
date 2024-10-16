@@ -16,7 +16,7 @@ class Room(models.Model):
     }
     name = models.CharField(max_length=300)
     number = models.IntegerField()
-    category = models.CharField(max_length=3, choices=ROOM_CATEGORIES)
+    category = models.CharField(choices=ROOM_CATEGORIES, max_length=2000)
     bed = models.IntegerField()
     capacity = models.IntegerField()
     image = models.ImageField(upload_to='img/room', default='img/room/default.jpg')
@@ -33,7 +33,7 @@ class Room(models.Model):
 
 
 class Price(models.Model):
-    price = models.IntegerField()
+    price = models.IntegerField(null=True, blank=True)
     date_price = models.DateField()
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
 

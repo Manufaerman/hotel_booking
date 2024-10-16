@@ -13,6 +13,8 @@ SITE_ID = 1
 SECRET_KEY = config('SECRET_KEY', default='2+@xo)m=q)mg0eauo^b6)n$63i^dio+2-((oy%ugok7q6j8xro')
 DEBUG = config('DJANGO_DEBUG', default=True, cast=bool)
 
+if config('DJANGO_PRODUCTION', default=False, cast=bool):
+    from .settings_production import *
 
 DATABASES = {
     'default': {
@@ -55,6 +57,7 @@ INSTALLED_APPS = [
     'hotel.booking_functions',
     'django_extensions',
     'user_profile',
+    'invoice',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -168,10 +171,6 @@ AUTHENTICATION_BACKENDS = [
 
 ]
 
-if config('DJANGO_PRODUCTION', default=False, cast=bool):
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=config('DATABASE_URL')
-        )
-    }
+import django_heroku
+django_heroku.settings(locals(), staticfiles=False)
 
