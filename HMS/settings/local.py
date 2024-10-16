@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.static',
+    'django.contrib.staticfiles',
     'hotel',
     'hotel.booking_functions',
     'django_extensions',
