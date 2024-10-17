@@ -6,4 +6,4 @@ class UsersConfig(AppConfig):
     name = 'user_profile'
 
     def ready(self):
-        from . import receivers
+        import user_profile.signals
