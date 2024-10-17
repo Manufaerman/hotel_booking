@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     'hotel.booking_functions',
     'django_extensions',
     'user_profile',
-    'user_profile.apps.user_profileConfig',
+    'user_profile.apps',
     'invoice',
     'allauth',
     'allauth.account',
