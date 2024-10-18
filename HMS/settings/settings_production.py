@@ -12,4 +12,4 @@ DATABASES = {
 }
 SECURE_SSL_REDIRECT = False
 
-ALLOWED_HOSTS = ['powerful-garden-90023-0b97dae15c35.herokuapp.com','localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['powerful-garden-90023-0b97dae15c35.herokuapp.com','localhost', '127.0.0.1','https://powerful-garden-90023-0b97dae15c35.herokuapp.com']
