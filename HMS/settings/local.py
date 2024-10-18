@@ -11,7 +11,7 @@ SECRET_KEY = config('SECRET_KEY', default='2+@xo)m=q)mg0eauo^b6)n$63i^dio+2-((oy
 DEBUG = config('DJANGO_DEBUG', default=True, cast=bool)
 
 if config('DJANGO_PRODUCTION_ENV', default=False, cast=bool):
-    from .settings_production import *
+    from .production import *
 
 DATABASES = {
     'default': {
