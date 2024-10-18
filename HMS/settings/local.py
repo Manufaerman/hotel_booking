@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.staticfiles',
     'hotel',
     'hotel.booking_functions',
     'django_extensions',
@@ -142,6 +143,9 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # here is where Nginx will search my files in deployment
 
 STATICFILES_DIRS = [
+    BASE_DIR / "static",
+    BASE_DIR / "static/hotel/css",
+    BASE_DIR / "static/user_profile/css",
     # to collect aditional files
 ]
 
