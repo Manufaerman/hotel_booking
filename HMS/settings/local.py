@@ -143,9 +143,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # here is where Nginx will searc
 
 STATICFILES_DIRS = [
     "static",
-    "static/hotel/css",
-    "static/user_profile/css",
-    # to collect aditional files
+
 ]
 
 
