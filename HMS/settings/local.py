@@ -142,9 +142,9 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # here is where Nginx will search my files in deployment
 
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
-    BASE_DIR / "static/hotel/css",
-    BASE_DIR / "static/user_profile/css",
+    "static",
+    "static/hotel/css",
+    "static/user_profile/css",
     # to collect aditional files
 ]
 
