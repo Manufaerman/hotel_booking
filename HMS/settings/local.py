@@ -160,7 +160,7 @@ ACCOUNT_EMAIL_VERIFICATION = "none"
 """STATICFILES_STORAGE = 'django.contrib.static.storage.StaticFilesStorage'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field"""
-STORAGES = {
+STATICFILES_STORAGE = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
