@@ -46,7 +46,7 @@ def total_price_cleanings_current_month(month=str(date.today().month)):
 
 
 # return all the prices of a month
-def total_month_bookings(month: str = '0' + str(date.today().month)):
+def total_month_bookings(month: str =str(date.today().month)):
     x = 1
     first_day = first_day_month_x(month)
     last_day = last_day_month_x(month)

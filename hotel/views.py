@@ -90,7 +90,7 @@ class DashboardBookMonth(TemplateView):
             # todo este else es nuevo
             else:
                 if date.today().month < 10:
-                    bookings = total_month_bookings('0' + str(date.today().month))
+                    bookings = total_month_bookings(str(date.today().month))
                     widget = total_days_book_and_not_book_current_month(kwargs['id'])
                     return render(request, 'book_dashboard.html',
                                   {'form': AddBooking(),
