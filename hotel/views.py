@@ -68,7 +68,6 @@ class DashboardBookMonth(TemplateView):
         month = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
         room = Room.objects.all()
         if kwargs:
-
             bookings = booking_month_x(id=kwargs['id'])
             current_room = Room.objects.get(id=kwargs['id'])
             if 'month' in kwargs:

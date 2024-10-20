@@ -165,14 +165,23 @@ def check_availability(room, check_in, check_out):
     return all(avail_list) #all return True if all items are true (any) does the opposite
 
 
-def booking_month_x(id: str, month: str = '0' + str(date.today().month)):
-    first_day = first_day_month_x(month)
-    last_day = last_day_month_x(month)
-    bookings = Booking.objects.filter(check_in__gt=first_day,
-                                      check_in__lte=last_day,
-                                      room__id=id, )
+def booking_month_x(id: str, month: str = str(date.today().month)):
+    if len(month)<1:
+        month = '0'+month
+        first_day = first_day_month_x(month)
+        last_day = last_day_month_x(month)
+        bookings = Booking.objects.filter(check_in__gt=first_day,
+                                          check_in__lte=last_day,
+                                          room__id=id, )
+        return bookings
+    else:
+        first_day = first_day_month_x(month)
+        last_day = last_day_month_x(month)
+        bookings = Booking.objects.filter(check_in__gt=first_day,
+                                          check_in__lte=last_day,
+                                          room__id=id, )
 
-    return bookings
+        return bookings
 
 def booking_year():
     rooms = Room.objects.all()
