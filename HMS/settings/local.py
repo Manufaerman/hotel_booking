@@ -2,10 +2,8 @@ import os
 from decouple import config
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 SITE_ID = 1
 SECRET_KEY = config('SECRET_KEY', default='2+@xo)m=q)mg0eauo^b6)n$63i^dio+2-((oy%ugok7q6j8xro')
 """DEBUG = config('DJANGO_DEBUG', default=False, cast=bool)"""
@@ -139,12 +137,14 @@ SITE_ID = 1
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')  # here is where Nginx will search my files in deployment
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # here is where Nginx will search my files in deployment
 
-STATICFILES_DIRS = [
-    "static",
+STATICFILES_DIRS = (
 
-]
+    os.path.join(BASE_DIR, "static"),
+
+
+                    )
 
 
 MEDIA_URL = "/media/"
@@ -154,17 +154,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 ACCOUNT_EMAIL_VERIFICATION = "none"
 
-"""STATICFILES_STORAGE = 'django.contrib.static.storage.StaticFilesStorage'
+
 # Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field"""
-STATICFILES_STORAGE = {
-    "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-    },
-    "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
-    },
-}
+# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
