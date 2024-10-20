@@ -108,7 +108,7 @@ def previus_month_bookings(month='0' + str(date.today().month)):
 
 
 #working  --->
-def total_days_book_and_not_book_current_month(id: str, month: str = '0' + str(date.today().month)):
+def total_days_book_and_not_book_current_month(id: str, month: str = str(date.today().month)):
     first_day = first_day_month_x(month)
     last_day = last_day_month_x(month)
     bookings = Booking.objects.filter(check_in__gt=first_day,

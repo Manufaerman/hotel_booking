@@ -37,8 +37,8 @@ def last_day_month():
 def first_day_month_x(month:str): #format '02'
     string_date = date.today()
     year = string_date.strftime('%Y')
-    if len(month)<1:
-        month = '0'+ month
+    if len(month) < 2:
+        month = '0' + month
         fecha = year + '-' + month + '-01'
         return fecha
     else:
