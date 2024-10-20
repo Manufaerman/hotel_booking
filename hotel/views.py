@@ -126,23 +126,23 @@ class DashboardBookMonth(TemplateView):
         else:
             if date.today().month > 9:
                 mes = str(date.today().month)
-                try:
-                    return render(request, 'book_dashboard.html',
-                                  {'form': AddBooking(),
-                                   'current_room': Room.objects.get(id=1),
-                                   'room': room,
-                                   'bookings': booking_month_x('01', month=mes),
-                                   'previous_month': booking_monthandyear_property(room_id=1),
-                                   'current_month': str(date.today().month),
-                                   'month': month,
-                                   'widget': total_days_book_and_not_book_current_month(id='1', month=mes),
-                                   'room_list': get_room_list(),
-                                   'total_booking_current_month': total_month_bookings(mes),
-                                   'total_price_cleanings_current_month': total_price_cleanings_current_month(month=mes)
-                                   })
+                """try:"""
+                return render(request, 'book_dashboard.html',
+                              {'form': AddBooking(),
+                               'current_room': Room.objects.get(id=1),
+                               'room': room,
+                               'bookings': booking_month_x('01', month=mes),
+                               'previous_month': booking_monthandyear_property(room_id=1),
+                               'current_month': str(date.today().month),
+                               'month': month,
+                               'widget': total_days_book_and_not_book_current_month(id='1', month=mes),
+                               'room_list': get_room_list(),
+                               'total_booking_current_month': total_month_bookings(mes),
+                               'total_price_cleanings_current_month': total_price_cleanings_current_month(month=mes)
+                               })
 
-                except:
-                    return render(request, 'nodatayet.html')
+                """except:"""
+                return render(request, 'nodatayet.html')
 
             else:
                 return render(request, 'book_dashboard.html',
