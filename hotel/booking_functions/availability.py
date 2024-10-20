@@ -12,7 +12,7 @@ def total_price_booking(check_in, check_out, price):
     return price * all_dates
 
 
-def total_price_cleanings_current_month(month='0' + str(date.today().month)):
+def total_price_cleanings_current_month(month=str(date.today().month)):
     first_day = first_day_month_x(month)
     last_day = last_day_month_x(month)
     bookings = Booking.objects.filter(check_in__gt=first_day,
