@@ -51,7 +51,7 @@ class AddBooking(forms.Form):
     )
 
     price = forms.IntegerField(
-        max_value=150,
+        max_value=4050,
         widget=forms.TextInput(attrs={'placeholder': 'Price'}),
     )
 

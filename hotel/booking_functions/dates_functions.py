@@ -2,11 +2,36 @@
 from datetime import timedelta, datetime, date
 import calendar
 
-def all_dates_between_dates(check_in, check_out):
+"""
+now all dates between dates return all dates between daten even the two dates provides are 
+in different month.
 
-    date_list = [(check_in + timedelta(days=d)).strftime("%Y-%m-%d") for d in range((check_out.day - check_in.day) + 1)]
+**** not tested between two different YEARS *****
+"""
+def all_dates_between_dates(uno:str, dos:str):
+    print(uno,'holaaaaaaaa')
+    uno = str(uno)[0:10]
+    uno = datetime.strptime(uno, "%Y-%m-%d")
+    dos = str(dos)[0:10]
+    dos = datetime.strptime(dos, "%Y-%m-%d")
 
-    return date_list
+
+    if uno.month != dos.month:
+        first_day_str = first_day_month_x(str(dos.month))
+        first_day = datetime.strptime(first_day_str, "%Y-%m-%d")
+        date_list = [(first_day + timedelta(days=d)).strftime("%Y-%m-%d") for d in range((dos.day - first_day.day) + 1)]
+        last_day_str = last_day_month_x(str(uno.month))
+        last_day = datetime.strptime(last_day_str, "%Y-%m-%d")
+        date_list2 = [(uno + timedelta(days=d)).strftime("%Y-%m-%d") for d in range((last_day.day - uno.day) + 1)]
+        res = date_list + date_list2
+
+        return sorted(res)
+
+    else:
+        date_list = [(uno + timedelta(days=d)).strftime("%Y-%m-%d") for d in range((dos.day - uno.day) + 1)]
+
+        return date_list
+
 
 def list_days_month():
     string_date = datetime.today()

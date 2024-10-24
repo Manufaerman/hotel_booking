@@ -1,5 +1,5 @@
 from datetime import date
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.models import User
 from .booking_functions.dates_functions import all_dates_between_dates
 from .models import Room, Price, Booking
@@ -13,6 +13,7 @@ from .booking_functions.get_room_list import get_room_list
 from .booking_functions.retrieving_data import booking_year_property, multiple_year_property, \
     booking_monthandyear_property, booking_month_allproperties, all_month_all_properties, all_month_properties_past
 from django.apps import apps
+from datetime import date
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -116,7 +117,7 @@ class DashboardBookMonth(TemplateView):
                                    'room': room,
                                    'bookings': bookings,
                                    'previous_month': booking_monthandyear_property(room_id=int(kwargs['id'])),
-                                   'current_month': '0' + str(date.today().month),
+                                   'current_month': str(date.today().month),
                                    'month': month,
                                    'widget': widget,
                                    'room_list': get_room_list(),
@@ -165,6 +166,8 @@ class DashboardBookMonth(TemplateView):
         print(kwargs)
         # this instance of Room is call for the customers side.
         room = Room.objects.all()
+        print(form.is_valid())
+        print(form.errors)
         if form.is_valid():
             data = form.clean()
             post = True
@@ -187,8 +190,8 @@ class DashboardBookMonth(TemplateView):
                 profile_ = profile(user=user, phone=data['phone'])
                 profile_.save()
 
-                for date in all_dates:
-                    price_book = Price.objects.get_or_create(room=room, price=data['price'], date_price=date)
+                for k in all_dates:
+                    price_book = Price.objects.get_or_create(room=room, price=data['price'], date_price=k)
                     price_book[0].save()
 
                 booking = Booking.objects.create(
@@ -224,11 +227,11 @@ class DashboardBookMonth(TemplateView):
                 no_room = True
                 context = {'no_room': no_room}
                 return render(request, 'home_post.html', context)
-
-        return render(request, 'home.html', {'form': form,
+        return HttpResponse('form is not valid')
+        """return render(request, 'home.html', {'form': form,
                                              'room': room,
                                              'room_list': get_room_list(),
-                                             })
+                                             })"""
 
 
 class Home(ListView):

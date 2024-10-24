@@ -117,7 +117,7 @@ def total_days_book_and_not_book_current_month(id: str, month: str = str(date.to
 
     book_not_book_and_price = {}
     for book in bookings:
-        dates = all_dates_between_dates(book.check_in, book.check_out)
+        dates = all_dates_between_dates(str(book.check_in), str(book.check_out))
         for day in dates:
             print(day)
             price = Price.objects.get(date_price=day, room__id=id, price=book.price.price)
