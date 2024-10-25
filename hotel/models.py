@@ -3,6 +3,8 @@ from django.urls import reverse, reverse_lazy
 import datetime
 from datetime import timedelta
 from django.db import models
+
+from .booking_functions.dates_functions import all_dates_between_dates
 from .signal import save_price_signal
 
 
@@ -47,6 +49,11 @@ class Booking(models.Model):
 
     def __str__(self):
         return f'{self.room}'
+
+    def total_bill_booking(self):
+        all_dates = all_dates_between_dates(str(self.check_in),str(self.check_out))
+        price = Price.objects.get(date_price=self.check_in, room=self.room)
+        return (int(len(all_dates))-1) * price.price
 
     def get_room_category(self):
         room_categories = dict(self.room.ROOM_CATEGORIES)

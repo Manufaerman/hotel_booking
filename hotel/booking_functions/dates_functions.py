@@ -9,7 +9,6 @@ in different month.
 **** not tested between two different YEARS *****
 """
 def all_dates_between_dates(uno:str, dos:str):
-    print(uno,'holaaaaaaaa')
     uno = str(uno)[0:10]
     uno = datetime.strptime(uno, "%Y-%m-%d")
     dos = str(dos)[0:10]
