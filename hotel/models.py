@@ -5,7 +5,7 @@ from datetime import timedelta
 from django.db import models
 
 from .booking_functions.dates_functions import all_dates_between_dates
-from .signal import save_price_signal
+
 
 
 class Room(models.Model):
@@ -52,8 +52,15 @@ class Booking(models.Model):
 
     def total_bill_booking(self):
         all_dates = all_dates_between_dates(str(self.check_in),str(self.check_out))
-        price = Price.objects.get(date_price=self.check_in, room=self.room)
-        return (int(len(all_dates))-1) * price.price
+        price = self.price
+
+        return (int(len(all_dates))-1) * int(self.price.price)
+
+    def check_in_date(self):
+        return str(self.check_in.day)+'-' + str(self.check_in.month)+'-' + str(self.check_in.year)[2:]
+
+    def check_out_date(self):
+        return str(self.check_out.day)+'-' + str(self.check_in.month)+'-' + str(self.check_in.year)[2:]
 
     def get_room_category(self):
         room_categories = dict(self.room.ROOM_CATEGORIES)

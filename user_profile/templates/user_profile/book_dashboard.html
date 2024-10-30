@@ -178,14 +178,24 @@
                     </thead>
 
                     <tbody>
+                    <!-- Scrollable modal -->
+
                     {% for book in bookings %}
                         <tr>
                             <th scope="row"> {{book.user}}</th>
                             <td> {{book.room}}</td>
-                            <td> {{book.check_in}}</td>
-                            <td> {{book.check_out}}</td>
+                            <td> {{book.check_in_date}}</td>
+                            
+                            <td> {{book.check_out_date}}</td>
                             <td> {{book.price.price}}</td>
                             <td> {{book.total_bill_booking}}</td>
+                        </tr>
+                        <tr class="mini_list">
+                            <th scope="row"> {{book.user.first_name}}</th>
+                            <td class="mini_list"> {{book.user.last_name}}</td>
+                            <td class="mini_list"> {{book.user.email}}</td>
+                            <td class="mini_list"> {{book.user.userprofile.phone}}</td>
+
                         </tr>
                     {% endfor %}
                     </tbody>

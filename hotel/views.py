@@ -72,6 +72,7 @@ class DashboardBookMonth(TemplateView):
             bookings = booking_month_x(id=kwargs['id'])
             current_room = Room.objects.get(id=kwargs['id'])
             if 'month' in kwargs:
+                bookings = booking_month_x(id=kwargs['id'], month=kwargs['month'])
                 widget = total_days_book_and_not_book_current_month(kwargs['id'], kwargs['month'])
                 return render(request, 'book_dashboard.html',
                               {'form': AddBooking(),
@@ -128,12 +129,13 @@ class DashboardBookMonth(TemplateView):
         else:
             if date.today().month > 9:
                 mes = str(date.today().month)
+                bookings = booking_month_x(id='1')
                 """try:"""
                 return render(request, 'book_dashboard.html',
                               {'form': AddBooking(),
-                               'current_room': Room.objects.get(id=1),
+                               'current_room': Room.objects.get(id='1'),
                                'room': room,
-                               'bookings': booking_month_x('01', month=mes),
+                               'bookings': bookings,
                                'previous_month': booking_monthandyear_property(room_id=1),
                                'current_month': str(date.today().month),
                                'month': month,
@@ -151,7 +153,7 @@ class DashboardBookMonth(TemplateView):
                               {'form': AddBooking(),
                                'current_room': Room.objects.get(id=1),
                                'room': room,
-                               'bookings': booking_month_x('01'),
+                               'bookings': bookings,
                                'previous_month': booking_monthandyear_property(room_id=1),
                                'current_month': '0' + str(date.today().month),
                                'month': month,
