@@ -3,10 +3,17 @@ from decouple import config
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+ALLOWED_HOSTS = ['*', 'www.smartagency.es', 'smartagency.es']
 DATABASES = {
-    'default': dj_database_url.config(
-        default=config('DATABASE_URL')
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'hotelina',
+        'user': 'manuel',
+        'PASSWORD': 'Prometheus',
+        'PORT': 5432,
+        'HOST': 'localhost',
+
+    }
 }
 SECURE_SSL_REDIRECT = False
 DEBUG = False

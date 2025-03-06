@@ -1,25 +1,28 @@
-from datetime import date
-from django.http import JsonResponse, HttpResponse
+import json
+
+from django.core.serializers.json import DjangoJSONEncoder
+from django.http import JsonResponse
 from django.contrib.auth.models import User
 from .booking_functions.dates_functions import all_dates_between_dates
 from .models import Room, Price, Booking
 from django.urls import reverse_lazy
+from django.core import serializers
 from django.shortcuts import render, HttpResponse, get_object_or_404
 from django.views.generic import ListView, View, DeleteView, TemplateView
 from .forms import AvailibilityForm, AddBooking
 from .booking_functions.availability import check_availability, total_month_bookings, total_price_booking, \
     total_price_cleanings_current_month, total_days_book_and_not_book_current_month, booking_month_x
 from .booking_functions.get_room_list import get_room_list
-from .booking_functions.retrieving_data import booking_year_property, multiple_year_property, \
+from .booking_functions.retrieving_data import \
     booking_monthandyear_property, booking_month_allproperties, all_month_all_properties, all_month_properties_past
 from django.apps import apps
 from datetime import date
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import authentication, permissions
+import jsonpickle
 
 
+""" for the charts using jquery and js"""
 class ChartData(APIView):
     authentication_classes = []
     permission_classes = []
@@ -33,10 +36,36 @@ class ChartData(APIView):
         data['labels'] = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
         return Response(data)
 
+""" I will use jquery and js in order to display the bookings, show in the modals information and change the bookings"""
+def kakashka(request):
+    return render(request, 'kakashka.html')
+
+
+class Modify(View):
+    def get(selfself, request):
+        data = {}
+        bookings = booking_month_x(id='7', month='10')
+        print(bookings)
+        #data = json.dumps(list(bookings), cls=DjangoJSONEncoder)
+        data = jsonpickle.encode(bookings)
+
+
+        return JsonResponse(data, safe=False)
+
+
 
 def dashboard(request):
     rooms = Room.objects.all()
     if date.today().month > 9:
+        mes = str(date.today().month)
+        bookings = total_month_bookings(month=mes)
+        cleanings = total_price_cleanings_current_month(month=mes)
+        bookings2023 = booking_month_allproperties()
+        usuarios = len(User.objects.all())
+        return render(request, 'dashboard.html',
+                      {'rooms': rooms, 'bookings': bookings, 'cleanings': cleanings, 'bookings2023': bookings2023,
+                       'usuarios': usuarios})
+    else:
         mes = str(date.today().month)
         bookings = total_month_bookings(month=mes)
         cleanings = total_price_cleanings_current_month(month=mes)
@@ -149,6 +178,7 @@ class DashboardBookMonth(TemplateView):
                 return render(request, 'nodatayet.html')
 
             else:
+                bookings = booking_month_x(id="1")
                 return render(request, 'book_dashboard.html',
                               {'form': AddBooking(),
                                'current_room': Room.objects.get(id=1),
@@ -177,6 +207,9 @@ class DashboardBookMonth(TemplateView):
                 room = Room.objects.filter(id=kwargs['id'])[0]
             except KeyError:
                 room = Room.objects.filter(id=1)[0]
+
+
+
 
             if check_availability(room, data['check_in'], data['check_out']):
                 all_dates = all_dates_between_dates(data['check_in'], data['check_out'])
@@ -371,112 +404,3 @@ class CancelBookingView(DeleteView):
     success_url = reverse_lazy('hotel:bookinglist')
 
 
-# vistas para eliminar
-"""
-
-def dashboardbook(request):
-    month = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
-    room = Room.objects.all()
-    current_room = Room.objects.get(id=1)
-    print(current_room.id)
-    return render(request, 'book_dashboard.html',
-                              {'form': AddBooking(),
-                               'current_room': current_room,
-                               'room': room,
-                               'month': month,
-                               'room_list': get_room_list(),
-                               'total_booking_current_month': total_month_bookings(),
-                               'total_price_cleanings_current_month': total_price_cleanings_current_month(),
-                               })
-                               
-
-
-class DashBoardBookFLat(TemplateView):
-    def get(self, request, *args, **kwargs):
-        month = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
-        room = Room.objects.all()
-        current_room = Room.objects.filter(id=1)
-        if kwargs:
-            bookings = booking_month_x(id=kwargs['id'])
-            widget = total_days_book_and_not_book_current_month(kwargs['id'])
-            current_room = Room.objects.get(id=kwargs['id'])
-
-            return render(request, 'book_dashboard.html',
-                          {'form': AddBooking(),
-                           'current_room': current_room,
-                            'room': room,
-                           'bookings': bookings,
-                           'month': month,
-                           'widget': widget,
-                            'room_list': get_room_list(),
-                            'total_booking_current_month': total_month_bookings(),
-                            'total_price_cleanings_current_month': total_price_cleanings_current_month(),
-                               })
-
-
-        else:
-            return render(request, 'book_dashboard.html',
-                          {'form': AddBooking(),
-                           'room': room,
-                           'current_room': current_room,
-                           'month': month,
-                           'room_list': get_room_list(),
-                           'total_booking_current_month': total_month_bookings(),
-                           'total_price_cleanings_current_month': total_price_cleanings_current_month(),
-                           })
-
-    def post(self, request, *args, **kwargs):
-        form = AddBooking(request.POST)
-        # this instance of Room is call for the customers side.
-        room = Room.objects.all()
-        if form.is_valid():
-            data = form.clean()
-            post = True
-            room = Room.objects.filter(id=kwargs['id'])[0]
-            if check_availability(room, data['check_in'], data['check_out']):
-                all_dates = all_dates_between_dates(data['check_in'], data['check_out'])
-                user = User.objects.create_user(
-                    username=data['name']+'_'+data['last_name'],
-                    password=None,
-                    first_name=data['name'],
-                    last_name=data['last_name'],
-                    email=data['email'],
-                    )
-                user.save()
-                profile = apps.get_model('user_profile', 'UserProfile')
-                profile_ = profile(user=user, phone=data['phone'])
-                profile_.save()
-
-                for date in all_dates:
-                    price_book = Price.objects.get_or_create(room=room, price=data['price'], date_price=date)
-                    price_book[0].save()
-
-                booking = Booking.objects.create(
-                    user=user,
-                    room=room,
-                    price=Price.objects.get(room=room, date_price=data['check_in'], price=data['price']),
-                    check_in=data['check_in'],
-                    check_out=data['check_out']
-                )
-
-                booking.save()
-
-                context = {'post': post,
-                           'id': room,
-                           'booking': booking,
-                           'total_booking': total_price_booking(data['check_in'], data['check_out'], data['price']),
-                           'total_cleanings': total_price_cleanings_current_month()
-                           }
-
-                return render(request, 'home_post.html', context)
-
-            else:
-                no_room = True
-                context = {'no_room': no_room}
-                return render(request, 'home_post.html', context)
-
-        return render(request, 'home.html', {'form': form,
-                                                       'room': room,
-                                                       'room_list': get_room_list(),
-                                                       })
-"""

@@ -4,7 +4,7 @@
 
 {% block extra-head %}
 <link rel="stylesheet" href= "{% static 'user_profile/css/book_dashboard.css' %}">
-
+<script src="{% static 'user_profile/js/book_dashboard.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -168,7 +168,6 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th scope="col">User </th>
                             <th scope="col"> Room </th>
                             <th scope="col"> checkin </th>
                             <th scope="col"> checkout </th>
@@ -182,13 +181,18 @@
 
                     {% for book in bookings %}
                         <tr>
-                            <th scope="row"> {{book.user}}</th>
-                            <td> {{book.room}}</td>
-                            <td> {{book.check_in_date}}</td>
+                            <th scope="row">{{book.room}} </th>
+
+                            <td class="letra_pequeña"> {{book.check_in_date}}</td>
                             
-                            <td> {{book.check_out_date}}</td>
-                            <td> {{book.price.price}}</td>
-                            <td> {{book.total_bill_booking}}</td>
+                            <td class="letra_pequeña"> {{book.check_out_date}}</td>
+                            <td class="letra_pequeña"> {{book.price.price}}</td>
+                            <td class="letra_pequeña"> {{book.total_bill_booking}}</td>
+                            <td>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                Modificar
+                            </button>
+                            </td>
                         </tr>
                         <tr class="mini_list">
                             <th scope="row"> {{book.user.first_name}}</th>
@@ -197,6 +201,85 @@
                             <td class="mini_list"> {{book.user.userprofile.phone}}</td>
 
                         </tr>
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        {% if form.non_field_errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ form.non_field_errors }}
+                    </div>
+                        {{ form.non_field_errors }}
+                {% endif %}
+
+                <div class="me-2 ms-3">
+                    <form id="modify" action="" method="POST">
+                        {{ formset.errors }}
+                    {% csrf_token %}
+
+                     <!-- Input Div -->
+                    <div class="row">
+                        <div class="col">
+                            <div>
+                                <h1>{{book.room}}</h1>
+                            </div>
+                            <!--   -->
+                            <div class="">
+                            {{form.name | as_crispy_field }}
+                            </div>
+
+                            <div class="">
+                                {{form.last_name | as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="col">
+
+                            <div class="">
+                                {{form.email | as_crispy_field }}
+                            </div>
+
+                            <div class="">
+                                {{form.phone | as_crispy_field }}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Input Div -->
+                        {{form.book.room.as_hidden}}
+                    <div class="">
+                        {{form.check_in | as_crispy_field }}
+                    </div>
+
+                    <!-- Input Div -->
+                    <div class="">
+                       {{form.check_out | as_crispy_field }}
+                    </div>
+
+                     <div class="">
+                       {{form.price | as_crispy_field }}
+                    </div>
+
+                    <!-- Button submit  Div -->
+                    <div class="">
+                        <a type="submit" class="btn btn-primary" name="modif-value" value="Submit" href=""> Modify </a>
+                    </div>
+
+
+                    </form>
+                </div>
+            </div>
+      </div>
+
+    </div>
+  </div>
+</div>
                     {% endfor %}
                     </tbody>
 
@@ -210,4 +293,5 @@
     </div>
 
 {% endif %}
+
 {% endblock %}

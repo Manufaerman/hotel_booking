@@ -2,7 +2,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
 from .views import Home, BookRoomClient, \
-    CancelBookingView, home, DashboardBookMonth, roomandflats, dashboard, get_data, ChartData
+    CancelBookingView, home, DashboardBookMonth, roomandflats, dashboard, get_data, ChartData, kakashka, Modify
 
 app_name = 'hotel'
 
@@ -20,6 +20,10 @@ urlpatterns = [
     path('dashboard/', dashboard, name='dashboard'),
     path('api/data/', get_data, name='api_data'),
     path('api/chart/data/', ChartData.as_view()),
+
+    #using jquery to show models in template
+    path('pruebas/', kakashka, name='pruebas'),
+    path('pruebas-json/', Modify.as_view(), name='pruebas-json'),
 
     path('booking_list/', Home.as_view(), name='bookinglist'),
     path('room/<category>', BookRoomClient.as_view(), name='roomdetailview'),

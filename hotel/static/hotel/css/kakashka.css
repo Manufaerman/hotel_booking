@@ -1,0 +1,40 @@
+.main {
+    display: grid;
+    grid-template: repeat(3, 1fr) / 1fr 1 fr;
+    gap:10px;
+}
+
+
+.one {
+    grid-column: span 2;
+    grid-row:1;
+    background: ;
+    border-bottom: solid  1px grey;
+
+}
+
+.two {
+    background-color:red;
+
+
+
+
+}
+
+
+
+
+.item {
+    width:45%;
+    background: black;
+}
+
+.mini_square {
+    display:flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.item_ms {
+    font-size:8;
+}
