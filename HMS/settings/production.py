@@ -12,7 +12,7 @@ DATABASES = {
         'NAME': 'hotelina',
         'user': 'manuel',
         'PASSWORD': 'Prometheus',
-        'PORT': 5432,
+        'PORT': '5432',
         'HOST': 'localhost',
 
     }
@@ -20,8 +20,4 @@ DATABASES = {
 SECURE_SSL_REDIRECT = False
 DEBUG = False
 
-STATICFILES_STORAGE = 'django.contrib.static.storage.StaticFilesStorage'
-ALLOWED_HOSTS = ['', 'localhost', '127.0.0.1', ''
-                                                                                               '-garden-90023'
-                                                                                               '-0b97dae15c35'
-                                                                                               '.herokuapp.com', '*','46.202.175.212']
+ALLOWED_HOSTS = ['', 'localhost', '127.0.0.1', '*', '46.202.175.212']
