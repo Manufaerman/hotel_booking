@@ -10,7 +10,6 @@ SECRET_KEY = '2+@xo)m=q)mg0eauo^b6)n$63i^dio+2-((oy%ugok7q6j8xro'
 ALLOWED_HOSTS = ['*']
 
 
-
 SOCIALACCOUNT_PROVIDERS = {
     'github': {
         # For each OAuth based provider, either add a ''SocialApp''
