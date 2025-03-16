@@ -5,7 +5,7 @@ from .base import *
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-ALLOWED_HOSTS = ['*', 'www.smartagency.es', 'smartagency.es', '46.202.175.212']
+ALLOWED_HOSTS = ['*', 'www.smartagency.es', 'smartagency.es', '46.202.175.212', 'localhost']
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -20,4 +20,4 @@ DATABASES = {
 SECURE_SSL_REDIRECT = False
 DEBUG = False
 
-ALLOWED_HOSTS = ['', 'localhost', '127.0.0.1', '*', '46.202.175.212']
+
