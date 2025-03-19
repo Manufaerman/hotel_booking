@@ -284,6 +284,10 @@ class Home(ListView):
 
 
 # client side
+def home(request):
+    return render(request, 'home.html')
+
+"""
 class home(TemplateView):
     def get(self, request, *args, **kwargs):
         room = Room.objects.all()
@@ -347,6 +351,9 @@ class home(TemplateView):
                                              'room': room,
                                              'room_list': get_room_list(),
                                              })
+
+"""
+
 
 
 """

@@ -28,7 +28,11 @@ urlpatterns = [
     path('booking_list/', Home.as_view(), name='bookinglist'),
     path('room/<category>', BookRoomClient.as_view(), name='roomdetailview'),
     path('booking/cancel/<pk>', CancelBookingView.as_view(), name='cancelbookingview'),
+    path('', home, name='home'),
+    """
     path('', home.as_view(), name='home'),
+    """
+
 
 
 
