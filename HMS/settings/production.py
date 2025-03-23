@@ -10,7 +10,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'hotelina',
-        'user': 'manuel',
+        'USER': 'manuel',
         'PASSWORD': 'Prometheus',
         'PORT': '5432',
         'HOST': 'localhost',
