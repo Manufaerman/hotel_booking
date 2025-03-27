@@ -14,9 +14,9 @@ DATABASES = {
         'PASSWORD': 'Prometheus',
         'PORT': '5432',
         'HOST': 'localhost',
-
     }
 }
+
 SECURE_SSL_REDIRECT = False
 DEBUG = False
 
