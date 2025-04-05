@@ -23,6 +23,7 @@ class AvailibilityForm(forms.Form):
     )
 
 
+
 class AddBooking(forms.Form):
     
     name = forms.CharField(
