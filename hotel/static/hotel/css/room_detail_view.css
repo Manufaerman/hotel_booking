@@ -1,81 +1,28 @@
-/* Root CSS */
 
-*{
-    padding:0;
-    margin:0;
-    box-sizing: border-box;
-}
-body{
-    background-color: rgb(46, 47, 48);
-    color: rgb(236, 235, 228);
-    font-family: sans-serif;
-    line-height: 1.25;
-    height: 100vh;
-}
-
-/* Main Divs */
-.content {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    width:100%;
-    justify-content: left;
-}
-
-.image{
-    flex: 0.3;
-}
-
-.room{
-    background: #65655F;
-    border-radius:
-    flex:0.3;
-    padding:50px 50px 50px 50px;
-
-    display:flex;
-    text-align: left;
-    align-items: start;
-    flex-direction: column;
-    border-radius: 0px 10px 10px 0px;
-
-}
-.room2{
-    background: #65655F;
-    margin:auto;
-    border-radius: 10px 10px 10px 10px;
-}
-/* Sub Divs */
-
-.home{
-    flex: 0.2;
-}
 .room-info{
-    flex: 0.4;
-    margin: 3rem 1rem;
-
+    margin-top:10px;
+    display:flex;
+    justify-content:center;
+    flex-direction:column;
+    background:#1C2833;
+    align-items:center;
 }
-
-form{
-    display: flex;
-    flex: 0.4 1 auto;
-    flex-direction: column;
+.letra {
+    font-family: 'Playfair Display';
+    font-size:20px;
+    align-items:center;
+    color:white;
 }
-
-/* Inside Sub Divs */
-
-.image img{
-    flex:1;
-    max-height: 99.2vh;
+.cajon {
+    width:60%;
 }
-
-i{
-    color:#dfdfdf;
-    font-size: 2rem;
+.cartas {
+    display:flex;
+    width:100%;
+    justify-content: center;
+    align-items:center;
 }
-
-/* Form's CSS */
-
-.input-div{
+.input-div {
     flex: 1 1 auto;
     margin:1rem;
     display: flex;

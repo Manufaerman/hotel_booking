@@ -126,8 +126,10 @@ SITE_ID = 1
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # here is where Nginx will search my files in deployment
-"""os.path.join(BASE_DIR, "static"),"""
-STATICFILES_DIRS = []
+""""""
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
 
 
 MEDIA_URL = "/media/"

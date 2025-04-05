@@ -1,0 +1,37 @@
+.letra {
+     font-family: 'Playfair Display', serif;
+    line-height: 1.2;
+}
+.big-letra {
+    font-size: 50px;
+}
+.midium-letra {
+    font-size: 20px;
+}
+.cajon {
+    margin-top: 20px;
+    display:flex;
+}
+.sub-cajon {
+    margin:20px;
+}
+.capacity {
+    color: grey;
+}
+.size-letra {
+    font-family: baskerville;
+    font-size: 50px,
+}
+.emoticons {
+    width:20px;
+    height:20px;
+}
+
+. cartas {
+    display:flex;
+    flex-direction: column;
+    gap:10px;
+
+
+}
+

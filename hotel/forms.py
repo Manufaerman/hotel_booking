@@ -61,11 +61,14 @@ class AddBooking(forms.Form):
         check_out = cleaned_data['check_out']
         today = datetime.date.today()
 
-        if check_in < today:
+        return cleaned_data
+        """
+                if check_in < today:
             raise ValidationError('Invalid date - renewal in past')
 
         if check_in > check_out:
             raise ValidationError('Invalid date - check in greater than check out')
 
         else:
-            return cleaned_data
+        """
+

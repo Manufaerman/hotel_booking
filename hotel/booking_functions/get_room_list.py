@@ -7,8 +7,9 @@ def get_room_list():
     room_categories = dict(room2.ROOM_CATEGORIES)
     room_list = []
     for room in room_categories:
+        properties = Room.objects.filter(category=room)[0]
         room2 = room_categories.get(room)
         room_url = reverse('hotel:roomdetailview', kwargs={'category': room})
-        room_list.append((room2, room_url))
+        room_list.append((properties, room2, room_url))
 
     return room_list

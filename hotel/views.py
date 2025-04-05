@@ -262,7 +262,7 @@ class DashboardBookMonth(TemplateView):
                 no_room = True
                 context = {'no_room': no_room}
                 return render(request, 'home_post.html', context)
-        return HttpResponse('form is not valid')
+        return HttpResponse('form is not valid or date before today')
         """return render(request, 'home.html', {'form': form,
                                              'room': room,
                                              'room_list': get_room_list(),
@@ -364,6 +364,7 @@ class BookRoomClient(View):
         room_category = self.kwargs.get('category', None)
         room_list = Room.objects.filter(category=room_category)
         print(room_list)
+        other_rooms= Room.objects.all
         form = AvailibilityForm()
 
         if len(room_list) > 0:
@@ -372,6 +373,7 @@ class BookRoomClient(View):
             context = {
                 'room_category': room_category,
                 'form': form,
+                'rooms': other_rooms
             }
             return render(request, 'room_detail_view.html', context)
         else:

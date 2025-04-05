@@ -10,11 +10,11 @@ from .booking_functions.dates_functions import all_dates_between_dates
 
 class Room(models.Model):
     ROOM_CATEGORIES = {
-        ('YAC', 'double room with air conditioning'),
-        ('NAC', 'Double bedroom without air conditioning'),
-        ('ONE', 'Design apartment of a room with air conditioning'),
-        ('TWO', 'Full two bedroom apartment without air conditioning'),
-        ('3AC', 'Full three bedroom apartment with air conditioning')
+        ('YAC', 'Disfruta de una estancia cómoda y moderna en esta habitación con cama de matrimonio, ideal para profesionales y viajeros frecuentes. Equipada con calefacción y aire acondicionado, ofrece un ambiente acogedor durante todo el año. \n 📍Ubicación Ideal: A solo minutos del Aeropuerto de Madrid-Barajas y IFEMA, perfecta para estancias largas con excelente conexión a la ciudad.¡Reserva ahora y vive la comodidad en Madrid!'),
+        ('NAC', 'Disfruta de una estancia cómoda y moderna en esta habitación con cama de matrimonio, ideal para profesionales y viajeros frecuentes. Equipada con calefacción, garantiza un ambiente acogedor en los meses más fríos. \n📍 Ubicación Ideal: A solo minutos del Aeropuerto de Madrid-Barajas y IFEMA, perfecta para estancias largas con excelente conexión a la ciudad.¡Reserva ahora y vive la comodidad en Madrid!'),
+        ('ONE', 'Disfruta de este moderno apartamento de un dormitorio, diseñado para ofrecer confort y estilo. Cuenta con aire acondicionado, una luminosa zona de estar y un baño totalmente equipado.\n 🌿 Terraza privada ideal para relajarte o trabajar al aire libre.\n📍 Ubicación estratégica, cerca del Aeropuerto de Madrid-Barajas y IFEMA. ¡Reserva tu estancia y vive Madrid con el máximo confort!'),
+        ('TWO', 'Amplio y cómodo apartamento de dos dormitorios, ideal para estancias prolongadas. Su diseño moderno y funcional ofrece un ambiente acogedor con una luminosa zona de estar, cocina totalmente equipada y baño completo. Calefacción para el invierno. \n📍 Ubicación estratégica, cerca del Aeropuerto de Madrid-Barajas y IFEMA, con excelentes conexiones al centro de la ciudad. ¡Reserva ahora y disfruta de Madrid con comodidad y estilo!'),
+        ('3AC', 'Amplio y moderno apartamento de tres dormitorios, perfecto para familias o grupos. Su diseño elegante y funcional ofrece una luminosa sala de estar, cocina totalmente equipada y baño completo. \n ✅ Aire acondicionado para un confort ideal todo el año. \n 📍 Ubicación estratégica, con excelentes conexiones y todos los servicios cercanos ¡Reserva tu estancia y disfruta de la comodidad con estilo!')
     }
     name = models.CharField(max_length=300)
     number = models.IntegerField()
@@ -24,6 +24,8 @@ class Room(models.Model):
     image = models.ImageField(upload_to='img/room', default='img/room/default.jpg')
     image1 = models.ImageField(upload_to='img/room', default='img/room/default.jpg')
     image2 = models.ImageField(upload_to='img/room', default='img/room/default.jpg')
+    subtitle = models.CharField(max_length=300, default='hola')
+    description = models.TextField(max_length=1000, default='hola')
 
     def __str__(self):
         return f'{self.name}'
