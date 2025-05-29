@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from allauth.account.forms import LoginForm, SignupForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
@@ -9,7 +9,9 @@ from allauth.account.views import LogoutView, LoginView
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib import messages
+from hotel.forms import UserForm, UserProfileForm
 
+from user_profile.models import UserProfile
 
 
 def register(request):
@@ -18,12 +20,31 @@ def register(request):
 
 def clients(request):
     users = User.objects.filter(is_superuser=False, is_staff=False)
-    user_image = ["https://bootdey.com/img/Content/avatar/avatar4.png","https://bootdey.com/img/Content/avatar/avatar5.png",
-                  "https://bootdey.com/img/Content/avatar/avatar6.png","https://bootdey.com/img/Content/avatar/avatar7.png",
-                  "https://bootdey.com/img/Content/avatar/avatar6.png","https://bootdey.com/img/Content/avatar/avatar1.png",
-                  "https://bootdey.com/img/Content/avatar/avatar3.png"]
 
     return render(request, 'clients.html', {'users': users})
+
+@login_required
+def editar_perfil(request):
+    user = request.user
+    profile, created = UserProfile.objects.get_or_create(user=user)
+
+    if request.method == 'POST':
+        user_form = UserForm(request.POST, instance=user)
+        profile_form = UserProfileForm(request.POST or None, instance=profile)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            return redirect('perfil')
+    else:
+        user_form = UserForm(instance=user)
+        profile_form = UserProfileForm(instance=profile)
+        context = {
+            'user_form': user_form,
+            'profile_form': profile_form,
+        }
+
+    return render(request, 'editar_perfil.html', context)
 
 def profile(request):
     return render(request, 'profile.html')

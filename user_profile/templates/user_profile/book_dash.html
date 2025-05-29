@@ -1,0 +1,207 @@
+{% extends 'base_dashboard.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block extra-head %}
+<link rel="stylesheet" href= "{% static 'user_profile/css/book_dashboard.css' %}">
+<script src="{% static 'user_profile/js/book_dashboard.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+{% if user.is_staff %}
+    <div class="grid-container">
+
+        <div class="bloque-overflow">
+
+            <div class="">
+                <div class="">
+                <h3 class="">Enter a new booking </h3>
+            </div>
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ form.non_field_errors }}
+                    </div>
+                        {{ form.non_field_errors }}
+                {% endif %}
+
+                <div class="me-2 ms-3">
+                    <form id="booking-form" action="" method="POST">
+                        {{ formset.errors }}
+                    {% csrf_token %}
+
+                     <!-- Input Div -->
+                    <div class="row">
+                        <div class="col">
+                            <div class="">
+                            {{form.flat | as_crispy_field }}
+                            </div>
+                            <div class="">
+                            {{form.name | as_crispy_field }}
+                            </div>
+                             <!-- Input Div -->
+                            <div class="">
+                                {{form.last_name | as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="col">
+                              <!-- Input Div -->
+                            <div class="">
+                                {{form.email | as_crispy_field }}
+                            </div>
+                            <!-- Input Div -->
+                            <div class="">
+                                {{form.phone | as_crispy_field }}
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Input Div -->
+                    <div class="">
+                        {{form.check_in | as_crispy_field }}
+                    </div>
+
+                    <!-- Input Div -->
+                    <div class="">
+                       {{form.check_out | as_crispy_field }}
+                    </div>
+
+                     <div class="">
+                       {{form.price | as_crispy_field }}
+                    </div>
+
+                    <!-- Button submit  Div -->
+                    <div class="">
+                        <button type="submit" class="btn btn-primary" name="{{form.prefix}}" value="Submit"> book </button>
+                    </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="btn-group ms-1" style="">
+                  <button type="button" class="widthcincuenta btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false" style="min-width:150px;">
+                      {% if not current_room %}
+                        property
+                      {% else %}
+                        {{current_room.name}}
+                      {% endif %}
+
+                  </button>
+                  <ul  class="dropdown-menu">
+                      {% for r in room %}
+                        <li ><a name= 'dropdown' class="dropdown-item" href="{% url 'hotel:dashboardbookmonth' r.id %}">{{r.name}}</a></li>
+                      {% endfor %}
+                  </ul>
+                  <button type="button" class=" widthcincuenta btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                     {% if not month %}
+                        month
+                      {% else %}
+                        {{current_month}}
+                      {% endif %}
+
+                  </button>
+                  <ul  class="dropdown-menu">
+                      {% for m in month %}
+                        <li ><a name= 'dropdown' class="dropdown-item" href="{%  url 'hotel:dashboardbookmonth' current_room.id m %}">{{m}}</a></li>
+                      {% endfor %}
+                  </ul>
+            </div>
+
+        <div class="bloque-overflow">
+
+
+                <div class="" style="margin:10px;">
+                    <h3 class="">Currents Bookings </h3>
+                </div>
+                <div class="" style="height:10px;display:flex; justify-content:center; align-items:center;margin:20px;">
+
+                    <span class="greenmini"></span>
+                    <span class="" style="color:grey;">Available</span>
+                    <span class="redmini"></span>
+                    <span class="" style="">Booked</span>
+                </div>
+
+
+                <div class="bloque_wrap">
+
+                        {% for date, true in widget.items %}
+                            {% if true.1 == False %}
+                                <div class="green"><span class="margin-auto__content" style="color:grey;">{{date}}</span></div>
+                            {% else %}
+                                <div class="red"><span class="margin-auto__content">{{date}}</span></div>
+                            {% endif %}
+                        {% endfor %}
+
+                </div>
+
+
+
+        </div>
+
+        <div class="bloque-overflow">
+             <div style="">
+            <h3 class=""> Bookings </h3>
+        </div>
+
+                <table class="" style="">
+                    <thead>
+                        <tr>
+                            <th scope="col"> Room </th>
+                            <th scope="col"> checkin </th>
+                            <th scope="col"> checkout </th>
+                            <th scope="col"> price/night  </th>
+                            <th scope="col"> total/price  </th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for book in bookings %}
+                        <tr>
+                            <th scope="row">{{book.room}} </th>
+
+                            <td class="letra_pequeña"> {{book.check_in_date}}</td>
+
+                            <td class="letra_pequeña"> {{book.check_out_date}}</td>
+                            <td class="letra_pequeña"> {{book.price.price}}</td>
+                            <td class="letra_pequeña"> {{book.total_bill_booking}}</td>
+                            <td>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                                Modificar
+                            </button>
+                            </td>
+                        </tr>
+                        <tr class="mini_list">
+                            <th scope="row"> {{book.user.first_name}}</th>
+                            <td class="mini_list"> {{book.user.last_name}}</td>
+                            <td class="mini_list"> {{book.user.email}}</td>
+                            <td class="mini_list"> {{book.user.userprofile.phone}}</td>
+
+                        </tr>
+
+                    <li class="reserva-item">
+                      <div class="reserva-info">
+                        <span class="reserva-nombre">{{ book.user.first_name }} {{ book.user.last_name }}</span>
+                        <span class="reserva-total">Total: <strong>{{ book.price }}</strong></span>
+                      </div>
+                      <div class="reserva-acciones">
+                        <a href="{% url 'hotel:editar' book.pk %}" class="btn-lux">Modificar</a>
+                        <a href="{% url 'hotel:eliminar' book.pk %}" class="btn-lux danger" onclick="return confirm('¿Estás seguro de que querés eliminar esta reserva?');">Eliminar</a>
+                      </div>
+                    </li>
+
+                    {% endfor %}
+                    </tbody>
+
+                </table>
+
+        </div>
+
+    </div>
+
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+ {% block extra-head %}
+<head>
+    <meta charset="UTF-8">
+    <title>Manuel Acosta Faerman</title>
+    <link rel="stylesheet" href="{% static 'hotel/css/biografia.css' %}">
+</head>
+{% endblock %}
+
+<div class="gral">
+    <div class="hero">
+        <img src="{% static 'hotel/img/MANUELACOSTA.jpg' url %}" alt="Manuel Acosta">
+    <div>
+      <h1>Manuel Acosta Faerman</h1>
+      <p>Actor. Creador. Presencia.
+         <br>En lo simple, lo intenso.</p>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+{% endblock %}

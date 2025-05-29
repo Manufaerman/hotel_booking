@@ -1,101 +1,65 @@
 
-body {
-    display:flex;
-    background:white;
-    flex-direction:column;
 
+.barra-2,
+.barra-3 {
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap:10px;
+    margin-bottom:10px;
 }
-.padre {
-    display:flex;
-    background:#DCDCDC;
-}
-
-.hijo {
-    width:25%;
-
-}
-.inside {
-    display: flex;
-    margin-top:5%;
-    flex-wrap: wrap;
-    justify-content: space-between;
-}
-
 .hijos {
-    width:45%;
-    margin:10px;
-}
-
-
-.counter-box {
-
-	display: block;
-	background: #f6f6f6;
-	padding: 40px 20px 37px;
-	text-align: center
-}
-
-.counter-box p {
-
-	margin: 5px 0 0;
-	padding: 0;
-	color: #909090;
-	font-size: 18px;
-	font-weight: 500
-}
-
-.counter-box i {
-	font-size: 60px;
-	margin: 0 0 15px;
-	color: #d2d2d2
-}
-
-.counter {
-
-	display: block;
-	font-size: 32px;
-	font-weight: 700;
-	color: #666;
-	line-height: 28px
+    padding:20px;
+    background:white;
+    border-radius:20px;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+    text-align:center;
+    min-width:200px;
 
 }
+.hijos-2 {
+      padding:20px;
+    background:white;
+    border-radius:20px;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+    text-align:center;
+    min-width:200px;
+      }
+@media screen and (max-width: 768px) {
 
-.counter-box.colored {
-      background: #3acf87;
-}
-.counter-box.colored-red {
-      background:#F7386C;
-
-}
-
-.counter-box.colored p,
-.counter-box.colored i,
-.counter-box.colored .counter {
-	color: #fff
-}
-
-
-.container {
-    width:100%;
-    margin: 20px;
-}
-
-.contenedor{
-    width:100%;
-    display:flex;
-    justify-content:apace-around;
-}
-.hijo {
-    width:25%;
-
-}
-.inside {
+  .barra-2,
+   .barra-3{
     display: flex;
-    margin-top:20px;
-    flex-wrap: wrap;
-    justify-content: space-between;
-}
-.hijo {
-    width:45%;
-    margin:10px;
+    flex-direction: row !important;  /* 👈 Forzamos la dirección en fila */
+    overflow-x: auto;
+    white-space: nowrap;
+    margin-top:10px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+      .hijos {
+      min-width:250px;
+      min-height:300px;
+      background:white;
+      color:black;
+      margin:10px;
+      flex: 0 0 auto;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      }
+      .hijos-2 {
+      min-width:350px;
+      min-height:150px;
+      background:white;
+      color:black;
+      margin:10px;
+      flex: 0 0 auto;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      border-radius:20px;
+      box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+      }
+
+
 }

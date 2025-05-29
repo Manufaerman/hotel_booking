@@ -1,8 +1,8 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path, include
-from .views import register, contact, ChangeUsername,\
-    profile, clients, thanks, login
+from .views import register, contact, ChangeUsername, \
+    profile, clients, thanks, login, editar_perfil
 
 app_name = 'user_profile'
 urlpatterns = [
@@ -13,6 +13,7 @@ urlpatterns = [
     path('accounts/change-username/', ChangeUsername.as_view(), name='account_change_username'),
     path('register/', register, name='register'),
     path('login/', login, name='login'),
-    path('accounts/signup/thanks/', thanks, name='thanks')
+    path('accounts/signup/thanks/', thanks, name='thanks'),
+    path('perfil/editar/', editar_perfil, name='editar_perfil'),
 
 ] + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0]) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

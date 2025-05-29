@@ -1,6 +1,6 @@
 from django.dispatch import receiver
 from .signal import save_price_signal
-from .models import Booking, Price
+from .models import Booking
 from .booking_functions.dates_functions import all_dates_between_dates
 
 

@@ -11,6 +11,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Parisienne&display=swap" rel="stylesheet">
 <link rel="icon" href="data:;base64,iVBORw0KGgo="> <!-- to avoid favicon error in terminal -->
 <link rel="stylesheet" href="{% static 'hotel/css/home.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 
 {% endblock %}
 
@@ -19,6 +21,8 @@
 <div class ="banner">
         <div class="letra" style="width:80%;">
              <h1>Book a stylish Rental Apartments in Madrid</h1>
+            <h6> Hermosos apartamentos de uno, dos y tres dormitorios en alquiler por noches</h6>
+            <h6 class="precio"><strong>Desde 120 Euros/noche</strong></h6>
         </div>
 
 </div>
@@ -28,13 +32,61 @@
 
           {% for room, room2, url in room_list %}
 
-            <div class= 'col-md-6'>
-                <div class="card mb-3">
-                    <img src="{% static '/hotel/img/categorias/' %}{{room.category}}.jpeg" class="img-fluid card-img-customp" alt="...">
+            <div class= 'col-md-6' >
+                <div class="card mb-3" style="margin:20px;border:none;" >
+                    <a href="{{url}}"><img src="{{ room.image.url}}" class="img-fluid card-img-customp" alt="..."style="border-radius:20px;"></a>
+                    <div class="row mt-2 px-3 text-muted" style="font-size: 0.9rem;">
+                        {% if aire_acondicionado %}
+                            <div class="col-6 mb-2"><i class="fas fa-wind me-2"></i>Aire acondicionado</div>
+                        {% endif %}
+                        <div class="col-6 mb-2"><i class="fas fa-user-group me-2"></i>Capacidad: {{ room.capacity }} personas</div>
+                        {% if room.doble_bed == True %}
+                            <div class="col-6 mb-2"><i class="fas fa-bed me-2"></i>Si</div>
+                        {% else %}
+                            <div class="col-6 mb-2"><i class="fas fa-bed me-2"></i>No</div>
+                        {% endif %}
+                        <div class="col-6 mb-2"><i class="fas fa-bed me-2"></i>{{ room.bed }} camas</div>
+                        <div class="col-6 mb-2"><i class="fas fa-tv me-2"></i>Televisión</div>
+                        <div class="col-6 mb-2"><i class="fas fa-umbrella-beach me-2"></i>Terraza</div>
+                    </div>
                     <div class="card-body">
                         <h5 class="card-title letra"><strong>{{room}}</strong></h5>
                         <p class="card-text letra" style="">{{room2}}</p>
-                        <a href="{{url}}" class="btn btn-light" style="font: small-caps 100%/200% serif; font-size: 20px;">Check availability </a>
+
+                    </div>
+                </div>
+            </div>
+         {% endfor %}
+            <div class= 'col-md-6' >
+                <div class="card mb-3" style="margin:20px;border:none;" >
+                    <a href=""><img src="{% static '/hotel/img/logo-hp2.png'%}" class="img-fluid card-img-customp" alt="..."style="border-radius:20px;"></a>
+                    <div class="card-body">
+                        <h5 class="card-title letra"><strong>Hummingbird Project</strong></h5>
+                        <p class="card-text letra" style=""></p>
+
+                    </div>
+                </div>
+            </div>
+
+</div>
+<div class ="bright-banner">
+        <div class="letra" style="width:80%;">
+             <h1>Book a stylish Chambre "long term" in Madrid</h1>
+            <h6>Hermosas habitaciones completamente equipadas e independientes en alquiler</h6>
+            <h6 class="precio"><strong>Desde 550 Euros/mes</strong></h6>
+        </div>
+</div>
+<div class="row">
+
+          {% for habitacion in habitaciones %}
+
+            <div class= 'col-md-6' >
+                <div class="card mb-3" style="margin:20px;border:none;" >
+                    <a href=""><img src="{{habitacion.image.url}}" class="img-fluid card-img-customp" alt="..."style="border-radius:20px;"></a>
+                    <div class="card-body">
+                        <h4 class="card-title letra">{{habitacion.nombre}}</h4>
+                        <h6 class="card-title letra"><strong>{{habitacion.subtitle}}</strong></h6>
+                        <p class="card-text letra" style="">{{habitacion.descripcion}}</p>
 
                     </div>
                 </div>
@@ -42,7 +94,6 @@
          {% endfor %}
 
 </div>
-
 
 
 

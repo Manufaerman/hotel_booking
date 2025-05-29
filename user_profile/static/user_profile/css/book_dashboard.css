@@ -1,48 +1,73 @@
 
-.text_title {
-
-    margin:40px;
-    color: grey;
-    font-family: helvetica neue light;
-
-
-}
-
-
-.contenedor {
-    width:100%;
-    display:flex;
-    justify-content:space-between;
-    background:#DCDCDC;
-
-}
-.contenedor_cincuenta {
-    width:45%;
-    margin:20px;
-
-}
-.contenedor_cuarenta {
-    margin-top:20px;
+.grid-container {
+    display:grid;
+    justify-content:center;
+    grid-template-columns:repeat(2,1fr);
+    gap:20px;
     padding:20px;
-    background: white;
-    border-radius: 5px;
-    width: 100%;
-    height:800px;
-
-
-
 }
 
-.mesures {
-    background: white;
-    width:100%;
-    height: 150px;
-    color: #E9245A;
-    border-radius: 5px;
-    display: flex;
-    align-items: center;
+.bloque {
+    padding:20px;
+    border radius:8px;
+    text-align:center;
+    justify-content:center;
+    align-items:center;
+    items-align:center;
+    background:white;
+    border-radius:20px;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+}
+
+.bloque_wrap {
+    justify-content:center;
+    align-items:center;
+    max-width:100%;
+    display:flex;
+    flex-wrap:wrap;
+    margin:20px;
+}
+.bloque-overflow {
+    padding:20px;
+    grid-column: span 2;
+    border radius:8px;
+    max-width:100%;
+    background:white;
+    border-radius:20px;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+    overflow-y: auto;
+
+}
+@media screen and (max-width:768px){
+.grid-container {
+    grid-template-columns:1fr;
+    justify-items:center;
     justify-content:center;
 
+    width:100%;
+    }
+
+.bloque {
+    width:100%;
+     overflow-x: auto;
+}
+
+.bloque-overflow {
+    padding:20px;
+    border radius:8px;
+    overflow-x: auto;
+    max-width:100%;
+
+}
+.bloque_wrap {
+    justify-content:center;
+    align-items:center;
+    max-width:100%;
+    display:flex;
+    flex-wrap:wrap;
+    height:auto;
+    margin:20px;
+}
 }
 
 .green{
@@ -98,25 +123,7 @@
         border: solid grey;
 
 }
-.inline{
-        display:flex;
-        align-items:center;
-        margin:20px;
-}
-#sidebar {
-      width: 10%;
-      height: 100vh;
-      background: #343a40;
 
-
-    }
-
-#centerside {
-      width:90%;
-      height:100vh;
-      margin: 5%;
-      background:black;
-    }
 
 .widthcincuenta {
     width:40%;
@@ -128,7 +135,4 @@
     color: black;
     background-color:#FDE3EA;
     width:100%;
-}
-.letra_pequeña {
-    font-size:15px;
 }

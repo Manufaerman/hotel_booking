@@ -1,0 +1,12 @@
+{% extends 'base_dashboard.html' %}
+
+{% block content %}
+<h2>Editar reserva</h2>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-success">Guardar cambios</button>
+  <a href="{% url 'hotel:reservas' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}
