@@ -5,7 +5,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.template.loader import get_template
-
+import secrets
+from django.db import transaction
 from .booking_functions.dates_functions import all_dates_between_dates
 from .models import Room, Booking, Habitacion, Inquilino, ContratoAlquiler
 from django.urls import reverse_lazy
@@ -172,7 +173,7 @@ class DashboardBookMonth(TemplateView):
                                'month': month,
                                'widget': total_days_book_and_not_book_current_month(id='1', month=mes),
                                'room_list': get_room_list(),
-                               'total_booking_current_month': total_month_bookings(mes),
+                               'total_booking_current_month': total_month_bookings(int(mes)),
                                'total_price_cleanings_current_month': total_price_cleanings_current_month(month=mes)
                                })
 
