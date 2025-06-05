@@ -197,111 +197,78 @@ class DashboardBookMonth(TemplateView):
 
     def post(self, request, *args, **kwargs):
         form = AddBooking(request.POST)
-        print(kwargs)
-        # this instance of Room is call for the customers side.
         room = Room.objects.all()
-        print(form.is_valid())
-        print(form.errors)
-        if form.is_valid():
-            data = form.clean()
-            print(data)
-            post = True
-            room_id = None
+        habitaciones = Habitacion.objects.all()
 
-            flat = data.get('flat')
+        if not form.is_valid():
+            print("Errores del formulario:", form.errors)
+            return render(request, 'home.html', {
+                'form': form,
+                'room': room,
+                'habitaciones': habitaciones,
+                'room_list': get_room_list(),
+                'error_form': form.errors
+            })
 
-            if flat == 'tolima':
-                room_id = 7
+        data = form.cleaned_data
+        print("Datos del formulario:", data)
+        post = True
 
-            elif flat == 'barichara':
-                room_id = 8
+        try:
+            room = Room.objects.get(namee=data['name'])
+        except Room.DoesNotExist:
+            print("Error: la habitación no existe.")
+            return render(request, 'home.html', {
+                'form': form,
+                'room': room,
+                'habitaciones': habitaciones,
+                'room_list': get_room_list(),
+                'error': 'La habitación seleccionada no existe.'
+            })
 
+        if not check_availability(room, data['check_in'], data['check_out']):
+            print("No hay disponibilidad para las fechas.")
+            return render(request, 'home_post.html', {'no_room': True})
+
+        # Crear usuario
+        try:
+            if data.get('email') and not User.objects.filter(username=data['email']).exists():
+                username = data['email']
             else:
-                room_id = 9
+                base_username = f"{data.get('first_name', 'anonimo')}_{data.get('last_name', 'usuario')}"
+                username = base_username
+                counter = 1
+                while User.objects.filter(username=username).exists():
+                    username = f"{base_username}_{counter}"
+                    counter += 1
 
+            user = User.objects.create_user(
+                username=username,
+                password=None,  # O usar un valor seguro si lo vas a enviar por mail
+                first_name=data['name'],
+                last_name=data['last_name'],
+                email=data['email'],
+            )
+        except Exception as e:
+            print("ERROR al crear el usuario:", e)
+            return render(request, 'home.html', {
+                'form': form,
+                'room': room,
+                'habitaciones': habitaciones,
+                'room_list': get_room_list(),
+                'error_usuario': str(e)
+            })
 
-            room = Room.objects.filter(id=room_id).first()
-
-            print(room, 'hola')
-            if room and check_availability(room, data['check_in'], data['check_out']):
-                all_dates = all_dates_between_dates(data['check_in'], data['check_out'])
-                if data.get('email') and not User.objects.filter(username=data['email']).exists():
-                    username = data['email']
-                else:
-                    # Generar uno basado en el nombre y apellido
-                    base_username = f"{data.get('first_name', 'anonimo')}_{data.get('last_name', 'usuario')}"
-                    username = base_username
-                    counter = 1
-                    while User.objects.filter(username=username).exists():
-                        username = f"{base_username}_{counter}"
-                        counter += 1
-                try:
-                    user = User.objects.create_user(
-                        username=username,
-                        password=None,  # esto puede dar problemas
-                        first_name=data['name'],
-                        last_name=data['last_name'],
-                        email=data['email'],
-                    )
-                    user.save()
-                except Exception as e:
-                    print("ERROR al crear usuario:", e)
-                    return render(request, 'home.html', {
-                        'form': form,
-                        'room': room,
-                        'habitaciones': Habitacion.objects.all(),
-                        'room_list': get_room_list(),
-                        'error_usuario': str(e)
-                    })
-
-
-                profile = apps.get_model('user_profile', 'UserProfile')
-                profile_ = profile(user=user, phone=data['phone'])
-                profile_.save()
-
-                try:
-                    booking = Booking.objects.create(
-                        user=user,
-                        room=room,
-                        check_in=data['check_in'],
-                        check_out=data['check_out'],
-                        price=data['price']
-                    )
-                    booking.save()
-                except Exception as e:
-                    print("ERROR al crear reserva:", e)
-
-
-                if date.today().month > 9:
-                    mes = str(date.today().month)
-                    context = {'post': post,
-                               'id': room,
-                               'booking': booking,
-                               'total_booking': total_price_booking(data['check_in'], data['check_out'], data['price']),
-                               'total_cleanings': total_price_cleanings_current_month(month=mes)
-                               }
-
-                    return render(request, 'home_post.html', context)
-                else:
-                    context = {'post': post,
-                               'id': room,
-                               'booking': booking,
-                               'total_booking': total_price_booking(data['check_in'], data['check_out'], data['price']),
-                               'total_cleanings': total_price_cleanings_current_month()
-                               }
-
-                    return render(request, 'home_post.html', context)
-
-            else:
-                no_room = True
-                context = {'no_room': no_room}
-                return render(request, 'home_post.html', context)
-        return HttpResponse('form is not valid or date before today')
-        """return render(request, 'home.html', {'form': form,
-                                             'room': room,
-                                             'room_list': get_room_list(),
-                                             })"""
-
+        # Crear perfil
+        try:
+            profile_model = apps.get_model('user_profile', 'UserProfile')
+            profile_ = profile_model(user=user, phone=data['phone'])
+            profile_.save()
+        except Exception as e:
+            print("ERROR al crear el perfil:", e)
+            return render(request, 'home.html', {
+                'form': form,
+            })
 
 class Home(ListView):
     model = Booking
