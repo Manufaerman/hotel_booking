@@ -164,7 +164,7 @@ class DashboardBookMonth(TemplateView):
                 """try:"""
                 return render(request, 'book_dash.html',
                               {'form': AddBooking(),
-                               'current_room': Room.objects.get(id='7'),
+                               'current_room': Room.objects.get(id='1'),
                                'room': room,
                                'bookings': bookings,
                                'previous_month': booking_monthandyear_property(room_id=1),
@@ -180,10 +180,10 @@ class DashboardBookMonth(TemplateView):
                 return render(request, 'nodatayet.html')
 
             else:
-                bookings = booking_month_x(id="7")
+                bookings = booking_month_x(id="1")
                 return render(request, 'book_dash.html',
                               {'form': AddBooking(),
-                               'current_room': Room.objects.get(id=7),
+                               'current_room': Room.objects.get(id=1),
                                'room': room,
                                'bookings': bookings,
                                'previous_month': booking_monthandyear_property(room_id=1),
