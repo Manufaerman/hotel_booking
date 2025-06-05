@@ -49,11 +49,13 @@ def total_price_cleanings_current_month(month=date.today().month):
 
 # return all the prices of a month
 def total_month_bookings(month: int = None, year: int = None):
+
     today = date.today()
-    month = month or today.month
+    month = int(month or today.month)
     year = year or today.year
 
-    first_day = date(year, month, 1)
+    first_day = date(year, int(month), 1)
+
     last_day = date(year, month, monthrange(year, month)[1])
 
     total = Booking.objects.filter(
