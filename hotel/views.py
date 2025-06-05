@@ -149,7 +149,7 @@ class DashboardBookMonth(TemplateView):
             today_month = date.today().month
             mes = int(today_month)
             bookings = booking_month_x(id='1')
-            widget = total_days_book_and_not_book_current_month(id='1', month=mes)
+            widget = total_days_book_and_not_book_current_month(room_id='1', month=mes)
 
             return render(request, 'book_dash.html', {
                 'form': AddBooking(),
