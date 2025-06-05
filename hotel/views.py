@@ -235,27 +235,43 @@ class DashboardBookMonth(TemplateView):
                     while User.objects.filter(username=username).exists():
                         username = f"{base_username}_{counter}"
                         counter += 1
-                user = User.objects.create_user(
-                    username=username,
-                    password=None,
-                    first_name=data['name'],
-                    last_name=data['last_name'],
-                    email=data['email'],
-                )
-                """user.save()"""
+                try:
+                    user = User.objects.create_user(
+                        username=username,
+                        password=None,  # esto puede dar problemas
+                        first_name=data['name'],
+                        last_name=data['last_name'],
+                        email=data['email'],
+                    )
+                    user.save()
+                except Exception as e:
+                    print("ERROR al crear usuario:", e)
+                    return render(request, 'home.html', {
+                        'form': form,
+                        'room': room,
+                        'habitaciones': Habitacion.objects.all(),
+                        'room_list': get_room_list(),
+                        'error_usuario': str(e)
+                    })
+
+
                 profile = apps.get_model('user_profile', 'UserProfile')
                 profile_ = profile(user=user, phone=data['phone'])
                 profile_.save()
 
-                booking = Booking.objects.create(
-                    user=user,
-                    room=room,
-                    check_in=data['check_in'],
-                    check_out=data['check_out'],
-                    price=data['price']
-                )
+                try:
+                    booking = Booking.objects.create(
+                        user=user,
+                        room=room,
+                        check_in=data['check_in'],
+                        check_out=data['check_out'],
+                        price=data['price']
+                    )
+                    booking.save()
+                except Exception as e:
+                    print("ERROR al crear reserva:", e)
 
-                booking.save()
+
                 if date.today().month > 9:
                     mes = str(date.today().month)
                     context = {'post': post,
