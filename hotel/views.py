@@ -98,103 +98,72 @@ def roomandflats(request, id):
 
 class DashboardBookMonth(TemplateView):
     def get(self, request, *args, **kwargs):
-        month = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+        month_list = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
         room = Room.objects.all()
+
         if kwargs:
             current_room = Room.objects.get(id=kwargs['id'])
-            if 'month' in kwargs:
-                bookings = booking_month_x(id=kwargs['id'], month=kwargs['month'])
-                room_id = kwargs.get('id')
-                month = kwargs.get('month', date.today().month)
-                widget = total_days_book_and_not_book_current_month(room_id=room_id, month=int(month))
-                return render(request, 'book_dash.html',
-                              {'form': AddBooking(),
-                               'current_room': current_room,
-                               'room': room,
-                               'bookings': bookings,
-                               'current_month': kwargs['month'],
-                               'previous_month': booking_monthandyear_property(room_id=int(kwargs['id']),month=kwargs['month']),
-                               'month': month,
-                               'widget': widget,
-                               'room_list': get_room_list(),
-                               'total_booking_current_month': total_month_bookings(int(kwargs['month'])),
-                               'total_price_cleanings_current_month': total_price_cleanings_current_month(),
-                               })
 
-            # todo este else es nuevo
+            if 'month' in kwargs:
+                raw_month = kwargs['month']
+                int_month = int(raw_month)
+
+                bookings = booking_month_x(id=kwargs['id'], month=raw_month)
+                widget = total_days_book_and_not_book_current_month(room_id=kwargs['id'], month=int_month)
+
+                return render(request, 'book_dash.html', {
+                    'form': AddBooking(),
+                    'current_room': current_room,
+                    'room': room,
+                    'bookings': bookings,
+                    'current_month': raw_month,
+                    'previous_month': booking_monthandyear_property(room_id=int(kwargs['id']), month=raw_month),
+                    'month': raw_month,
+                    'widget': widget,
+                    'room_list': get_room_list(),
+                    'total_booking_current_month': total_month_bookings(int_month),
+                    'total_price_cleanings_current_month': total_price_cleanings_current_month(month=int_month),
+                })
+
             else:
-                if date.today().month < 10:
-                    total_bill = total_month_bookings(date.today().month)
-                    bookings = booking_month_x(id=kwargs['id'])
-                    widget = total_days_book_and_not_book_current_month(kwargs['id'])
-                    return render(request, 'book_dash.html',
-                                  {'form': AddBooking(),
-                                   'current_room': current_room,
-                                   'room': room,
-                                   'bookings': bookings,
-                                   'previous_month': booking_monthandyear_property(room_id=int(kwargs['id'])),
-                                   'current_month': '0' + str(date.today().month),
-                                   'month': month,
-                                   'widget': widget,
-                                   'room_list': get_room_list(),
-                                   'total_booking_current_month': total_bill,
-                                   'total_price_cleanings_current_month': total_price_cleanings_current_month(),
-                                   })
-                else:
-                    total_bill = total_month_bookings(date.today().month)
-                    bookings = booking_month_x(id=kwargs['id'])
-                    widget = total_days_book_and_not_book_current_month(kwargs['id'])
-                    return render(request, 'book_dash.html',
-                                  {'form': AddBooking(),
-                                   'current_room': current_room,
-                                   'room': room,
-                                   'bookings': bookings,
-                                   'previous_month': booking_monthandyear_property(room_id=int(kwargs['id'])),
-                                   'current_month': str(date.today().month),
-                                   'month': month,
-                                   'widget': widget,
-                                   'room_list': get_room_list(),
-                                   'total_booking_current_month': total_bill,
-                                   'total_price_cleanings_current_month': total_price_cleanings_current_month(),
-                                   })
+                today_month = date.today().month
+                total_bill = total_month_bookings(today_month)
+                bookings = booking_month_x(id=kwargs['id'])
+                widget = total_days_book_and_not_book_current_month(kwargs['id'])
+
+                return render(request, 'book_dash.html', {
+                    'form': AddBooking(),
+                    'current_room': current_room,
+                    'room': room,
+                    'bookings': bookings,
+                    'previous_month': booking_monthandyear_property(room_id=int(kwargs['id'])),
+                    'current_month': f'{today_month:02}',
+                    'month': month_list,
+                    'widget': widget,
+                    'room_list': get_room_list(),
+                    'total_booking_current_month': total_bill,
+                    'total_price_cleanings_current_month': total_price_cleanings_current_month(month=today_month),
+                })
 
         else:
-            if date.today().month > 9:
-                mes = str(date.today().month)
-                bookings = booking_month_x(id='7')
-                """try:"""
-                return render(request, 'book_dash.html',
-                              {'form': AddBooking(),
-                               'current_room': Room.objects.first(),
-                               'room': room,
-                               'bookings': bookings,
-                               'previous_month': booking_monthandyear_property(room_id=1),
-                               'current_month': str(date.today().month),
-                               'month': month,
-                               'widget': total_days_book_and_not_book_current_month(id='1', month=mes),
-                               'room_list': get_room_list(),
-                               'total_booking_current_month': total_month_bookings(int(mes)),
-                               'total_price_cleanings_current_month': total_price_cleanings_current_month(month=mes)
-                               })
+            today_month = date.today().month
+            mes = int(today_month)
+            bookings = booking_month_x(id='1')
+            widget = total_days_book_and_not_book_current_month(id='1', month=mes)
 
-                """except:"""
-                return render(request, 'nodatayet.html')
-
-            else:
-                bookings = booking_month_x(id="1")
-                return render(request, 'book_dash.html',
-                              {'form': AddBooking(),
-                               'current_room': Room.objects.first(),
-                               'room': room,
-                               'bookings': bookings,
-                               'previous_month': booking_monthandyear_property(room_id=1),
-                               'current_month': '0' + str(date.today().month),
-                               'month': month,
-                               'widget': total_days_book_and_not_book_current_month(room_id='1', month=date.today().month),
-                               'room_list': get_room_list(),
-                               'total_booking_current_month': total_month_bookings(date.today().month),
-                               'total_price_cleanings_current_month': total_price_cleanings_current_month()
-                               })
+            return render(request, 'book_dash.html', {
+                'form': AddBooking(),
+                'current_room': Room.objects.first(),
+                'room': room,
+                'bookings': bookings,
+                'previous_month': booking_monthandyear_property(room_id=1),
+                'current_month': f'{mes:02}',
+                'month': month_list,
+                'widget': widget,
+                'room_list': get_room_list(),
+                'total_booking_current_month': total_month_bookings(mes),
+                'total_price_cleanings_current_month': total_price_cleanings_current_month(month=mes),
+            })
 
     def post(self, request, *args, **kwargs):
         form = AddBooking(request.POST)
@@ -218,7 +187,7 @@ class DashboardBookMonth(TemplateView):
             with transaction.atomic():
                 print("Buscando habitación...")
                 try:
-                    room = Room.objects.get(name=data['name'])  # <-- campo corregido
+                    room = Room.objects.get(name=data['name'])
                 except Room.DoesNotExist:
                     print("La habitación no existe.")
                     return render(request, 'home.html', {
@@ -246,7 +215,7 @@ class DashboardBookMonth(TemplateView):
 
                 user = User.objects.create_user(
                     username=username,
-                    password=secrets.token_urlsafe(16),  # <-- genera contraseña segura
+                    password=secrets.token_urlsafe(16),
                     first_name=data['name'],
                     last_name=data['last_name'],
                     email=data['email'],
@@ -263,12 +232,9 @@ class DashboardBookMonth(TemplateView):
                 else:
                     print("No se proporcionó teléfono. Se omite perfil.")
 
-                # Aquí podrías crear la reserva (booking), si va en esta vista
-
                 return render(request, 'booking_success.html', {
                     'user': user,
                     'room': room,
-                    # podés pasar más datos aquí
                 })
 
         except Exception as e:
@@ -280,7 +246,6 @@ class DashboardBookMonth(TemplateView):
                 'room_list': get_room_list(),
                 'error_proceso': str(e)
             })
-
 
 class Home(ListView):
     model = Booking
