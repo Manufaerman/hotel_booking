@@ -3,18 +3,39 @@ from django.urls import reverse, reverse_lazy
 from datetime import timedelta, date, datetime
 from django.db import models
 from django.utils import timezone
-
-
 from .booking_functions.dates_functions import all_dates_between_dates
 
 class Habitacion(models.Model):
+    BATHROOM = {
+        ('ONE',
+         'En suite'),
+        ('TWO',
+         'Compartido'),
+    }
+    BED = {
+        ('ONE',
+         'Doble'),
+        ('TWO',
+         'Simple'),
+    }
     nombre = models.CharField(max_length=100, unique=True)
     title = models.CharField(max_length=100, default='hola')
     subtitle = models.CharField(max_length=100, default='hola')
+    capacity = models.IntegerField(default=1)
+    tv = models.BooleanField(default=True)
+    aire_acondicionado = models.BooleanField(default=False)
+    calefaccion = models.BooleanField(default=True)
+    bed = models.CharField(choices=BED, max_length=100, default='ONE')
+    bathroom = models.CharField(choices=BATHROOM, max_length=100, default='ONE')
+    share_kitchen = models.BooleanField(default=True)
+    terrace = models.BooleanField(default=False)
+    share_garden = models.BooleanField(default=True)
     descripcion = models.TextField(blank=True)
     image = models.ImageField(upload_to='img/room', default='img/room/default.jpg')
     image1 = models.ImageField(upload_to='img/room', default='img/room/default.jpg')
     image2 = models.ImageField(upload_to='img/room', default='img/room/default.jpg')
+    gastos = models.BooleanField(default=True)
+    price = models.IntegerField(db_default=500)
 
     def alquilada(self):
         return self.contratos.filter(fecha_fin__isnull=True).exists()
@@ -72,8 +93,15 @@ class Room(models.Model):
     doble_bed = models.BooleanField(default=True)
     capacity = models.IntegerField()
     image = models.ImageField(upload_to='img/room', default='img/room/default.jpg')
+    description_image = models.TextField(max_length=1000,default='hola', null=True, blank=True)
     image1 = models.ImageField(upload_to='img/room', default='img/room/default.jpg')
+    description_image1 = models.TextField(max_length=1000,default='hola', null=True, blank=True)
     image2 = models.ImageField(upload_to='img/room', default='img/room/default.jpg')
+    description_image2 = models.TextField(max_length=1000,default='hola', null=True, blank=True)
+    image3 = models.ImageField(upload_to='img/room', default='img/room/default.jpg')
+    image4 = models.ImageField(upload_to='img/room', default='img/room/default.jpg')
+    image5 = models.ImageField(upload_to='img/room', default='img/room/default.jpg')
+    image6 = models.ImageField(upload_to='img/room', default='img/room/default.jpg')
     subtitle = models.CharField(max_length=300, default='hola')
     description = models.TextField(max_length=1000, default='hola')
     """

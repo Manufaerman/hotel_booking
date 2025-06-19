@@ -80,7 +80,7 @@ body{
     max-width:20%;
     min-width: 200px;
     text-align: center;
-    border-radius: 1rem;
+    border-radius: 0.5rem;
     padding:1rem;
     margin:0.5rem;
     background-color: #444;
@@ -102,3 +102,4 @@ a{
 img{
     max-width:100%;
 }
+

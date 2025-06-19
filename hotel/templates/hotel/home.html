@@ -3,7 +3,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Hotelina{% endblock%}
+{% block title %}Home{% endblock%}
 
 {% block extra-head %}
 <!-- Main StyleSheet -->
@@ -34,7 +34,11 @@
 
             <div class= 'col-md-6' >
                 <div class="card mb-3" style="margin:20px;border:none;" >
-                    <a href="{{url}}"><img src="{{ room.image.url}}" class="img-fluid card-img-customp" alt="..."style="border-radius:20px;"></a>
+                    <a href="{{url}}"><img src="{{ room.image.url}}" class="img-fluid card-img-customp" alt="..."style="border-radius:10px;"></a>
+                    <div class="card-body">
+                        <h5 class="card-title letra"><strong>{{room}}</strong></h5>
+                        <h6 class="letra" style="margin-bottom:10px;">Madrid, España </h6>
+                    </div>
                     <div class="row mt-2 px-3 text-muted" style="font-size: 0.9rem;">
                         {% if aire_acondicionado %}
                             <div class="col-6 mb-2"><i class="fas fa-wind me-2"></i>Aire acondicionado</div>
@@ -50,7 +54,6 @@
                         <div class="col-6 mb-2"><i class="fas fa-umbrella-beach me-2"></i>Terraza</div>
                     </div>
                     <div class="card-body">
-                        <h5 class="card-title letra"><strong>{{room}}</strong></h5>
                         <p class="card-text letra" style="">{{room2}}</p>
 
                     </div>
@@ -82,11 +85,43 @@
 
             <div class= 'col-md-6' >
                 <div class="card mb-3" style="margin:20px;border:none;" >
-                    <a href=""><img src="{{habitacion.image.url}}" class="img-fluid card-img-customp" alt="..."style="border-radius:20px;"></a>
+                    <a href=""><img src="{{habitacion.image.url}}" class="img-fluid card-img-customp" alt="..."style="border-radius:10px;"></a>
+
                     <div class="card-body">
-                        <h4 class="card-title letra">{{habitacion.nombre}}</h4>
-                        <h6 class="card-title letra"><strong>{{habitacion.subtitle}}</strong></h6>
-                        <p class="card-text letra" style="">{{habitacion.descripcion}}</p>
+                        <h5 class="card-title letra"><strong>{{habitacion.nombre}}</strong></h5>
+                        <h6 class="letra" style="margin-bottom:10px;">Madrid, España </h6>
+                            <div class="row mt-2 px-1 text-muted" style="border-radius:5px;padding: 10px;font-size: 0.9rem; margin-bottom:10px; background:#F8F6F4  ; ">
+                                {% if aire_acondicionado %}
+                                    <div class="col-4 mb-2"><i class="fas fa-wind me-2"></i>Aire acondicionado:{{habitacion.aire_acondicionado}}</div>
+                                {% else %}
+                                    <div class="col-4 mb-2"><i class="fas fa-wind me-2"></i>No</div>
+                                {% endif %}
+                                    <div class="col-4 mb-2"><i class="fas fa-user-group me-2"></i>Capacidad: {{ habitacion.capacity }}</div>
+                                {% if room.doble_bed == True %}
+                                    <div class="col-4 mb-2"><i class="fas fa-bed me-2"></i>Si</div>
+                                {% endif %}
+                                <div class="col-4 mb-2"><i class="fas fa-bed me-2"></i>{{ habitacion.get_bed_display }}</div>
+                                <div class="col-4 mb-2"><i class="fas fa-tv me-2"></i>Televisión</div>
+                                {% if room.terrace == True %}
+                                <div class="col-4 mb-2"><i class="fas fa-umbrella-beach me-2"></i>Terraza: Si</div>
+                                {% else %}
+                                <div class="col-4 mb-2"><i class="fas fa-umbrella-beach me-2"></i>Terraza: No</div>
+                                {% endif %}
+
+                            </div>
+                        <h6 class="card-title letra">{{habitacion.subtitle}}</h6>
+                        <h6 class="letra" style="margin: 20px 0; font-size: 1.1rem; font-weight: 600; color: #3a3a3a;">
+                          <span style="font-family: 'Georgia', serif; letter-spacing: 0.5px; color: #7C6F64;">
+                            Desde:
+                          </span>
+                          <span style="font-family: 'Playfair Display', serif; font-size: 1.3rem; color: #000;">
+                            <strong>{{habitacion.price}} €</strong>
+                          </span>
+                          <span style="font-family: 'Georgia', serif; color: #7C6F64;">
+                            mensuales
+                          </span>
+                        </h6>
+
 
                     </div>
                 </div>

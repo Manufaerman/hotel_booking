@@ -16,7 +16,10 @@
 
 {% block title %}Room Detail {% endblock %}
 
+<!-- CONTENIDO BASE DE LA PLANTILLA CON MÁRGENES Y PADDING UNIFICADOS -->
 {% block content %}
+
+<!-- HERO -->
 <section class="hero-section" style="background-image: url('{{ room.image.url }}');">
   <div class="overlay">
     <div class="hero-content">
@@ -24,144 +27,158 @@
       <p class="hero-tagline">A Premium Apartment Collection</p>
 
       <div class="room-info luxury-box">
-  <form id="booking-form" action="" method="POST">
-    {% csrf_token %}
-    <div class="input-div">
-      {{ form.check_in }}
-    </div>
-    <div class="input-div">
-      {{ form.check_out }}
-    </div>
-    <div class="input-div">
-      <button type="submit" class="luxury-button">Check availability</button>
-    </div>
-  </form>
-</div>
+        <form id="booking-form" action="" method="POST">
+          {% csrf_token %}
+          <div class="input-div">{{ form.check_in }}</div>
+          <div class="input-div">{{ form.check_out }}</div>
+          <div class="input-div">
+            <button type="submit" class="luxury-button">Check availability</button>
+          </div>
+        </form>
+      </div>
 
       <p class="hero-price">Approx rates from: <span class="highlight-price">€700 per week</span> | €3k per month</p>
     </div>
   </div>
 </section>
 
-  <!-- Galeria a lo apple -->
+<!-- CONTENEDOR GENERAL -->
+<div class="bloque" style="max-width: 1200px; margin: 0 auto; padding: 0 16px;">
 
-<section class="gallery-grid">
-  <div class="gallery-card">
-    <img src="{{ room.image.url }}" alt="Descripción 1">
-    <div class="text-content">
-      <h3>Cocina</h3>
-      <p><strong>Subtítulo:</strong> Descripción corta del contenido o funcionalidad que quieras destacar.</p>
-    </div>
-  </div>
-
-  <div class="gallery-card">
-    <img src="{{ room.image1.url }}" alt="Descripción 2">
-    <div class="text-content">
-      <h3>Dormitorio</h3>
-      <p><strong>Subtítulo:</strong> Otra breve descripción, con énfasis en claridad y estética.</p>
-    </div>
-  </div>
-
-      <!-- card doble  -->
-  <div class="gallery-card gallery-card-wide">
-    <img src="{{ room.image1.url }}" alt="Descripción 2">
-    <div class="text-content">
-      <h3>Espacio Destacado</h3>
-      <p><strong>Subtítulo:</strong> Esta card ocupa el doble de espacio en pantallas grandes.</p>
-    </div>
-  </div>
-
-<div class="w-full flex justify-center">
-  <div class="w-full max-w-7xl bg-white p-6 rounded-2xl shadow-sm space-y-6">
-    <h2 class="text-2xl font-semibold text-gray-800">¿Qué ofrece este lugar?</h2>
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-      <div class="flex items-center gap-3 text-gray-700">
-        <i data-lucide="chef-hat" class="w-5 h-5"></i>
-        <span>Cocina</span>
-      </div>
-      <div class="flex items-center gap-3 text-gray-700">
-        <i data-lucide="laptop" class="w-5 h-5"></i>
-        <span>Zona de trabajo</span>
-      </div>
-      <div class="flex items-center gap-3 text-gray-700">
-        <i data-lucide="bath" class="w-5 h-5"></i>
-        <span>Bañera</span>
-      </div>
-      <div class="flex items-center gap-3 text-gray-700">
-        <i data-lucide="wifi" class="w-5 h-5"></i>
-        <span>Wifi</span>
-      </div>
-      <div class="flex items-center gap-3 text-gray-700">
-        <i data-lucide="droplets" class="w-5 h-5"></i>
-        <span>Jacuzzi</span>
-      </div>
-      <div class="flex items-center gap-3 text-gray-700">
-        <i data-lucide="briefcase" class="w-5 h-5"></i>
-        <span>Se permite dejar el equipaje</span>
-      </div>
-      <div class="flex items-center gap-3 text-gray-700">
-        <i data-lucide="sun" class="w-5 h-5"></i>
-        <span>Patio trasero compartido</span>
-      </div>
-      <div class="flex items-center gap-3 text-gray-700">
-        <i data-lucide="wind" class="w-5 h-5"></i>
-        <span>Secador de pelo</span>
+  <!-- GALERÍA APPLE STYLE -->
+  <section class="gallery-grid">
+    <div class="gallery-card">
+      <img src="{{ room.image.url }}" alt="Cocina">
+      <div class="text-content">
+        <h3>Cocina</h3>
+        <p><strong>Subtítulo:</strong> Descripción corta del contenido.</p>
       </div>
     </div>
-  </div>
+    <div class="gallery-card">
+      <img src="{{ room.image1.url }}" alt="Dormitorio">
+      <div class="text-content">
+        <h3>Dormitorio</h3>
+        <p><strong>Subtítulo:</strong> Breve descripción clara.</p>
+      </div>
+    </div>
+    <div class="gallery-card gallery-card-wide" style="width:100%;font-family: 'Playfair Display'; background:#E8E9EA; display: flex; align-items: center; padding: 20px;">
+      <div class="image-container" style="margin-right: 20px;">
+        <img src="{% static 'hotel/img/MANUELACOSTAdos.jpg'%}" alt="Asesor" style="width:100px;height:100px;object-fit:cover;border-radius:50%;border:2px solid #ccc;">
+      </div>
+      <div class="text-content">
+        <h1>Información adicional</h1>
+        <h6><strong>Check in de 17:30 a 21:30 pm</strong></h6>
+        <h6><strong>Check out 11:00 am</strong></h6>
+      </div>
+    </div>
+    <div class="gallery-card gallery-card-wide">
+      <img src="{{ room.image1.url }}" alt="Espacio">
+      <div class="text-content">
+        <h3>Espacio Destacado</h3>
+        <p><strong>Subtítulo:</strong> Esta card ocupa el doble de espacio en pantallas grandes.</p>
+      </div>
+    </div>
+  </section>
+
+
+<div style="
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+  padding: 32px;
+  max-width: 1100px;
+  margin: 48px auto;
+  font-family: 'Playfair Display', serif;
+  text-align: center;
+">
+  <h2 style="margin: 0; font-size: 1.8em;">Descubre los detalles de esta propiedad</h2>
+  <p style="color: #555; font-size: 1.1em; margin-top: 12px;">
+    Confort, estilo y privacidad en cada rincón. A continuación, una galería exclusiva.
+  </p>
 </div>
 
 
-  <!-- Agrega más cards según necesites -->
-<!-- Incluye Lucide -->
 
-
-
-
-
-
-
-
-
-  <!-- Agrega más cards según necesites -->
-
-    <div class="gallery-card gallery-card-wide" style="width:100%;font-family: 'Playfair Display'; background:#E8E9EA;">
-    <div class="text-content">
-       <h1>Book a stylish Chambre "long term" in Madrid</h1>
-            <h6>Hermosas habitaciones completamente equipadas e independientes en alquiler</h6>
-            <h6 class="precio"><strong>Desde 550 Euros/mes</strong></h6>
+  <!-- GALERÍA VISUAL (ESTILO COLLAGE) -->
+  <section style="margin: 40px 0;">
+    <div style="margin-bottom: 16px;">
+      <img src="{{ room.image2.url }}" alt="Imagen principal" style="width: 100%; border-radius: 12px; object-fit: cover;">
     </div>
-  </div>
-</section>
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+      <img src="{{ room.image2.url }}" alt="detalle 1" style="width: 100%; border-radius: 12px; object-fit: cover;">
+      <img src="{{ room.image1.url }}" alt="detalle 2" style="width: 100%; border-radius: 12px; object-fit: cover;">
+      <img src="{{ room.image1.url }}" alt="detalle 3" style="width: 100%; border-radius: 12px; object-fit: cover;">
+      <img src="{{ room.image1.url }}" alt="detalle 4" style="width: 100%; border-radius: 12px; object-fit: cover;">
+    </div>
+  </section>
 
-<div class="scroll-container"> <!-- g-3 da espacio entre columnas y filas -->
-    {% for room in rooms %}
-    <div class="scroll-item">
-      <div class="card h-100">
-        <img src="{{ room.image.url }}" class="card-img-top" alt="...">
-        <div class="card-body">
-          <h5 class="card-title letra">{{ room.name }}</h5>
-          <p class="card-text letra">{{ room.subtitle }}</p>
+  <!-- BLOQUE DE SERVICIOS -->
+  <section class="bloque-interno" style="background:#fcdada; padding: 32px; border-radius: 12px; margin-bottom: 32px;">
+    <div class="bg-red-100 px-4 sm:px-8 lg:px-12 py-6 rounded-2xl shadow-sm space-y-6">
+      <h2 class="text-2xl font-semibold text-gray-800">¿Qué ofrece este lugar?</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+        {% for icon, text in icons %}
+        <div class="flex items-center gap-3 text-gray-700">
+          <i data-lucide="{{ icon }}" class="w-5 h-5"></i>
+          <span>{{ text }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
 
-           <div class="input-div">
-            <button type="submit" class="luxury-button">See More</button>
-          </div>
+  <!-- BLOQUE DE CONTACTO ASESOR -->
+  <section class="bloque-interno" style="background:#E8E9EA; padding: 32px; border-radius: 12px; margin-bottom: 32px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; font-family: 'Playfair Display', serif;">
+      <div style="flex: 1; padding-right: 20px;">
+        <h2 style="margin-top: 0; font-size: 1.6em; color: #1f1f1f;">¿Dudas sobre la estancia?</h2>
+        <p style="margin: 10px 0 20px 0; font-size: 1em; color: #333;">
+          Te ayudaré con cualquier consulta sobre el alojamiento, el check-in o el check-out. Estoy aquí para que disfrutes una experiencia cómoda y sin complicaciones.
+        </p>
+        <a href="mailto:tuemail@ejemplo.com" style="display: inline-block; padding: 12px 24px; background-color: #1f3e3f; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">
+          Escribir ahora
+        </a>
+      </div>
+      <div style="flex-shrink: 0;">
+        <img src="{% static 'hotel/img/MANUELACOSTAtres.jpg'%}" alt="Asesor" style="width: 110px; height: 110px; object-fit: cover; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+      </div>
+    </div>
+  </section>
+
+  <!-- BLOQUE FINAL - DESCRIPCIÓN -->
+  <section class="bloque-interno" style="background:#F6F6F6; padding: 32px; border-radius: 12px;">
+    <div style="font-family: 'Playfair Display', serif; background: #ffffff; border: 1px solid #ddd; border-radius: 12px; padding: 24px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
+      <h2 style="margin-top: 0; font-size: 1.6em; color: #1f1f1f;">Book a stylish Chambre <span style="font-style: italic;">"long term"</span> in Madrid</h2>
+      <p style="margin: 10px 0 16px 0; font-size: 1em; color: #444;">
+        Hermosas habitaciones completamente equipadas e independientes en alquiler
+      </p>
+      <p style="font-weight: bold; font-size: 1.1em; color: #111;">Desde 550 Euros/mes</p>
+    </div>
+  </section>
+
+</div>
+
+<!-- CARRUSEL DE OTRAS ROOMS -->
+<div class="scroll-container" style="margin: 40px 0;">
+  {% for room in rooms %}
+  <div class="scroll-item">
+    <div class="card h-100">
+      <img src="{{ room.image.url }}" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title letra">{{ room.name }}</h5>
+        <p class="card-text letra">{{ room.subtitle }}</p>
+        <div class="w-full flex justify-center">
+          <button type="submit" class="luxury-button">See More</button>
         </div>
       </div>
     </div>
-    {% endfor %}
+  </div>
+  {% endfor %}
 </div>
 
-
-
-
-
-<!-- Bootstrap JS (Opcional, solo si usas componentes interactivos) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- JS para íconos -->
 <script>
-  lucide.createIcons(); // Esto carga todos los íconos
+  lucide.createIcons();
 </script>
-
 
 {% endblock %}
