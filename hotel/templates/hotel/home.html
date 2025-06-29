@@ -18,14 +18,30 @@
 
 {% block content %}
 
-<div class ="banner">
-        <div class="letra" style="width:80%;">
-             <h1>Book a stylish Rental Apartments in Madrid</h1>
-            <h6> Hermosos apartamentos de uno, dos y tres dormitorios en alquiler por noches</h6>
-            <h6 class="precio"><strong>Desde 120 Euros/noche</strong></h6>
-        </div>
+<div class="bg-[#1f2a36] py-16 px-8 flex justify-center">
+  <div class="w-4/5 text-white" style="font-family: 'Playfair Display', serif;">
 
+    <!-- Título principal con fuente reducida y peso normal -->
+    <h1 class="text-4xl md:text-5xl font-normal leading-tight mb-6">
+      Book a stylish Rental Apartments in Madrid
+    </h1>
+
+    <!-- Subtítulo en blanco y peso normal -->
+    <h6 class="text-lg md:text-xl font-normal mb-6">
+      Hermosos apartamentos de uno, dos y tres dormitorios en alquiler por noches
+    </h6>
+
+    <!-- Precio en dorado y negrita, con 'noche' en cursiva y negrita -->
+    <h6 class="text-xl md:text-2xl font-bold underline text-[#c1a867] decoration-[#c1a867]">
+      Desde 120 Euros/<span class="italic font-bold">noche</span>
+    </h6>
+
+  </div>
 </div>
+
+
+
+
 
 
 <div class="row">
@@ -72,13 +88,33 @@
             </div>
 
 </div>
-<div class ="bright-banner">
-        <div class="letra" style="width:80%;">
-             <h1>Book a stylish Chambre "long term" in Madrid</h1>
-            <h6>Hermosas habitaciones completamente equipadas e independientes en alquiler</h6>
-            <h6 class="precio"><strong>Desde 550 Euros/mes</strong></h6>
-        </div>
+
+<div class="banner" style="background-color: #E8E9EA;">
+  <div class="letra" style="width: 80%; font-family: 'Playfair Display', serif; color: #2c2c2c;">
+
+    <!-- Título principal -->
+    <h1 style="font-size: 2.4rem; font-weight: 400; margin-bottom: 1rem;">
+      Book a stylish Chambre "long term" in Madrid
+    </h1>
+
+
+
+
+    <!-- Subtítulo -->
+    <h6 style="font-size: 1.1rem; font-weight: 400; margin-bottom: 1rem;">
+      Hermosas habitaciones completamente equipadas e independientes en alquiler
+    </h6>
+
+    <!-- Precio en dorado -->
+    <h6 style="font-size: 1.3rem; color: #c1a867; font-weight: bold;">
+      Desde 550 Euros/mes
+    </h6>
+
+  </div>
 </div>
+
+
+
 <div class="row">
 
           {% for habitacion in habitaciones %}

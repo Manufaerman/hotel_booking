@@ -339,11 +339,10 @@ formulario.
 
 class BookRoomClient(View):
     def get(self, request, *args, **kwargs):
-        print(kwargs)
         room_category = self.kwargs.get('category', None)
         room_list = Room.objects.filter(category=room_category)
-        print(room_list, 'hola soy room list')
         other_rooms = Room.objects.all
+        habitaciones = Habitacion.objects.all()
         form = AvailibilityForm()
 
         if len(room_list) > 0:
@@ -353,7 +352,8 @@ class BookRoomClient(View):
                 'room_category': room_category,
                 'form': form,
                 'rooms': other_rooms,
-                'room':room
+                'room': room,
+                'habitaciones': habitaciones
             }
             return render(request, 'room_detail_view.html', context)
         else:

@@ -4,6 +4,13 @@ body {
   color: white;
 }
 
+.container-limited {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
 .hero-section {
   background-size: cover;
   background-position: center;
@@ -35,47 +42,15 @@ body {
   font-size: 1.5rem;
   text-transform: uppercase;
   letter-spacing: 2px;
-  margin-bottom: 0;
 }
 
 .luxe {
-  font-family: font-family: 'Georgia', serif;
+  font-family: 'Georgia', serif;
   font-size: 2rem;
 }
 
-.hero-tagline {
-  font-size: 0.9rem;
-  color: #ccc;
-  margin-bottom: 1.2rem;
-}
-
-.hero-content h1 {
-  font-size: 3rem;
-  margin: 1rem 0;
-}
-
-.highlight {
-  color: #fcd144;
-}
-
-.hero-description {
-  font-size: 1.1rem;
-  margin-bottom: 2rem;
-}
-
-.hero-button {
-  background: white;
-  color: black;
-  padding: 0.8rem 1.5rem;
-  border-radius: 5px;
-  text-decoration: none;
-  font-weight: bold;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
-
+.hero-tagline,
 .hero-price {
-  margin-top: 1.5rem;
-  font-size: 1.2rem;
   color: #ccc;
 }
 
@@ -84,71 +59,32 @@ body {
   font-weight: bold;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .hero-section {
-    background-position: right center;
-    text-align: left;
-  }
-
-  .hero-content {
-    padding: 1rem;
-  }
-
-  .title {
-    font-size: 2.2rem;
-  }
-
-  .subtitle {
-    font-size: 1.2rem;
-  }
-
-  .cta {
-    width: 100%;
-  }
-}
-
-.letra {
-    font-family: 'Playfair Display';
-    font-size:20px;
-    align-items:center;
-    color:black;
-}
-
-.cartas {
-    display:flex;
-    width:100%;
-    justify-content: center;
-    align-items:center;
-}
 .input-div {
-    flex: 1 1 auto;
-    margin:1rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+  margin: 1rem 0;
+  width: 100%;
 }
 
-input, button{
-    flex:1;
-    width:300px;
-    border-radius: 0.5rem;
-    line-height: 1.5;
-    font-size: 1.5rem;
-    color: #555;
+input[type="date"],
+button {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-family: 'Playfair Display', serif;
 }
 
-button{
-    background-color: #dfdfdf;
-    color:rgb(6, 137, 245);
-    outline:none;
+button {
+  background-color: #dfdfdf;
+  color: rgb(6, 137, 245);
+  border: none;
 }
 
-button:hover{
-    color:#dfdfdf;
-    background-color: rgb(6, 137, 245);
+button:hover {
+  background-color: rgb(6, 137, 245);
+  color: #dfdfdf;
 }
-/* Contenedor del formulario */
+
 .luxury-box {
   background: white;
   border-radius: 15px;
@@ -156,52 +92,20 @@ button:hover{
   max-width: 400px;
   margin: 2rem auto;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-/* Centrado vertical si está dentro de hero-section */
-.hero-section .luxury-box {
-  z-index: 2;
   position: relative;
+  z-index: 2;
 }
 
-/* Alineación de los elementos del formulario */
-#booking-form {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* Espaciado entre campos */
-.input-div {
-  width: 100%;
-  margin-bottom: 1.2rem;
-}
-
-/* Estilo para inputs (Django date fields) */
-input[type="date"] {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  font-family: 'Playfair Display', serif;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 1rem;
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-}
-
-/* Botón con estética "luxury" */
 .luxury-button {
   background-color: black;
   color: white;
-  font-family: 'Playfair Display', serif;
   font-weight: 600;
   font-size: 1rem;
   padding: 0.8rem 2rem;
-  border: none;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
   display: inline-block;
-  max-width: 100%;
 }
 
 .luxury-button:hover {
@@ -212,10 +116,9 @@ input[type="date"] {
   display: flex;
   gap: 1.5rem;
   overflow-x: auto;
-  padding: 1rem;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  justify-content: center;
+  padding: 1rem 0;
 }
 
 .scroll-item {
@@ -231,33 +134,11 @@ input[type="date"] {
   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
-/* Desktop: centrado, sin scroll */
-@media (min-width: 768px) {
-  .scroll-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
-    overflow: visible;
-    justify-items: center;
-  }
-
-  .scroll-item {
-    width: 100%;
-    max-width: none;
-    min-width: auto;
-  }
-}
-
-
-/* galeria a lo apple */
-
 .gallery-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
+  padding: 2rem 0;
 }
 
 .gallery-card {
@@ -267,7 +148,6 @@ input[type="date"] {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  font-family: 'Georgia', serif;
   transition: transform 0.3s ease;
 }
 
@@ -279,43 +159,134 @@ input[type="date"] {
   width: 100%;
   height: auto;
   object-fit: cover;
-  display: block;
 }
 
 .text-content {
   padding: 1.2rem;
+  color: #333;
 }
 
 .text-content h3 {
   font-size: 1.25rem;
-  margin-bottom: 0.5rem;
   font-weight: bold;
-}
-
-.text-content p {
-  color: #333;
-  font-size: 0.95rem;
-  line-height: 1.4;
+  margin-bottom: 0.5rem;
 }
 
 @media (min-width: 768px) {
   .gallery-grid {
     grid-template-columns: repeat(2, 1fr);
-    justify-items: center;
-  }
-
-  .gallery-card {
-    max-width: 100%;
   }
 
   .gallery-card-wide {
     grid-column: span 2;
   }
+
+  .scroll-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    overflow: visible;
+  }
+
+  .scroll-item {
+    max-width: none;
+    min-width: auto;
+  }
+  @media (max-width: 768px) {
+  .gallery-card-horizontal {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .gallery-image-container {
+    height: 200px;
+  }
+
+  .gallery-image-horizontal {
+    height: 100%;
+  }
 }
 
-. precio {
-    font-family: 'Playfair Display', serif;
-      font-size: 1.5em;
-      font-weight: 700;
-      color: #b59e67; /* Un color dorado elegante */
 }
+
+.precio {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5em;
+  font-weight: 700;
+  color: #b59e67;
+}
+
+.letra {
+  font-family: 'Playfair Display';
+  font-size: 20px;
+  color: black;
+  text-align: center;
+}
+.container-limitado {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+.gallery-card-horizontal {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  height: 600px; /* ajustalo si querés más alto */
+  margin-bottom: 2rem; /* por si querés separación con la siguiente */
+}
+
+
+.gallery-card-horizontal:hover {
+  transform: translateY(-5px);
+}
+
+.gallery-image-container {
+  flex: 1;
+  overflow: hidden;
+}
+
+.gallery-image-horizontal {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.gallery-text-content {
+  flex: 1;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #333;
+}
+
+.gallery-text-content h3 {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+/* recortando la imagen de la galeria al 50%*/
+.image-crop-container {
+  height: 50%;               /* Muestra solo el 50% central */
+  width: 100%;               /* O lo que necesites */
+  overflow: hidden;          /* Oculta lo que sobresale */
+  position: relative;
+}
+
+.image-crop {
+  width: 100%;               /* Escala al ancho completo */
+  position: relative;
+  top: -25%;                 /* Sube la imagen para mostrar el centro */
+}
+.luxury-font {
+    font-family: 'Playfair Display', serif;
+  }

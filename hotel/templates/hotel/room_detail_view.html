@@ -11,6 +11,13 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
 <script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap" rel="stylesheet">
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 
 {% endblock %}
 
@@ -26,6 +33,8 @@
       <h2 class="hero-subtitle"><span class="luxe">{{ room.name }}</span></h2>
       <p class="hero-tagline">A Premium Apartment Collection</p>
 
+
+      <!-- Formulario -->
       <div class="room-info luxury-box">
         <form id="booking-form" action="" method="POST">
           {% csrf_token %}
@@ -38,30 +47,185 @@
       </div>
 
       <p class="hero-price">Approx rates from: <span class="highlight-price">€700 per week</span> | €3k per month</p>
+
     </div>
   </div>
 </section>
 
-<!-- CONTENEDOR GENERAL -->
-<div class="bloque" style="max-width: 1200px; margin: 0 auto; padding: 0 16px;">
+<!-- Autor flotante entre secciones -->
+<div class="relative z-10 flex flex-col items-center -mt-16 mb-2">
+  <img src="{% static 'hotel/img/MANUELACOSTAtres.jpg'%}"
+       alt="autor"
+       class="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md">
+  <div class="text-center mt-2">
+    <p class="uppercase font-bold text-gray-800 text-sm">Por Manuel</p>
+    <p class="text-gray-500 text-sm">21 de junio de 2025</p>
+  </div>
+</div>
+ <!-- BLOQUE DESCRIPCIÓN -->
+<!-- BLOQUE DESCRIPCIÓN -->
+<div class="max-w-7xl mx-auto px-6 sm:px-12 py-10">
 
-  <!-- GALERÍA APPLE STYLE -->
-  <section class="gallery-grid">
-    <div class="gallery-card">
-      <img src="{{ room.image.url }}" alt="Cocina">
-      <div class="text-content">
-        <h3>Cocina</h3>
-        <p><strong>Subtítulo:</strong> Descripción corta del contenido.</p>
+  <!-- TÍTULO, UBICACIÓN Y DETALLES -->
+  <h1 class="text-4xl font-bold luxury-font text-gray-900 mb-2">{{ room.name }}</h1>
+  <p class="text-lg text-gray-600 mb-1">Hortaleza, Madrid, España</p>
+  <p class="text-md text-gray-500 mb-6">
+    {{ room.capacity }} viajeros · {{ room.bed }} habitaciones · {{ room.bathroom }} baños · {{ room.square_meters }} m²
+  </p>
+
+  <!-- DESCRIPCIÓN CON COLAPSABLE -->
+  <div x-data="{ expanded: false }" class="text-gray-800 text-base leading-relaxed">
+
+    <!-- Vista truncada -->
+    <p x-show="!expanded" x-cloak>
+      {{ room.description|truncatechars:230 }}...
+    </p>
+
+    <!-- Vista completa -->
+    <p x-show="expanded" x-cloak>
+      {{ room.description }}
+    </p>
+
+    <!-- Botón -->
+    <button @click="expanded = !expanded" class="mt-4 text-sm font-semibold text-gray-900 hover:underline">
+      <span x-show="!expanded" x-cloak>Leer toda la descripción</span>
+      <span x-show="expanded" x-cloak>Mostrar menos</span>
+    </button>
+  </div>
+</div>
+
+
+
+<!-- CONTENEDOR UNIFICADO -->
+<div class="container-limitado">
+
+    <!-- BLOQUE FINAL DESCRIPCIÓN
+<section class="max-w-4xl mx-auto px-6 sm:px-12 py-16">
+  {% if room.price %}
+  <div class="mt-8 text-center">
+    <p class="text-xl sm:text-2xl font-semibold text-gray-800 tracking-wide">
+      Desde {{ room.price }} Euros/mes
+    </p>
+  </div>
+  {% endif %}
+</section>
+-->
+<!-- BLOQUE SERVICIOS -->
+<section class="my-4">
+  <div class="bg-red-100 py-10 px-6 sm:px-10 lg:px-16 rounded-2xl shadow-md space-y-8 max-w-7xl mx-auto">
+    <h2 class="text-2xl font-semibold text-gray-800">¿Qué ofrece este lugar?</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-2">
+
+      <div class="flex items-center gap-3 text-gray-700">
+        <i data-lucide="chef-hat" class="w-5 h-5"></i>
+        <span>Cocina</span>
+      </div>
+      <div class="flex items-center gap-3 text-gray-700">
+        <i data-lucide="laptop" class="w-5 h-5"></i>
+        <span>Zona de trabajo</span>
+      </div>
+      <div class="flex items-center gap-3 text-gray-700">
+        <i data-lucide="bath" class="w-5 h-5"></i>
+        <span>Toallas incluidas</span>
+      </div>
+      <div class="flex items-center gap-3 text-gray-700">
+        <i data-lucide="spray-can" class="w-5 h-5"></i>
+        <span>Shampoo y jabón</span>
+      </div>
+
+        <!--
+      <div class="flex items-center gap-3 text-gray-700">
+        <i data-lucide="bath" class="w-5 h-5"></i>
+        <span>Bañera</span>
+      </div> -->
+
+      <div class="flex items-center gap-3 text-gray-700">
+        <i data-lucide="wifi" class="w-5 h-5"></i>
+        <span>Wifi</span>
+      </div>
+        <!--
+      <div class="flex items-center gap-3 text-gray-700">
+        <i data-lucide="droplets" class="w-5 h-5"></i>
+        <span>Jacuzzi</span>
+      </div> -->
+      <div class="flex items-center gap-3 text-gray-700">
+        <i data-lucide="briefcase" class="w-5 h-5"></i>
+        <span>Se permite dejar el equipaje</span>
+      </div>
+        <!--
+      <div class="flex items-center gap-3 text-gray-700">
+        <i data-lucide="sun" class="w-5 h-5"></i>
+        <span>Patio trasero compartido</span>
+      </div> -->
+
+      <div class="flex items-center gap-3 text-gray-700">
+        <i data-lucide="wind" class="w-5 h-5"></i>
+        <span>Secador de pelo</span>
       </div>
     </div>
-    <div class="gallery-card">
-      <img src="{{ room.image1.url }}" alt="Dormitorio">
-      <div class="text-content">
-        <h3>Dormitorio</h3>
-        <p><strong>Subtítulo:</strong> Breve descripción clara.</p>
-      </div>
+  </div>
+</section>
+
+
+
+<!-- GALERÍA APPLE STYLE -->
+<section class="gallery-grid mb-10">
+  <!-- Card vertical 1 -->
+  <div class="gallery-card">
+    <img src="{{ room.image.url }}" alt="Cocina">
+    <div class="text-content">
+      <h3>{{ room.title }}</h3>
+      <p>{{ room.description_image }}</p>
     </div>
-    <div class="gallery-card gallery-card-wide" style="width:100%;font-family: 'Playfair Display'; background:#E8E9EA; display: flex; align-items: center; padding: 20px;">
+  </div>
+
+  <!-- Card vertical 2 -->
+  <div class="gallery-card">
+    <img src="{{ room.image1.url }}" alt="Dormitorio">
+    <div class="text-content">
+      <h3>{{ room.title1 }}</h3>
+      <p>{{ room.description_image1 }}</p>
+    </div>
+  </div>
+
+  <!-- Card horizontal (ancha) -->
+  <div class="gallery-card-horizontal" style="grid-column: 1 / -1;">
+  <div class="gallery-image-container">
+    <img src="{{ room.image2.url }}" alt="Espacio" class="gallery-image-horizontal">
+  </div>
+  <div class="gallery-text-content">
+    <h3>{{ room.title2 }}</h3>
+    <p>{{ room.description_image2 }}</p>
+  </div>
+</div>
+
+</section>
+
+<!-- BLOQUE TEXTO "Descubre los detalles" -->
+<div class="bg-white rounded-2xl shadow-md px-6 py-4 text-center font-serif mb-4">
+  <h2 class="text-2xl font-semibold">Descubre los detalles de esta propiedad</h2>
+  <p class="text-gray-600 text-lg mt-2">
+    Confort, estilo y privacidad en cada rincón. A continuación, una galería exclusiva.
+  </p>
+</div>
+
+ <!-- BLOQUE mapa "" -->
+<div id="map" class="w-full h-[400px] rounded-xl shadow-md mb-10"></div>
+
+  <!-- BLOQUE DESCRIPCION "" -->
+
+  <div class="text-center mb-8">
+    <p class="uppercase text-sm tracking-widest text-gray-500 font-light">España</p>
+    <h1 class="text-4xl sm:text-5xl font-serif font-semibold text-gray-900 italic mt-2">
+      “{{room.name}}”, Madrid
+    </h1>
+     <p class="text-lg sm:text-xl text-gray-700 leading-relaxed font-light max-w-3xl mx-auto text-justify">
+    {{ room.description }}
+     </p>
+
+  </div>
+
+  <div class="gallery-card gallery-card-wide" style="width:100%;font-family: 'Playfair Display'; background:#E8E9EA; display: flex; align-items: center; padding: 20px;">
       <div class="image-container" style="margin-right: 20px;">
         <img src="{% static 'hotel/img/MANUELACOSTAdos.jpg'%}" alt="Asesor" style="width:100px;height:100px;object-fit:cover;border-radius:50%;border:2px solid #ccc;">
       </div>
@@ -71,114 +235,123 @@
         <h6><strong>Check out 11:00 am</strong></h6>
       </div>
     </div>
-    <div class="gallery-card gallery-card-wide">
-      <img src="{{ room.image1.url }}" alt="Espacio">
-      <div class="text-content">
-        <h3>Espacio Destacado</h3>
-        <p><strong>Subtítulo:</strong> Esta card ocupa el doble de espacio en pantallas grandes.</p>
-      </div>
-    </div>
-  </section>
 
+  <!-- GALERÍA VISUAL ESTILO COLLAGE -->
+<section class="mb-10 pt-10">
+  <!-- Imagen principal recortada y centrada -->
+  <div class="mb-8 overflow-hidden h-[500px] relative rounded-xl">
+    <img src="{{ room.image3.url }}"
+         alt="Imagen principal"
+         class="absolute top-1/2 left-0 w-full -translate-y-1/2 object-cover h-auto min-h-[700px]">
+  </div>
 
-<div style="
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
-  padding: 32px;
-  max-width: 1100px;
-  margin: 48px auto;
-  font-family: 'Playfair Display', serif;
-  text-align: center;
-">
-  <h2 style="margin: 0; font-size: 1.8em;">Descubre los detalles de esta propiedad</h2>
-  <p style="color: #555; font-size: 1.1em; margin-top: 12px;">
-    Confort, estilo y privacidad en cada rincón. A continuación, una galería exclusiva.
-  </p>
-</div>
+  <!-- Galería de imágenes en grid -->
+  <div class="grid grid-cols-2 gap-4">
+    <img src="{{ room.image3.url }}" alt="detalle 1" class="w-full rounded-xl object-cover">
+    <img src="{{ room.image4.url }}" alt="detalle 2" class="w-full rounded-xl object-cover">
+    <img src="{{ room.image5.url }}" alt="detalle 3" class="w-full rounded-xl object-cover">
+    <img src="{{ room.image6.url }}" alt="detalle 4" class="w-full rounded-xl object-cover">
+  </div>
+</section>
 
 
 
-  <!-- GALERÍA VISUAL (ESTILO COLLAGE) -->
-  <section style="margin: 40px 0;">
-    <div style="margin-bottom: 16px;">
-      <img src="{{ room.image3.url }}" alt="Imagen principal" style="width: 100%; border-radius: 12px; object-fit: cover;">
-    </div>
-    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
-      <img src="{{ room.image3.url }}" alt="detalle 1" style="width: 100%; border-radius: 12px; object-fit: cover;">
-      <img src="{{ room.image4.url }}" alt="detalle 2" style="width: 100%; border-radius: 12px; object-fit: cover;">
-      <img src="{{ room.image5.url }}" alt="detalle 3" style="width: 100%; border-radius: 12px; object-fit: cover;">
-      <img src="{{ room.image6.url }}" alt="detalle 4" style="width: 100%; border-radius: 12px; object-fit: cover;">
-    </div>
-  </section>
 
-  <!-- BLOQUE DE SERVICIOS -->
-  <section class="bloque-interno" style="background:#fcdada; padding: 32px; border-radius: 12px; margin-bottom: 32px;">
-    <div class="bg-red-100 px-4 sm:px-8 lg:px-12 py-6 rounded-2xl shadow-sm space-y-6">
-      <h2 class="text-2xl font-semibold text-gray-800">¿Qué ofrece este lugar?</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-        {% for icon, text in icons %}
-        <div class="flex items-center gap-3 text-gray-700">
-          <i data-lucide="{{ icon }}" class="w-5 h-5"></i>
-          <span>{{ text }}</span>
-        </div>
-        {% endfor %}
-      </div>
-    </div>
-  </section>
 
-  <!-- BLOQUE DE CONTACTO ASESOR -->
-  <section class="bloque-interno" style="background:#E8E9EA; padding: 32px; border-radius: 12px; margin-bottom: 32px;">
-    <div style="display: flex; justify-content: space-between; align-items: center; font-family: 'Playfair Display', serif;">
-      <div style="flex: 1; padding-right: 20px;">
-        <h2 style="margin-top: 0; font-size: 1.6em; color: #1f1f1f;">¿Dudas sobre la estancia?</h2>
-        <p style="margin: 10px 0 20px 0; font-size: 1em; color: #333;">
+  <!-- BLOQUE CONTACTO ASESOR -->
+  <section class="mb-10">
+    <div class="bg-gray-100 p-8 rounded-2xl flex flex-col md:flex-row justify-between items-center font-serif space-y-6 md:space-y-0">
+      <div class="md:w-2/3 pr-6">
+        <h2 class="text-xl font-semibold text-gray-900">¿Dudas sobre la estancia?</h2>
+        <p class="text-gray-700 mt-2 mb-4">
           Te ayudaré con cualquier consulta sobre el alojamiento, el check-in o el check-out. Estoy aquí para que disfrutes una experiencia cómoda y sin complicaciones.
         </p>
-        <a href="mailto:tuemail@ejemplo.com" style="display: inline-block; padding: 12px 24px; background-color: #1f3e3f; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">
+        <a href="mailto:tuemail@ejemplo.com" class="inline-block px-6 py-3 bg-gray-800 text-white rounded-lg font-bold">
           Escribir ahora
         </a>
       </div>
-      <div style="flex-shrink: 0;">
-        <img src="{% static 'hotel/img/MANUELACOSTAtres.jpg'%}" alt="Asesor" style="width: 110px; height: 110px; object-fit: cover; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+      <div>
+        <img src="{% static 'hotel/img/MANUELACOSTAtres.jpg'%}" alt="Asesor" class="w-[110px] h-[110px] rounded-full border-4 border-white shadow-lg object-cover">
       </div>
     </div>
   </section>
 
-  <!-- BLOQUE FINAL - DESCRIPCIÓN -->
-  <section class="bloque-interno" style="background:#F6F6F6; padding: 32px; border-radius: 12px;">
-    <div style="font-family: 'Playfair Display', serif; background: #ffffff; border: 1px solid #ddd; border-radius: 12px; padding: 24px; box-shadow: 0 2px 6px rgba(0,0,0,0.05);">
-      <h2 style="margin-top: 0; font-size: 1.6em; color: #1f1f1f;">Book a stylish Chambre <span style="font-style: italic;">"long term"</span> in Madrid</h2>
-      <p style="margin: 10px 0 16px 0; font-size: 1em; color: #444;">
-        Hermosas habitaciones completamente equipadas e independientes en alquiler
-      </p>
-      <p style="font-weight: bold; font-size: 1.1em; color: #111;">Desde 550 Euros/mes</p>
+  <!-- BLOQUE FINAL DESCRIPCIÓN -->
+  <section class="mb-10">
+    <div class="bg-gray-50 p-8 rounded-2xl shadow font-serif text-center">
+      <h1 class="text-3xl font-semibold text-gray-900"> <span class="italic">"O"</span></h1>
+      <h2 class="text-xl font-semibold text-gray-900">Book a stylish Chambre <span class="italic">"long term"</span> in Madrid</h2>
+      <p class="text-gray-700 mt-2">Hermosas habitaciones completamente equipadas e independientes en alquiler</p>
+      <p class="text-black font-bold mt-3 text-lg">Desde 550 Euros/mes</p>
     </div>
   </section>
 
 </div>
 
 <!-- CARRUSEL DE OTRAS ROOMS -->
-<div class="scroll-container" style="margin: 40px 0;">
-  {% for room in rooms %}
-  <div class="scroll-item">
-    <div class="card h-100">
-      <img src="{{ room.image.url }}" class="card-img-top" alt="...">
-      <div class="card-body">
-        <h5 class="card-title letra">{{ room.name }}</h5>
-        <p class="card-text letra">{{ room.subtitle }}</p>
-        <div class="w-full flex justify-center">
-          <button type="submit" class="luxury-button">See More</button>
+<div class="container-limitado mt-12">
+  <div class="scroll-container">
+    {% for room in habitaciones %}
+    <div class="scroll-item">
+      <div class="card h-100 shadow-md rounded-xl overflow-hidden bg-white">
+        <img src="{{ room.image.url }}" class="card-img-top" alt="..." style="object-fit: cover; height: 200px;">
+        <div class="card-body px-5 py-4">
+          <h2 class="text-2xl font-bold text-gray-900 mb-1">{{ room.nombre }}</h2>
+          <p class="text-base text-gray-700 mb-1">Hortaleza, Madrid, España</p>
+          <p class="text-sm text-gray-500 mb-4">
+            {{ room.capacity }} viajeros · {{ room.bed }} habitaciones · {{ room.bathroom }} baños · {{ room.square_meters }} m²
+          </p>
+          <p class="text-base text-gray-800 leading-relaxed mb-4">
+            {{ room.description|truncatechars:150 }}...
+          </p>
+          <div class="w-full flex justify-center">
+            <button type="submit" class="luxury-button">See More</button>
+          </div>
         </div>
       </div>
     </div>
+    {% endfor %}
   </div>
-  {% endfor %}
 </div>
 
+
+
 <!-- JS para íconos -->
+<script src="//unpkg.com/alpinejs" defer></script>
 <script>
+
+
   lucide.createIcons();
+
+  // Coordenadas del punto central
+  const lat = 40.4168;  // ejemplo: Madrid
+  const lng = -3.7038;
+
+  // Crear mapa
+  const map = L.map('map').setView([lat, lng], 13);
+
+  // Capa de mapa en blanco y negro (CartoDB Positron)
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://carto.com/">Carto</a>',
+    subdomains: 'abcd',
+    maxZoom: 19
+  }).addTo(map);
+
+  // Icono personalizado
+  const customIcon = L.icon({
+    iconUrl: '/static/hotel/img/icono.png', // Cambia esta ruta a tu ícono
+    iconSize: [40, 40], // tamaño del ícono
+    iconAnchor: [20, 40], // punto del ícono que apunta al lugar
+    popupAnchor: [0, -40] // opcional
+  });
+
+  // Marcador
+  L.marker([lat, lng], { icon: customIcon }).addTo(map)
+    .bindPopup('Aquí está la propiedad')
+    .openPopup();
 </script>
 
+
 {% endblock %}
+
+
