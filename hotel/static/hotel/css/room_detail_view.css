@@ -220,7 +220,7 @@ button:hover {
   font-family: 'Playfair Display';
   font-size: 20px;
   color: black;
-  text-align: center;
+  /*ext-align: center;*/
 }
 .container-limitado {
   max-width: 1200px;
@@ -290,3 +290,135 @@ button:hover {
 .luxury-font {
     font-family: 'Playfair Display', serif;
   }
+
+.scroll-cards-wrapper {
+  display: flex;
+  overflow-x: auto;
+  gap: 16px;
+  scroll-snap-type: x mandatory;
+  padding: 1rem 0;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 6rem; /* espacio extra debajo para que el footer no tape las cards */
+}
+ .scroll-card .card:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    transition: box-shadow 0.3s ease-in-out;
+  }
+
+.scroll-card {
+  flex: 0 0 auto;
+  width: 340px; /* antes era 280px */
+  max-width: 90vw;
+  scroll-snap-align: start;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+
+.scroll-card .card {
+  width: 100%;
+  border: none;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.scroll-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px 10px 0 0;
+}
+.scroll-card {
+  flex: 0 0 auto;
+  width: 340px; /* antes era 280px */
+  max-width: 90vw;
+  scroll-snap-align: start;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+
+.scroll-card .card-body {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.fondo-gris {
+  background-color: #F8F8F8; /* gris muy suave */
+  padding: 2rem 1rem;
+}
+
+.card-body .row {
+  min-height: 140px; /* asegura que el bloque de iconos no salte */
+  max-height: 160px;
+  overflow: auto; /* scroll interno si hay demasiado contenido */
+  background: #F8F6F4;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 0.9rem;
+}
+
+
+.card-body h6.letra {
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+
+.scroll-card {
+  height: 520px; /* ajustá según necesidad */
+  padding-bottom: 1rem;
+
+}
+
+
+.card h6.letra {
+  margin: 0.2rem 0 0.4rem 0;
+  text-align: left !important;
+}
+h6.text-muted {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+
+.badge-alquilada {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: rgba(255, 0, 0, 0.7); /* rojo suave translúcido */
+  color: white;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  border-radius: 6px;
+  z-index: 10;
+}
+/* banner */
+
+.banner {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    margin-bottom: 0px;
+    background:#1C2833;
+    width:100%;
+    height:350px;
+    margin-top:20px;
+}

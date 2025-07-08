@@ -276,43 +276,81 @@
     </div>
   </section>
 
-  <!-- BLOQUE FINAL DESCRIPCIÓN -->
-  <section class="mb-10">
-    <div class="bg-gray-50 p-8 rounded-2xl shadow font-serif text-center">
-      <h1 class="text-3xl font-semibold text-gray-900"> <span class="italic">"O"</span></h1>
-      <h2 class="text-xl font-semibold text-gray-900">Book a stylish Chambre <span class="italic">"long term"</span> in Madrid</h2>
-      <p class="text-gray-700 mt-2">Hermosas habitaciones completamente equipadas e independientes en alquiler</p>
-      <p class="text-black font-bold mt-3 text-lg">Desde 550 Euros/mes</p>
-    </div>
-  </section>
+  <!-- banner -->
+
+
+<div class="banner" style="background-color: #E8E9EA;">
+  <div class="letra" style="width: 80%; font-family: 'Playfair Display', serif; color: #2c2c2c;">
+
+    <!-- Título principal -->
+    <h1 style="font-size: 2.4rem; font-weight: 400; margin-bottom: 1rem;">
+      Book a stylish Chambre "long term" in Madrid
+    </h1>
+
+    <!-- Subtítulo -->
+    <h6 style="font-size: 1.1rem; font-weight: 400; margin-bottom: 1rem;">
+      Hermosas habitaciones completamente equipadas e independientes en alquiler
+    </h6>
+
+    <!-- Precio en dorado -->
+    <h6 style="font-size: 1.3rem; color: #c1a867; font-weight: bold;">
+      Desde 550 Euros/mes
+    </h6>
+
+  </div>
+</div>
+
+
+
 
 </div>
 
 <!-- CARRUSEL DE OTRAS ROOMS -->
-<div class="container-limitado mt-12">
-  <div class="scroll-container">
-    {% for room in habitaciones %}
-    <div class="scroll-item">
-      <div class="card h-100 shadow-md rounded-xl overflow-hidden bg-white">
-        <img src="{{ room.image.url }}" class="card-img-top" alt="..." style="object-fit: cover; height: 200px;">
-        <div class="card-body px-5 py-4">
-          <h2 class="text-2xl font-bold text-gray-900 mb-1">{{ room.nombre }}</h2>
-          <p class="text-base text-gray-700 mb-1">Hortaleza, Madrid, España</p>
-          <p class="text-sm text-gray-500 mb-4">
-            {{ room.capacity }} viajeros · {{ room.bed }} habitaciones · {{ room.bathroom }} baños · {{ room.square_meters }} m²
-          </p>
-          <p class="text-base text-gray-800 leading-relaxed mb-4">
-            {{ room.description|truncatechars:150 }}...
-          </p>
-          <div class="w-full flex justify-center">
-            <button type="submit" class="luxury-button">See More</button>
+
+
+<div class="scroll-cards-wrapper d-flex flex-row overflow-auto px-3 py-4">
+  {% for habitacion in habitaciones %}
+    <div class="scroll-card card mx-2 shadow-sm" style="width: 350px; border: none; background: #f7f7f7; border-radius: 12px; overflow: hidden;">
+      <a href="#">
+        <img src="{{ habitacion.image.url }}" class="img-fluid card-img-top" alt="Imagen de habitación" style="height: 200px; object-fit: cover;">
+      </a>
+
+      <div class="card-body px-3 py-3 d-flex flex-column justify-content-between" style="height: 100%;">
+        <div>
+          <h5 class="card-title mb-1"><strong>{{ habitacion.nombre }}</strong></h5>
+          <h6 class="text-muted mb-3" style="font-size: 0.9rem;">
+            <i class="fas fa-map-marker-alt me-1"></i> Madrid, España
+          </h6>
+
+          <div class="row gx-2 gy-1 text-muted mb-3" style="background:#EFEFEF; border-radius: 6px; font-size: 0.85rem; padding: 10px;">
+            <div class="col-6"><i class="fas fa-users me-1"></i>{{ habitacion.capacity }}</div>
+            <div class="col-6"><i class="fas fa-bed me-1"></i>{{ habitacion.get_bed_display }}</div>
+            <div class="col-6"><i class="fas fa-wind me-1"></i>{% if habitacion.aire_acondicionado %}Sí{% else %}No{% endif %}</div>
+            <div class="col-6"><i class="fas fa-tv me-1"></i>Televisión</div>
+            <div class="col-6"><i class="fas fa-umbrella-beach me-1"></i>{% if habitacion.terrace %}Terraza: Sí{% else %}Terraza: No{% endif %}</div>
+            {% if habitacion.doble_bed %}
+              <div class="col-6"><i class="fas fa-bed me-1"></i>Doble</div>
+            {% endif %}
           </div>
+
+          <p class="card-text mb-3" style="font-size: 0.92rem;">{{ habitacion.subtitle }}</p>
+        </div>
+        {% if habitacion.rented %}
+          <div class="badge-alquilada">Alquilada</div>
+        {% endif %}
+
+
+        <div class="pt-2 border-top" style="font-weight: 600; font-size: 1rem;">
+          <span style="color: #7C6F64;">Desde: </span>
+          <span style="color: #000; font-size: 1.2rem;"><strong>{{ habitacion.price }} €</strong></span>
+          <span style="color: #7C6F64;">mensuales</span>
         </div>
       </div>
     </div>
-    {% endfor %}
-  </div>
+  {% endfor %}
 </div>
+
+
 
 
 

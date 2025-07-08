@@ -26,6 +26,7 @@ class Habitacion(models.Model):
     aire_acondicionado = models.BooleanField(default=False)
     calefaccion = models.BooleanField(default=True)
     bed = models.CharField(choices=BED, max_length=100, default='ONE')
+    rented = models.BooleanField(db_default=False)
     bathroom = models.CharField(choices=BATHROOM, max_length=100, default='ONE')
     share_kitchen = models.BooleanField(default=True)
     terrace = models.BooleanField(default=False)

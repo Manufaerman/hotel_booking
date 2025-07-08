@@ -115,55 +115,47 @@
 
 
 
-<div class="row">
+<div class="scroll-cards-wrapper d-flex flex-row overflow-auto px-3 py-4">
+  {% for habitacion in habitaciones %}
+    <div class="scroll-card card mx-2 shadow-sm" style="width: 350px; border: none; background: #f7f7f7; border-radius: 12px; overflow: hidden;">
+      <a href="#">
+        <img src="{{ habitacion.image.url }}" class="img-fluid card-img-top" alt="Imagen de habitación" style="height: 200px; object-fit: cover;">
+      </a>
+        {% if not habitacion.rented %}
+          <div class="badge-alquilada">Alquilada</div>
+        {% endif %}
 
-          {% for habitacion in habitaciones %}
+      <div class="card-body px-3 py-3 d-flex flex-column justify-content-between" style="height: 100%;">
+        <div>
+          <h5 class="card-title mb-1"><strong>{{ habitacion.nombre }}</strong></h5>
+          <h6 class="text-muted mb-3" style="font-size: 0.9rem;">
+            <i class="fas fa-map-marker-alt me-1"></i> Madrid, España
+          </h6>
 
-            <div class= 'col-md-6' >
-                <div class="card mb-3" style="margin:20px;border:none;" >
-                    <a href=""><img src="{{habitacion.image.url}}" class="img-fluid card-img-customp" alt="..."style="border-radius:10px;"></a>
+          <div class="row gx-2 gy-1 text-muted mb-3" style="background:#EFEFEF; border-radius: 6px; font-size: 0.85rem; padding: 10px;">
+            <div class="col-6"><i class="fas fa-users me-1"></i>{{ habitacion.capacity }}</div>
+            <div class="col-6"><i class="fas fa-bed me-1"></i>{{ habitacion.get_bed_display }}</div>
+            <div class="col-6"><i class="fas fa-wind me-1"></i>{% if habitacion.aire_acondicionado %}Sí{% else %}No{% endif %}</div>
+            <div class="col-6"><i class="fas fa-tv me-1"></i>Televisión</div>
+            <div class="col-6"><i class="fas fa-umbrella-beach me-1"></i>{% if habitacion.terrace %}Terraza: Sí{% else %}Terraza: No{% endif %}</div>
+            {% if habitacion.doble_bed %}
+              <div class="col-6"><i class="fas fa-bed me-1"></i>Doble</div>
+            {% endif %}
+          </div>
 
-                    <div class="card-body">
-                        <h5 class="card-title letra"><strong>{{habitacion.nombre}}</strong></h5>
-                        <h6 class="letra" style="margin-bottom:10px;">Madrid, España </h6>
-                            <div class="row mt-2 px-1 text-muted" style="border-radius:5px;padding: 10px;font-size: 0.9rem; margin-bottom:10px; background:#F8F6F4  ; ">
-                                {% if aire_acondicionado %}
-                                    <div class="col-4 mb-2"><i class="fas fa-wind me-2"></i>Aire acondicionado:{{habitacion.aire_acondicionado}}</div>
-                                {% else %}
-                                    <div class="col-4 mb-2"><i class="fas fa-wind me-2"></i>No</div>
-                                {% endif %}
-                                    <div class="col-4 mb-2"><i class="fas fa-user-group me-2"></i>Capacidad: {{ habitacion.capacity }}</div>
-                                {% if room.doble_bed == True %}
-                                    <div class="col-4 mb-2"><i class="fas fa-bed me-2"></i>Si</div>
-                                {% endif %}
-                                <div class="col-4 mb-2"><i class="fas fa-bed me-2"></i>{{ habitacion.get_bed_display }}</div>
-                                <div class="col-4 mb-2"><i class="fas fa-tv me-2"></i>Televisión</div>
-                                {% if room.terrace == True %}
-                                <div class="col-4 mb-2"><i class="fas fa-umbrella-beach me-2"></i>Terraza: Si</div>
-                                {% else %}
-                                <div class="col-4 mb-2"><i class="fas fa-umbrella-beach me-2"></i>Terraza: No</div>
-                                {% endif %}
-
-                            </div>
-                        <h6 class="card-title letra">{{habitacion.subtitle}}</h6>
-                        <h6 class="letra" style="margin: 20px 0; font-size: 1.1rem; font-weight: 600; color: #3a3a3a;">
-                          <span style="font-family: 'Georgia', serif; letter-spacing: 0.5px; color: #7C6F64;">
-                            Desde:
-                          </span>
-                          <span style="font-family: 'Playfair Display', serif; font-size: 1.3rem; color: #000;">
-                            <strong>{{habitacion.price}} €</strong>
-                          </span>
-                          <span style="font-family: 'Georgia', serif; color: #7C6F64;">
-                            mensuales
-                          </span>
-                        </h6>
+          <p class="card-text mb-3" style="font-size: 0.92rem;">{{ habitacion.subtitle }}</p>
+        </div>
 
 
-                    </div>
-                </div>
-            </div>
-         {% endfor %}
+        <div class="pt-2 border-top" style="font-weight: 600; font-size: 1rem;">
+          <span style="color: #7C6F64;">Desde: </span>
+          <span style="color: #000; font-size: 1.2rem;"><strong>{{ habitacion.price }} €</strong></span>
+          <span style="color: #7C6F64;">mensuales</span>{{ habitacion.price|default:"---" }}
 
+        </div>
+      </div>
+    </div>
+  {% endfor %}
 </div>
 
 
