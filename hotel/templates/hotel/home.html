@@ -18,22 +18,23 @@
 
 {% block content %}
 
-<div class="bg-[#1f2a36] py-16 px-8 flex justify-center">
-  <div class="w-4/5 text-white" style="font-family: 'Playfair Display', serif;">
 
-    <!-- Título principal con fuente reducida y peso normal -->
-    <h1 class="text-4xl md:text-5xl font-normal leading-tight mb-6">
+<div class="py-5 px-4 d-flex justify-content-center" style="background-color: #1f2a36;">
+  <div class="w-100 text-white" style="max-width: 80%; font-family: 'Playfair Display', serif;">
+
+    <!-- Título -->
+    <h1 class="mb-4" style="font-size: 2.5rem; font-weight: 400; line-height: 1.2;">
       Book a stylish Rental Apartments in Madrid
     </h1>
 
-    <!-- Subtítulo en blanco y peso normal -->
-    <h6 class="text-lg md:text-xl font-normal mb-6">
+    <!-- Subtítulo -->
+    <h6 class="mb-4" style="font-size: 1.25rem; font-weight: 400;">
       Hermosos apartamentos de uno, dos y tres dormitorios en alquiler por noches
     </h6>
 
-    <!-- Precio en dorado y negrita, con 'noche' en cursiva y negrita -->
-    <h6 class="text-xl md:text-2xl font-bold underline text-[#c1a867] decoration-[#c1a867]">
-      Desde 120 Euros/<span class="italic font-bold">noche</span>
+    <!-- Precio -->
+    <h6 class="mb-0" style="font-size: 1.5rem; font-weight: bold; text-decoration: underline; color: #c1a867;">
+      Desde 120 Euros/<span style="font-style: italic; font-weight: bold;">noche</span>
     </h6>
 
   </div>
@@ -43,58 +44,60 @@
 
 
 
-
 <div class="row">
+  {% for room, room2, url in room_list %}
+    <div class="col-md-6">
+      <div class="card mb-3" style="margin: 20px; border: none;">
+        <a href="{{ url }}">
+          <img src="{{ room.image.url }}" class="img-fluid card-img-customp" alt="..." style="border-radius: 10px;">
+        </a>
+        <div class="card-body pb-1">
+          <h5 class="card-title letra mb-1" style="font-weight: 600;">{{ room }}</h5>
+          <p class="letra text-muted small mb-3" style="margin-top: -2px;">Madrid, España</p>
+        </div>
+        <div class="row px-3 text-muted" style="font-size: 0.9rem;">
+          {% if aire_acondicionado %}
+            <div class="col-6 mb-2"><i class="fas fa-wind me-2"></i>Aire acondicionado</div>
+          {% endif %}
+          <div class="col-6 mb-2"><i class="fas fa-user-group me-2"></i>Capacidad: {{ room.capacity }} personas</div>
+          {% if room.doble_bed %}
+            <div class="col-6 mb-2"><i class="fas fa-bed me-2"></i>Si</div>
+          {% else %}
+            <div class="col-6 mb-2"><i class="fas fa-bed me-2"></i>No</div>
+          {% endif %}
+          <div class="col-6 mb-2"><i class="fas fa-bed me-2"></i>{{ room.bed }} camas</div>
+          <div class="col-6 mb-2"><i class="fas fa-tv me-2"></i>Televisión</div>
+          <div class="col-6 mb-2"><i class="fas fa-umbrella-beach me-2"></i>Terraza</div>
+        </div>
+        <div class="card-body pt-2">
+          <p class="card-text letra">{{ room2 }}</p>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
 
-          {% for room, room2, url in room_list %}
-
-            <div class= 'col-md-6' >
-                <div class="card mb-3" style="margin:20px;border:none;" >
-                    <a href="{{url}}"><img src="{{ room.image.url}}" class="img-fluid card-img-customp" alt="..."style="border-radius:10px;"></a>
-                    <div class="card-body">
-                        <h5 class="card-title letra"><strong>{{room}}</strong></h5>
-                        <h6 class="letra" style="margin-bottom:10px;">Madrid, España </h6>
-                    </div>
-                    <div class="row mt-2 px-3 text-muted" style="font-size: 0.9rem;">
-                        {% if aire_acondicionado %}
-                            <div class="col-6 mb-2"><i class="fas fa-wind me-2"></i>Aire acondicionado</div>
-                        {% endif %}
-                        <div class="col-6 mb-2"><i class="fas fa-user-group me-2"></i>Capacidad: {{ room.capacity }} personas</div>
-                        {% if room.doble_bed == True %}
-                            <div class="col-6 mb-2"><i class="fas fa-bed me-2"></i>Si</div>
-                        {% else %}
-                            <div class="col-6 mb-2"><i class="fas fa-bed me-2"></i>No</div>
-                        {% endif %}
-                        <div class="col-6 mb-2"><i class="fas fa-bed me-2"></i>{{ room.bed }} camas</div>
-                        <div class="col-6 mb-2"><i class="fas fa-tv me-2"></i>Televisión</div>
-                        <div class="col-6 mb-2"><i class="fas fa-umbrella-beach me-2"></i>Terraza</div>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text letra" style="">{{room2}}</p>
-
-                    </div>
-                </div>
-            </div>
-         {% endfor %}
-            <div class= 'col-md-6' >
-                <div class="card mb-3" style="margin:20px;border:none;" >
-                    <a href=""><img src="{% static 'hotel/img/logo-hp2.png'%}" class="img-fluid card-img-customp" alt="..."style="border-radius:20px;"></a>
-                    <div class="card-body">
-                        <h5 class="card-title letra"><strong>Hummingbird Project</strong></h5>
-                        <p class="card-text letra" style=""></p>
-
-                    </div>
-                </div>
-            </div>
-
+  <!-- Card fija del proyecto -->
+  <div class="col-md-6">
+    <div class="card mb-3" style="margin: 20px; border: none;">
+      <a href="">
+        <img src="{% static 'hotel/img/logo-hp2.png' %}" class="img-fluid card-img-customp" alt="..." style="border-radius: 20px;">
+      </a>
+      <div class="card-body">
+        <h5 class="card-title letra"><strong>Hummingbird Project</strong></h5>
+        <p class="card-text letra"></p>
+      </div>
+    </div>
+  </div>
 </div>
+
+
 
 <div class="banner" style="background-color: #E8E9EA;">
   <div class="letra" style="width: 80%; font-family: 'Playfair Display', serif; color: #2c2c2c;">
 
     <!-- Título principal -->
     <h1 style="font-size: 2.4rem; font-weight: 400; margin-bottom: 1rem;">
-      Book a stylish Chambre "long term" in Madrid
+      Book a stylish Room "long term" in Madrid
     </h1>
 
 

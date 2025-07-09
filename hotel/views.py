@@ -23,6 +23,14 @@ from datetime import date
 from rest_framework.views import APIView
 from rest_framework.response import Response
 import jsonpickle
+from django.shortcuts import render
+from .models import Visit
+
+def visitas_view(request):
+    visitas = Visit.objects.order_by('-timestamp')[:100]  # últimas 100
+    total = Visit.objects.count()
+    return render(request, 'visitas.html', {'visitas': visitas, 'total': total})
+
 
 
 """ for the charts using jquery and js"""

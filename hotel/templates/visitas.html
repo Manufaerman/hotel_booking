@@ -1,0 +1,115 @@
+{% extends 'base_dashboard.html' %}
+{% load static %}
+
+
+{% block title %} <title>Visitas</title> {% endblock %}
+
+{% block content %}
+<style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      background-color: #f5f5f7;
+      color: #1d1d1f;
+      padding: 40px;
+      line-height: 1.6;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 30px;
+      font-weight: 600;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-bottom: 50px;
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+
+    thead {
+      background-color: #f2f2f2;
+      font-weight: 500;
+    }
+
+    th, td {
+      padding: 14px 18px;
+      text-align: left;
+      font-size: 15px;
+    }
+
+    tbody tr {
+      border-top: 1px solid #eaeaea;
+    }
+
+    tbody tr:hover {
+      background-color: #f9f9f9;
+    }
+
+    th {
+      color: #6e6e73;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      color: #1d1d1f;
+    }
+  </style>
+
+
+<body>
+    <h1>Total de visitas: {{ total }}</h1>
+    <!--
+     <table>
+    <thead>
+      <tr>
+        <th>IP</th>
+        <th>Ruta</th>
+        <th>User-Agent</th>
+        <th>Fecha</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for v in visitas %}
+      <tr>
+        <td>{{ v.ip }}</td>
+        <td>{{ v.path }}</td>
+        <td>{{ v.user_agent|truncatechars:40 }}</td>
+        <td>{{ v.timestamp }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+-->
+  <!-- Tabla 2 -->
+  <table>
+    <thead>
+      <tr>
+        <th>IP</th>
+        <th>Ciudad</th>
+        <th>País</th>
+        <th>Ruta</th>
+        <th>Fecha</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for v in visitas %}
+      <tr>
+        <td>{{ v.ip }}</td>
+        <td>{{ v.city }}</td>
+        <td>{{ v.country }}</td>
+        <td>{{ v.path }}</td>
+        <td>{{ v.timestamp }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock %}
+

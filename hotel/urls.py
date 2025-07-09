@@ -5,7 +5,7 @@ from django.urls import path
 from . import views
 from .views import Home, BookRoomClient, \
     CancelBookingView, home, DashboardBookMonth, roomandflats, dashboard, get_data, ChartData, kakashka, Modify \
-    , AllBookings, BookingUpdateView, biografia
+    , AllBookings, BookingUpdateView, biografia, visitas_view
 
 app_name = 'hotel'
 
@@ -39,9 +39,9 @@ urlpatterns = [
     path('booking/cancel/<pk>', CancelBookingView.as_view(), name='cancelbookingview'),
 
     path('reservas/', AllBookings.as_view(), name='reservas'),
-    path('reservas/editar/<int:pk>', BookingUpdateView.as_view(), name='editar')
+    path('reservas/editar/<int:pk>', BookingUpdateView.as_view(), name='editar'),
 
-
+    path('visitas/', visitas_view, name='visitas'),
 
 
 ] + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0]) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

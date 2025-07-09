@@ -3,7 +3,21 @@ from django.urls import reverse, reverse_lazy
 from datetime import timedelta, date, datetime
 from django.db import models
 from django.utils import timezone
+from django.utils.timezone import now
+
 from .booking_functions.dates_functions import all_dates_between_dates
+
+class Visit(models.Model):
+    ip = models.GenericIPAddressField()
+    path = models.CharField(max_length=200)
+    user_agent = models.TextField()
+    timestamp = models.DateTimeField(default=now)
+    city = models.CharField(max_length=100, blank=True, null=True)
+    country = models.CharField(max_length=100, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.ip} - {self.city}, {self.country} - {self.path}"
+
 
 class Habitacion(models.Model):
     BATHROOM = {
