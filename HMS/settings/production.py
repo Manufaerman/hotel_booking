@@ -1,9 +1,10 @@
-import dj_database_url
-from decouple import config
-from pathlib import Path
 from .base import *
-
 import sys
+from dotenv import load_dotenv
+from pathlib import Path
+
+load_dotenv(dotenv_path=Path(BASE_DIR) / '.env')
+
 
 LOGGING = {
     'version': 1,
@@ -22,16 +23,18 @@ LOGGING = {
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 ALLOWED_HOSTS = ['*', 'www.smartagency.es', 'smartagency.es', '46.202.175.212', 'localhost']
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'hotelina',
-        'USER': 'manuel',
-        'PASSWORD': 'Prometheus',
-        'PORT': '5432',
-        'HOST': 'localhost',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
     }
 }
+
 
 
 DEBUG = False
