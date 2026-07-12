@@ -1,47 +1,51 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
-
+from django.contrib.sitemaps.views import sitemap
+from hotel.sitemaps import StaticViewSitemap
 from . import views
-from .views import Home, BookRoomClient, \
-    CancelBookingView, home, DashboardBookMonth, roomandflats, dashboard, get_data, ChartData, kakashka, Modify \
-    , AllBookings, BookingUpdateView, biografia, visitas_view
+from .views import dashboard, visitas_view, habitaciones, \
+    NewContractView, home, flat_detail, finalizar_contrato,\
+    modificar_contrato, contratos, habitaciones_dashboard, \
+    modificar_inquilino, habitaciones_all, contacto, TemplateView
 
 app_name = 'hotel'
-
+sitemaps = {
+    "static": StaticViewSitemap,
+}
 urlpatterns = [
-    # Esta es la ruta principal, sin parámetros
-    path('', home.as_view(), name='home'),
 
 
-    path('kakashka/<str:id>', roomandflats, name='roomandflats'),
-    path('room_list/<id>', home.as_view(), name='roomlist'),
+    path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="django.contrib.sitemaps.views.sitemap",),
+    path("robots.txt", TemplateView.as_view(template_name="robots.txt", content_type="text/plain",), name="robots_txt"),
 
 
-    path('dashboard/la/la/la/', DashboardBookMonth.as_view(), name='dashboardbookmonth'), #new
-    path('dashboard/la/la/la/<id>', DashboardBookMonth.as_view(), name='dashboardbookmonth'), #new
-    path('dashboard/la/la/la/<id>/<month>', DashboardBookMonth.as_view(), name='dashboardbookmonth'),
-
-
-    path('reserva/eliminar/<int:pk>/', views.eliminar_reserva, name='eliminar'),
     #using it to display charts
+
+
     path('dashboard/', dashboard, name='dashboard'),
-    path('api/data/', get_data, name='api_data'),
-    path('api/chart/data/', ChartData.as_view()),
-    path('biografia/', biografia, name='biografia'),
+    path('dashboard/chart-data/', views.chart_data, name='dashboard_chart_data'),
+    path('habitaciones_all/', habitaciones_all, name='habitaciones_all'),
+    path('contacto/', contacto, name='contacto'),
 
-    #using jquery to show models in template
-    path('pruebas/', kakashka, name='pruebas'),
-    path('pruebas-json/', Modify.as_view(), name='pruebas-json'),
+    path('', home, name='home'),
+    path('flat/<int:id>', flat_detail, name='flat'),
 
-    path('booking_list/', Home.as_view(), name='bookinglist'),
-    path('room/<category>', BookRoomClient.as_view(), name='roomdetailview'),
-    path('booking/cancel/<pk>', CancelBookingView.as_view(), name='cancelbookingview'),
 
-    path('reservas/', AllBookings.as_view(), name='reservas'),
-    path('reservas/editar/<int:pk>', BookingUpdateView.as_view(), name='editar'),
 
     path('visitas/', visitas_view, name='visitas'),
+    path('habitaciones_dashboard/', habitaciones_dashboard, name='habitaciones_dashboard'),
+    path('habitaciones/<int:id>', habitaciones, name='habitaciones'),
 
 
-] + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0]) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path("contratos/", contratos, name='contratos'),
+    path("contratos/<int:contrato_id>/pdf/", views.contrato_pdf, name="contrato_pdf"),
+    path('contratos/newcontract', NewContractView.as_view(), name='newcontract'),
+
+    path('contratos/<int:id>/finalizar', finalizar_contrato, name='finalizar_contrato'),
+    path('contratos/<int:id>/modificar', modificar_contrato, name='modificar_contrato'),
+    path('contratos/modificar_inquilino/<int:id>/<int:contrato_id>', modificar_inquilino, name='modificar_inquilino')
+
+
+
+    ] + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0]) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,30 @@
+{% extends 'base_dashboard.html' %}
+{% load static %}
+{% block extra-head %}
+<link rel="stylesheet" href="{% static 'hotel/css/modificar_inquilino.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="contract-container">
+
+    <div class="contract-header">
+        <h1>Modificar inquilino</h1>
+        <p>Actualiza los datos del inquilino.</p>
+    </div>
+
+    <div class="contract-card">
+
+        <form method="post">
+
+             {% csrf_token %}
+            {{form.as_p}}
+
+            <button type="submit" class="save-btn">
+                Guardar cambios
+            </button>
+        </form>
+
+    </div>
+
+</div>
+{% endblock %}

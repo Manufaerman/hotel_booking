@@ -1,0 +1,58 @@
+{% extends 'base_dashboard.html' %}
+{% load static %}
+{% block extra-head %}
+<link rel="stylesheet" href="{% static 'hotel/css/modificar.css'%}">
+{% endblock %}
+
+{% block content %}
+
+
+<div class="contract-container">
+
+    <div class="contract-header">
+        <h1>Modificar contrato</h1>
+        <p>Actualiza los datos del contrato del inquilino.</p>
+    </div>
+
+    <div class="contract-card">
+
+        <form method="post">
+
+             {% csrf_token %}
+            {{form.propiedad}}
+            {{form.habitacion}}
+            <div class="inquilino-campo">
+            {{contrato.inquilino}}
+            <a href="{% url 'hotel:modificar_inquilino' contrato.inquilino.id contrato.id %}"
+               class="btn-editar-inquilino"> editar </a>
+            </div>
+            {{form.fecha_inicio}}
+            {{form.precio_mensual}}
+            {{form.fianza}}
+
+            <button type="submit" class="save-btn">
+                Guardar cambios
+            </button>
+
+
+
+
+        </form>
+
+    </div>
+
+</div>
+{% endblock %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const propiedadSelect = document.getElementById("id_propiedad");
+
+    if (propiedadSelect) {
+        propiedadSelect.addEventListener("change", function () {
+            const propiedadId = this.value;
+            window.location.href = window.location.pathname + "?propiedad=" + propiedadId;
+        });
+    }
+});
+</script>

@@ -1,0 +1,143 @@
+:root{
+    --vino: #6B3140;
+    --vino-hover: #7E3B4C;
+    --ambar: #C8A96B;
+    --cream: #F7F4EE;
+    --cream-dark: #F3EEE6;
+    --texto: #2F2A26;
+  }
+
+  body {
+    margin: 0;
+    background: var(--cream);
+    color: var(--texto);
+  }
+
+  .logo-blanco {
+    width: 150px;
+    height: auto;
+    object-fit: contain;
+    margin-bottom: 28px;
+    filter:brightness(0) saturate(100%) invert(95%) sepia(7%) saturate(242%) hue-rotate(324deg) brightness(99%) contrast(92%);
+  }
+
+  .logo-blanco:hover {
+    opacity: 0.8;
+  }
+
+  #sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 26px 18px;
+    gap: 18px;
+    border-right: 1px solid rgba(107, 49, 64, 0.12);
+
+    background:#786170;
+    width:230px;
+
+  }
+
+#sidebar .navbar-brand {
+    padding: 0 !important;
+    margin: 0;
+  }
+.hijo {
+    width: 155px;
+    height: 54px;
+    background: transparent;
+    border-radius: 999px;
+    box-shadow: none;
+    transition: .25s ease;
+}
+hijo.active{
+
+    background:#C8A96B;
+    color:#5E2B38;
+}
+
+  .hijo:hover {
+    background: rgba(255,255,255,.12);
+    transform: translateY(-1px);
+  }
+
+  .hijo a {
+    width: 100%;
+    height: 100%;
+    color: #F7F4EE;
+    text-decoration: none !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .hijo i {
+    color: #F7F4EE;
+    font-size: 18px;
+  }
+  .hijo span {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+.hijo:hover i,
+.hijo:hover span {
+    color: #C8A96B;
+}
+.hijo.active {
+    background: #F7F4EE;
+}
+
+.hijo.active i,
+.hijo.active span {
+    color: #786170;
+}
+  #centerside {
+    min-height: 100vh;
+    margin-left: 220px;
+    padding: 42px;
+    background:#F7F4EE;
+  }
+
+  @media screen and (max-width: 768px) {
+    #sidebar {
+      position: relative;
+      width: 100%;
+      height: auto;
+      flex-direction: row;
+      overflow-x: auto;
+      white-space: nowrap;
+      padding: 14px;
+      gap: 12px;
+    }
+
+    .logo-blanco {
+      width:105px;
+      height:auto;
+      display:block;
+    }
+
+    navbar-brand {
+    widht:100% !important;
+    padding: 16px 0 12px !important;
+    margin: 0 !important;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    }
+    .hijo {
+      min-width: 86px;
+      height: 50px;
+      flex: 0 0 auto;
+    }
+
+    #centerside {
+      margin-left: 0;
+      padding: 24px 16px;
+    }
+  }

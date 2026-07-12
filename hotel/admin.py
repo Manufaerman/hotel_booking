@@ -1,9 +1,9 @@
 from django.contrib import admin
-from .models import Room, Booking, Habitacion, Inquilino, ContratoAlquiler
+from .models import Flat, Habitacion, Inquilino, ContratoAlquiler, Gasto
 
 # Register your models here.
 class AdminHabitacion(admin.ModelAdmin):
-    list_display = ['id', 'nombre']
+    list_display = ['id', 'nombre', 'propiedad', 'disponible']
 
 admin.site.register(Habitacion, AdminHabitacion)
 
@@ -18,14 +18,34 @@ class AdminContratoAlquiler(admin.ModelAdmin):
 admin.site.register(ContratoAlquiler, AdminContratoAlquiler)
 
 class RoomAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'category', 'bed', 'capacity']
+    list_display = ['id', 'nombre', 'category', 'capacity']
 
-admin.site.register(Room, RoomAdmin)
+admin.site.register(Flat, RoomAdmin)
 
-class BookingAdmin(admin.ModelAdmin):
-    list_display = ['user', 'room', 'check_in', 'check_out']
+@admin.register(Gasto)
+class GastoAdmin(admin.ModelAdmin):
+    list_display = (
+        "propiedad",
+        "habitacion",
+        "concepto",
+        "categoria",
+        "importe",
+        "fecha",
+        "pagado",
+    )
 
-admin.site.register(Booking, BookingAdmin)
+    list_filter = (
+        "propiedad",
+        "categoria",
+        "pagado",
+        "fecha",
+    )
+
+    search_fields = (
+        "concepto",
+        "notas",
+    )
+
 
 
 

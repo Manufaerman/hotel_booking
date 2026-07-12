@@ -1,0 +1,414 @@
+/* ===== Página habitaciones por colección ===== */
+
+.collection {
+    padding: 90px 0 95px;
+    overflow: hidden;
+}
+
+.collection-tolima {
+    background: linear-gradient(135deg, #7f5a68 0%, #5f4350 100%);
+}
+
+.collection-barichara {
+    background: linear-gradient(135deg, #9cac94 0%, #71806d 100%);
+}
+
+.collection-haro {
+    background: linear-gradient(135deg, #9b6874 0%, #7c4f5c 100%);
+}
+
+.collection-header {
+    width: min(1180px, calc(100% - 48px));
+    margin: 0 auto 46px;
+    color: #f8f1eb;
+}
+
+.collection-header span,
+.collection-header .eyebrow {
+    display: block;
+    margin-bottom: 12px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: rgba(248, 241, 235, 0.72);
+}
+
+.collection-header h2 {
+    margin: 0 0 10px;
+    font-family: "Playfair Display", serif;
+    font-size: clamp(2.6rem, 5vw, 4.6rem);
+    line-height: 0.95;
+    color: #fff8f1;
+}
+
+.collection-header p {
+    max-width: 650px;
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: rgba(255, 248, 241, 0.9);
+}
+
+/* Scroll horizontal */
+
+.rooms-scroll,
+.scroll-cards-wrapper {
+    display: flex;
+    gap: 34px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 4px max(24px, calc((100vw - 1180px) / 2)) 28px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+}
+
+.rooms-scroll::-webkit-scrollbar,
+.scroll-cards-wrapper::-webkit-scrollbar {
+    height: 8px;
+}
+
+.rooms-scroll::-webkit-scrollbar-track,
+.scroll-cards-wrapper::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.14);
+    border-radius: 999px;
+}
+
+.rooms-scroll::-webkit-scrollbar-thumb,
+.scroll-cards-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.45);
+    border-radius: 999px;
+}
+
+/* Card reutilizable */
+
+.scroll-card,
+.room-card {
+    flex: 0 0 430px;
+    width: 430px;
+    min-height: 520px;
+    border: none !important;
+    border-radius: 18px !important;
+    overflow: hidden;
+    background: #f7f3ee !important;
+    box-shadow: 0 22px 50px rgba(24, 13, 17, 0.22) !important;
+    scroll-snap-align: start;
+}
+
+.scroll-card img,
+.room-card img {
+    width: 100%;
+    height: 230px !important;
+    object-fit: cover;
+    display: block;
+}
+
+.collection-badge {
+    position: absolute;
+    top: 22px;
+    left: 22px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: rgba(95, 67, 80, 0.82);
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+/* Por si tu card no tiene position relative */
+.scroll-card,
+.room-card {
+    position: relative;
+}
+
+/* Interior de la card */
+
+.scroll-card .card-body,
+.room-card .card-body {
+    padding: 26px 30px 30px;
+}
+
+.scroll-card h3,
+.scroll-card h4,
+.room-card h3,
+.room-card h4 {
+    margin: 0 0 6px;
+    font-family: "Playfair Display", serif;
+    font-size: 2rem;
+    line-height: 1;
+    color: #5b5364;
+}
+
+.scroll-card p,
+.room-card p {
+    color: #6f6a70;
+}
+
+.status-badge,
+.room-status,
+.badge-alquilada {
+    display: inline-flex;
+    width: fit-content;
+    margin-top: 18px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: #7d7488;
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+    .collection {
+        padding: 64px 0 70px;
+    }
+
+    .collection-header {
+        width: calc(100% - 36px);
+        margin-bottom: 32px;
+    }
+
+    .rooms-scroll,
+    .scroll-cards-wrapper {
+        gap: 20px;
+        padding-inline: 18px;
+    }
+
+    .scroll-card,
+    .room-card {
+        flex-basis: 82vw;
+        width: 82vw;
+        min-height: auto;
+    }
+
+    .scroll-card img,
+    .room-card img {
+        height: 210px !important;
+    }
+}
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+}
+
+.price-block {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+}
+
+.precio {
+    font-family: "Playfair Display", serif;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #6b4d58;
+    margin: 0;
+}
+
+.price-label {
+    margin-top: 4px;
+    font-size: 0.85rem;
+    color: #8a8a8a;
+}
+
+.contact-chip {
+    width: 44px;
+    height: 44px;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: #6e715b;
+    color: white;
+    transition: 0.25s;
+}
+
+.contact-chip:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.contact-chip i {
+    font-size: 25px;
+}
+.flat-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.2rem;
+}
+
+.flat-title-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.flat-title-row .card-title {
+    margin: 0;
+    font-family: "Montserrat", sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #59434e;
+    line-height: 1.15;
+}
+
+.room-location {
+    margin-top: 0.3rem;
+    font-family: "Montserrat", sans-serif;
+    font-size: 0.76rem;
+    font-weight: 500;
+    color: #8b8782;
+}
+
+.rental-badge {
+    flex-shrink: 0;
+    border-radius: 999px;
+    padding: 0.35rem 0.7rem;
+    font-family: "Montserrat", sans-serif;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.rental-rooms {
+    background-color: #dfe7d2;
+    color: #536443;
+}
+
+.rental-rented {
+    background-color: #8a7a87;
+    color: #ffffff;
+}
+
+.scroll-card {
+    position: relative;
+}
+
+.suite-crown {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 3;
+
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+    background: #f7eed8;
+    color: #b88a35;
+    border: 1px solid rgba(184, 138, 53, 0.35);
+    box-shadow: 0 4px 12px rgba(80, 55, 35, 0.18);
+
+    font-size: 0.95rem;
+}
+.suite-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    width: fit-content;
+    margin-top: 0.5rem;
+    padding: 0.28rem 0.55rem;
+    border-radius: 999px;
+
+    background-color: #eee7f0;
+    color: #735d72;
+
+    font-family: "Montserrat", sans-serif;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.suite-badge i {
+    font-size: 0.7rem;
+}
+/* Contenedor de características normales */
+.card-body .row.gx-2.gy-1 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.55rem 0.9rem;
+
+    margin: 0 0 1rem 0;
+    padding: 0.8rem 0.9rem !important;
+
+    background: #f4f2ef !important;
+    border: 1px solid #ece7e1;
+    border-radius: 12px !important;
+
+    color: #746e6b !important;
+    font-family: "Montserrat", sans-serif;
+    font-size: 0.72rem !important;
+    font-weight: 600;
+}
+
+/* Cada característica normal */
+.amenity-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    white-space: nowrap;
+}
+
+.amenity-item i {
+    color: #86707c;
+    font-size: 0.76rem;
+}
+
+/* Badges de extras */
+.suite-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+
+    padding: 0.38rem 0.7rem;
+    border-radius: 999px;
+
+    font-family: "Montserrat", sans-serif;
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 0.055em;
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* Baño en suite: dorado crema */
+.suite-bath-badge {
+    background: #f5ead5;
+    color: #9a702d;
+    border: 1px solid #ead5ad;
+}
+
+.suite-bath-badge i {
+    color: #b88532;
+}
+
+/* Aire acondicionado: lavanda suave */
+.air-badge {
+    background: #ece4f0;
+    color: #725d79;
+    border: 1px solid #ddd0e4;
+}
+
+.air-badge i {
+    color: #80698a;
+}

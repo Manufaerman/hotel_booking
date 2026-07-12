@@ -1,35 +1,46 @@
-import datetime
-from django.core.exceptions import ValidationError
-from django.forms import ModelForm
-from crispy_forms.helper import FormHelper
+
 from django import forms
 from django.contrib.auth.models import User
 
-from hotel.models import Booking
+from hotel.models import Inquilino, ContratoAlquiler, Flat, Habitacion
 from user_profile.models import UserProfile
 
 
 
-class AvailibilityForm(forms.Form):
 
-    check_in = forms.DateField(
+class ContratoAlquilerForm(forms.ModelForm):
+    propiedad = forms.ModelChoiceField(
+        queryset=Flat.objects.all(),
         required=True,
-        widget=forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}),
-        input_formats=["%Y-%m-%d"]
+        label="Flat"
     )
 
-    check_out = forms.DateField(
-        required=True,
-        widget=forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}),
-        input_formats=["%Y-%m-%d"]
-    )
+    class Meta:
+        model = ContratoAlquiler
+        fields = [
+            "propiedad",
+            "habitacion",
+            "fecha_inicio",
+            "precio_mensual",
+            "fianza",
+        ]
 
+    def __init__(self, *args, **kwargs):
+        propiedad_id = kwargs.pop("propiedad_id", None)
+        contrato = kwargs.get('instance', None)
+        if not propiedad_id and contrato:
+            propiedad_id = contrato.habitacion.propiedad_id
+        print(propiedad_id, 'estamos en el formmmm justo antes del super', kwargs)
+        super().__init__(*args, **kwargs)
+        print('kwaersdfgvhjh al entrarrrr', kwargs)
+        if propiedad_id:
+            habitaciones = Habitacion.objects.filter(propiedad_id=propiedad_id)
+            print(habitaciones,'aqui estan todas las habitaciones')
+            self.fields["habitacion"].queryset = habitaciones
+            self.fields["propiedad"].initial = propiedad_id
+        else:
 
-OPCIONES_COLOR = [
-    ('tolima', 'Tolima'),
-    ('barichara', 'Barichara'),
-    ('san luis', 'San Luis')
-]
+            self.fields["habitacion"].queryset = Habitacion.objects.none()
 
 class UserForm(forms.ModelForm):
     class Meta:
@@ -39,70 +50,10 @@ class UserForm(forms.ModelForm):
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['phone', 'dni', 'address', 'cp', 'city', 'country', 'birthday']
+        fields = ['telefono', 'dni', 'direccion', 'cp', 'ciudad', 'pais', 'cumpleaños']
 
-class BookingForm(forms.ModelForm):  # <-- IMPORTANTE: ModelForm, no Form
+class InquilinoForm(forms.ModelForm):
     class Meta:
-        model = Booking
-        fields = ['check_in', 'check_out', 'room', 'price']
-
-class AddBooking(forms.Form):
-    flat = forms.ChoiceField(
-        choices=OPCIONES_COLOR,
-        widget=forms.Select(attrs={'class': 'form-control'}),
-        label='',
-        required=True,
-    )
-    name = forms.CharField(
-        required=True,
-        label='',
-        widget=forms.TextInput(attrs={'placeholder': 'Name'}),
-    )
-    last_name = forms.CharField(widget=forms.TextInput(attrs={'placeholder': 'last Name'}),)
-    email = forms.EmailField(
-        required=False,
-        label='',
-        widget=forms.TextInput(attrs={'placeholder': 'Email'}),
-    )
-    phone = forms.IntegerField(
-        required=False,
-        label='',
-        widget=forms.TextInput(attrs={'placeholder': 'Phone'}),
-    )
-    check_in = forms.DateField(
-        required=True,
-        label='',
-        widget=forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}),
-        input_formats=["%Y-%m-%d"]
-    )
-
-    check_out = forms.DateField(
-        required=True,
-        label='',
-        widget=forms.DateInput(format="%Y-%m-%d", attrs={"type": "date"}),
-        input_formats=["%Y-%m-%d"]
-    )
-
-    price = forms.IntegerField(
-        max_value=4050,
-        label='',
-        widget=forms.TextInput(attrs={'placeholder': 'Price'}),
-    )
-
-    def clean(self):
-        cleaned_data = self.cleaned_data
-        check_in = cleaned_data['check_in']
-        check_out = cleaned_data['check_out']
-        today = datetime.date.today()
-
-        return cleaned_data
-        """
-                if check_in < today:
-            raise ValidationError('Invalid date - renewal in past')
-
-        if check_in > check_out:
-            raise ValidationError('Invalid date - check in greater than check out')
-
-        else:
-        """
+        model = Inquilino
+        fields = ['nombre', 'email', 'dni', 'direccion', 'telefono', 'nacionalidad']
 

@@ -1,0 +1,243 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block extra-head %}<link rel="stylesheet" href="{% static 'hotel/css/habitaciones.css' %}">{% endblock %}
+{% block title %} by Coleccion {{ habitacion.nombre }} | Alquiler de habitaciones premium en Madrid {% endblock %}
+{% block description %} Descubre la habitación {{habitacion.nombre }} de la colección Tolima. Habitacion luminosa con baño con {{ habitacion.bathroom }} {% endblock %}
+{% block content %}
+<body>
+
+
+
+<section class="flat-intro-nav">
+  <div class="container">
+
+    <div class="hero-header">
+      <div class="hero-left">
+        <p class="eyebrow">Colección Tolima</p>
+        <h1>Descubre {{ habitacion.nombre }}</h1>
+        <p class="flat-intro-text">{{ habitacion.subtitle }}</p>
+      </div>
+    {% if habitacion.disponible %}
+      <div class="hero-price-card">
+        <div class="price-main">{{ habitacion.precio }} €</div>
+        <div class="price-period">/ mes</div>
+          <div class="disponibilidad">disponible</div>
+        <ul>
+          <li>Gastos incluidos hasta 200€</li>
+          <li>Internet alta velocidad</li>
+        </ul>
+      </div>
+        {% else %}
+        <div class="hero-price-card-alquilada">
+            <div class="price-main">{{ habitacion.price }} €</div>
+            <div class="price-period">/ mes</div>
+            <div class="disponibilidad">Alquilada</div>
+            <ul>
+              <li>Gastos incluidos hasta 200€</li>
+              <li>Internet alta velocidad</li>
+            </ul>
+      </div>
+        {% endif%}
+    </div>
+
+    <nav class="flat-anchor-nav">
+      <a href="#habitaciones">Habitaciones</a>
+      <a href="https://wa.me/34639446142?text=Hola,%20me%20gustar%C3%ADa%20recibir%20informaci%C3%B3n {{ habitacion.propiedad }} {{ habitacion.nombre }}" style="background: #F3E7B3;
+color: #6B3140;
+font-weight: 600;">Contacta</a>
+      <a href="#armario">Armario</a>
+      <a href="#plano">Fotografías</a>
+      <a href="#condiciones">Condiciones</a>
+    </nav>
+
+  </div>
+</section>
+
+
+<section class="room-features-section" id="caracteristicas">
+    <p class="section-eyebrow">Características</p>
+    <h2 class="section-title">Lo que incluye esta habitación</h2>
+
+    <div class="room-features-grid">
+
+        <div class="room-feature-card">
+            <i class="fas fa-users"></i>
+            <span>1 huésped</span>
+        </div>
+
+        <div class="room-feature-card">
+            <i class="fas fa-bath"></i>
+            <span>{{ habitacion.get_bathroom_display }}</span>
+        </div>
+
+        <div class="room-feature-card">
+            <i class="fas fa-ruler-combined"></i>
+            <span>{{ habitacion.metros }} m²</span>
+        </div>
+        {% if habitacion.armario %}
+         <div class="room-feature-card">
+            <i class="fa-solid fa-shirt"></i>
+            <span>Armario</span>
+        </div>
+        {% endif %}
+
+        {% if habitacion.aire_acondicionado %}
+        <div class="room-feature-card">
+            <i class="fas fa-wind"></i>
+            <span>Aire acondicionado</span>
+        </div>
+        {% endif %}
+
+        {% if habitacion.tv %}
+        <div class="room-feature-card">
+            <i class="fas fa-tv"></i>
+            <span>TV</span>
+        </div>
+        {% endif %}
+
+        {% if habitacion.propiedad.wifi %}
+        <div class="room-feature-card">
+            <i class="fas fa-wifi"></i>
+            <span>Internet A.V</span>
+        </div>
+        {% endif %}
+
+        <div class="room-feature-card">
+            <i class="fas fa-bed"></i>
+            <span>{{ habitacion.get_bed_display }}</span>
+        </div>
+
+    </div>
+    <div class="room-notes">
+        <h4>Información</h4>
+
+        <div class="note-item">
+            <i class="fa-solid fa-couch"></i>
+            <span>Vivienda completamente amueblada.</span>
+        </div>
+
+        <div class="note-item">
+            <i class="fa-solid fa-camera"></i>
+            <span>Las habitaciones se entregan con todo el mobiliario mostrado en las fotografías.</span>
+        </div>
+
+        <div class="note-item">
+            <i class="fa-solid fa-ban"></i>
+            <span>No está permitido retirar, almacenar o desechar muebles pertenecientes a la propiedad.</span>
+        </div>
+
+        <div class="note-item">
+            <i class="fa-solid fa-location-dot"></i>
+            <span>Los elementos de mobiliario deberán permanecer en la habitación durante toda la estancia.</span>
+        </div>
+    </div>
+</section>
+
+<section>
+ <div class="room-gallery">
+  <div id="carouselExampleIndicators" class="carousel slide">
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+    <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+  </div>
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src="{{ habitacion.image.url }}" class="img-fluid" alt="...">
+    </div>
+    <div class="carousel-item">
+      <img src="{{ habitacion.image1.url }}" class="img-fluid" alt="...">
+    </div>
+    <div class="carousel-item">
+      <img src="{{ habitacion.image2.url }}" class="img-fluid" alt="...">
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+ </div>
+</section>
+
+<section class=" container conditions-section" id="condiciones">
+
+    <h2 class="conditions-title">Condiciones de la estancia</h2>
+
+    <div class="conditions-grid">
+
+        <div class="condition-item">
+            <i class="fas fa-file-signature"></i>
+            <span>Contrato mínimo de 6 meses</span>
+        </div>
+
+        <div class="condition-item">
+            <i class="fas fa-sync-alt"></i>
+            <span>Renovable trimestralmente</span>
+        </div>
+
+        <div class="condition-item">
+            <i class="fas fa-shield-alt"></i>
+            <span>1 mes de fianza</span>
+        </div>
+
+        <div class="condition-item">
+            <i class="fas fa-smoking-ban"></i>
+            <span>No se permite fumar</span>
+        </div>
+
+        <div class="condition-item">
+            <i class="fas fa-cat"></i>
+            <span>No se admiten mascotas </span>
+        </div>
+
+        <div class="condition-item">
+            <i class="fas fa-bolt"></i>
+            <span>Gastos incluidos hasta 200 € / mes</span>
+        </div>
+
+        <div class="condition-item">
+            <i class="fas fa-user-check"></i>
+            <span>Ideal para estudiantes y profesionales</span>
+        </div>
+
+    </div>
+
+</section>
+{% if habitacion.armario %}
+<section id="armario" class="space-section terraza-section">
+    <div class="container">
+        <div class="room-detail reverse">
+
+            <div class="room-content">
+                <span class="section-label">Armario</span>
+
+                <h2>Comodo Armario </h2>
+
+                <p>
+                    Amplio armario con gran almacenaje.
+                </p>
+
+                <ul class="features-list">
+                    <li>✓ Colgador</li>
+                    <li>✓ Cajoneras</li>
+                    <li>✓ Zapatero</li>
+                    <li>✓ lampara exterior</li>
+                </ul>
+            </div>
+
+            <div class="room-image">
+                <img src="{{ habitacion.image_armario.url }}" alt="Baño">
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endif %}
+</body>
+{% endblock %}
+</html>

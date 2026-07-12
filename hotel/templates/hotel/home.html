@@ -3,7 +3,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Home{% endblock%}
+{% block title %} By Collection | Alquiler de habitaciones premium en Madrid {% endblock%}
 
 {% block extra-head %}
 <!-- Main StyleSheet -->
@@ -11,7 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Parisienne&display=swap" rel="stylesheet">
 <link rel="icon" href="data:;base64,iVBORw0KGgo="> <!-- to avoid favicon error in terminal -->
 <link rel="stylesheet" href="{% static 'hotel/css/home.css' %}">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 
 
 {% endblock %}
@@ -19,123 +19,193 @@
 {% block content %}
 
 
-<div class="py-5 px-4 d-flex justify-content-center" style="background-color: #1f2a36;">
-  <div class="w-100 text-white" style="max-width: 80%; font-family: 'Playfair Display', serif;">
+<div class="hero-section" style="">
+  <div class="hero-content" style="">
 
     <!-- Título -->
-    <h1 class="mb-4" style="font-size: 2.5rem; font-weight: 400; line-height: 1.2;">
-      Book a stylish Rental Apartments in Madrid
-    </h1>
-
+    <h3 class="hero-kicker"> By Collection</h3>
+    <h1 class="hero-title" style="">Espacios diseñados para vivir Madrid</h1>
     <!-- Subtítulo -->
-    <h6 class="mb-4" style="font-size: 1.25rem; font-weight: 400;">
-      Hermosos apartamentos de uno, dos y tres dormitorios en alquiler por noches
-    </h6>
+    <p class="hero-subtitle" style="">
+      Habitaciones y apartamentos cuidadosamente seleccionados.
+    </p>
 
     <!-- Precio -->
-    <h6 class="mb-0" style="font-size: 1.5rem; font-weight: bold; text-decoration: underline; color: #c1a867;">
-      Desde 120 Euros/<span style="font-style: italic; font-weight: bold;">noche</span>
-    </h6>
+    <div class="price-badge" style="">
+      Desde 550 €/mes
+    </div>
 
   </div>
 </div>
 
-
-
-
-
-<div class="row">
-  {% for room, room2, url in room_list %}
+<section class="flat-section">
+<div class="row flats-grid" style="">
+  {% for room in flat %}
     <div class="col-md-6">
-      <div class="card mb-3" style="margin: 20px; border: none;">
-        <a href="{{ url }}">
-          <img src="{{ room.image.url }}" class="img-fluid card-img-customp" alt="..." style="border-radius: 10px;">
-        </a>
-        <div class="card-body pb-1">
-          <h5 class="card-title letra mb-1" style="font-weight: 600;">{{ room }}</h5>
-          <p class="letra text-muted small mb-3" style="margin-top: -2px;">Madrid, España</p>
+      <a href="{% url 'hotel:flat' room.id %}" class="flat-card">
+
+        <div class="flat-image-wrap">
+          <img src="{{ room.image3.url }}" alt="{{ room }}" class="flat-image">
         </div>
-        <div class="row px-3 text-muted" style="font-size: 0.9rem;">
-          {% if aire_acondicionado %}
-            <div class="col-6 mb-2"><i class="fas fa-wind me-2"></i>Aire acondicionado</div>
-          {% endif %}
-          <div class="col-6 mb-2"><i class="fas fa-user-group me-2"></i>Capacidad: {{ room.capacity }} personas</div>
-          {% if room.doble_bed %}
-            <div class="col-6 mb-2"><i class="fas fa-bed me-2"></i>Si</div>
-          {% else %}
-            <div class="col-6 mb-2"><i class="fas fa-bed me-2"></i>No</div>
-          {% endif %}
-          <div class="col-6 mb-2"><i class="fas fa-bed me-2"></i>{{ room.bed }} camas</div>
-          <div class="col-6 mb-2"><i class="fas fa-tv me-2"></i>Televisión</div>
-          <div class="col-6 mb-2"><i class="fas fa-umbrella-beach me-2"></i>Terraza</div>
+
+        <div class="flat-info">
+          <div class="flat-title-row">
+            <h3>{{ room }}</h3>
+
+            {% if room.tipo_alquiler == "habitaciones" %}
+                <span class="rental-badge rental-rooms">Por habitaciones</span>
+            {% else %}
+                <span class="rental-badge rental-full">Piso completo</span>
+            {% endif %}
+          </div>
+
+          <div class="flat-features">
+            <span><i class="fas fa-user-group"></i>{{ room.capacity }} personas</span>
+            <span><i class="fas fa-bed"></i>{{ room.bed }} camas</span>
+
+            {% if room.doble_bed %}
+              <span><i class="fas fa-bed"></i>Cama doble</span>
+            {% endif %}
+
+            <span><i class="fas fa-tv"></i>TV</span>
+            <span><i class="fas fa-umbrella-beach"></i>Terraza</span>
+
+            {% if room.aire_acondicionado %}
+              <span><i class="fas fa-wind"></i>Aire acondicionado</span>
+            {% endif %}
+          </div>
+
+          <div class="flat-cta">Descubrir propiedad</div>
         </div>
-        <div class="card-body pt-2">
-          <p class="card-text letra">{{ room2 }}</p>
-        </div>
-      </div>
+
+      </a>
     </div>
   {% endfor %}
+</div>
+</section>
+<!-- Card fija del proyecto -->
 
-  <!-- Card fija del proyecto -->
-  <div class="col-md-6">
-    <div class="card mb-3" style="margin: 20px; border: none;">
-      <a href="">
-        <img src="{% static 'hotel/img/logo-hp2.png' %}" class="img-fluid card-img-customp" alt="..." style="border-radius: 20px;">
-      </a>
-      <div class="card-body">
-        <h5 class="card-title letra"><strong>Hummingbird Project</strong></h5>
-        <p class="card-text letra"></p>
+<section class="investment-section">
+<div class="row flats-grid">
+    <div class="col-md-6">
+        <a href="" class="investment-card">
+
+            <div class="investment-top"></div>
+
+            <div class="investment-image-wrap">
+                <img src="{% static 'hotel/img/logo-hp23.png' %}"
+                     alt="Hummingbird Project"
+                     class="investment-image">
+            </div>
+
+            <div class="investment-info">
+
+                <span class="investment-tag">
+                    PRIVATE REAL ESTATE
+                </span>
+
+                <h3>Hummingbird</h3>
+
+                <p>
+                    Capital privado para invertir en activos inmobiliarios
+                    de alta calidad.
+                </p>
+
+                <p>
+                    Construimos patrimonio a largo plazo mediante proyectos
+                    cuidadosamente seleccionados.
+                </p>
+
+                <div class="hummingbird-btn">
+                    Más información →
+                </div>
+
+            </div>
+
+        </a>
+    </div>
+</div>
+</section>
+
+<section class="fedora-hero">
+    <div class="fedora-image">
+        <img src="{% static 'hotel/img/fedora.jpg'%}" alt="Fedora">
+    </div>
+
+    <div class="fedora-content">
+        <span class="fedora-label">Boutique Aparthotel</span>
+
+        <h2 class="fedora-title">Fedora</h2>
+
+        <p class="fedora-text">
+            Una casa familiar reinterpretada para viajeros que buscan
+            autenticidad, calma y diseño.
+        </p>
+
+        <p class="fedora-text">
+            Situada en el corazón de Catamarca, Fedora combina
+            arquitectura tradicional, hospitalidad y una experiencia
+            cuidadosamente curada.
+        </p>
+
+        <a href="#" class="fedora-button">
+            Descubrir Fedora →
+        </a>
+    </div>
+</section>
+
+<section>
+    <div class="banner" style="background-color: #D8C3C8;">
+      <div class="letra" style="width: 80%; font-family: 'Playfair Display', serif; color: #2c2c2c;">
+
+        <!-- Título principal -->
+        <h1 style="font-size: 2.4rem; font-weight: 400; margin-bottom: 1rem;">
+          Book a stylish Room "long term" in Madrid
+        </h1>
+
+        <!-- Subtítulo -->
+        <h6 style="font-size: 1.1rem; font-weight: 400; margin-bottom: 1rem;">
+          Hermosas habitaciones completamente equipadas e independientes en alquiler
+        </h6>
+
+        <!-- Precio en dorado -->
+        <h6 style="font-size: 1.3rem; color: #c1a867; font-weight: bold;">
+          Desde 550 Euros/mes
+        </h6>
+
       </div>
     </div>
-  </div>
-</div>
+
+</section>
 
 
 
-<div class="banner" style="background-color: #E8E9EA;">
-  <div class="letra" style="width: 80%; font-family: 'Playfair Display', serif; color: #2c2c2c;">
-
-    <!-- Título principal -->
-    <h1 style="font-size: 2.4rem; font-weight: 400; margin-bottom: 1rem;">
-      Book a stylish Room "long term" in Madrid
-    </h1>
-
-
-
-
-    <!-- Subtítulo -->
-    <h6 style="font-size: 1.1rem; font-weight: 400; margin-bottom: 1rem;">
-      Hermosas habitaciones completamente equipadas e independientes en alquiler
-    </h6>
-
-    <!-- Precio en dorado -->
-    <h6 style="font-size: 1.3rem; color: #c1a867; font-weight: bold;">
-      Desde 550 Euros/mes
-    </h6>
-
-  </div>
-</div>
-
-
-
-<div class="scroll-cards-wrapper d-flex flex-row overflow-auto px-3 py-4">
+<section>
+    <div class="scroll-cards-wrapper habitaciones-seccion " style="">
   {% for habitacion in habitaciones %}
     <div class="scroll-card card mx-2 shadow-sm" style="width: 350px; border: none; background: #f7f7f7; border-radius: 12px; overflow: hidden;">
-      <a href="#">
+      <a href="{% url 'hotel:habitaciones' habitacion.id %}">
         <img src="{{ habitacion.image.url }}" class="img-fluid card-img-top" alt="Imagen de habitación" style="height: 200px; object-fit: cover;">
       </a>
-        {% if not habitacion.rented %}
-          <div class="badge-alquilada">Alquilada</div>
-        {% endif %}
+         <div class="collection-badge">
+        Colección {{ habitacion.propiedad.nombre }}
+        </div>
 
       <div class="card-body px-3 py-3 d-flex flex-column justify-content-between" style="height: 100%;">
         <div>
-          <h5 class="card-title mb-1"><strong>{{ habitacion.nombre }}</strong></h5>
+
+            <div class="flat-title-row">
+                <h5 class="card-title mb-1"><strong>{{ habitacion.nombre }}</strong></h5>
+                {% if habitacion.disponible %}
+                <span class="rental-badge rental-rooms">Disponible</span>
+                {% endif %}
+            </div>
+
           <h6 class="text-muted mb-3" style="font-size: 0.9rem;">
             <i class="fas fa-map-marker-alt me-1"></i> Madrid, España
           </h6>
 
-          <div class="row gx-2 gy-1 text-muted mb-3" style="background:#EFEFEF; border-radius: 6px; font-size: 0.85rem; padding: 10px;">
+          <div class="row  text-muted " style="background:#EFEFEF; border-radius: 6px; font-size: 0.85rem; padding: 10px;">
             <div class="col-6"><i class="fas fa-users me-1"></i>{{ habitacion.capacity }}</div>
             <div class="col-6"><i class="fas fa-bed me-1"></i>{{ habitacion.get_bed_display }}</div>
             <div class="col-6"><i class="fas fa-wind me-1"></i>{% if habitacion.aire_acondicionado %}Sí{% else %}No{% endif %}</div>
@@ -150,20 +220,37 @@
         </div>
 
 
-        <div class="pt-2 border-top" style="font-weight: 600; font-size: 1rem;">
-          <span style="color: #7C6F64;">Desde: </span>
-          <span style="color: #000; font-size: 1.2rem;"><strong>{{ habitacion.price }} €</strong></span>
-          <span style="color: #7C6F64;">mensuales</span>{{ habitacion.price|default:"---" }}
 
+        <div class="price-row" style=";">
+            {% if habitacion.disponible %}
+
+            <div class="price-block">
+                <div class="precio" style="">{{ habitacion.precio }}€ mes</div>
+                <div class="price-label">por mes</div>
+            </div>
+            <a href="https://wa.me/34639446142?text=Hola,%20me%20gustar%C3%ADa%20recibir%20informaci%C3%B3n {{ habitacion.propiedad }} {{ habitacion.nombre }}"
+               class="contact-chip"
+               target="_blank">
+                <i class="fa-brands fa-whatsapp"></i>
+            </a>
+            {% else %}
+
+          <div class="badge-alquilada">Alquilada</div>
+
+            {% endif %}
         </div>
       </div>
+        </div>
+      {% endfor %}
     </div>
-  {% endfor %}
-</div>
+</section>
+
 
 
 
 {% endblock %}
+
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 

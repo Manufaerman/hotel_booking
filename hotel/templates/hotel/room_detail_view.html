@@ -101,10 +101,10 @@
 
     <!-- BLOQUE FINAL DESCRIPCIÓN
 <section class="max-w-4xl mx-auto px-6 sm:px-12 py-16">
-  {% if room.price %}
+  {% if room.precio %}
   <div class="mt-8 text-center">
     <p class="text-xl sm:text-2xl font-semibold text-gray-800 tracking-wide">
-      Desde {{ room.price }} Euros/mes
+      Desde {{ room.precio }} Euros/mes
     </p>
   </div>
   {% endif %}
@@ -335,7 +335,7 @@
 
           <p class="card-text mb-3" style="font-size: 0.92rem;">{{ habitacion.subtitle }}</p>
         </div>
-        {% if habitacion.rented %}
+        {% if not habitacion.rented %}
           <div class="badge-alquilada">Alquilada</div>
         {% endif %}
 

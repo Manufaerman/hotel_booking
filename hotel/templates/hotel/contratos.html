@@ -1,0 +1,87 @@
+{% extends 'base_dashboard.html' %}
+{% load static %}
+{% block extra-head %}
+<link rel="stylesheet" href="{% static 'hotel/css/contratos.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="contracts-header">
+
+    <div>
+        <p class="section-tag">GESTIÓN</p>
+
+        <h1>Contratos</h1>
+
+        <p class="section-description">
+            Gestiona los contratos activos de todas las propiedades de By Colección.
+        </p>
+    </div>
+
+    <a href="{% url 'hotel:newcontract' %}" class="new-contract-btn">
+        <i class="fa fa-plus"></i>
+        Nuevo contrato
+    </a>
+
+</div>
+
+<div class="contracts">
+
+{% if contratos %}
+    {% for contrato in contratos %}
+        {% if contrato.activo %}
+
+        <div class="contract-card">
+
+            <div class="contract-header">
+                <h3>{{ contrato.habitacion.propiedad }}</h3>
+
+                <span class="status">
+                    Activo
+                </span>
+            </div>
+
+            <div class="contract-info">
+
+                <div>
+                    <small>Inquilino</small>
+                    <p>{{ contrato.inquilino }}</p>
+                </div>
+
+                <div>
+                    <small>Habitación</small>
+                    <p>{{ contrato.habitacion }}</p>
+                </div>
+
+                <div>
+                    <small>Precio</small>
+                    <p>{{ contrato.precio_mensual }} €/mes</p>
+                </div>
+
+            </div>
+
+            <div class="contract-actions">
+
+                <a href="{% url 'hotel:modificar_contrato' contrato.id %}" class="btn-edit">
+                    Modificar
+                </a>
+
+                <form method="post" action="{% url 'hotel:finalizar_contrato' contrato.id %}">
+                    {% csrf_token %}
+                    <button class="btn-finish" type="submit">
+                        Finalizar
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,139 @@
+{% extends 'base_dashboard.html' %}
+{% load static %}
+
+{% block extra-head %}
+<link rel="stylesheet" href="{% static 'hotel/css/habitaciones_dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="habitaciones-container">
+
+</div>
+    <div class="titulo">
+        <h1>Estado de habitaciones</h1>
+        <p>Resumen de ocupación y contratos.</p>
+    </div>
+    <div class="resumen-habitaciones">
+
+    <div class="resumen-card">
+    <span>Habitaciones totales</span>
+    <strong>{{ total_habitaciones }}</strong>
+  </div>
+
+  <div class="resumen-card">
+    <span>Habitaciones ocupadas</span>
+    <strong>{{ ocupadas }}</strong>
+  </div>
+
+  <div class="resumen-card">
+    <span>Ingresos actuales</span>
+    <strong>{{ ingresos_actuales }} €</strong>
+  </div>
+
+  <div class="resumen-card">
+    <span>Habitaciones libres</span>
+    <strong>{{ libres }}</strong>
+  </div>
+
+  <div class="resumen-card alerta">
+    <span>Dinero no entrando</span>
+    <strong>{{ dinero_no_entrando }} €</strong>
+  </div>
+
+</div>
+
+<div class="ranking-card">
+  <h2>Resumen por propiedad</h2>
+
+  {% for propiedad in resumen_propiedades %}
+    <div class="ranking-row">
+      <span>{{ propiedad.nombre }}</span>
+      <strong>
+        {{ propiedad.ocupadas }} ocupadas /
+        {{ propiedad.libres }} libres /
+        {{ propiedad.total_habitaciones }} total
+      </strong>
+    </div>
+  {% endfor %}
+</div>
+    {% for habitacion in habitaciones %}
+
+    <div class="habitacion-card">
+
+        <div class="cabecera">
+
+            <div>
+                <h2>{{ habitacion.nombre }}</h2>
+                <span>{{ habitacion.propiedad }}</span>
+            </div>
+
+            {% if habitacion.rented %}
+                <span class="badge ocupada">Ocupada</span>
+            {% else %}
+                <span class="badge libre">Libre</span>
+            {% endif %}
+
+        </div>
+
+        <div class="contenido">
+
+            <div class="dato">
+                <span>Precio</span>
+                <strong>{{ habitacion.precio }} €</strong>
+            </div>
+
+            <div class="dato">
+                <span>Capacidad</span>
+                <strong>{{ habitacion.capacity }}</strong>
+            </div>
+
+            <div class="dato">
+                <span>Contrato</span>
+
+                {% if habitacion.contratos.last %}
+                    {% if habitacion.contratos.last.activo %}
+                        <strong class="verde">Activo</strong>
+                    {% else %}
+                        <strong class="naranja">Finalizado</strong>
+                    {% endif %}
+                {% else %}
+                    <strong class="rojo">Sin contrato</strong>
+                {% endif %}
+
+            </div>
+
+            {% if habitacion.contratos.last %}
+            <div class="dato">
+                <span>Inquilino</span>
+                <strong>{{ habitacion.contratos.last.inquilino }}</strong>
+            </div>
+
+            <div class="dato">
+                <span>Finaliza</span>
+                <strong>{{ habitacion.contratos.last.fecha_fin }}</strong>
+            </div>
+            {% endif %}
+
+        </div>
+
+        <div class="acciones">
+
+            {% if habitacion.contratos.last %}
+                <a href="{% url 'hotel:modificar_contrato' habitacion.contratos.last.id %}" class="btn">
+                    Ver contrato
+                </a>
+            {% else %}
+                <a href="{% url 'hotel:newcontract' %}" class="btn">
+                    Crear contrato
+                </a>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% endblock %}

@@ -8,90 +8,199 @@
 {% endblock %}
 
 {% block content %}
-<body>
+
+<section class="dashboard-section">
+
+    <div class="dashboard-header">
+        <div>
+            <span class="dashboard-kicker">Panel de gestión</span>
+            <h1>Dashboard By Colección</h1>
+            <p>Resumen mensual de ocupación, ingresos, gastos y contratos.</p>
+        </div>
+
+        <div class="dashboard-date">
+            <span>Mes actual</span>
+            <strong>{{ mes_actual }}</strong>
+        </div>
+    </div>
+
+    <div class="dashboard-kpis">
+
+        <div class="kpi-card">
+            <div class="kpi-icon">
+                <i class="fa fa-eur"></i>
+            </div>
+            <div>
+                <span>Facturación mensual</span>
+                <h2>{{ beneficio_mes }} €</h2>
+                <p>Total generado este mes</p>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon">
+                <i class="fa fa-bed"></i>
+            </div>
+            <div>
+                <span>Ocupación actual</span>
+                <h2>{{ ocupadas }}/{{ habitaciones_totales }}</h2>
+                <p>{{ porcentaje_ocupacion }}% ocupadas</p>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon">
+                <i class="fa fa-line-chart"></i>
+            </div>
+            <div>
+                <span>Beneficio estimado</span>
+                <h2>{{ beneficio_mes }} €</h2>
+                <p>Ingresos menos gastos</p>
+            </div>
+        </div>
+
+        <div class="kpi-card warning">
+            <div class="kpi-icon">
+                <i class="fa fa-calendar"></i>
+            </div>
+            <div>
+                <span>Vencen pronto</span>
+                <h2>{{ contratos_por_vencer }}</h2>
+                <p>Contratos próximos a finalizar</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="dashboard-grid">
+
+        <div class="chart-card">
+            <div class="chart-header">
+                <div>
+                    <h3>Ingresos por propiedad</h3>
+                    <p>Qué inmueble genera más dinero.</p>
+                </div>
+            </div>
+            <canvas id="incomeByPropertyChart"></canvas>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-header">
+                <div>
+                    <h3>Evolución mensual</h3>
+                    <p>Facturación acumulada por mes.</p>
+                </div>
+            </div>
+            <canvas id="monthlyIncomeChart"></canvas>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-header">
+                <div>
+                    <h3>Habitaciones desocupadas</h3>
+                    <p>Días vacías por habitación.</p>
+                </div>
+            </div>
+            <canvas id="vacancyChart"></canvas>
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-header">
+                <div>
+                    <h3>Gastos por propiedad</h3>
+                    <p>Limpieza, suministros y reparaciones.</p>
+                </div>
+            </div>
+            <canvas id="expensesChart"></canvas>
+        </div>
+
+    </div>
+
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    fetch("{% url 'hotel:dashboard_chart_data' %}")
+        .then(response => response.json())
+        .then(data => {
+
+            new Chart(document.getElementById("incomeByPropertyChart"), {
+                type: "bar",
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: "Ingresos €",
+                        data: data.datos,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            new Chart(document.getElementById("monthlyIncomeChart"), {
+                type: "line",
+                data: {
+                    labels: data.labels_meses,
+                    datasets: [{
+                        label: "Facturación €",
+                        data: data.facturacion_mensual,
+                        tension: 0.35,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+
+            new Chart(document.getElementById("vacancyChart"), {
+                type: "bar",
+                data: {
+                    labels: data.habitaciones,
+                    datasets: [{
+                        label: "Días vacía",
+                        data: data.dias_vacia,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    indexAxis: "y",
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            new Chart(document.getElementById("expensesChart"), {
+                type: "doughnut",
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: "Gastos €",
+                        data: data.gastos_por_propiedad,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+
+        });
+</script>
 
 
-	<div class="barra-2">
-		<div class="hijos-2">
-			{% if bookings > bookings2023 %}
-			<div class="counter-box">
-				<i class="fa fa-thumbs-o-up" style="color:#ea496f;"></i>
-					<span class="counter">{{bookings}} Euros</span>
-						<p>bookings</p>
-					</div>
-				{% else %}
-				<div class="counter-box colored-red">
-					<i class="fa fa-thumbs-down"></i>
-						<span class="counter">{{bookings}} Euros</span>
-						<p>bookings</p>
-					</div>
-					{% endif %}
-		</div>
-
-		<div class="hijos-2">
-			<div class="counter-box">
-				<i class="fa  fa-shopping-cart"></i>
-				<span class="counter">{{bookings2023}}</span>
-				<p>2023</p>
-			</div>
-		</div>
-		<div class="hijos-2">
-			<div class="counter-box">
-				<i class="fa fa-group"></i>
-				<span class="counter">{{usuarios}}</span>
-				<p>Users</p>
-			</div>
-		</div>
-
-		<div class="hijos-2">
-			<div class="counter-box">
-				<i class="fa  fa-user"></i>
-				<span class="counter">{{cleanings}} Euros</span>
-				<p>Cleanings</p>
-			</div>
-		</div>
-
-</div>
-
-
-
-
-<div class="barra-3">
-		<div class="hijos">
-			<canvas id="myChart"></canvas>
-		</div>
-		<div class="hijos">
-			<canvas id="myChart2"></canvas>
-		</div>
-		<div class="hijos">
-			<canvas id="myChart4"></canvas>
-		</div>
-
-		<div class="hijos">
-			<canvas id="myChart3"></canvas>
-		</div>
-</div>
-
-
-
-
-
-
-
-	<div class="" style="width:100%;">
-		<div class="list-group" style="width:100%;">
-		{% for book in room %}
-
-		  <a href="{{book.get_absolute_url}}" class="list-group-item list-group-item-action"> {{book.name}}</a>
-
-		{% endfor%}
-		</div>
-	</div>
-
-
-
-
-</body>
 <!-- this is for Jquery-->
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <!-- this is for CHARTS JS-->

@@ -4,9 +4,8 @@ from django.urls import path, include
 from .views import register, contact, ChangeUsername, \
     profile, clients, thanks, login, editar_perfil
 
-app_name = 'user_profile'
+
 urlpatterns = [
-    path('accounts/', include('allauth.urls')),
     path('contact/', contact, name='contact'),
     path('clients/', clients, name='clients'),
     path('profile/', profile, name='profile'),

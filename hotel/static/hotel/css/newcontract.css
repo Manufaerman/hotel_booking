@@ -1,0 +1,100 @@
+.contract-page {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 35px;
+    color: #2F2A26;
+}
+
+.contract-header {
+    margin-bottom: 25px;
+}
+
+.contract-header p {
+    margin: 0;
+    color: #C8A96B;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
+}
+
+.contract-header h1 {
+    color: #6B3140;
+    font-size: 34px;
+    margin-top: 8px;
+}
+
+.property-card,
+.form-card {
+    background: #F7F4EE;
+    border: 1px solid rgba(107, 49, 64, 0.18);
+    border-radius: 18px;
+    padding: 26px;
+    margin-bottom: 24px;
+    box-shadow: 0 10px 28px rgba(107, 49, 64, 0.08);
+}
+
+.form-card h2 {
+    color: #6B3140;
+    font-size: 22px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(200, 169, 107, 0.45);
+    padding-bottom: 10px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+}
+
+.form-group label,
+.property-card label {
+    display: block;
+    color: #6B3140;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group select,
+.property-card select {
+    width: 100%;
+    height: 45px;
+    border: 1px solid rgba(107, 49, 64, 0.25);
+    border-radius: 12px;
+    background: #FFFCF8;
+    color: #2F2A26;
+    padding: 0 14px;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.property-card select:focus {
+    outline: none;
+    border-color: #6B3140;
+    box-shadow: 0 0 0 4px rgba(107, 49, 64, 0.12);
+}
+
+.btn-save {
+    background: #6B3140;
+    color: #F7F4EE;
+    border: none;
+    border-radius: 999px;
+    padding: 14px 28px;
+    font-weight: 700;
+    box-shadow: 0 8px 20px rgba(107, 49, 64, 0.22);
+}
+
+.btn-save:hover {
+    background: #7E3B4C;
+}
+
+@media (max-width: 768px) {
+    .contract-page {
+        padding: 22px 12px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}

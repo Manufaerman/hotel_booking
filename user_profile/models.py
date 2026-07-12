@@ -6,13 +6,13 @@ from django.dispatch import receiver
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True,)
-    phone = models.IntegerField(blank=True, null=True)
+    telefono = models.IntegerField(blank=True, null=True)
     dni = models.IntegerField(blank=True, null=True)
-    address = models.CharField(blank=True, max_length=150, null=True)
+    direccion = models.CharField(blank=True, max_length=150, null=True)
     cp = models.IntegerField(blank=True, null=True)
-    city = models.CharField(blank=True, max_length=150, null=True)
-    country = models.CharField(blank=True, max_length=150, null=True)
-    birthday = models.DateField(blank=True,null=True)
+    ciudad = models.CharField(blank=True, max_length=150, null=True)
+    pais = models.CharField(blank=True, max_length=150, null=True)
+    cumpleaños = models.DateField(blank=True,null=True)
 
 
 

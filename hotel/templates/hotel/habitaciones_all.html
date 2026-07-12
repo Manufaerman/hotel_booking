@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra-head %}
+<link rel="stylesheet" href="{% static 'hotel/css/habitaciones_all.css'%}">
+{% block description %}
+Explora las colecciones de By Collection y encuentra habitaciones premium en Madrid con espacios cuidadosamente diseñados para una estancia cómoda y tranquila.
+{% endblock %}
+
+<section class="collection collection-tolima">
+  <div class="collection-header">
+    <span>Colección</span>
+    <h2>Tolima</h2>
+  </div>
+
+  <div class="rooms-scroll">
+    {% for habitacion in habitaciones_tolima %}
+      {% include "hotel/components/habitacion_card.html" %}
+    {% endfor %}
+  </div>
+</section>
+
+<section class="collection collection-barichara">
+  <div class="collection-header">
+    <span>Colección</span>
+    <h2>Barichara</h2>
+  </div>
+
+  <div class="rooms-scroll">
+    {% for habitacion in habitaciones_barichara %}
+      {% include "hotel/components/habitacion_card.html" %}
+    {% endfor %}
+  </div>
+</section>
+
+<section class="collection collection-haro">
+  <div class="collection-header">
+    <span>Colección</span>
+    <h2>Haro</h2>
+  </div>
+
+  <div class="rooms-scroll">
+    {% for habitacion in habitaciones_haro %}
+      {% include "hotel/components/habitacion_card.html" %}
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

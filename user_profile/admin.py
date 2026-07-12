@@ -4,7 +4,7 @@ from .models import UserProfile
 
 
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ['user', 'phone']
+    list_display = ['user', 'telefono']
 
 
 admin.site.register(UserProfile, UserProfileAdmin)

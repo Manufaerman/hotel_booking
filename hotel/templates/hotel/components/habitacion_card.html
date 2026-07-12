@@ -1,0 +1,89 @@
+
+
+
+        <div class="scroll-card card mx-2 shadow-sm" style="width: 350px; border: none; background: #f7f7f7; border-radius: 12px; overflow: hidden;">
+          <a href="{% url 'hotel:habitaciones' habitacion.id %}">
+            <img src="{{ habitacion.image.url }}" class="img-fluid card-img-top" alt="Imagen de habitación" style="height: 200px; object-fit: cover;">
+          </a>
+             <div class="collection-badge">
+            Colección {{ habitacion.propiedad.nombre }}
+            </div>
+            {% if habitacion.bathroom == "ONE" %}
+            <div class="suite-crown" title="Baño en suite">
+                <i class="fas fa-crown"></i>
+            </div>
+            {% endif %}
+
+          <div class="card-body px-3 py-3 d-flex flex-column justify-content-between" style="height: 100%;">
+            <div>
+                <div class="flat-title-row">
+
+                    <div class="flat-title-info">
+                        <h5 class="card-title mb-1">
+                            {{ habitacion.nombre }}
+                        </h5>
+
+                        <div class="room-location">
+                            <i class="fas fa-map-marker-alt me-1"></i> Madrid, España
+                        </div>
+
+
+                    </div>
+
+                    {% if habitacion.disponible %}
+                        <span class="rental-badge rental-rooms">Disponible</span>
+                    {% else %}
+                        <span class="rental-badge rental-rented">Alquilada</span>
+                    {% endif %}
+
+                </div>
+
+
+              <div class="row gx-2 gy-1 text-muted mb-3" style="background:#EFEFEF; border-radius: 6px; font-size: 0.85rem; padding: 10px;">
+                <div class="suite-badge"><i class="fas fa-tv me-1"></i>Televisión</div>
+                <div class="suite-badge"><i class="fas fa-umbrella-beach me-1"></i>{% if habitacion.terrace %}Terraza: Sí{% else %}Terraza: No{% endif %}</div>
+                <div class="amenity-item"><i class="fas fa-users me-1"></i>{{ habitacion.capacity }}</div>
+                <div class="amenity-item"><i class="fas fa-bed me-1"></i>{{ habitacion.get_bed_display }}</div>
+
+                {% if habitacion.aire_acondicionado %}
+                    <span class="suite-badge air-badge">
+                        <i class="fas fa-snowflake"></i> Aire acondicionado
+                    </span>
+                {% endif %}
+
+                <div class="amenity-item"><i class="fas fa-tv me-1"></i>Televisión</div>
+                <div class="amenity-item">
+                    <i class="fas fa-umbrella-beach me-1"></i>
+                    {% if habitacion.terrace %}Terraza{% else %}Sin terraza{% endif %}
+                </div>
+
+                {% if habitacion.bathroom == "ONE" %}
+                    <span class="suite-badge suite-bath-badge">
+                        <i class="fas fa-crown"></i> Baño en suite
+                    </span>
+                {% endif %}
+              </div>
+
+              <p class="card-text mb-3" style="font-size: 0.92rem;">{{ habitacion.subtitle }}</p>
+            </div>
+
+
+            <div class="price-row" style="">
+                {% if habitacion.disponible %}
+                <div class="price-block">
+                    <div class="precio" style="">{{ habitacion.precio }}€</div>
+                    <div class="price-label">por mes</div>
+                </div>
+                <a href="https://wa.me/34639446142?text=Hola,%20me%20gustar%C3%ADa%20recibir%20informaci%C3%B3n {{ habitacion.propiedad }} {{ habitacion.nombre }}"
+                   class="contact-chip"
+                   target="blank">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </a>
+
+
+                {% endif %}
+            </div>
+          </div>
+        </div>
+
+
