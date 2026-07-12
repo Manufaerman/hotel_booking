@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'django_extensions',
     'user_profile',
     'user_profile.apps',
-    'invoice',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
