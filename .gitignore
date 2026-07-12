@@ -174,3 +174,15 @@ poetry.toml
 pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python
+# Archivos subidos por usuarios
+media/
+
+# Archivos generados por collectstatic
+staticfiles/
+
+# Entorno virtual del servidor
+virtual/
+
+# Archivos del sistema y del IDE
+.DS_Store
+.idea/
