@@ -16,40 +16,41 @@ Descubre {{ piso.nombre }}, una propiedad exclusiva de By Collection en Madrid, 
 {% endblock %}
 {% block content %}
 <section class="flat-intro-nav">
-    <div class="flat-main">
-        <p class="eyebrow">Colección {{piso.nombre}}</p>
-        <h1>Descubre {{piso.nombre}}</h1>
-        <p class="flat-intro-text">
-            Un piso diseñado para vivir Madrid con calma: tres habitaciones privadas, disponibles para alquiler individual
-            con cocina equipada, terraza y espacios pensados para estancias cómodas.
-        </p>
+    <div class="flat-hero-content">
+        <div class="flat-main">
+            <p class="eyebrow">Colección {{piso.nombre}}</p>
+            <h1>Descubre {{piso.nombre}}</h1>
+            <p class="flat-intro-text">
+                Un piso diseñado para vivir Madrid con calma: tres habitaciones privadas, disponibles para alquiler individual
+                con cocina equipada, terraza y espacios pensados para estancias cómodas.
+            </p>
 
-        <nav class="flat-anchor-nav">
-            <a href="#habitaciones"> Explorar habitaciones </a>
-            <a href="#cocina">Cocina</a>
-             <a href="#bano">Baño</a>
-            <a href="#terraza">Terraza</a>
-            <a href="#plano">Plano</a>
-            <a href="#ubicacion">Ubicación</a>
-        </nav>
+            <nav class="flat-anchor-nav">
+                <a href="#habitaciones"> Explorar habitaciones </a>
+                <a href="#cocina">Cocina</a>
+                 <a href="#bano">Baño</a>
+                <a href="#terraza">Terraza</a>
+                <a href="#plano">Plano</a>
+                <a href="#ubicacion">Ubicación</a>
+            </nav>
 
+        </div>
+
+
+        <a href="#habitaciones" class="availability-card">
+            <div class="availability-label">
+                Disponibilidad
+            </div>
+
+            <div class="availability-count">
+                {{habitaciones_disponibles}}
+            </div>
+
+            <div class="availability-text">
+                habitaciones disponibles
+            </div>
+        </a>
     </div>
-
-
-    <a href="#habitaciones" class="availability-card">
-        <div class="availability-label">
-            Disponibilidad
-        </div>
-
-        <div class="availability-count">
-            {{habitaciones_disponibles}}
-        </div>
-
-        <div class="availability-text">
-            habitaciones disponibles
-        </div>
-    </a>
-
 </section>
 
 <div class="container">
@@ -66,9 +67,16 @@ Descubre {{ piso.nombre }}, una propiedad exclusiva de By Collection en Madrid, 
     <div class="carousel-item">
       <img src="{{ piso.image4.url }}" class="img-fluid" alt="...">
     </div>
+      {% if piso.image5 %}
     <div class="carousel-item">
       <img src="{{ piso.image5.url }}" class="img-fluid" alt="...">
     </div>
+      {% endif %}
+    {% if piso.image6 %}
+    <div class="carousel-item">
+      <img src="{{ piso.image6.url }}" class="img-fluid" alt="...">
+    </div>
+      {% endif %}
   </div>
   <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -81,7 +89,7 @@ Descubre {{ piso.nombre }}, una propiedad exclusiva de By Collection en Madrid, 
 </div>
 </div>
   <div class="container ">
-    <h2 class="big-letra" style="margin-top:20px;">{{piso.name}}</h2>
+    <h2 class="big-letra" style="margin-top:20px;">{{piso.nombre}}</h2>
     <h4 class="letra midium-letra">{{piso.subtitle}}</h4>
     <div class="cajon">
       <div class="sub-cajon">
@@ -110,14 +118,17 @@ Descubre {{ piso.nombre }}, una propiedad exclusiva de By Collection en Madrid, 
        </div>
       {% endif %}
     </div>
-    <div class="descripcion-piso">
-      <p class="letra"> {{piso.description}}</p>
-    </div>
-
   </div>
 
-<!--
--->
+<section class="descripcion-piso">
+    <span class="section-label">La vivienda</span>
+
+    <h2>Un hogar tranquilo para disfrutar de tu espacio</h2>
+
+    <div class="letra">
+        {{ piso.description|linebreaks }}
+    </div>
+</section>
 
 <section class="rooms-section" style="" id="habitaciones">
     <div class="container">
@@ -127,10 +138,10 @@ Descubre {{ piso.nombre }}, una propiedad exclusiva de By Collection en Madrid, 
                 Explora las habitaciones de
             </span>
 
-            <h2>Tolima</h2>
+            <h2>{{piso.nombre}}</h2>
 
             <p>
-                Dos habitaciones simples y una doble, completamente equipadas.
+                Todas nuestras habitaciones están equipadas para que solo lleves contigo lo puesto.
             </p>
         </div>
 

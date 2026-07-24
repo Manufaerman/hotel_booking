@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm 1.8cm;
+
+            @bottom-center {
+                content: "Página " counter(page) " de " counter(pages);
+                font-size: 8pt;
+                color: #777;
+            }
+        }
+
+        *{
+            box-sizing:border-box;
+        }
+
+        body{
+            margin:0;
+            font-family:Arial, Helvetica, sans-serif;
+            font-size:10pt;
+            line-height:1.6;
+            color:#3F343A;
+        }
+
+        h1,h2,h3,p{
+            margin-top:0;
+        }
+
+        .cabecera{
+            border-bottom:3px solid #C8A96B;
+            margin-bottom:30px;
+            padding-bottom:15px;
+        }
+
+        .marca{
+            color:#6B3140;
+            font-size:9pt;
+            font-weight:bold;
+            letter-spacing:2px;
+            text-transform:uppercase;
+            margin-bottom:8px;
+        }
+
+        .titulo{
+            text-align:center;
+            color:#6B3140;
+            font-size:20pt;
+            margin:0;
+            text-transform:uppercase;
+        }
+
+        .subtitulo{
+            text-align:center;
+            color:#7B6B71;
+            margin-top:8px;
+            font-size:9pt;
+        }
+
+        .fecha{
+            text-align:right;
+            margin-bottom:25px;
+        }
+
+        .clausula{
+            margin-bottom:22px;
+            text-align:justify;
+            page-break-inside:avoid;
+        }
+
+        .clausula h2{
+            color:#6B3140;
+            font-size:12pt;
+            border-bottom:2px solid #C8A96B;
+            padding-bottom:5px;
+            margin-bottom:12px;
+            text-transform:uppercase;
+        }
+
+        .clausula p{
+            margin-bottom:8px;
+        }
+
+        ul{
+            margin:8px 0 12px 24px;
+        }
+
+        li{
+            margin-bottom:5px;
+        }
+
+        .datos{
+            width:100%;
+            border-collapse:collapse;
+            margin-top:10px;
+        }
+
+        .datos td{
+            border:1px solid #DDD;
+            padding:8px;
+        }
+
+        .datos td:first-child{
+            width:30%;
+            background:#F7F4EE;
+            font-weight:bold;
+            color:#6B3140;
+        }
+
+        .inventario{
+            margin-top:15px;
+            background:#F7F4EE;
+            border-left:5px solid #C8A96B;
+            border-radius:6px;
+            padding:15px;
+        }
+
+        .inventario h3{
+            margin-bottom:10px;
+            color:#6B3140;
+        }
+
+        .firmas{
+            width:100%;
+            margin-top:60px;
+            border-collapse:collapse;
+        }
+
+        .firmas td{
+            width:50%;
+            text-align:center;
+            vertical-align:top;
+            padding:0 20px;
+        }
+
+        .linea{
+            border-top:1px solid black;
+            margin:60px auto 10px;
+            width:80%;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<header class="cabecera">
+
+    <div class="marca">
+        BY COLLECTION · MACRABBIT S.L.U.
+    </div>
+
+    <h1 class="titulo">
+        CONTRATO DE ARRENDAMIENTO DE HABITACIÓN
+    </h1>
+
+    <div class="subtitulo">
+        Documento privado de arrendamiento de habitación
+    </div>
+
+</header>
+
+<p class="fecha">
+    Madrid, {{ dia|date:"d/m/Y" }}
+</p>
+
+<section class="clausula">
+
+    <h2>REUNIDOS</h2>
+
+    <p>
+        Don Manuel Acosta Faerman, mayor de edad, de nacionalidad española,
+        con domicilio en C/ Lorca 1 y DNI nº 06002387-P, actuando en su propio
+        nombre y en representación de MACRABBIT, S.L.U.
+        (en adelante, el <strong>Propietario</strong>).
+    </p>
+
+    <p>
+        Y de otra parte,
+        doña <strong>{{ contrato.inquilino.nombre }}</strong>,
+        mayor de edad,
+        de nacionalidad {{ contrato.inquilino.nacionalidad }},
+        con domicilio en
+        {{ contrato.inquilino.direccion }},
+        y DNI nº {{ contrato.inquilino.dni }},
+        cuya copia queda incorporada como anexo al presente contrato.
+
+        Actúa en su propio nombre y representación
+        (en adelante, el <strong>Inquilino</strong>).
+    </p>
+
+    <p>
+        Ambas partes se reconocen capacidad legal suficiente para contratar y
+        obligarse, acordando formalizar el presente
+        <strong>Contrato de Arrendamiento de Habitación</strong>.
+    </p>
+
+</section>
+
+<section class="clausula">
+
+    <h2>EXPONEN</h2>
+
+    <p>
+        <strong>1.º</strong>
+        Que el Propietario es titular de la vivienda situada en
+        {{ contrato.habitacion.propiedad.direccion }},
+        {{ contrato.habitacion.propiedad.descripcion_contrato }}.
+    </p>
+
+    <p>
+        La habitación objeto del presente contrato se identifica como
+        <strong>{{ contrato.habitacion.nombre }}</strong>,
+        reuniendo las condiciones necesarias de habitabilidad y conservación.
+    </p>
+
+    <p>
+        En adelante, la habitación será denominada
+        <strong>"Habitación"</strong>,
+        y conjuntamente con las zonas comunes,
+        el <strong>"Inmueble"</strong>.
+    </p>
+
+    <p>
+        <strong>2.º</strong>
+        El Inquilino manifiesta su interés en arrendar la Habitación
+        para destinarla exclusivamente a vivienda habitual,
+        compartiendo las zonas comunes del Inmueble.
+    </p>
+
+    <p>
+        <strong>3.º</strong>
+        Ambas partes acuerdan que el presente contrato se regirá
+        por el Código Civil y por las cláusulas que se desarrollan
+        a continuación.
+    </p>
+
+</section>
+
+<section class="clausula">
+
+    <h2>PRIMERA. OBJETO</h2>
+
+    <p>
+        <strong>1.1</strong>
+        El Propietario arrienda al Inquilino la Habitación junto con
+        el uso compartido de las zonas comunes.
+    </p>
+
+    <p>
+        <strong>1.2</strong>
+        El Inquilino destinará exclusivamente la Habitación
+        a vivienda habitual.
+    </p>
+
+    <p>
+        <strong>1.3</strong>
+        Queda expresamente prohibido:
+    </p>
+
+    <ul>
+
+        <li>Cualquier uso distinto del pactado.</li>
+
+        <li>El subarrendamiento total o parcial.</li>
+
+        <li>La cesión del contrato.</li>
+
+        <li>El uso comercial del inmueble.</li>
+
+        <li>Destinar la habitación a alojamiento turístico.</li>
+
+    </ul>
+
+    <p>
+        <strong>1.4</strong>
+        La habitación únicamente podrá ser ocupada por el Inquilino.
+    </p>
+
+    <p>
+        <strong>1.5</strong>
+        El Inquilino deberá respetar las normas de convivencia del inmueble.
+    </p>
+
+    <p>
+        <strong>1.6</strong>
+        Se prohíbe fumar y tener animales sin autorización escrita del Propietario.
+    </p>
+
+</section>
+
+   <section class="clausula">
+
+    <h2>SEGUNDA. PLAZO DE VIGENCIA</h2>
+
+    <p>
+        <strong>2.1</strong>
+        El presente contrato entrará en vigor el día
+        <strong>{{ contrato.fecha_inicio|date:"d/m/Y" }}</strong>,
+        con una duración inicial obligatoria de
+        <strong>seis (6) meses</strong>.
+    </p>
+
+    <p>
+        <strong>2.2</strong>
+        Transcurrido dicho plazo mínimo, o cualquiera de sus prórrogas
+        sucesivas de tres (3) meses, cualquiera de las Partes podrá
+        desistir del contrato notificándolo por escrito con una
+        antelación mínima de treinta (30) días.
+    </p>
+
+</section>
+
+<section class="clausula">
+
+    <h2>TERCERA. DERECHO DE ACCESO DEL PROPIETARIO</h2>
+
+    <p>
+        El Inquilino permitirá el acceso del Propietario a las zonas
+        comunes y a la Habitación, previa comunicación razonable,
+        salvo en casos de urgencia o emergencia.
+    </p>
+
+    <p>
+        El incumplimiento de esta obligación podrá facultar al
+        Propietario para resolver el contrato y reclamar los daños
+        y perjuicios que correspondan.
+    </p>
+
+</section>
+
+<section class="clausula">
+
+    <h2>CUARTA. ENTREGA DE LA HABITACIÓN</h2>
+
+    <p>
+        <strong>4.1</strong>
+        El Propietario entrega la Habitación y el Inmueble en adecuadas
+        condiciones de habitabilidad, conservación y funcionamiento,
+        a satisfacción del Inquilino.
+    </p>
+
+    <p>
+        La Habitación se entrega completamente amueblada y el Inmueble
+        dispone de cocina equipada y zonas comunes aptas para su uso.
+    </p>
+
+    <p>
+        <strong>4.2</strong>
+        En este acto se entrega al Inquilino un juego completo de llaves
+        de acceso al inmueble y a la Habitación.
+    </p>
+
+</section>
+
+<section class="clausula">
+
+    <h2>QUINTA. RENTA</h2>
+
+    <p>
+
+        <strong>5.1</strong>
+
+        Ambas Partes fijan una renta mensual de
+
+        <strong>{{ contrato.precio_mensual }} €</strong>.
+
+    </p>
+
+    <p>
+
+        La renta incluye los gastos de agua, electricidad, gas e internet
+        hasta un máximo conjunto de <strong>200 € mensuales</strong>,
+        cuya gestión corresponderá al Propietario.
+
+    </p>
+
+    <p>
+
+        <strong>5.2</strong>
+
+        La falta de pago de una sola mensualidad facultará al
+        Propietario para resolver el contrato y ejercitar las acciones
+        legales oportunas.
+
+    </p>
+
+    <p>
+
+        <strong>5.3</strong>
+
+        La renta se devengará desde la fecha de entrada en vigor del
+        presente contrato.
+
+    </p>
+
+    <p>
+
+        El Inquilino entrega en este acto el importe correspondiente
+        a los días pendientes del mes en curso, sirviendo el presente
+        documento como recibo de pago.
+
+    </p>
+
+    <p>
+
+        <strong>5.4</strong>
+
+        El pago de la renta se realizará mediante transferencia bancaria
+        dentro de los cinco (5) primeros días laborables de cada mes.
+
+    </p>
+
+    <table class="datos">
+
+        <tr>
+            <td>Titular</td>
+            <td>MACRABBIT, S.L.U.</td>
+        </tr>
+
+        <tr>
+            <td>Entidad</td>
+            <td>BANKINTER</td>
+        </tr>
+
+        <tr>
+            <td>IBAN</td>
+            <td>ES92 0128 0068 1301 0003 3162</td>
+        </tr>
+
+    </table>
+
+</section>
+
+<section class="clausula">
+
+    <h2>SEXTA. GARANTÍA</h2>
+
+    <p>
+
+        <strong>6.1</strong>
+
+        El Inquilino entrega al Propietario la cantidad de
+
+        <strong>{{ contrato.fianza }} €</strong>
+
+        en concepto de garantía contractual.
+
+    </p>
+
+    <p>
+
+        El Propietario declara recibir dicha cantidad en este acto.
+
+    </p>
+
+    <p>
+
+        <strong>6.2</strong>
+
+        La garantía responderá de los posibles daños, desperfectos,
+        impagos o incumplimientos contractuales imputables al Inquilino.
+
+    </p>
+
+    <p>
+
+        La devolución de la garantía se efectuará en el plazo máximo
+        de una semana desde la finalización del contrato, previa
+        comprobación del estado de la Habitación.
+
+    </p>
+
+</section>
+
+<section class="clausula">
+
+    <h2>SÉPTIMA. SERVICIOS Y GASTOS</h2>
+
+    <p>
+
+        <strong>7.1</strong>
+
+        El Propietario asumirá los gastos ordinarios de agua,
+        electricidad, gas e internet hasta un máximo conjunto
+        de <strong>200 € mensuales</strong>.
+
+    </p>
+
+    <p>
+
+        Si dicho importe fuera superado, el exceso se repartirá
+        entre los inquilinos conforme a los siguientes porcentajes:
+
+    </p>
+
+    <ul>
+        <li><strong>SE DIVIDIRÁ A PARTES IGUALES ENTRE LAS 8 HABITACIONES</strong>.</li>
+        <!--
+        <li>Habitación doble con aire acondicionado: <strong>40 %</strong>.</li>
+
+        <li>Habitación doble: <strong>35 %</strong>.</li>
+
+        <li>Habitación individual: <strong>25 %</strong>.</li>
+        -->
+    </ul>
+
+    <p>
+
+        Si todas las habitaciones fueran dobles, el exceso se
+        dividirá a partes iguales.
+
+    </p>
+
+    <p>
+
+        <strong>7.2</strong>
+
+        Los suministros permanecerán contratados a nombre del
+        Propietario.
+
+    </p>
+
+    <p>
+
+        <strong>7.3</strong>
+
+        Los gastos de comunidad, IBI y tasas municipales serán
+        íntegramente asumidos por el Propietario.
+
+    </p>
+
+    <p>
+
+        <strong>7.4</strong>
+
+        El Propietario no responderá de las interrupciones de
+        suministro ajenas a su voluntad.
+
+    </p>
+
+</section>
+<section class="clausula">
+
+    <h2>OCTAVA. GASTOS DE REPARACIÓN Y CONSERVACIÓN</h2>
+
+    <p>
+
+        <strong>8.1</strong>
+
+        El Propietario realizará las reparaciones necesarias para
+        conservar el Inmueble en condiciones de habitabilidad,
+        salvo aquellas derivadas de daños ocasionados por
+        negligencia, mal uso o culpa del Inquilino.
+
+    </p>
+
+    <p>
+
+        El Inquilino responderá de todos los daños ocasionados
+        por él mismo o por las personas que accedan al inmueble
+        con su autorización.
+
+    </p>
+
+    <p>
+
+        <strong>8.2</strong>
+
+        El Inquilino permitirá la realización de las reparaciones
+        urgentes que no puedan demorarse hasta la finalización
+        del contrato.
+
+    </p>
+
+    <p>
+
+        <strong>8.3</strong>
+
+        Queda prohibido instalar o utilizar estufas eléctricas,
+        aparatos de aire acondicionado o cualquier otro equipo de
+        elevado consumo eléctrico que no haya sido suministrado o
+        autorizado previamente por el Propietario.
+
+    </p>
+
+    <p>
+
+        En caso de incumplimiento, el Propietario podrá exigir su
+        retirada inmediata y, si persistiera el incumplimiento,
+        resolver el contrato.
+
+    </p>
+
+</section>
+
+<section class="clausula">
+
+    <h2>NOVENA. OBRAS</h2>
+
+    <p>
+
+        <strong>9.1</strong>
+
+        El Inquilino no podrá realizar obras, instalaciones,
+        modificaciones o alteraciones en la Habitación ni en las
+        zonas comunes sin autorización previa y escrita del
+        Propietario.
+
+    </p>
+
+    <p>
+
+        En particular queda prohibido:
+
+    </p>
+
+    <ul>
+
+        <li>Instalar aparatos fijados a paredes o estructuras.</li>
+
+        <li>Realizar perforaciones en paredes, techos, azulejos o suelos.</li>
+
+        <li>Colocar cerraduras, cerrojos o sistemas de seguridad distintos a los suministrados por la propiedad.</li>
+
+        <li>Pintar, modificar o sustituir elementos del inmueble.</li>
+
+    </ul>
+
+    <p>
+
+        <strong>9.2</strong>
+
+        El incumplimiento de esta cláusula facultará al Propietario
+        para resolver el contrato y exigir la reposición inmediata
+        al estado original, así como reclamar los daños y perjuicios
+        ocasionados.
+
+    </p>
+
+</section>
+
+<section class="clausula">
+
+    <h2>DÉCIMA. DEVOLUCIÓN DE LA HABITACIÓN</h2>
+
+    <p>
+
+        <strong>10.1</strong>
+
+        Finalizado el contrato, el Inquilino deberá abandonar la
+        Habitación y entregar las llaves sin necesidad de requerimiento
+        previo.
+
+    </p>
+
+    <p>
+
+        <strong>10.2</strong>
+
+        La Habitación deberá devolverse completamente desocupada,
+        limpia y en buen estado de conservación, salvo el desgaste
+        normal producido por un uso adecuado.
+
+    </p>
+
+    <p>
+
+        <strong>10.3</strong>
+
+        El Inquilino asumirá el coste de cualquier desperfecto
+        ocasionado durante la vigencia del contrato.
+
+    </p>
+
+    <p>
+
+        <strong>10.4</strong>
+
+        El retraso en la entrega de la Habitación dará lugar a una
+        penalización equivalente al doble de la renta diaria vigente
+        por cada día de demora, sin perjuicio de las acciones legales
+        que pudieran corresponder.
+
+    </p>
+
+</section>
+
+<section class="clausula">
+
+    <h2>DECIMOPRIMERA. DERECHO DE TANTEO Y RETRACTO</h2>
+
+    <p>
+
+        El Inquilino renuncia expresamente a los derechos de tanteo
+        y retracto que pudieran corresponderle conforme a la
+        legislación vigente.
+
+    </p>
+
+</section>
+
+<section class="clausula">
+
+    <h2>DECIMOSEGUNDA. CAUSAS DE TERMINACIÓN</h2>
+
+    <p>
+
+        Además de las previstas en la legislación aplicable,
+        constituirán causas de resolución del presente contrato:
+
+    </p>
+
+    <ul>
+
+        <li>El impago de la renta o de cualquier cantidad asumida por el Inquilino.</li>
+
+        <li>La falta de entrega de la garantía pactada.</li>
+
+        <li>La realización de daños u obras no autorizadas.</li>
+
+        <li>El desarrollo de actividades molestas, peligrosas, ilícitas o insalubres.</li>
+
+        <li>El subarrendamiento o cesión no autorizados.</li>
+
+        <li>El incumplimiento de cualquiera de las obligaciones establecidas en el presente contrato.</li>
+
+    </ul>
+
+</section>
+
+<section class="clausula">
+
+    <h2>DECIMOTERCERA. PROTECCIÓN DE DATOS</h2>
+
+    <p>
+
+        <strong>13.1</strong>
+
+        Los datos personales facilitados por las Partes serán tratados
+        por el Propietario con la única finalidad de gestionar la
+        relación contractual derivada del presente contrato, de
+        conformidad con la normativa vigente en materia de protección
+        de datos.
+
+    </p>
+
+    <p>
+
+        El Inquilino podrá ejercer los derechos de acceso,
+        rectificación, supresión, oposición, limitación del tratamiento
+        y portabilidad mediante comunicación dirigida al Propietario.
+
+    </p>
+
+    <p>
+
+        <strong>13.2</strong>
+
+        En caso de impago, el Propietario podrá comunicar los datos
+        estrictamente necesarios a los correspondientes sistemas de
+        información crediticia, conforme a la legislación aplicable.
+
+    </p>
+
+</section>
+
+   <section class="clausula">
+
+    <h2>DECIMOCUARTA. LEY APLICABLE Y JURISDICCIÓN</h2>
+
+    <p>
+
+        <strong>14.1</strong>
+
+        El presente contrato se regirá por lo dispuesto en el Código
+        Civil Español y por cuantas normas resulten de aplicación.
+
+    </p>
+
+    <p>
+
+        <strong>14.2</strong>
+
+        Para cuantas cuestiones pudieran derivarse de la interpretación,
+        cumplimiento o ejecución del presente contrato, las Partes se
+        someten expresamente a los Juzgados y Tribunales del lugar donde
+        radique el inmueble, con renuncia a cualquier otro fuero que
+        pudiera corresponderles.
+
+    </p>
+
+</section>
+
+<section class="clausula">
+
+    <h2>DECIMOQUINTA. NOTIFICACIONES</h2>
+
+    <p>
+
+        <strong>15.1</strong>
+
+        Toda comunicación relacionada con el presente contrato deberá
+        realizarse por escrito mediante correo postal, correo
+        electrónico, SMS o cualquier otro medio que permita acreditar
+        razonablemente su envío y recepción.
+
+    </p>
+
+    <p>
+
+        <strong>15.2</strong>
+
+        A efectos de notificaciones, las Partes designan los siguientes
+        datos de contacto:
+
+    </p>
+
+    <table class="datos">
+
+        <tr>
+            <td>Inquilino</td>
+            <td>{{ contrato.inquilino.nombre }}</td>
+        </tr>
+
+        <tr>
+            <td>Email</td>
+            <td>{{ contrato.inquilino.email }}</td>
+        </tr>
+
+        <tr>
+            <td>Teléfono</td>
+            <td>+34 {{ contrato.inquilino.telefono }}</td>
+        </tr>
+
+        <tr>
+            <td>Propietario</td>
+            <td>MACRABBIT, S.L.U.</td>
+        </tr>
+
+        <tr>
+            <td>Email</td>
+            <td>office@bycoleccion.com</td>
+        </tr>
+
+        <tr>
+            <td>Teléfono</td>
+            <td>+34 639 44 61 42</td>
+        </tr>
+
+    </table>
+
+</section>
+
+<section class="clausula">
+
+    <h2>DECIMOSEXTA. MOBILIARIO DE LA HABITACIÓN</h2>
+
+    <p>
+
+        La Habitación se entrega completamente amueblada junto con
+        todos los muebles, accesorios, electrodomésticos y demás
+        elementos descritos en el siguiente inventario.
+
+    </p>
+
+    <p>
+
+        Todos los bienes inventariados deberán permanecer durante toda
+        la vigencia del contrato dentro de la Habitación asignada.
+
+        El arrendatario no podrá trasladarlos, almacenarlos, retirarlos
+        o abandonarlos en zonas comunes u otras habitaciones sin la
+        autorización previa y expresa del Propietario.
+
+    </p>
+
+    <p>
+
+        A la finalización del contrato, todo el mobiliario deberá
+        encontrarse en el mismo lugar y estado de conservación en que
+        fue entregado, salvo el desgaste normal derivado de un uso
+        adecuado.
+
+    </p>
+
+    <p>
+
+        Cualquier pérdida, deterioro, traslado no autorizado o necesidad
+        de reposición será asumida económicamente por el arrendatario.
+
+    </p>
+
+    <div class="inventario">
+
+        <h3>Inventario entregado</h3>
+
+        <ul>
+
+            {% for item in inventario %}
+
+                <li>{{item.cantidad}} {{ item.item }} {{ item.observaciones}}</li>
+
+            {% empty %}
+
+                <li>No se ha registrado ningún elemento.</li>
+
+            {% endfor %}
+
+        </ul>
+
+    </div>
+
+</section>
+
+<section class="clausula">
+
+    <h2>DECIMOSÉPTIMA. ACEPTACIÓN Y FIRMA</h2>
+
+    <p>
+
+        Las Partes manifiestan haber leído íntegramente el presente
+        contrato, comprender su contenido y aceptar todas y cada una de
+        sus cláusulas.
+
+    </p>
+
+    <p>
+
+        En prueba de conformidad, firman el presente documento por
+        duplicado y a un solo efecto, en el lugar y fecha indicados al
+        comienzo del mismo.
+
+    </p>
+
+</section>
+
+<table class="firmas">
+
+    <tr>
+
+        <td>
+
+            <strong>EL PROPIETARIO</strong>
+
+            <div class="linea"></div>
+
+            <strong>MACRABBIT, S.L.U.</strong><br>
+
+            Manuel Acosta Faerman
+
+        </td>
+
+        <td>
+
+            <strong>EL INQUILINO</strong>
+
+            <div class="linea"></div>
+
+            <strong>{{ contrato.inquilino.nombre }}</strong>
+
+        </td>
+
+    </tr>
+
+</table>
+
+</body>
+</html>

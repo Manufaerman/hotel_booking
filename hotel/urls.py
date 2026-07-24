@@ -3,11 +3,11 @@ from django.conf.urls.static import static
 from django.urls import path
 from django.contrib.sitemaps.views import sitemap
 from hotel.sitemaps import StaticViewSitemap
-from . import views
+from django.views.generic import TemplateView
 from .views import dashboard, visitas_view, habitaciones, \
     NewContractView, home, flat_detail, finalizar_contrato,\
     modificar_contrato, contratos, habitaciones_dashboard, \
-    modificar_inquilino, habitaciones_all, contacto, TemplateView
+    modificar_inquilino, habitaciones_all, contacto, chart_data, contrato_pdf
 
 app_name = 'hotel'
 sitemaps = {
@@ -24,7 +24,7 @@ urlpatterns = [
 
 
     path('dashboard/', dashboard, name='dashboard'),
-    path('dashboard/chart-data/', views.chart_data, name='dashboard_chart_data'),
+    path('dashboard/chart-data/', chart_data, name='dashboard_chart_data'),
     path('habitaciones_all/', habitaciones_all, name='habitaciones_all'),
     path('contacto/', contacto, name='contacto'),
 
@@ -39,7 +39,7 @@ urlpatterns = [
 
 
     path("contratos/", contratos, name='contratos'),
-    path("contratos/<int:contrato_id>/pdf/", views.contrato_pdf, name="contrato_pdf"),
+    path("contratos/<int:contrato_id>/pdf/", contrato_pdf, name="contrato_pdf"),
     path('contratos/newcontract', NewContractView.as_view(), name='newcontract'),
 
     path('contratos/<int:id>/finalizar', finalizar_contrato, name='finalizar_contrato'),

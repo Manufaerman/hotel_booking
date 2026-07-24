@@ -46,7 +46,7 @@
 color: #6B3140;
 font-weight: 600;">Contacta</a>
       <a href="#armario">Armario</a>
-      <a href="#plano">Fotografías</a>
+      <a href="#fotografias">Fotografías</a>
       <a href="#condiciones">Condiciones</a>
     </nav>
 
@@ -134,23 +134,35 @@ font-weight: 600;">Contacta</a>
 </section>
 
 <section>
- <div class="room-gallery">
+ <div class="room-gallery" >
   <div id="carouselExampleIndicators" class="carousel slide">
   <div class="carousel-indicators">
     <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
     <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
     <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
   </div>
-  <div class="carousel-inner">
+  <div class="carousel-inner" id="fotografias">
     <div class="carousel-item active">
       <img src="{{ habitacion.image.url }}" class="img-fluid" alt="...">
     </div>
     <div class="carousel-item">
       <img src="{{ habitacion.image1.url }}" class="img-fluid" alt="...">
     </div>
-    <div class="carousel-item">
+    {% if habitacion.image2 %}
+      <div class="carousel-item">
       <img src="{{ habitacion.image2.url }}" class="img-fluid" alt="...">
     </div>
+      {% endif%}
+    {% if habitacion.image3 %}
+      <div class="carousel-item">
+      <img src="{{ habitacion.image3.url }}" class="img-fluid" alt="...">
+    </div>
+      {% endif%}
+      {% if habitacion.image4 %}
+      <div class="carousel-item">
+      <img src="{{ habitacion.image4.url }}" class="img-fluid" alt="...">
+    </div>
+      {% endif%}
   </div>
   <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
     <span class="carousel-control-prev-icon" aria-hidden="true"></span>

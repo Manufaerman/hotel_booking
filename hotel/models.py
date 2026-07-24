@@ -24,7 +24,7 @@ class Flat(models.Model):
         ('ONE',
          'Disfruta de este moderno apartamento de un dormitorio, diseñado para ofrecer confort y estilo. Cuenta con aire acondicionado, una luminosa zona de estar y un baño totalmente equipado.\n Terraza privada ideal para relajarte o trabajar al aire libre.\n Ubicación estratégica, cerca del Aeropuerto de Madrid-Barajas y IFEMA. ¡Reserva tu estancia y vive Madrid con el máximo confort!'),
         ('TWO',
-         'Amplio y cómodo apartamento de dos dormitorios, ideal para estancias prolongadas. Su diseño moderno y funcional ofrece un ambiente acogedor con una luminosa zona de estar, cocina totalmente equipada y baño completo. Calefacción para el invierno. \n Ubicación estratégica, cerca del Aeropuerto de Madrid-Barajas y IFEMA, con excelentes conexiones al centro de la ciudad. ¡Reserva ahora y disfruta de Madrid con comodidad y estilo!'),
+         'Amplio y cómodo apartamento de tres dormitorios, ideal para estancias prolongadas. Su diseño moderno y funcional ofrece un ambiente acogedor, cocina totalmente equipada y baño completo. Calefacción para el invierno. \n Ubicación estratégica, cerca del Aeropuerto de Madrid-Barajas y IFEMA, con excelentes conexiones al centro de la ciudad. ¡Reserva ahora y disfruta de Madrid con comodidad y estilo!'),
         ('3AC',
          'Amplio y moderno apartamento de tres dormitorios. Su diseño elegante y funcional ofrece una luminosa sala de estar, cocina totalmente equipada y baño completo. \n  Aire acondicionado para un confort ideal todo el año. \n  Ubicación estratégica, con excelentes conexiones y todos los servicios cercanos ¡Reserva tu estancia y disfruta de la comodidad con estilo!'),
         ('PLUS', 'Antigua casa española de carácter auténtico, rodeada por la calma de un jardín sencillo presidido por un olivo centenario. Sus dos cocinas y espacios luminosos la convierten en un lugar ideal tanto para el teletrabajo como para disfrutar de largas comidas al aire libre, en un ambiente sereno y acogedor de inspiración mediterránea.')
@@ -84,7 +84,7 @@ class Habitacion(models.Model):
     propiedad = models.ForeignKey(Flat, related_name='habitaciones', null=True, blank=True, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=100, unique=True)
     title = models.CharField(max_length=100, default='hola')
-    subtitle = models.CharField(max_length=100, default='hola')
+    subtitle = models.CharField(max_length=500, default='hola')
     capacity = models.IntegerField(default=1)
     tv = models.BooleanField(default=True)
     metros = models.CharField(default=10, max_length=50)
@@ -101,6 +101,9 @@ class Habitacion(models.Model):
     descripcion = models.TextField(blank=True)
     image = models.ImageField(upload_to='img/room', default='img/room/default.jpg')
     image1 = models.ImageField(upload_to='img/room', default='img/room/default.jpg')
+    image2 = models.ImageField(upload_to='img/room', default='img/room/default.jpg')
+    image3 = models.ImageField(upload_to='img/room', default='img/room/default.jpg')
+    image4 = models.ImageField(upload_to='img/room', default='img/room/default.jpg')
     image_armario = models.ImageField(upload_to='img/room', default='img/room/default.jpg')
     precio = models.IntegerField(db_default=500)
 
@@ -217,5 +220,16 @@ class Gasto(models.Model):
         return f"{self.propiedad} - {self.concepto} - {self.importe} €"
 
 
+class Iteminventario(models.Model):
+    nombre = models.CharField(max_length=100)
 
+    def __str__(self):
+        return self.nombre
+
+
+class Inventario(models.Model):
+    habitacion = models.ForeignKey(Habitacion, on_delete=models.CASCADE)
+    item = models.ForeignKey(Iteminventario, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField(default=1)
+    observaciones = models.CharField(max_length=200, blank=True)
 

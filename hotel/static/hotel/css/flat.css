@@ -1,575 +1,1243 @@
-.collection-badge{
-    position:absolute;
-    top:15px;
-    left:15px;
+/* =========================================================
+   VARIABLES
+========================================================= */
 
-    background:rgba(107,77,88,.9);
+:root {
+    --mauve: #74515d;
+    --mauve-dark: #6f5a68;
+    --mauve-deep: #6b4d58;
+    --mauve-soft: #8a7a82;
 
-    color:white;
+    --sage: #95a89d;
+    --sage-dark: #6e715b;
+    --sage-light: #e5ece5;
+    --sage-extra-light: #eef2ee;
 
-    padding:6px 12px;
+    --amber: #9b7a4e;
+    --amber-warm: #a9783a;
+    --amber-light: #e7d4a2;
 
-    border-radius:999px;
+    --cream: #f7f4f0;
+    --white: #ffffff;
 
-    font-size:.75rem;
-    letter-spacing:1px;
-}
-.collection-name{
-    font-size:.75rem;
-    letter-spacing:2px;
-    text-transform:uppercase;
-    color:#8A7A82;
-    margin-bottom:4px;
-}
+    --text-dark: #3f3937;
+    --text-medium: #5e5a56;
+    --text-soft: #6b6662;
+    --text-grey: #8a8a8a;
 
-.room-title{
-    font-family:'Playfair Display', serif;
-    font-size:1.4rem;
-    color:#6B4D58;
-    font-weight:600;
-}
-.contact-chip{
-    width:44px;
-    height:44px;
-    margin-right:10px;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-
-    border-radius:14px;
-
-    background:#6E715B;
-    color:white;
-
-    transition:.25s;
-    text-decoration:none !important;
+    --border-soft: #e5e5e5;
 }
 
-.contact-chip:hover{
-    text-decoration:none !important;
-    transform:translateY(-3px) scale(1.05);
-    box-shadow:0 8px 20px rgba(0,0,0,.15);
-    background:#6F5A68 !important;
-}
-.contact-chip i{
-    font-size:25px;
-    color:white;
 
-}
+/* =========================================================
+   AJUSTES GENERALES
+========================================================= */
 
-.card-title{
-    color:#6f627d;
-    font-family:'Playfair Display', serif;
-    font-weight:600;
-    font-size:2rem;
-    line-height:1,1;
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
 }
 
-.price-row{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:8px;
+html {
+    scroll-behavior: smooth;
+}
 
+body {
+    margin: 0;
+    overflow-x: hidden;
 }
-.price-block{
-    display:flex;
-    flex-direction:column;
-    line-height:1;
 
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
 }
-.price-label{
-    margin-top:4px;
-    font-size:0,85rem;
-    color:#8a8a8a;
+
+a {
+    text-decoration: none;
 }
+
+
+/* =========================================================
+   TARJETAS DE HABITACIONES
+========================================================= */
+
+.collection-badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    z-index: 2;
+
+    padding: 6px 12px;
+
+    border-radius: 999px;
+    background: rgba(107, 77, 88, 0.9);
+
+    color: var(--white);
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+}
+
+.collection-name {
+    margin-bottom: 4px;
+
+    color: var(--mauve-soft);
+
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.room-title {
+    margin: 0;
+
+    font-family: "Playfair Display", serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    line-height: 1.2;
+
+    color: var(--mauve-deep);
+}
+
+.card-title {
+    margin: 0;
+
+    font-family: "Playfair Display", serif;
+    font-size: 2rem;
+    font-weight: 600;
+    line-height: 1.1;
+
+    color: #6f627d;
+}
+
+.room-card {
+    position: relative;
+
+    flex: 0 0 auto;
+
+    width: 350px;
+    min-width: 350px;
+
+    overflow: hidden;
+
+    border: none;
+    border-radius: 16px;
+
+    background: #f7f7f7;
+
+    box-shadow: 0 18px 35px rgba(0, 0, 0, 0.25);
+}
+
+
+/* =========================================================
+   CONTACTO
+========================================================= */
+
+.contact-chip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 44px;
+    height: 44px;
+    margin-right: 10px;
+
+    border-radius: 14px;
+
+    background: var(--sage-dark);
+    color: var(--white);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        background-color 0.25s ease;
+}
+
+.contact-chip:hover {
+    transform: translateY(-3px) scale(1.05);
+
+    background: var(--mauve-dark);
+
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.contact-chip i {
+    color: var(--white);
+    font-size: 25px;
+}
+
+
+/* =========================================================
+   PRECIO
+========================================================= */
+
+.price-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+
+    padding: 8px;
+}
+
+.price-block {
+    display: flex;
+    flex-direction: column;
+
+    line-height: 1;
+}
+
+.price-label {
+    margin-top: 4px;
+
+    color: var(--text-grey);
+    font-size: 0.85rem;
+}
+
 .precio {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.8rem;
-      font-weight: 600;
-      color: #6b4d58;
-      margin: 0;
-    }
+    margin: 0;
+
+    font-family: "Playfair Display", serif;
+    font-size: 1.8rem;
+    font-weight: 600;
+
+    color: var(--mauve-deep);
+}
+
+
+/* =========================================================
+   TIPOGRAFÍA
+========================================================= */
+
 .letra {
-     font-family: 'Playfair Display', serif;
+    max-width: 800px;
 
+    font-family: "Playfair Display", serif;
+    font-size: 18px;
+    line-height: 1.8;
 
+    color: var(--text-medium);
 }
+
 .big-letra {
+    margin: 0;
+
+    font-family: "Playfair Display", serif;
     font-size: 50px;
-     font-family: 'Playfair Display', serif;
+    line-height: 1.1;
+
+    color: var(--text-dark);
 }
+
 .midium-letra {
     font-size: 20px;
-}
-.cajon {
-    margin-top: 30px;
-    display:flex;
-    justify-content: space-between;
-    flex-wrap:wrap;
-    gap:20px;
-}
-.sub-cajon {
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    min-width:80px;
-}
-.sub-cajon i{
-    font-size:24px;
-    color:#666;
-    margin-bottom:8px;
-}
-.sub-cajon span{
-    color:#666;
-    font-size:15px;
-}
-.cajon{
-    border-bottom: 1px solid #e5e5e5;
-    padding-bottom:25px;
-}
-.descripcion-piso{
-    margin-top:40px;
+    line-height: 1.5;
 
+    color: var(--text-soft);
 }
-.letra{
-    line-height: 1.8;
-    max-width:800px;
-    font-size:18px;
-    color:#5e5a56;
-}
-.capacity {
-    color: grey;
-}
+
 .size-letra {
-    font-family: baskerville;
+    font-family: Baskerville, Georgia, serif;
     font-size: 50px;
 }
 
-.cartas {
-    display:flex;
-    flex-direction: column;
-    gap:10px;
+
+/* =========================================================
+   CARACTERÍSTICAS DEL PISO
+========================================================= */
+
+.cajon {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+
+    margin-top: 30px;
+    padding-bottom: 25px;
+
+    border-bottom: 1px solid var(--border-soft);
 }
+
+.sub-cajon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    min-width: 80px;
+
+    text-align: center;
+}
+
+.sub-cajon i {
+    margin-bottom: 8px;
+
+    color: #666;
+    font-size: 24px;
+}
+
+.sub-cajon span {
+    color: #666;
+    font-size: 15px;
+}
+
+.capacity {
+    margin: 0;
+    color: grey;
+}
+
+
+/* =========================================================
+   DESCRIPCIÓN DEL PISO
+========================================================= */
+
+.descripcion-piso {
+    position: relative;
+
+    width: calc(100% - 48px);
+    max-width: 1050px;
+
+    margin: 60px auto;
+    padding: 55px 65px;
+
+    overflow: hidden;
+
+    border: 1px solid rgba(107, 77, 88, 0.15);
+    border-radius: 28px;
+
+    background: var(--white);
+
+    box-shadow: 0 25px 65px rgba(70, 54, 61, 0.13);
+}
+
+.descripcion-piso::before {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 7px;
+    height: 100%;
+
+    background: var(--amber-warm);
+}
+
+.descripcion-piso .section-label,
+.descripcion-piso .eyebrow {
+    display: block;
+
+    max-width: 800px;
+    margin: 0 auto 12px;
+
+    color: var(--amber-warm);
+
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.descripcion-piso h2,
+.descripcion-piso h3 {
+    max-width: 800px;
+
+    margin: 0 auto 26px;
+
+    font-family: "Playfair Display", serif;
+    font-size: 40px;
+    font-weight: 600;
+    line-height: 1.2;
+
+    color: var(--mauve-deep);
+}
+
+.descripcion-piso .letra {
+    max-width: 800px;
+    margin: 0 auto;
+
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 18px;
+    line-height: 1.85;
+
+    color: var(--text-medium);
+}
+
+.descripcion-piso p {
+    margin: 0 0 20px;
+}
+
+.descripcion-piso p:last-child {
+    margin-bottom: 0;
+}
+
+
+/* =========================================================
+   SECCIÓN DE HABITACIONES
+========================================================= */
 
 .rooms-section {
     width: 100%;
-    background: #74515d;
-    padding: 50px 0 50px;
+
     margin-top: 50px;
-    box-shadow: inset 0 18px 30px rgba(0,0,0,.22);
+    padding: 50px 0;
+
+    background: var(--mauve);
+
+    box-shadow: inset 0 18px 30px rgba(0, 0, 0, 0.22);
 }
 
 .rooms-header {
-    color: #f7f1ed;
     margin-bottom: 25px;
+
+    color: #f7f1ed;
 }
 
 .rooms-header .eyebrow {
     display: block;
+
+    margin-bottom: 8px;
+
     font-size: 12px;
     text-transform: uppercase;
-    letter-spacing: .14em;
-    opacity: .75;
-    margin-bottom: 8px;
+    letter-spacing: 0.14em;
+
+    opacity: 0.75;
 }
 
 .rooms-header h2 {
-    font-family: 'Playfair Display', serif;
-    font-size: 42px;
-    color: #fff;
     margin: 0 0 8px;
+
+    font-family: "Playfair Display", serif;
+    font-size: 42px;
+    line-height: 1.2;
+
+    color: var(--white);
 }
 
 .rooms-header p {
     max-width: 700px;
-    color: rgba(255,255,255,.85);
     margin: 0;
+
+    color: rgba(255, 255, 255, 0.85);
+
+    line-height: 1.6;
 }
 
-.scroll-cards-wrapper{
-    display:flex;
-    gap:24px;
-    padding:40px 24px;
-    background:#7a5a63;
+.scroll-cards-wrapper {
+    display: flex;
+    gap: 24px;
+
+    width: 100%;
+    padding: 40px 24px;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    background: #7a5a63;
+
+    -webkit-overflow-scrolling: touch;
 }
 
-.scroll-card{
-    flex:1;
+.scroll-card {
+    flex: 1;
+    min-width: 0;
 }
 
-@media (max-width: 768px){
-    .scroll-cards-wrapper{
-        overflow-x:auto;
-        overflow-y:hidden;
-        flex-wrap:nowrap;
-        scroll-snap-type:x mandatory;
-        -webkit-overflow-scrolling:touch;
-    }
+.badge-alquilada {
+    display: inline-block;
 
-    .scroll-card{
-        flex:0 0 320px;
-        width:320px;
-        min-width:320px;
-        scroll-snap-align:start;
-    }
+    padding: 6px 12px;
 
-    .scroll-cards-wrapper::-webkit-scrollbar{
-        display:none;
-    }
+    border-radius: 10px;
+
+    background: #6f627d;
+    color: var(--white);
+
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.room-card {
-    width: 350px;
-    min-width: 350px;
-    border: none;
-    border-radius: 16px;
-    overflow: hidden;
-    background: #f7f7f7;
-    box-shadow: 0 18px 35px rgba(0,0,0,.25);
-    flex: 0 0 auto;
-}
-.location-section {
-    padding: 28px 0px 45px;
-    background: #95a89D;
+
+/* =========================================================
+   HERO DEL PISO
+========================================================= */
+
+.flat-intro-nav {
+    width: 100%;
+
+    padding: 55px 70px;
+
+    background: var(--mauve-dark);
+    color: var(--cream);
 }
 
-.location-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 50px;
+.flat-hero-content {
+    display: grid;
+    grid-template-columns: minmax(0, 700px) 260px;
+    align-items: start;
+    justify-content: space-between;
+    gap: 70px;
+
+    width: 100%;
+    max-width: 1450px;
+
+    margin: 0 auto;
+}
+
+.flat-main {
+    min-width: 0;
+}
+
+.flat-intro-nav .eyebrow {
+    display: block;
+
+    margin-bottom: 12px;
+
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+
+    opacity: 0.75;
+}
+
+.flat-intro-nav h1 {
+    margin: 0 0 14px;
+
+    font-family: "Playfair Display", serif;
+    font-size: 3rem;
+    line-height: 1.1;
+
+    color: var(--cream);
+}
+
+.flat-intro-text {
+    max-width: 650px;
+    margin: 0;
+
+    font-size: 1.05rem;
+    line-height: 1.6;
+
+    opacity: 0.88;
+}
+
+
+/* =========================================================
+   DISPONIBILIDAD
+========================================================= */
+
+.availability-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    width: 260px;
+    min-height: 220px;
+
+    padding: 24px;
+
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 24px;
+
+    background: var(--amber);
+
+    color: var(--amber-light);
+    text-align: center;
+
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.availability-card:hover {
+    transform: translateY(-4px);
+
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+}
+
+.availability-card,
+.availability-card * {
+    color: var(--amber-light);
+    text-decoration: none;
+}
+
+.availability-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+
+    opacity: 0.75;
+}
+
+.availability-count {
+    margin: 12px 0;
+
+    font-size: 4rem;
     font-weight: 700;
-    line-height: 1.2;
-    color: #F7F4F0;
-    margin-bottom: 10px;
+    line-height: 1;
 }
 
-.location-subtitle {
-    font-family: Georgia, serif;
-    font-size: 16px;
-    color: rgba(247,244,240,.85);
-    margin-bottom: 16px;
+.availability-text {
+    line-height: 1.4;
+    opacity: 0.9;
+}
+
+
+/* =========================================================
+   NAVEGACIÓN INTERNA
+========================================================= */
+
+.flat-anchor-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+
+    margin-top: 28px;
+}
+
+.flat-anchor-nav a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 9px 16px;
+
+    border: 1px solid rgba(247, 244, 240, 0.35);
+    border-radius: 999px;
+
+    color: var(--cream);
+
+    font-size: 0.9rem;
+
+    transition:
+        background-color 0.25s ease,
+        color 0.25s ease,
+        border-color 0.25s ease;
+}
+
+.flat-anchor-nav a:hover {
+    border-color: var(--cream);
+
+    background: var(--cream);
+    color: var(--mauve-dark);
+}
+
+
+/* =========================================================
+   SECCIONES CON IMAGEN
+========================================================= */
+
+.space-section {
+    padding: 100px 0;
+
+    background: var(--sage-light);
+}
+
+.space-section.light {
+    background: var(--sage-extra-light);
+}
+
+.terraza-section {
+    padding: 100px 0;
+
+    background: var(--sage-light);
+}
+
+.room-detail {
+    display: flex;
+    align-items: center;
+    gap: 60px;
+}
+
+.room-detail.reverse {
+    flex-direction: row-reverse;
+}
+
+.room-image {
+    flex: 0 0 380px;
+}
+
+.room-image img {
+    width: 100%;
+    height: 600px;
+
+    object-fit: cover;
+
+    border-radius: 28px;
+
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+}
+
+.room-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.section-label {
+    color: #8d6e63;
+
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.room-content h2 {
+    margin: 15px 0 20px;
+
+    font-family: "Playfair Display", serif;
+    font-size: 52px;
+    line-height: 1.15;
+
+    color: var(--text-dark);
+}
+
+.room-content p {
+    max-width: 600px;
+
+    font-size: 18px;
+    line-height: 1.7;
+
+    color: var(--text-medium);
+}
+
+.features-list {
+    margin-top: 25px;
+    padding: 0;
+
+    list-style: none;
+}
+
+.features-list li {
+    position: relative;
+
+    margin-bottom: 12px;
+    padding-left: 24px;
+
+    line-height: 1.5;
+}
+
+.features-list li::before {
+    content: "✓";
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    color: var(--mauve);
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   COCINA
+========================================================= */
+
+.cocina-section {
+    padding: 100px 0;
+
+    background: var(--amber-warm);
+    color: var(--cream);
+}
+
+.cocina-section .section-label,
+.cocina-section h2,
+.cocina-section p,
+.cocina-section li {
+    color: var(--cream);
+}
+
+.cocina-section .features-list li::before {
+    color: var(--cream);
+}
+
+
+/* =========================================================
+   UBICACIÓN
+========================================================= */
+
+.location-section {
+    padding: 45px 0;
+
+    background: var(--sage);
 }
 
 .location-section .eyebrow {
-    display:block;
-    font-size:12px;
-    text-transform:uppercase;
-    letter-spacing:.14em;
-    color:rgba(247,244,240,.7);
-    margin-bottom:12px;
+    display: block;
+
+    margin-bottom: 12px;
+
+    color: rgba(247, 244, 240, 0.7);
+
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+}
+
+.location-title {
+    margin: 0 0 10px;
+
+    font-family: "Playfair Display", serif;
+    font-size: 50px;
+    font-weight: 700;
+    line-height: 1.2;
+
+    color: var(--cream);
+}
+
+.location-subtitle {
+    margin-bottom: 16px;
+
+    font-family: Georgia, serif;
+    font-size: 16px;
+    line-height: 1.6;
+
+    color: rgba(247, 244, 240, 0.85);
 }
 
 .map-box {
     width: 90%;
+
     margin: 16px auto 22px;
-    border-radius: 28px;
+
     overflow: hidden;
-    box-shadow: 0 25px 60px rgba(0,0,0,.35);
-    border: 8px solid #F7F4F0;
+
+    border: 8px solid var(--cream);
+    border-radius: 28px;
+
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
 }
 
 .map-box iframe {
+    display: block;
+
     width: 100%;
     height: 380px;
+
     border: 0;
-    display: block;
+
     filter: grayscale(100%) contrast(90%);
 }
 
 .location-points {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 18px;
+
     margin-top: 35px;
-    background: #F7F4F0;
-    border-radius: 20px;
     padding: 22px;
+
+    border-radius: 20px;
+
+    background: var(--cream);
 }
 
 .location-point {
     display: flex;
     align-items: center;
     gap: 14px;
+
     color: #3b3b3b;
+
     font-weight: 500;
 }
 
 .location-point i {
-    width: 42px;
-    height: 42px;
-    min-width: 42px;
-    border-radius: 50%;
-    background: #74515d;
-    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
+
+    flex-shrink: 0;
+
+    width: 42px;
+    height: 42px;
+
+    border-radius: 50%;
+
+    background: var(--mauve);
+    color: var(--white);
 }
 
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 992px) {
+
+    .flat-intro-nav {
+        padding: 48px 32px;
+    }
+
+    .flat-hero-content {
+        grid-template-columns: minmax(0, 1fr) 220px;
+        gap: 35px;
+    }
+
+    .flat-intro-nav h1 {
+        font-size: 2.5rem;
+    }
+
+    .availability-card {
+        width: 220px;
+        min-height: 210px;
+    }
+
+    .room-detail,
+    .room-detail.reverse {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 35px;
+    }
+
+    .room-image {
+        flex: none;
+        width: 100%;
+    }
+
+    .room-image img {
+        height: 480px;
+    }
+
+    .room-content h2 {
+        font-size: 43px;
+    }
+
+    .space-section,
+    .terraza-section,
+    .cocina-section {
+        padding: 75px 0;
+    }
+
+    .location-points {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
 @media (max-width: 768px) {
+
+    .big-letra {
+        font-size: 37px;
+    }
+
+    .midium-letra {
+        font-size: 18px;
+    }
+
+    .size-letra {
+        font-size: 36px;
+    }
+
+    .letra {
+        font-size: 16px;
+        line-height: 1.75;
+    }
+
+
+    /* HERO */
+
+    .flat-intro-nav {
+        padding: 42px 18px 38px;
+    }
+
+    .flat-hero-content {
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+    }
+
+    .flat-main {
+        width: 100%;
+    }
+
+    .flat-intro-nav h1 {
+        font-size: 2.15rem;
+    }
+
+    .flat-intro-text {
+        max-width: 100%;
+        font-size: 1rem;
+    }
+
+
+    /* NAVEGACIÓN */
+
+    .flat-anchor-nav {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+
+        width: 100%;
+    }
+
+    .flat-anchor-nav a {
+        width: 100%;
+        min-height: 44px;
+
+        padding: 9px 8px;
+
+        font-size: 0.8rem;
+        text-align: center;
+    }
+
+
+    /* DISPONIBILIDAD */
+
+    .availability-card {
+        width: 100%;
+        min-height: 0;
+
+        margin-top: 0;
+        padding: 26px 22px;
+
+        border-radius: 20px;
+    }
+
+    .availability-count {
+        font-size: 3.4rem;
+    }
+
+
+    /* CARACTERÍSTICAS */
+
+    .cajon {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 25px 14px;
+    }
+
+    .sub-cajon {
+        min-width: 0;
+    }
+
+    .sub-cajon span,
+    .capacity {
+        font-size: 14px;
+    }
+
+
+    /* DESCRIPCIÓN */
+
+    .descripcion-piso {
+        width: calc(100% - 28px);
+
+        margin: 36px auto;
+        padding: 38px 25px 34px 30px;
+
+        border-radius: 21px;
+    }
+
+    .descripcion-piso::before {
+        width: 5px;
+    }
+
+    .descripcion-piso h2,
+    .descripcion-piso h3 {
+        margin-bottom: 20px;
+
+        font-size: 28px;
+    }
+
+    .descripcion-piso .letra {
+        font-size: 16px;
+        line-height: 1.75;
+    }
+
+
+    /* HABITACIONES */
+
+    .rooms-section {
+        margin-top: 40px;
+        padding: 40px 0 30px;
+    }
+
+    .rooms-header {
+        padding: 0 18px;
+    }
+
+    .rooms-header h2 {
+        font-size: 32px;
+    }
+
+    .rooms-header p {
+        font-size: 15px;
+    }
+
+    .scroll-cards-wrapper {
+        flex-wrap: nowrap;
+        gap: 16px;
+
+        padding: 28px 18px 35px;
+
+        scroll-snap-type: x mandatory;
+        scroll-padding-left: 18px;
+
+        scrollbar-width: none;
+    }
+
+    .scroll-cards-wrapper::-webkit-scrollbar {
+        display: none;
+    }
+
+    .scroll-card,
+    .room-card {
+        flex: 0 0 84vw;
+
+        width: 84vw;
+        min-width: 84vw;
+        max-width: 340px;
+
+        scroll-snap-align: start;
+    }
+
+    .card-title {
+        font-size: 1.65rem;
+    }
+
+    .room-title {
+        font-size: 1.25rem;
+    }
+
+    .precio {
+        font-size: 1.6rem;
+    }
+
+
+    /* SECCIONES CON IMAGEN */
+
+    .space-section,
+    .terraza-section,
+    .cocina-section {
+        padding: 55px 0;
+    }
+
+    .room-detail,
+    .room-detail.reverse {
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .room-image img {
+        height: 390px;
+
+        border-radius: 20px;
+    }
+
+    .room-content h2 {
+        font-size: 35px;
+    }
+
+    .room-content p {
+        max-width: none;
+
+        font-size: 16px;
+    }
+
+    .features-list li {
+        font-size: 15px;
+    }
+
+
+    /* UBICACIÓN */
+
     .location-section {
         padding: 50px 0;
     }
 
     .location-title {
-        font-size: 38px;
+        font-size: 37px;
     }
 
     .map-box {
         width: 100%;
-        border-radius: 20px;
-        border: 6px solid #F7F4F0;
+
+        border-width: 5px;
+        border-radius: 18px;
     }
 
     .map-box iframe {
-        height: 340px;
+        height: 330px;
     }
 
     .location-points {
         grid-template-columns: 1fr;
+        gap: 14px;
+
+        padding: 18px;
+    }
+}
+
+
+/* =========================================================
+   MÓVILES PEQUEÑOS
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .flat-intro-nav {
+        padding: 36px 14px 32px;
     }
 
-    .location-point {
-        font-size: 15px;
+    .flat-intro-nav h1 {
+        font-size: 1.85rem;
     }
-}
-.badge-alquilada {
-  display:inline-block;
-  padding:6px 12px;
-  border-radius: 10px;
-  background: #6f627d;
-  color:white;
-  font-size:12px;
-  font-weight:600;
-  text-transform: uppercase;
-  letter-spacing:1px;
-}
 
+    .flat-anchor-nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 
-.flat-intro-nav{
-    background:#6F5A68;
-    color:#F7F4F0;
-    padding:55px 70px;
+    .flat-anchor-nav a {
+        font-size: 0.76rem;
+    }
 
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    gap:4rem;
-    text-decoration:none !important;
-}
+    .availability-count {
+        font-size: 3rem;
+    }
 
-.flat-intro-nav .eyebrow{
-    text-transform:uppercase;
-    letter-spacing:2px;
-    font-size:.75rem;
-    opacity:.75;
-    margin-bottom:12px;
-}
+    .descripcion-piso {
+        width: calc(100% - 20px);
 
-.flat-intro-nav h1{
-    font-family:'Playfair Display', serif;
-    font-size:3rem;
-    margin-bottom:14px;
-}
+        padding: 32px 20px 28px 25px;
+    }
 
-.flat-intro-text{
-    max-width:650px;
-    font-size:1.05rem;
-    line-height:1.6;
-    opacity:.88;
-}
+    .descripcion-piso h2,
+    .descripcion-piso h3 {
+        font-size: 25px;
+    }
 
-.flat-anchor-nav{
-    margin-top:28px;
-    display:flex;
-    gap:14px;
-    flex-wrap:wrap;
-}
+    .scroll-card,
+    .room-card {
+        flex-basis: 88vw;
 
-.flat-anchor-nav a{
-    color:#F7F4F0;
-    text-decoration:none;
-    padding:9px 16px;
-    border:1px solid rgba(247,244,240,.35);
-    border-radius:999px;
-    font-size:.9rem;
-    transition:.25s;
-}
+        width: 88vw;
+        min-width: 88vw;
+    }
 
-.flat-anchor-nav a:hover{
-    background:#F7F4F0;
-    color:#6F5A68;
-}
+    .room-image img {
+        height: 310px;
+    }
 
-.flat-hero-content{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    gap:4rem;
-}
+    .room-content h2 {
+        font-size: 30px;
+    }
 
-.flat-main{
-    flex:1;
-    max-width:700px;
-}
+    .location-title {
+        font-size: 32px;
+    }
 
-.availability-card{
-    min-width:220px;
-    max-width:260px;
-
-    background:#9b7A4E;
-    backdrop-filter:blur(8px);
-    border:1px solid rgba(255,255,255,.2);
-    border-radius:24px;
-    padding:24px;
-    color:f7f4f0;
-    box-shadow: 0 12px 30px rgba(0,0,0,.15);
-    text-decoration:none !important;
-
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    text-align:center;
-}
-.availability-card *{
-    color:#E7D4A2 !important;
-    text-decoration: none !important;
-}
-.availability-label{
-    font-size:.75rem;
-    text-transform:uppercase;
-    letter-spacing:.15em;
-    opacity:.6;
-    text-decoration:none !important;
-}
-
-.availability-count{
-    font-size:4rem;
-    font-weight:700;
-    line-height:1;
-    margin:10px 0;
-    text-decoration:none !important;
-}
-
-.availability-text{
-    opacity:.85;
-    text-decoration:none !important;
-}
-
-.space-section{
-    padding:100px 0;
-    background:#e5ece5;
-}
-
-.space-section.light{
-    background:#eef2ee;
-}
-.terraza-section{
-    background:#e5ece5;
-}
-.room-detail{
-    display:flex;
-    align-items:center;
-    gap:60px;
-}
-
-.room-detail.reverse{
-    flex-direction:row-reverse;
-}
-
-.room-image{
-    flex:0 0 380px;
-}
-
-.room-image img{
-    width:100%;
-    height:600px;
-    object-fit:cover;
-    border-radius:28px;
-    box-shadow:0 20px 50px rgba(0,0,0,.12);
-}
-
-.room-content{
-    flex:1;
-}
-
-.section-label{
-    letter-spacing:2px;
-    font-size:12px;
-    font-weight:600;
-    color:#8D6E63;
-}
-
-.room-content h2{
-    font-family:'Playfair Display',serif;
-    font-size:52px;
-    margin:15px 0 20px;
-}
-
-.room-content p{
-    font-size:18px;
-    line-height:1.7;
-    max-width:600px;
-}
-
-.features-list{
-    list-style:none;
-    padding:0;
-    margin-top:25px;
-}
-
-.features-list li{
-    margin-bottom:12px;
-}
-
-.cocina-section{
-    padding:100px 0;
-    background:#A9783A;
-    color:#f7f4f0;
-}
-
-
-
-.cocina-section .room-detail{
-    display:flex;
-    align-items:center;
-    gap:60px;
-}
-
-.cocina-section .room-image img{
-    width:100%;
-    height:600px;
-    object-fit:cover;
-    border-radius:28px;
-    box-shadow:0 20px 50px rgba(0,0,0,.15);
-}
-
-.cocina-section .section-label{
-    color:#F7F4F0;
-    letter-spacing:2px;
-    text-transform:uppercase;
-}
-
-.cocina-section h2{
-    color:#F7F4F0;
-}
-
-.cocina-section p{
-    color:#F7F4F0;
-}
-
-.cocina-section li{
-    color:#F7F4F0;
-}
-
-.cocina-section .features-list{
-    list-style:none;
-    padding:0;
-}
-
-.cocina-section .features-list li{
-    margin-bottom:12px;
-}
-
-
+    .map-box iframe {
+        height: 280px;
+    }
+}}
