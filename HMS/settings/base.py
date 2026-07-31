@@ -77,6 +77,8 @@ TEMPLATES = [
 
         "DIRS": [
             BASE_DIR / "templates",
+            BASE_DIR / "hotel" / "templates" / "hotel",
+            BASE_DIR / "user_profile" / "templates" / "user_profile",
         ],
 
         "APP_DIRS": True,
