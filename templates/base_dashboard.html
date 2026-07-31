@@ -1,84 +1,353 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
+
 {% load static %}
 
 <head>
-    <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="{% static 'hotel/css/base_dashboard.css' %}">
-    <!-- favicon apple-->
-    <link rel="icon" href="{% static 'hotel/img/icons/favicon.ico' %}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'hotel/img/icons/favicon-32x32.png' %}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'hotel/img/icons/favicon-16x16.png' %}">
-    <link rel="apple-touch-icon" href="{% static 'hotel/img/icons/apple-touch-icon.png' %}">
-    <link rel="manifest" href="{% static 'hotel/img/icons/site.webmanifest' %}">
 
-  {% block title %}{% endblock %}
-  {% block extra-head %}{% endblock %}
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
 
-    <style>
+    <title>
+        {% block title %}
+            By Collection
+        {% endblock %}
+    </title>
 
-</style>
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
 
+    <link
+        rel="stylesheet"
+        href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&display=swap"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{% static 'hotel/css/base_dashboard.css' %}"
+    >
+
+    <!-- Favicons -->
+
+    <link
+        rel="icon"
+        href="{% static 'hotel/img/icons/favicon.ico' %}"
+    >
+
+    <link
+        rel="icon"
+        type="image/png"
+        sizes="32x32"
+        href="{% static 'hotel/img/icons/favicon-32x32.png' %}"
+    >
+
+    <link
+        rel="icon"
+        type="image/png"
+        sizes="16x16"
+        href="{% static 'hotel/img/icons/favicon-16x16.png' %}"
+    >
+
+    <link
+        rel="apple-touch-icon"
+        href="{% static 'hotel/img/icons/apple-touch-icon.png' %}"
+    >
+
+    <link
+        rel="manifest"
+        href="{% static 'hotel/img/icons/site.webmanifest' %}"
+    >
+
+    {% block extra-head %}
+    {% endblock %}
 </head>
 
 <body>
 
-  <div class="d-flex">
+<!-- =======================================================
+     LOGOTIPO SUPERIOR MÓVIL
+======================================================== -->
 
-    <div id="sidebar">
-      <div class="" id="">
-        <a href="{% url 'hotel:home'%}" class="navbar-brand text-center text-light w-100 p-4 ">
-          <img src="{% static 'hotel/img/logo-bycoleccion2.png'%}" class="logo-blanco" style="">
-        </a>
-      </div>
-      <div class="hijo active">
-        <a href="{% url 'hotel:dashboard' %}" class="">
-            <i class="fa fa-tachometer mr-3" aria-hidden="true"></i>
-          </a>
-      </div>
+<header class="mobile-brand-bar">
+    <a
+        href="{% url 'hotel:home' %}"
+        class="mobile-brand-link"
+    >
+        <img
+            src="{% static 'hotel/img/logo-bycoleccion-lateral.png' %}"
+            class="logo-movil"
+            alt="By Collection"
+        >
+    </a>
+</header>
 
-      <div class="hijo active">
-        <a href="{% url 'hotel:newcontract'%}" class=" ">
-            <i class="fa fa-bed mr-3" aria-hidden="true"></i>
-          </a>
-      </div>
 
-      <div class="hijo active">
-         <a href="{% url 'hotel:contratos' %}" class="">
-            <i class="fa fa-user mr-3" aria-hidden="true"></i>
-          </a>
-      </div>
 
-      <div class="hijo active">
-         <a href="{% url 'hotel:habitaciones_dashboard' %}" class="">
-           <i class="fa fa-calendar mr-3" aria-hidden="true"></i>
-          </a>
-      </div>
+<!-- =======================================================
+     ESTRUCTURA DEL DASHBOARD
+======================================================== -->
 
-      <div class="hijo active">
-         <a href="#dashboard-items" data-toggle="collapse" aria-expanded="false"
-            class="">
-            <i class="fa fa-cog mr-3" aria-hidden="true"></i>
-          </a>
-      </div>
+<div class="dashboard-layout">
+
+    <!-- ===================================================
+         MENÚ LATERAL / INFERIOR
+    ==================================================== -->
+
+    <aside id="sidebar">
+
+        <!-- Logotipo de escritorio -->
+
+        <div class="sidebar-logo-box">
+
+            <a
+                href="{% url 'hotel:home' %}"
+                class="sidebar-logo-link"
+                aria-label="Ir a la web de By Collection"
+                title="By Collection"
+            >
+                <img
+                    src="{% static 'hotel/img/logo-bycoleccion2.png' %}"
+                    class="logo-blanco"
+                    alt="By Collection"
+                >
+            </a>
+
         </div>
-      </div>
-
-  <div id="centerside">{% block content %}{% endblock %}</div>
 
 
+        <nav
+            class="sidebar-navigation"
+            aria-label="Navegación principal"
+        >
 
-  <script>
-        {% block jquery %}
+            <!-- Panel -->
 
+            <a
+                href="{% url 'hotel:dashboard' %}"
+                class="
+                    sidebar-link
+
+                    {% if request.resolver_match.url_name == 'dashboard' %}
+                        active
+                    {% endif %}
+                "
+                aria-label="Panel principal"
+                title="Panel principal"
+                data-label="Panel"
+            >
+                <i
+                    class="fa fa-bar-chart"
+                    aria-hidden="true"
+                ></i>
+            </a>
+
+
+            <!-- Nuevo contrato -->
+
+            <a
+                href="{% url 'hotel:newcontract' %}"
+                class="
+                    sidebar-link
+
+                    {% if request.resolver_match.url_name == 'newcontract' %}
+                        active
+                    {% endif %}
+                "
+                aria-label="Crear contrato"
+                title="Crear contrato"
+                data-label="Nuevo contrato"
+            >
+                <i
+                    class="fa fa-file-text-o"
+                    aria-hidden="true"
+                ></i>
+
+                <span
+                    class="sidebar-icon-indicator"
+                    aria-hidden="true"
+                >
+                    +
+                </span>
+            </a>
+
+
+            <!-- Contratos -->
+
+            <a
+                href="{% url 'hotel:contratos' %}"
+                class="
+                    sidebar-link
+
+                    {% if request.resolver_match.url_name == 'contratos' %}
+                        active
+                    {% elif request.resolver_match.url_name == 'modificar_contrato' %}
+                        active
+                    {% elif request.resolver_match.url_name == 'modificar_inquilino' %}
+                        active
+                    {% elif request.resolver_match.url_name == 'contrato_pdf' %}
+                        active
+                    {% endif %}
+                "
+                aria-label="Contratos"
+                title="Contratos"
+                data-label="Contratos"
+            >
+                <i
+                    class="fa fa-folder-open-o"
+                    aria-hidden="true"
+                ></i>
+            </a>
+
+
+            <!-- Habitaciones -->
+
+            <a
+                href="{% url 'hotel:habitaciones_dashboard' %}"
+                class="
+                    sidebar-link
+
+                    {% if request.resolver_match.url_name == 'habitaciones_dashboard' %}
+                        active
+                    {% elif request.resolver_match.url_name == 'habitaciones' %}
+                        active
+                    {% elif request.resolver_match.url_name == 'crear_proceso_formalizacion' %}
+                        active
+                    {% elif request.resolver_match.url_name == 'detalle_proceso_formalizacion' %}
+                        active
+                    {% endif %}
+                "
+                aria-label="Estado de las habitaciones"
+                title="Estado de las habitaciones"
+                data-label="Habitaciones"
+            >
+                <i
+                    class="fa fa-bed"
+                    aria-hidden="true"
+                ></i>
+            </a>
+
+
+            <!-- Visitas -->
+
+            <a
+                href="{% url 'hotel:visitas' %}"
+                class="
+                    sidebar-link
+
+                    {% if request.resolver_match.url_name == 'visitas' %}
+                        active
+                    {% endif %}
+                "
+                aria-label="Visitas a la web"
+                title="Visitas a la web"
+                data-label="Visitas"
+            >
+                <i
+                    class="fa fa-eye"
+                    aria-hidden="true"
+                ></i>
+            </a>
+
+        </nav>
+
+
+        <!-- Web pública, solo escritorio -->
+
+        <div class="sidebar-bottom">
+
+            <a
+                href="{% url 'hotel:home' %}"
+                class="sidebar-link"
+                aria-label="Ver web pública"
+                title="Ver web pública"
+                data-label="Ver web"
+            >
+                <i
+                    class="fa fa-home"
+                    aria-hidden="true"
+                ></i>
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ===================================================
+         CONTENIDO
+    ==================================================== -->
+
+    <main id="centerside">
+
+        {% if messages %}
+
+            <div class="dashboard-messages">
+
+                {% for message in messages %}
+
+                    <div
+                        class="
+                            alert
+
+                            {% if message.tags == 'error' %}
+                                alert-danger
+                            {% elif message.tags %}
+                                alert-{{ message.tags }}
+                            {% else %}
+                                alert-info
+                            {% endif %}
+
+                            alert-dismissible
+                            fade
+                            show
+                        "
+                        role="alert"
+                    >
+                        {{ message }}
+
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="alert"
+                            aria-label="Cerrar"
+                        ></button>
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+
+        {% block content %}
         {% endblock %}
 
-  </script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    </main>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    {% block jquery %}
+    {% endblock %}
+</script>
+
+{% block extra-js %}
+{% endblock %}
+
 </body>
 
 </html>

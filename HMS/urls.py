@@ -20,14 +20,25 @@ from django.contrib import admin
 from django.urls import path
 from django.urls import include, path
 from django.contrib import admin
-
+from django.views.generic import TemplateView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('hotel.urls')),
     path('user_profile/', include('user_profile.urls')),
     path("accounts/", include("allauth.urls")),
+    path("accounts/sign-out/", TemplateView.as_view(template_name="account/logout_confirm.html"), name="logout_confirm",),
+
+    path(
+        "accounts/",
+        include("django.contrib.auth.urls"),
+    ),
 
 
 
-] + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0]) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+if settings.DEBUG:
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT,
+    )

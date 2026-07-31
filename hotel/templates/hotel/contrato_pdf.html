@@ -2,152 +2,485 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-
+    {% load static %}
     <style>
-        @page {
-            size: A4;
-            margin: 2cm 1.8cm;
+        <style>
 
-            @bottom-center {
-                content: "Página " counter(page) " de " counter(pages);
-                font-size: 8pt;
-                color: #777;
-            }
+    /* =========================
+       CONFIGURACIÓN DEL PDF
+    ========================== */
+
+    @page {
+        size: A4;
+        margin: 20mm 18mm 30mm 18mm;
+
+        @bottom-center {
+            content: "Página " counter(page) " de " counter(pages);
+            font-size: 8pt;
+            color: #777;
         }
+    }
 
-        *{
-            box-sizing:border-box;
-        }
+    * {
+        box-sizing: border-box;
+    }
 
-        body{
-            margin:0;
-            font-family:Arial, Helvetica, sans-serif;
-            font-size:10pt;
-            line-height:1.6;
-            color:#3F343A;
-        }
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 10pt;
+        line-height: 1.6;
+        color: #3F343A;
+    }
 
-        h1,h2,h3,p{
-            margin-top:0;
-        }
+    h1,
+    h2,
+    h3,
+    p {
+        margin-top: 0;
+    }
 
-        .cabecera{
-            border-bottom:3px solid #C8A96B;
-            margin-bottom:30px;
-            padding-bottom:15px;
-        }
+    /* =========================
+       CABECERA
+    ========================== */
 
-        .marca{
-            color:#6B3140;
-            font-size:9pt;
-            font-weight:bold;
-            letter-spacing:2px;
-            text-transform:uppercase;
-            margin-bottom:8px;
-        }
+    .cabecera {
+        border-bottom: 3px solid #C8A96B;
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+    }
 
-        .titulo{
-            text-align:center;
-            color:#6B3140;
-            font-size:20pt;
-            margin:0;
-            text-transform:uppercase;
-        }
+    .marca {
+        margin-bottom: 8px;
+        color: #6B3140;
+        font-size: 9pt;
+        font-weight: bold;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
 
-        .subtitulo{
-            text-align:center;
-            color:#7B6B71;
-            margin-top:8px;
-            font-size:9pt;
-        }
+    .titulo {
+        margin: 0;
+        text-align: center;
+        color: #6B3140;
+        font-size: 20pt;
+        text-transform: uppercase;
+    }
 
-        .fecha{
-            text-align:right;
-            margin-bottom:25px;
-        }
+    .subtitulo {
+        margin-top: 8px;
+        text-align: center;
+        color: #7B6B71;
+        font-size: 9pt;
+    }
 
-        .clausula{
-            margin-bottom:22px;
-            text-align:justify;
-            page-break-inside:avoid;
-        }
+    .fecha {
+        margin-bottom: 25px;
+        text-align: right;
+    }
 
-        .clausula h2{
-            color:#6B3140;
-            font-size:12pt;
-            border-bottom:2px solid #C8A96B;
-            padding-bottom:5px;
-            margin-bottom:12px;
-            text-transform:uppercase;
-        }
+    /* =========================
+       CLÁUSULAS
+    ========================== */
 
-        .clausula p{
-            margin-bottom:8px;
-        }
+    .clausula {
+        margin-bottom: 22px;
+        text-align: justify;
+        page-break-inside: avoid;
+    }
 
-        ul{
-            margin:8px 0 12px 24px;
-        }
+    .clausula h2 {
+        margin-bottom: 12px;
+        padding-bottom: 5px;
+        border-bottom: 2px solid #C8A96B;
+        color: #6B3140;
+        font-size: 12pt;
+        text-transform: uppercase;
+    }
 
-        li{
-            margin-bottom:5px;
-        }
+    .clausula p {
+        margin-bottom: 8px;
+    }
 
-        .datos{
-            width:100%;
-            border-collapse:collapse;
-            margin-top:10px;
-        }
+    ul {
+        margin: 8px 0 12px 24px;
+    }
 
-        .datos td{
-            border:1px solid #DDD;
-            padding:8px;
-        }
+    li {
+        margin-bottom: 5px;
+    }
 
-        .datos td:first-child{
-            width:30%;
-            background:#F7F4EE;
-            font-weight:bold;
-            color:#6B3140;
-        }
+    /* =========================
+       TABLAS DE DATOS
+    ========================== */
 
-        .inventario{
-            margin-top:15px;
-            background:#F7F4EE;
-            border-left:5px solid #C8A96B;
-            border-radius:6px;
-            padding:15px;
-        }
+    .datos {
+        width: 100%;
+        margin-top: 10px;
+        border-collapse: collapse;
+    }
 
-        .inventario h3{
-            margin-bottom:10px;
-            color:#6B3140;
-        }
+    .datos td {
+        padding: 8px;
+        border: 1px solid #DDD;
+    }
 
-        .firmas{
-            width:100%;
-            margin-top:60px;
-            border-collapse:collapse;
-        }
+    .datos td:first-child {
+        width: 30%;
+        background: #F7F4EE;
+        color: #6B3140;
+        font-weight: bold;
+    }
 
-        .firmas td{
-            width:50%;
-            text-align:center;
-            vertical-align:top;
-            padding:0 20px;
-        }
+    /* =========================
+       INVENTARIO
+    ========================== */
 
-        .linea{
-            border-top:1px solid black;
-            margin:60px auto 10px;
-            width:80%;
-        }
+    .inventario {
+        margin-top: 15px;
+        padding: 15px;
+        background: #F7F4EE;
+        border-left: 5px solid #C8A96B;
+        border-radius: 6px;
+    }
 
+    .inventario h3 {
+        margin-bottom: 10px;
+        color: #6B3140;
+    }
+
+    /* =========================
+       SALTOS DE PÁGINA
+    ========================== */
+
+    .page-break {
+        page-break-before: always;
+        break-before: page;
+    }
+
+    .aval-section {
+        page-break-before: always;
+        break-before: page;
+    }
+
+    /* =========================
+       SELLO FIJO EN TODAS LAS HOJAS
+    ========================== */
+
+    .sello-contrato {
+        position: fixed;
+        right: 12mm;
+        bottom: -15mm;
+
+        width: 50mm;
+        height: auto;
+
+        opacity: 0.90;
+        z-index: -1;
+
+
+    }
+
+    /* =========================
+       FIRMAS NORMALES DEL CONTRATO
+       SOLO PROPIETARIO E INQUILINO
+    ========================== */
+
+    .firmas {
+        width: 100%;
+        margin-top: 60px;
+        border-collapse: collapse;
+        table-layout: fixed;
+        page-break-inside: avoid;
+    }
+
+    .firmas td {
+        width: 50%;
+        padding: 0 25px;
+        text-align: center;
+        vertical-align: top;
+    }
+
+    .firma-normal-titulo {
+        min-height: 28px;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    .firma-normal-espacio {
+        position: relative;
+        height: 120px;
+    }
+
+    .firma-normal-linea {
+        width: 85%;
+        margin: 0 auto 10px;
+        border-top: 1px solid #444;
+    }
+
+    .firma-normal-datos {
+        min-height: 45px;
+        font-size: 9.5pt;
+        line-height: 1.45;
+        text-align: center;
+    }
+
+    .firma-normal-sello {
+        display: block;
+        width: 42mm;
+        height: auto;
+        margin: 0 auto;
+        opacity: 0.95;
+    }
+
+    /* =========================
+       FIRMAS DEL ANEXO DE AVAL
+       TRES COLUMNAS IGUALES
+    ========================== */
+
+    .aval-signatures-table {
+    width: 100%;
+    margin-top: 35px;
+    border-collapse: collapse;
+    table-layout: fixed;
+    page-break-inside: avoid;
+}
+
+.aval-signature-cell {
+    width: 33.333%;
+    padding: 0 10px;
+    text-align: center;
+    vertical-align: top;
+}
+
+.aval-signature-title {
+    height: 30px;
+    font-size: 10pt;
+    font-weight: bold;
+    text-align: center;
+}
+
+.aval-signature-space {
+    position: relative;
+    width: 100%;
+    height: 145px;
+}
+
+.aval-owner-stamp {
+    position: absolute;
+
+    width: 60mm;
+    height: auto;
+
+    top: -5mm;
+    left: 50%;
+
+    transform: translateX(-50%);
+    z-index:-1;
+    opacity: 0.95;
+
+
+    filter:
+        hue-rotate(150deg)
+        saturate(130%)
+        brightness(1.08)
+        contrast(.95);
+
+}
+
+.aval-signature-line {
+    width: 85%;
+    margin: 0 auto 10px;
+    border-top: 1px solid #444;
+}
+
+.aval-signature-name {
+    min-height: 50px;
+    font-size: 9.5pt;
+    line-height: 1.45;
+    text-align: center;
+}
+    /* =========================
+       ANEXO DE AVAL
+    ========================== */
+
+    .contract-section {
+        width: 100%;
+    }
+
+    .contract-section-title {
+        margin: 0 0 24px;
+        text-align: center;
+        color: #6B3140;
+        font-size: 15pt;
+        font-weight: 700;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+    }
+
+    .aval-section p {
+        margin-bottom: 14px;
+        text-align: justify;
+    }
+
+    .contract-place-date {
+        margin-top: 28px;
+        text-align: left;
+    }
+
+    /* =========================
+   FIRMAS DEL CONTRATO
+   NO AFECTA AL ANEXO
+========================= */
+
+.firmas-contrato {
+    width: 100%;
+    margin-top: 55px;
+    border-collapse: collapse;
+    table-layout: fixed;
+    page-break-inside: avoid;
+}
+
+.firma-contrato-celda {
+    width: 50%;
+    padding: 0 25px;
+    text-align: center;
+    vertical-align: top;
+}
+
+.firma-contrato-titulo {
+    display: block;
+    position: relative;
+    z-index: 2;
+    font-size: 10pt;
+}
+
+.firma-contrato-propietario {
+    position: relative;
+    height: 155px;
+    margin-top: 5px;
+    text-align: center;
+}
+
+.firma-contrato-sello {
+    position: absolute;
+    top: -35px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: 58mm;
+    height: auto;
+
+    opacity: 0.95;
+    z-index: 1;
+}
+
+.firma-contrato-datos {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    z-index: 2;
+    text-align: center;
+}
+
+.firma-contrato-datos p {
+    margin: 2px 0;
+}
+
+.firma-contrato-espacio {
+    height: 105px;
+}
+
+.firma-contrato-linea {
+    width: 80%;
+    margin: 0 auto 10px;
+    border-top: 1px solid #444;
+}
+/* =========================================================
+   AVISO IMPORTANTE: EFICACIA DEL CONTRATO
+========================================================= */
+
+.contract-important-box {
+    position: relative;
+    margin: 28px 0;
+    padding: 22px 24px;
+
+    border: 2px solid #9f2f35;
+    border-radius: 8px;
+
+    background: #fff7f7;
+    color: #3f343a;
+
+    page-break-inside: avoid;
+    z-index:-2;
+}
+
+.contract-important-header {
+    margin: -22px -24px 20px;
+    padding: 9px 16px;
+
+    background: #9f2f35;
+    color: #ffffff;
+
+    font-size: 13pt;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.contract-important-title {
+    margin: 0 0 16px;
+    padding: 0;
+
+    border: 0;
+
+    color: #7d252b;
+    font-size: 12pt;
+    line-height: 1.35;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.contract-important-box p {
+    margin: 0 0 11px;
+    text-align: justify;
+}
+
+.contract-important-list {
+    margin: 12px 0 15px;
+    padding-left: 24px;
+}
+
+.contract-important-list li {
+    margin-bottom: 9px;
+    padding-left: 4px;
+    text-align: justify;
+}
+
+.contract-important-final {
+    margin-bottom: 0 !important;
+    padding-top: 12px;
+
+    border-top: 1px solid rgba(159, 47, 53, 0.35);
+
+    color: #74242a;
+    font-weight: 700;
+}
+</style>
     </style>
 
 </head>
 
 <body>
+
+<img
+        src="{% static 'hotel/img/sello.png' %}"
+        class="sello-contrato"
+        alt="Sello By Colección"
+    >
 
 <header class="cabecera">
 
@@ -300,10 +633,10 @@
 
     <p>
         <strong>2.1</strong>
-        El presente contrato entrará en vigor el día
-        <strong>{{ contrato.fecha_inicio|date:"d/m/Y" }}</strong>,
-        con una duración inicial obligatoria de
-        <strong>seis (6) meses</strong>.
+        El presente contrato comenzará el día
+        <strong>{{ contrato.fecha_inicio|date:"d/m/Y" }}</strong>
+        y finalizará el día
+        <strong>{{ contrato.fecha_fin|date:"d/m/Y" }}</strong>.
     </p>
 
     <p>
@@ -499,16 +832,25 @@
 
     </p>
 
+   {% if contrato.habitacion.propiedad.reparto_gastos == "IGUAL" %}
+
     <ul>
-        <li><strong>SE DIVIDIRÁ A PARTES IGUALES ENTRE LAS 8 HABITACIONES</strong>.</li>
-        <!--
-        <li>Habitación doble con aire acondicionado: <strong>40 %</strong>.</li>
-
-        <li>Habitación doble: <strong>35 %</strong>.</li>
-
-        <li>Habitación individual: <strong>25 %</strong>.</li>
-        -->
+        <li>
+            <strong>
+                Los gastos se dividirán a partes iguales entre todas las habitaciones de la vivienda.
+            </strong>
+        </li>
     </ul>
+
+    {% else %}
+
+    <ul>
+        <li>Habitación doble con aire acondicionado: <strong>40 %</strong></li>
+        <li>Habitación doble: <strong>35 %</strong></li>
+        <li>Habitación individual: <strong>25 %</strong></li>
+    </ul>
+
+    {% endif %}
 
     <p>
 
@@ -940,27 +1282,42 @@
 
 </section>
 
-<table class="firmas">
+<table class="firmas-contrato">
 
     <tr>
 
-        <td>
+        <td class="firma-contrato-celda">
 
-            <strong>EL PROPIETARIO</strong>
+            <strong class="firma-contrato-titulo">
+                EL PROPIETARIO
+            </strong>
 
-            <div class="linea"></div>
+            <div class="firma-contrato-propietario">
 
-            <strong>MACRABBIT, S.L.U.</strong><br>
+                <img
+                    src="{% static 'hotel/img/sello.png' %}"
+                    class="firma-contrato-sello"
+                    alt="Sello By Colección"
+                >
 
-            Manuel Acosta Faerman
+                <div class="firma-contrato-datos">
+                    <p><strong>MACRABBIT, S.L.U.</strong></p>
+                    <p>Manuel Acosta Faerman</p>
+                </div>
+
+            </div>
 
         </td>
 
-        <td>
+        <td class="firma-contrato-celda">
 
-            <strong>EL INQUILINO</strong>
+            <strong class="firma-contrato-titulo">
+                EL INQUILINO
+            </strong>
 
-            <div class="linea"></div>
+            <div class="firma-contrato-espacio"></div>
+
+            <div class="firma-contrato-linea"></div>
 
             <strong>{{ contrato.inquilino.nombre }}</strong>
 
@@ -969,6 +1326,196 @@
     </tr>
 
 </table>
+
+
+{% if contrato.tiene_aval %}
+
+
+<section class="contract-section aval-section">
+
+    <h2 class="contract-section-title">
+        ANEXO DE AVAL PERSONAL Y SOLIDARIO
+    </h2>
+
+    <p>
+        D./D.ª
+        <strong>{{ contrato.aval.nombre_completo }}</strong>,
+        con DNI/NIE
+        <strong>{{ contrato.aval.dni_nie }}</strong>,
+        actúa como avalista solidario del arrendatario D./D.ª
+        <strong>{{ contrato.inquilino.nombre_completo }}</strong>,
+        respecto del contrato de arrendamiento de la habitación
+        <strong>{{ contrato.habitacion }}</strong>,
+        situada en
+        <strong>{{ contrato.habitacion.propiedad.direccion }}</strong>,
+        suscrito con fecha
+        <strong>{{ contrato.fecha_inicio|date:"d/m/Y" }}</strong>.
+    </p>
+
+    <p>
+        El avalista declara conocer íntegramente el contenido del contrato
+        y se obliga a responder solidaria e ilimitadamente del cumplimiento
+        de todas las obligaciones económicas asumidas por el arrendatario,
+        incluyendo rentas, suministros, daños, penalizaciones y cualquier
+        otra cantidad derivada del contrato.
+    </p>
+
+    <p>
+        El avalista renuncia expresamente a los beneficios de excusión,
+        división y orden, pudiendo el arrendador reclamarle directamente
+        las cantidades adeudadas sin necesidad de requerir previamente
+        al arrendatario.
+    </p>
+
+    <p>
+        El presente aval permanecerá vigente durante toda la duración del
+        contrato y sus posibles prórrogas, hasta la completa extinción de
+        las obligaciones garantizadas.
+    </p>
+
+    <p class="contract-place-date">
+        En Madrid, a
+        {{ contrato.fecha_inicio|date:"d" }}
+        de
+        {{ contrato.fecha_inicio|date:"F" }}
+        de
+        {{ contrato.fecha_inicio|date:"Y" }}.
+    </p>
+
+<table class="aval-signatures-table">
+    <tr>
+
+        <td class="aval-signature-cell">
+            <div class="aval-signature-title">
+                EL PROPIETARIO
+            </div>
+
+            <div class="aval-signature-space">
+                <img
+                    src="{% static 'hotel/img/sello.png' %}"
+                    class="aval-owner-stamp"
+                    alt=""
+                >
+            </div>
+
+            <div class="aval-signature-line"></div>
+
+            <div class="aval-signature-name">
+                <strong>MACRABBIT, S.L.U.</strong><br>
+                Manuel Acosta Faerman
+            </div>
+        </td>
+
+        <td class="aval-signature-cell">
+            <div class="aval-signature-title">
+                EL INQUILINO
+            </div>
+
+            <div class="aval-signature-space"></div>
+
+            <div class="aval-signature-line"></div>
+
+            <div class="aval-signature-name">
+                <strong>{{ contrato.inquilino.nombre }}</strong>
+            </div>
+        </td>
+
+        <td class="aval-signature-cell">
+            <div class="aval-signature-title">
+                EL AVALISTA
+            </div>
+
+            <div class="aval-signature-space"></div>
+
+            <div class="aval-signature-line"></div>
+
+            <div class="aval-signature-name">
+                <strong>{{ contrato.aval.nombre_completo }}</strong><br>
+                {{ contrato.aval.dni_nie }}
+            </div>
+        </td>
+
+    </tr>
+</table>
+
+</section>
+
+{% endif %}
+
+<div class="contract-important-box">
+
+    <div class="contract-important-header">
+        IMPORTANTE
+    </div>
+
+    <h2 class="contract-important-title">
+        CONDICIÓN DE EFICACIA DEL CONTRATO
+    </h2>
+
+    <p>
+        La eficacia del presente contrato queda expresamente sometida al
+        cumplimiento por parte del <strong>ARRENDATARIO</strong> de las
+        siguientes condiciones dentro del plazo máximo de
+        <strong>veinticuatro (24) horas naturales</strong>, contado desde el
+        momento en que el contrato firmado por el
+        <strong>ARRENDADOR</strong> haya sido puesto a su disposición para su
+        descarga:
+    </p>
+
+    <ol class="contract-important-list">
+
+        <li>
+            Descargar, firmar y remitir al ARRENDADOR una copia íntegra y
+            legible del presente contrato, incluyendo todos sus anexos cuando
+            proceda.
+        </li>
+
+        <li>
+            Abonar mediante transferencia bancaria o por el medio de pago
+            indicado por el ARRENDADOR el importe correspondiente a la
+            <strong>fianza</strong>.
+        </li>
+
+        <li>
+            Abonar la <strong>renta correspondiente al mes en curso</strong>
+            o, cuando la fecha de inicio del arrendamiento no coincida con el
+            primer día del mes, la cantidad proporcional correspondiente a
+            los días comprendidos entre la fecha de inicio del contrato y el
+            último día de dicho mes.
+        </li>
+
+    </ol>
+
+    <p>
+        Las condiciones anteriores tendrán carácter acumulativo, por lo que
+        deberán cumplirse todas ellas dentro del plazo indicado.
+    </p>
+
+    <p>
+        Si transcurren las veinticuatro (24) horas naturales sin que el
+        ARRENDATARIO haya remitido el contrato debidamente firmado y sin que
+        haya realizado la totalidad de los pagos exigidos, la condición se
+        considerará incumplida y el presente contrato
+        <strong>no adquirirá eficacia</strong>, sin necesidad de comunicación,
+        requerimiento o preaviso adicional.
+    </p>
+
+    <p>
+        En tal caso, el ARRENDADOR quedará facultado para volver a ofrecer y
+        contratar libremente la habitación o inmueble con terceros, sin que
+        el posible ARRENDATARIO pueda exigir la reserva del alojamiento,
+        reclamar su entrega o alegar derecho de preferencia alguno.
+    </p>
+
+    <p class="contract-important-final">
+        La firma del contrato por el ARRENDADOR y su puesta a disposición para
+        descarga no implican por sí solas la entrega de la posesión, la reserva
+        definitiva del inmueble ni el nacimiento efectivo del derecho de
+        ocupación.
+    </p>
+
+</div>
+
 
 </body>
 </html>

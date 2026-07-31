@@ -1,0 +1,464 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block extra-head %}
+<link
+    rel="stylesheet"
+    href="{% static 'hotel/css/detalle_proceso_formalizacion.css' %}"
+>
+{% endblock %}
+
+{% block content %}
+
+<div class="formalizacion-page">
+
+    <div class="formalizacion-detail-card">
+
+        <!-- CABECERA -->
+        <header class="formalizacion-detail-header">
+
+            <div class="formalizacion-heading">
+
+                <span class="formalizacion-eyebrow">
+                    Proceso de formalización
+                </span>
+
+                <h1>
+                    {{ proceso.habitacion.nombre }}
+                </h1>
+
+                {% if proceso.habitacion.propiedad %}
+                    <p>
+                        {{ proceso.habitacion.propiedad.nombre }}
+                    </p>
+                {% endif %}
+
+            </div>
+
+            <div class="
+                formalizacion-status-card
+                formalizacion-{{ proceso.estado|lower }}
+            ">
+
+                <span>Estado</span>
+
+                <strong>
+                    {{ proceso.get_estado_display }}
+                </strong>
+
+            </div>
+
+        </header>
+
+
+        <!-- DATOS DEL PROCESO -->
+        <section class="formalizacion-section">
+
+            <div class="formalizacion-section-heading">
+
+                <span>Seguimiento</span>
+
+                <h2>Datos del proceso</h2>
+
+            </div>
+
+            <div class="formalizacion-detail-grid">
+
+                <div class="formalizacion-detail-item">
+
+                    <span>Fecha de creación</span>
+
+                    <strong>
+                        {{ proceso.fecha_creacion|date:"d/m/Y H:i" }}
+                    </strong>
+
+                </div>
+
+                <div class="formalizacion-detail-item">
+
+                    <span>Inicio del plazo</span>
+
+                    <strong>
+                        {% if proceso.fecha_inicio %}
+                            {{ proceso.fecha_inicio|date:"d/m/Y H:i" }}
+                        {% else %}
+                            Pendiente
+                        {% endif %}
+                    </strong>
+
+                </div>
+
+                <div class="formalizacion-detail-item">
+
+                    <span>Fecha límite</span>
+
+                    <strong>
+                        {% if proceso.fecha_limite %}
+                            {{ proceso.fecha_limite|date:"d/m/Y H:i" }}
+                        {% else %}
+                            Pendiente
+                        {% endif %}
+                    </strong>
+
+                </div>
+
+                <div class="formalizacion-detail-item">
+
+                    <span>Contrato</span>
+
+                    <strong>
+                        {% if proceso.contrato %}
+                            Generado
+                        {% else %}
+                            Todavía no generado
+                        {% endif %}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ESTADO DE LA FORMALIZACIÓN -->
+        <section class="formalizacion-checklist">
+
+            <div class="formalizacion-section-heading">
+
+                <span>Comprobaciones</span>
+
+                <h2>Estado de formalización</h2>
+
+            </div>
+
+            <div class="formalizacion-check-grid">
+
+                <div class="formalizacion-check-row">
+
+                    <span>Contrato descargado</span>
+
+                    <strong class="
+                        {% if proceso.contrato_descargado %}
+                            check-completo
+                        {% else %}
+                            check-pendiente
+                        {% endif %}
+                    ">
+                        {% if proceso.contrato_descargado %}
+                            Sí
+                        {% else %}
+                            No
+                        {% endif %}
+                    </strong>
+
+                </div>
+
+                <div class="formalizacion-check-row">
+
+                    <span>Contrato firmado recibido</span>
+
+                    <strong class="
+                        {% if proceso.contrato_firmado_recibido %}
+                            check-completo
+                        {% else %}
+                            check-pendiente
+                        {% endif %}
+                    ">
+                        {% if proceso.contrato_firmado_recibido %}
+                            Sí
+                        {% else %}
+                            No
+                        {% endif %}
+                    </strong>
+
+                </div>
+
+                <div class="formalizacion-check-row">
+
+                    <span>Fianza recibida</span>
+
+                    <strong class="
+                        {% if proceso.fianza_recibida %}
+                            check-completo
+                        {% else %}
+                            check-pendiente
+                        {% endif %}
+                    ">
+                        {% if proceso.fianza_recibida %}
+                            Sí
+                        {% else %}
+                            No
+                        {% endif %}
+                    </strong>
+
+                </div>
+
+                <div class="formalizacion-check-row">
+
+                    <span>Renta recibida</span>
+
+                    <strong class="
+                        {% if proceso.renta_recibida %}
+                            check-completo
+                        {% else %}
+                            check-pendiente
+                        {% endif %}
+                    ">
+                        {% if proceso.renta_recibida %}
+                            Sí
+                        {% else %}
+                            No
+                        {% endif %}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        {% if proceso.estado == "PENDIENTE" or proceso.estado == "INICIADO" %}
+
+            <!-- ENLACE PÚBLICO -->
+            <section class="formalizacion-link-box">
+
+                <div class="formalizacion-link-header">
+
+                    <span class="formalizacion-eyebrow">
+                        Enlace público
+                    </span>
+
+                    <h2>Enviar al candidato</h2>
+
+                    <p>
+                        El candidato podrá revisar las condiciones y
+                        descargar el documento desde este enlace.
+                    </p>
+
+                </div>
+
+                <div class="formalizacion-link-row">
+
+                    <input
+                        id="formalizacion-url"
+                        type="text"
+                        readonly
+                        value="{{ request.scheme }}://{{ request.get_host }}{% url 'hotel:formalizacion_publica' proceso.token %}"
+                    >
+
+                    <button
+                        type="button"
+                        class="btn-copiar-enlace"
+                        onclick="copiarEnlaceFormalizacion()"
+                    >
+                        Copiar enlace
+                    </button>
+
+                </div>
+
+                {% if proceso.inquilino and proceso.inquilino.telefono %}
+
+                    <button
+                        type="button"
+                        class="btn-enviar-whatsapp"
+                        onclick="enviarFormalizacionWhatsApp()"
+                    >
+                        <i
+                            class="fa fa-whatsapp"
+                            aria-hidden="true"
+                        ></i>
+
+                        Enviar por WhatsApp
+                    </button>
+
+                {% else %}
+
+                    <p class="formalizacion-warning">
+
+                        <i
+                            class="fa fa-exclamation-circle"
+                            aria-hidden="true"
+                        ></i>
+
+                        No hay un teléfono registrado para este candidato.
+                        Puedes copiar el enlace y enviarlo manualmente.
+
+                    </p>
+
+                {% endif %}
+
+            </section>
+
+
+            <!-- ACCIONES -->
+            <section class="proceso-acciones-section">
+
+                <div class="formalizacion-section-heading">
+
+                    <span>Administración</span>
+
+                    <h2>Acciones del proceso</h2>
+
+                    <p>
+                        Confirma, cancela o elimina este proceso.
+                    </p>
+
+                </div>
+
+                <div class="proceso-acciones">
+
+                    <form
+                        method="post"
+                        action="{% url 'hotel:confirmar_formalizacion' proceso.pk %}"
+                    >
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="btn-confirmar-formalizacion"
+                            onclick="return confirm(
+                                '¿Confirmas que has recibido el contrato firmado, la fianza y la renta?'
+                            )"
+                        >
+                            Confirmar formalización
+                        </button>
+
+                    </form>
+
+
+                    <form
+                        method="post"
+                        action="{% url 'hotel:cancelar_proceso_formalizacion' proceso.pk %}"
+                    >
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="btn-cancelar-formalizacion"
+                            onclick="return confirm(
+                                '¿Seguro que deseas cancelar este proceso?'
+                            )"
+                        >
+                            Cancelar proceso
+                        </button>
+
+                    </form>
+
+
+                    {% if proceso.estado != "FORMALIZADO" and not proceso.contrato %}
+
+                        <form
+                            method="post"
+                            action="{% url 'hotel:eliminar_proceso_formalizacion' proceso.pk %}"
+                            class="eliminar-proceso-form"
+                        >
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="btn-eliminar-formalizacion"
+                                onclick="return confirm(
+                                    'Este proceso se eliminará definitivamente y no podrá recuperarse. ¿Deseas continuar?'
+                                )"
+                            >
+                                Eliminar proceso
+                            </button>
+
+                        </form>
+
+                    {% endif %}
+
+                </div>
+
+            </section>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<script>
+function obtenerEnlaceFormalizacion() {
+    const input = document.getElementById("formalizacion-url");
+
+    return input ? input.value : "";
+}
+
+
+function copiarEnlaceFormalizacion() {
+    const input = document.getElementById("formalizacion-url");
+
+    if (!input) {
+        return;
+    }
+
+    navigator.clipboard
+        .writeText(input.value)
+        .then(() => {
+            alert("Enlace copiado correctamente.");
+        })
+        .catch(() => {
+            input.select();
+            input.setSelectionRange(
+                0,
+                input.value.length
+            );
+
+            document.execCommand("copy");
+
+            alert("Enlace copiado correctamente.");
+        });
+}
+
+
+function enviarFormalizacionWhatsApp() {
+    const enlace = obtenerEnlaceFormalizacion();
+
+    const telefono = (
+        "{{ proceso.inquilino.telefono|default:''|escapejs }}"
+    ).replace(/\D/g, "");
+
+    const nombre =
+        "{{ proceso.inquilino.nombre|default:''|escapejs }}";
+
+    const habitacion =
+        "{{ proceso.habitacion.nombre|default:''|escapejs }}";
+
+    if (!enlace) {
+        alert("No se ha podido generar el enlace.");
+        return;
+    }
+
+    if (!telefono) {
+        alert("El candidato no tiene un teléfono válido.");
+        return;
+    }
+
+    const mensaje = [
+        `Hola ${nombre},`,
+        "",
+        `Te enviamos el enlace para continuar con la formalización de la habitación ${habitacion}.`,
+        "",
+        enlace,
+        "",
+        "Desde este enlace podrás revisar las condiciones y descargar el documento.",
+        "",
+        "Si tienes alguna duda, puedes responder a este mensaje."
+    ].join("\n");
+
+    const urlWhatsApp =
+        `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
+
+    window.open(
+        urlWhatsApp,
+        "_blank",
+        "noopener,noreferrer"
+    );
+}
+</script>
+
+{% endblock %}

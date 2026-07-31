@@ -1,143 +1,616 @@
-:root{
-    --vino: #6B3140;
-    --vino-hover: #7E3B4C;
-    --ambar: #C8A96B;
-    --cream: #F7F4EE;
-    --cream-dark: #F3EEE6;
-    --texto: #2F2A26;
-  }
+/* =========================================================
+   VARIABLES
+========================================================= */
 
-  body {
+:root {
+    --dashboard-mauve: #765f6e;
+    --dashboard-mauve-medium: #89717c;
+    --dashboard-mauve-dark: #5d4755;
+    --dashboard-mauve-soft: #e9e0e4;
+
+    --dashboard-teal: #679a96;
+    --dashboard-teal-dark: #4f7f7b;
+    --dashboard-teal-soft: #e8f1ef;
+
+    --dashboard-yellow: #f6e8ad;
+    --dashboard-yellow-dark: #745044;
+
+    --dashboard-cream: #f2ede6;
+    --dashboard-cream-light: #faf8f5;
+
+    --dashboard-white: #ffffff;
+
+    --dashboard-text: #403a3d;
+    --dashboard-text-medium: #665f62;
+    --dashboard-text-soft: #8b8286;
+
+    --dashboard-border: #e1d9d3;
+
+    --sidebar-width: 140px;
+}
+
+
+/* =========================================================
+   AJUSTES GENERALES
+========================================================= */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    min-height: 100%;
+
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
     margin: 0;
-    background: var(--cream);
-    color: var(--texto);
-  }
 
-  .logo-blanco {
-    width: 150px;
-    height: auto;
-    object-fit: contain;
-    margin-bottom: 28px;
-    filter:brightness(0) saturate(100%) invert(95%) sepia(7%) saturate(242%) hue-rotate(324deg) brightness(99%) contrast(92%);
-  }
+    overflow-x: hidden;
 
-  .logo-blanco:hover {
-    opacity: 0.8;
-  }
+    background: var(--dashboard-cream);
+    color: var(--dashboard-text);
 
-  #sidebar {
-    position: fixed;
-    left: 0;
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+a {
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   DISTRIBUCIÓN
+========================================================= */
+
+.dashboard-layout {
+    display: flex;
+
+    width: 100%;
+    min-height: 100vh;
+}
+
+#centerside {
+    flex: 1;
+    min-width: 0;
+    min-height: 100vh;
+
+    overflow-x: hidden;
+
+    background: var(--dashboard-cream);
+}
+
+
+/* =========================================================
+   MENSAJES
+========================================================= */
+
+.dashboard-messages {
+    position: relative;
+    z-index: 50;
+
+    width: calc(100% - 40px);
+    max-width: 1100px;
+    margin: 18px auto 0;
+}
+
+.dashboard-messages .alert {
+    margin-bottom: 10px;
+
+    border: 0;
+    border-radius: 12px;
+
+    box-shadow:
+        0 9px 24px rgba(72, 54, 65, 0.08);
+}
+
+/* =========================================================
+   LOGOTIPO SUPERIOR ESCRITORIO
+========================================================= */
+
+/* =========================================================
+   LOGOTIPO SUPERIOR MÓVIL
+========================================================= */
+
+.mobile-brand-bar {
+    display: none;
+}
+
+
+/* =========================================================
+   SIDEBAR DE ESCRITORIO
+========================================================= */
+
+#sidebar {
+    position: sticky;
     top: 0;
-    height: 100vh;
+    z-index: 100;
+
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 26px 18px;
-    gap: 18px;
-    border-right: 1px solid rgba(107, 49, 64, 0.12);
 
-    background:#786170;
-    width:230px;
+    flex: 0 0 var(--sidebar-width);
 
-  }
+    width: var(--sidebar-width);
+    height: 100vh;
 
-#sidebar .navbar-brand {
-    padding: 0 !important;
-    margin: 0;
-  }
-.hijo {
-    width: 155px;
-    height: 54px;
-    background: transparent;
-    border-radius: 999px;
-    box-shadow: none;
-    transition: .25s ease;
-}
-hijo.active{
+    background: var(--dashboard-mauve);
 
-    background:#C8A96B;
-    color:#5E2B38;
+    box-shadow:
+        7px 0 24px rgba(63, 47, 57, 0.1);
 }
 
-  .hijo:hover {
-    background: rgba(255,255,255,.12);
-    transform: translateY(-1px);
-  }
 
-  .hijo a {
+/* =========================================================
+   LOGOTIPO DE ESCRITORIO
+========================================================= */
+.logo-escritorio {
+    display: block;
+
     width: 100%;
-    height: 100%;
-    color: #F7F4EE;
-    text-decoration: none !important;
+    height: auto;
+
+    filter: brightness(0) invert(1);
+}
+
+.sidebar-logo-box {
     display: flex;
-    justify-content: center;
     align-items: center;
-    gap: 10px;
-  }
+    justify-content: center;
 
-  .hijo i {
-    color: #F7F4EE;
-    font-size: 18px;
-  }
-  .hijo span {
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-.hijo:hover i,
-.hijo:hover span {
-    color: #C8A96B;
-}
-.hijo.active {
-    background: #F7F4EE;
+    width: 100%;
+    padding: 22px 8px 25px;
+
+    border-bottom:
+        1px solid rgba(255, 255, 255, 0.11);
+    overflow: hidden;
 }
 
-.hijo.active i,
-.hijo.active span {
-    color: #786170;
-}
-  #centerside {
-    min-height: 100vh;
-    margin-left: 220px;
-    padding: 42px;
-    background:#F7F4EE;
-  }
+.sidebar-logo-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-  @media screen and (max-width: 768px) {
-    #sidebar {
-      position: relative;
-      width: 100%;
-      height: auto;
-      flex-direction: row;
-      overflow-x: auto;
-      white-space: nowrap;
-      padding: 14px;
-      gap: 12px;
+    width: 100%;
+
+    text-decoration: none;
+}
+
+.logo-blanco {
+    display: block;
+
+    width: 100%;
+    height: auto;
+
+    filter: brightness(0) invert(1);
+
+    clip-path: inset(0 0 25% 0);
+
+    transform: scale(1.15);
+    transform-origin: center top;
+}
+
+
+/* =========================================================
+   NAVEGACIÓN
+========================================================= */
+
+.sidebar-navigation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+
+    width: 100%;
+    padding: 20px 10px;
+}
+
+.sidebar-bottom {
+    width: 100%;
+    margin-top: auto;
+    padding: 13px 10px 20px;
+
+    border-top:
+        1px solid rgba(255, 255, 255, 0.11);
+}
+
+
+/* =========================================================
+   ENLACES DEL MENÚ
+========================================================= */
+
+.sidebar-link {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 56px;
+    height: 56px;
+
+    border: 1px solid transparent;
+    border-radius: 16px;
+
+    background: transparent;
+    color: rgba(255, 255, 255, 0.72);
+
+    text-decoration: none;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.sidebar-link i {
+    color: inherit;
+
+    font-size: 23px;
+    line-height: 1;
+}
+
+.sidebar-link:hover {
+    border-color: rgba(255, 255, 255, 0.08);
+
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--dashboard-white);
+
+    transform: translateY(-1px);
+}
+
+.sidebar-link.active {
+    border-color: rgba(255, 255, 255, 0.12);
+
+    background: var(--dashboard-teal);
+    color: var(--dashboard-white);
+
+    box-shadow:
+        0 9px 20px rgba(49, 86, 82, 0.22);
+}
+
+
+/* =========================================================
+   INDICADOR “+”
+========================================================= */
+
+.sidebar-icon-indicator {
+    position: absolute;
+    top: 7px;
+    right: 6px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 17px;
+    height: 17px;
+
+    border: 2px solid var(--dashboard-mauve);
+    border-radius: 50%;
+
+    background: var(--dashboard-yellow);
+    color: var(--dashboard-yellow-dark);
+
+    font-size: 11px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.sidebar-link.active
+.sidebar-icon-indicator {
+    border-color: var(--dashboard-teal);
+}
+
+
+/* =========================================================
+   ETIQUETAS DEL MENÚ
+========================================================= */
+
+.sidebar-link::after {
+    content: attr(data-label);
+
+    position: absolute;
+    top: 50%;
+    left: calc(100% + 14px);
+    z-index: 120;
+
+    padding: 8px 11px;
+
+    border-radius: 8px;
+
+    background: var(--dashboard-mauve-dark);
+    color: var(--dashboard-white);
+
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+
+    opacity: 0;
+    visibility: hidden;
+
+    pointer-events: none;
+
+    transform:
+        translate(-5px, -50%);
+
+    box-shadow:
+        0 8px 20px rgba(63, 47, 57, 0.17);
+
+    transition:
+        opacity 0.18s ease,
+        transform 0.18s ease,
+        visibility 0.18s ease;
+}
+
+.sidebar-link:hover::after {
+    opacity: 1;
+    visibility: visible;
+
+    transform:
+        translate(0, -50%);
+}
+
+
+/* =========================================================
+   FOCO DE TECLADO
+========================================================= */
+
+.sidebar-link:focus-visible,
+.sidebar-logo-link:focus-visible,
+.mobile-brand-link:focus-visible {
+    outline: 3px solid var(--dashboard-yellow);
+    outline-offset: 2px;
+}
+
+
+/* =========================================================
+   SELECCIÓN
+========================================================= */
+
+::selection {
+    background: var(--dashboard-yellow);
+    color: var(--dashboard-mauve-dark);
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) and (min-width: 601px) {
+    .sidebar-navigation {
+        padding-right: 8px;
+        padding-left: 8px;
     }
 
-    .logo-blanco {
-      width:105px;
-      height:auto;
-      display:block;
+    .sidebar-link {
+        width: 52px;
+        height: 52px;
+
+        border-radius: 15px;
     }
 
-    navbar-brand {
-    widht:100% !important;
-    padding: 16px 0 12px !important;
-    margin: 0 !important;
-
-    display:flex;
-    justify-content:center;
-    align-items:center;
+    .sidebar-link i {
+        font-size: 22px;
     }
-    .hijo {
-      min-width: 86px;
-      height: 50px;
-      flex: 0 0 auto;
+}
+
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
+@media (max-width: 600px) {
+    body {
+        padding-bottom: 0;
+    }
+
+    /* Cabecera superior */
+    .logo-movil {
+        display: block;
+
+        width: 250px;
+        height: auto;
+
+        object-fit: contain;
+
+        filter: brightness(0) invert(1);
+    }
+
+    .mobile-brand-bar {
+        position: sticky;
+        top: 0;
+        z-index: 950;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 100%;
+        height: 64px;
+        padding: 9px 16px;
+
+        border-bottom:
+            1px solid rgba(255, 255, 255, 0.1);
+
+        background: var(--dashboard-mauve);
+
+        box-shadow:
+            0 7px 20px rgba(63, 47, 57, 0.11);
+    }
+
+    .mobile-brand-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        height: 100%;
+    }
+
+    .mobile-brand-logo {
+        display: block;
+
+        width: 150px;
+        max-width: 72vw;
+        max-height: 45px;
+
+        object-fit: contain;
+
+        filter:
+            brightness(0)
+            invert(1);
+    }
+
+    /* Contenido */
+
+    .dashboard-layout {
+        display: block;
+
+        min-height: calc(100vh - 64px);
+        padding-bottom: 70px;
     }
 
     #centerside {
-      margin-left: 0;
-      padding: 24px 16px;
+        width: 100%;
+        min-height: calc(100vh - 134px);
     }
-  }
+
+    /* Barra inferior */
+
+    #sidebar {
+        position: fixed;
+        top: auto;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1000;
+
+        flex-direction: row;
+
+        width: 100%;
+        height: 70px;
+
+        background: var(--dashboard-mauve);
+
+        box-shadow:
+            0 -8px 24px rgba(63, 47, 57, 0.14);
+    }
+
+    .sidebar-logo-box,
+    .sidebar-bottom {
+        display: none;
+    }
+
+    .sidebar-navigation {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 4px;
+
+        width: 100%;
+        height: 100%;
+        padding: 8px 10px;
+    }
+
+    .sidebar-link {
+        width: 100%;
+        height: 52px;
+
+        border-radius: 13px;
+    }
+
+    .sidebar-link i {
+        font-size: 21px;
+    }
+
+    .sidebar-link::after {
+        display: none;
+    }
+
+    .sidebar-icon-indicator {
+        top: 6px;
+        right: calc(50% - 20px);
+    }
+
+    .dashboard-messages {
+        width: calc(100% - 20px);
+        margin-top: 10px;
+    }
+}
+
+
+/* =========================================================
+   MÓVILES PEQUEÑOS
+========================================================= */
+
+@media (max-width: 380px) {
+    .mobile-brand-bar {
+        height: 58px;
+        padding: 8px 14px;
+    }
+
+    .mobile-brand-logo {
+        width: 135px;
+        max-height: 40px;
+    }
+
+    .dashboard-layout {
+        min-height: calc(100vh - 58px);
+        padding-bottom: 64px;
+    }
+
+    #sidebar {
+        height: 64px;
+    }
+
+    #centerside {
+        min-height: calc(100vh - 122px);
+    }
+
+    .sidebar-navigation {
+        padding: 6px 7px;
+    }
+
+    .sidebar-link {
+        height: 50px;
+
+        border-radius: 11px;
+    }
+
+    .sidebar-link i {
+        font-size: 19px;
+    }
+}
+
+
+/* =========================================================
+   MOVIMIENTO REDUCIDO
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}

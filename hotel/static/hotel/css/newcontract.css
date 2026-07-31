@@ -98,3 +98,184 @@
         grid-template-columns: 1fr;
     }
 }
+
+
+
+:root {
+    --azul-porcelana: #DCE6E7;
+    --azul-porcelana-claro: #F1F5F5;
+    --azul-porcelana-oscuro: #9BAFB1;
+
+    --vino-berenjena: #633F55;
+    --vino-berenjena-oscuro: #4E3042;
+    --vino-berenjena-suave: #806477;
+
+    --crema: #F8F4EE;
+    --blanco: #FFFFFF;
+    --texto: #3F343A;
+}
+
+/* TARJETA DEL AVAL */
+
+.aval-card {
+    grid-column: 1 / -1;
+    width: 100%;
+    margin-top: 10px;
+    padding: 28px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--azul-porcelana-claro),
+            var(--blanco)
+        );
+
+    border: 1px solid rgba(99, 63, 85, 0.18);
+    border-left: 5px solid var(--vino-berenjena);
+    border-radius: 18px;
+
+    box-shadow: 0 12px 30px rgba(78, 48, 66, 0.08);
+}
+
+/* CABECERA */
+
+.aval-card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    padding-bottom: 20px;
+    margin-bottom: 24px;
+
+    border-bottom: 1px solid rgba(99, 63, 85, 0.15);
+}
+
+.aval-icon {
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--crema);
+    background: var(--vino-berenjena);
+    border-radius: 14px;
+
+    font-size: 1.15rem;
+
+    box-shadow: 0 8px 18px rgba(99, 63, 85, 0.22);
+}
+
+.aval-card-header h3 {
+    margin: 0 0 4px;
+    color: var(--vino-berenjena-oscuro);
+
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.aval-card-header p {
+    margin: 0;
+    color: #756971;
+    font-size: 0.9rem;
+}
+
+/* DISTRIBUCIÓN DE CAMPOS */
+
+.aval-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.aval-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.aval-field-full {
+    grid-column: 1 / -1;
+}
+
+/* ETIQUETAS */
+
+.aval-field label {
+    color: var(--vino-berenjena-oscuro);
+    font-size: 0.9rem;
+    font-weight: 650;
+}
+
+/* INPUTS */
+
+.aval-field input,
+.aval-field select,
+.aval-field textarea {
+    width: 100%;
+    min-height: 46px;
+    padding: 11px 14px;
+
+    color: var(--texto);
+    background: rgba(255, 255, 255, 0.88);
+
+    border: 1px solid var(--azul-porcelana-oscuro);
+    border-radius: 10px;
+
+    font: inherit;
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.aval-field textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+.aval-field input:focus,
+.aval-field select:focus,
+.aval-field textarea:focus {
+    background: var(--blanco);
+    border-color: var(--vino-berenjena);
+
+    box-shadow:
+        0 0 0 4px rgba(99, 63, 85, 0.12);
+}
+
+/* ERRORES */
+
+.aval-field .errorlist {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    color: #A23443;
+    font-size: 0.82rem;
+}
+
+/* MÓVIL */
+
+@media (max-width: 700px) {
+    .aval-card {
+        padding: 20px;
+        border-radius: 15px;
+    }
+
+    .aval-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .aval-field-full {
+        grid-column: auto;
+    }
+
+    .aval-card-header {
+        align-items: flex-start;
+    }
+}

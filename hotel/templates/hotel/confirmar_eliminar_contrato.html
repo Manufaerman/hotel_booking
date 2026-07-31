@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h3>Eliminar contrato</h3>
+
+<p>
+¿Seguro que deseas eliminar el contrato de
+<strong>{{ contrato.inquilino }}</strong>?
+</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button class="btn btn-danger">
+        Sí, eliminar definitivamente
+    </button>
+
+    <a href="{% url 'hotel:contratos' %}" class="btn btn-secondary">
+        Cancelar
+    </a>
+</form>
+
+</body>
+</html>

@@ -2,10 +2,10 @@ from dateutil.relativedelta import relativedelta
 from django.urls import reverse
 from django.contrib.auth.models import User
 from datetime import date
+from django.utils.timezone import now
+import uuid
 from django.db import models
 from django.utils import timezone
-from django.utils.timezone import now
-
 
 class Visit(models.Model):
     ip = models.GenericIPAddressField()
@@ -33,6 +33,19 @@ class Flat(models.Model):
         ('habitaciones', 'Alquiler por habitaciones'),
         ('completo', 'Alquiler piso completo')
     }
+
+    TIPO_REPARTO_GASTOS = [
+        ("IGUAL", "A partes iguales"),
+        ("POR_TIPO_HABITACION", "Según tipo de habitación"),
+    ]
+
+    reparto_gastos = models.CharField(
+        max_length=30,
+        choices=TIPO_REPARTO_GASTOS,
+        default="IGUAL",
+        verbose_name="Sistema de reparto de gastos"
+    )
+
     tipo_alquiler = models.CharField(choices=TIPO_ALQUILER, default='habitaciones', max_length=20,)
     direccion = models.CharField(max_length=255, blank=True, null=True)
     descripcion_contrato = models.TextField(max_length=1000, null=True, blank=True, default='compuesta por 3 habitaciones numeradas del 1 al 3, un cuarto de baño, cocina y zonas comunes')
@@ -81,6 +94,8 @@ class Habitacion(models.Model):
         ('TWO',
          'Simple'),
     }
+
+
     propiedad = models.ForeignKey(Flat, related_name='habitaciones', null=True, blank=True, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=100, unique=True)
     title = models.CharField(max_length=100, default='hola')
@@ -125,7 +140,41 @@ class Habitacion(models.Model):
         return total
 
     def __str__(self):
-        return self.nombre
+        return f"Proceso de formalización #{self.pk}"
+
+    @property
+    def proceso_formalizacion_activo(self):
+        return self.procesos_formalizacion.filter(
+            estado__in=[
+                "PENDIENTE",
+                "INICIADO",
+            ]
+        ).order_by("-fecha_creacion").first()
+
+    @property
+    def contrato_activo(self):
+        return self.contratos.filter(
+            activo=True
+        ).order_by("-fecha_inicio").first()
+
+    @property
+    def contrato_futuro(self):
+        hoy = timezone.localdate()
+
+        return self.contratos.filter(
+            fecha_inicio__gt=hoy
+        ).order_by("fecha_inicio").first()
+
+    @property
+    def estado_ocupacion(self):
+        if self.contrato_activo:
+            return "OCUPADA"
+
+        if self.contrato_futuro:
+            return "RESERVADA"
+
+        return "LIBRE"
+
 
 class Inquilino(models.Model):
     user = models.OneToOneField(User,
@@ -150,7 +199,7 @@ class ContratoAlquiler(models.Model):
     habitacion = models.ForeignKey(Habitacion, related_name='contratos', on_delete=models.CASCADE)
     inquilino = models.ForeignKey(Inquilino, related_name='contratos', on_delete=models.CASCADE)
     fecha_inicio = models.DateField(default=timezone.now)
-    fecha_fin = models.DateField(null=True, blank=True)
+    fecha_fin = models.DateField(null=True, blank=True, verbose_name="Fecha de finalización")
     precio_mensual = models.DecimalField(max_digits=10, decimal_places=2)
     fianza = models.DecimalField(max_digits=6, decimal_places=2, null=True,  blank=True)
     activo = models.BooleanField(default=True)
@@ -160,6 +209,9 @@ class ContratoAlquiler(models.Model):
             self.fecha_fin = self.fecha_inicio + relativedelta(month=6)
         super().save(*args, **kwargs)
 
+    @property
+    def tiene_aval(self):
+        return hasattr(self, "aval")
 
     def finalizar(self):
         self.activo = False
@@ -170,6 +222,23 @@ class ContratoAlquiler(models.Model):
         return f"{self.inquilino.nombre} alquila {self.habitacion.nombre} desde {self.fecha_inicio}"
 
 
+from django.db import models
+
+
+class AvalContrato(models.Model):
+    contrato = models.OneToOneField(
+        "ContratoAlquiler",
+        on_delete=models.CASCADE,
+        related_name="aval"
+    )
+
+    nombre_completo = models.CharField(max_length=150)
+    dni_nie = models.CharField(max_length=20)
+    domicilio = models.CharField(max_length=200, blank=True)
+
+
+    def __str__(self):
+        return f"Aval de {self.contrato}"
 
 class Gasto(models.Model):
 
@@ -233,3 +302,190 @@ class Inventario(models.Model):
     cantidad = models.PositiveIntegerField(default=1)
     observaciones = models.CharField(max_length=200, blank=True)
 
+
+
+
+class ProcesoFormalizacion(models.Model):
+
+    class Estado(models.TextChoices):
+        PENDIENTE = "PENDIENTE", "Pendiente"
+        INICIADO = "INICIADO", "En proceso"
+        FORMALIZADO = "FORMALIZADO", "Formalizado"
+        CADUCADO = "CADUCADO", "Caducado"
+        CANCELADO = "CANCELADO", "Cancelado"
+
+    class TipoPrimeraRenta(models.TextChoices):
+        MES_COMPLETO = "MES_COMPLETO", "Mes completo"
+        PROPORCIONAL = "PROPORCIONAL", "Parte proporcional"
+
+    habitacion = models.ForeignKey(
+        "Habitacion",
+        on_delete=models.CASCADE,
+        related_name="procesos_formalizacion",
+        null=True,
+        blank=True
+    )
+
+    inquilino = models.ForeignKey(
+        "Inquilino",
+        on_delete=models.CASCADE,
+        related_name="procesos_formalizacion",
+        null=True,
+        blank=True,
+    )
+
+    contrato = models.OneToOneField(
+        "ContratoAlquiler",
+        on_delete=models.SET_NULL,
+        related_name="proceso_formalizacion",
+        null=True,
+        blank=True,
+    )
+
+    token = models.UUIDField(
+        default=uuid.uuid4,
+        unique=True,
+        editable=False,
+    )
+
+    estado = models.CharField(
+        max_length=20,
+        choices=Estado.choices,
+        default=Estado.PENDIENTE,
+    )
+
+    fecha_creacion = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    fecha_inicio = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    fecha_limite = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    fecha_inicio_contrato = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    duracion_meses = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+    )
+
+    precio_mensual = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        null=True,
+        blank=True,
+    )
+
+    fianza = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        null=True,
+        blank=True,
+    )
+
+    tipo_primera_renta = models.CharField(
+        max_length=20,
+        choices=TipoPrimeraRenta.choices,
+        default=TipoPrimeraRenta.PROPORCIONAL,
+    )
+
+    importe_primera_renta = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        null=True,
+        blank=True,
+    )
+
+    contrato_descargado = models.BooleanField(
+        default=False,
+    )
+
+    fecha_descarga = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    contrato_firmado_recibido = models.BooleanField(
+        default=False,
+    )
+
+    fecha_contrato_firmado = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    fianza_recibida = models.BooleanField(
+        default=False,
+    )
+
+    renta_recibida = models.BooleanField(
+        default=False,
+    )
+
+    fecha_formalizacion = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    observaciones = models.TextField(
+        blank=True,
+    )
+
+    def __str__(self):
+        if self.contrato_id:
+            return f"Formalización del contrato {self.contrato_id}"
+
+        if self.habitacion_id:
+            return f"Formalización de {self.habitacion}"
+
+        return f"Proceso de formalización {self.pk or 'nuevo'}"
+
+    @property
+    def importe_total_inicial(self):
+        if (
+            self.importe_primera_renta is None
+            or self.fianza is None
+        ):
+            return None
+
+        return self.importe_primera_renta + self.fianza
+
+    @property
+    def esta_caducado(self):
+        return (
+            self.estado in {
+                self.Estado.PENDIENTE,
+                self.Estado.INICIADO,
+            }
+            and self.fecha_limite is not None
+            and timezone.now() >= self.fecha_limite
+        )
+
+    @property
+    def requisitos_completos(self):
+        return (
+            self.contrato_firmado_recibido
+            and self.fianza_recibida
+            and self.renta_recibida
+        )
+
+    def actualizar_estado(self):
+        if self.estado in {
+            self.Estado.CANCELADO,
+            self.Estado.FORMALIZADO,
+            self.Estado.CADUCADO,
+        }:
+            return
+
+        if self.esta_caducado:
+            self.estado = self.Estado.CADUCADO
+            self.save(update_fields=["estado"])

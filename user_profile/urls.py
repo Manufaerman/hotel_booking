@@ -15,4 +15,9 @@ urlpatterns = [
     path('accounts/signup/thanks/', thanks, name='thanks'),
     path('perfil/editar/', editar_perfil, name='editar_perfil'),
 
-] + static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0]) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+if settings.DEBUG:
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT,
+    )

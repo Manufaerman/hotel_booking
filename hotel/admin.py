@@ -2,29 +2,37 @@ from django.contrib import admin
 from .models import Flat, Habitacion, Inquilino, ContratoAlquiler, Gasto, Inventario, Iteminventario
 
 # Register your models here.
+
+
 class AdminHabitacion(admin.ModelAdmin):
     list_display = ['id', 'nombre', 'propiedad', 'disponible']
 
+
 admin.site.register(Habitacion, AdminHabitacion)
+
 
 class AdminInquilino(admin.ModelAdmin):
     list_display = ['id', 'nombre']
 
+
 admin.site.register(Inquilino, AdminInquilino)
+
 
 class AdminContratoAlquiler(admin.ModelAdmin):
     list_display = ['id', 'habitacion', 'inquilino', 'fecha_inicio', 'fecha_fin']
 
+
 admin.site.register(ContratoAlquiler, AdminContratoAlquiler)
 
+
 class RoomAdmin(admin.ModelAdmin):
-    list_display = ['id', 'nombre', 'category', 'capacity']
+    list_display = ['id', 'nombre', 'category', 'capacity', 'reparto_gastos']
 
 
 admin.site.register(Flat, RoomAdmin)
 
 
-class  InventarioAdmin(admin.ModelAdmin):
+class InventarioAdmin(admin.ModelAdmin):
     list_display = ['habitacion', 'item', 'cantidad', 'observaciones']
 
 

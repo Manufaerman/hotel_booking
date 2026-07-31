@@ -1,0 +1,147 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block extra-head %}
+<link
+    rel="stylesheet"
+    href="{% static 'hotel/css/crear_proceso_formalizacion.css' %}"
+>
+{% endblock %}
+
+{% block content %}
+
+<div class="proceso-form-page">
+
+    <div class="proceso-form-card">
+
+        <header class="proceso-form-header">
+            <span>Nueva formalización</span>
+
+            <h1>{{ habitacion.nombre }}</h1>
+
+            <p>{{ habitacion.propiedad }}</p>
+        </header>
+
+        <form method="post">
+            {% csrf_token %}
+
+            {% if inquilino_form.non_field_errors %}
+                <div class="form-errors">
+                    {{ inquilino_form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            {% if proceso_form.non_field_errors %}
+                <div class="form-errors">
+                    {{ proceso_form.non_field_errors }}
+                </div>
+            {% endif %}
+
+            <section class="form-section">
+
+                <div class="form-section-header">
+                    <span>01</span>
+
+                    <div>
+                        <h2>Datos del futuro inquilino</h2>
+                        <p>
+                            Estos datos aparecerán posteriormente en el contrato.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+
+                    {% for field in inquilino_form %}
+
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">
+                                {{ field.label }}
+                            </label>
+
+                            {{ field }}
+
+                            {% if field.help_text %}
+                                <small>{{ field.help_text }}</small>
+                            {% endif %}
+
+                            {% for error in field.errors %}
+                                <span class="field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+            <section class="form-section">
+
+                <div class="form-section-header">
+                    <span>02</span>
+
+                    <div>
+                        <h2>Condiciones de la formalización</h2>
+                        <p>
+                            El candidato podrá consultar estas condiciones,
+                            pero no modificarlas.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+
+                    {% for field in proceso_form %}
+
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">
+                                {{ field.label }}
+                            </label>
+
+                            {{ field }}
+
+                            {% if field.help_text %}
+                                <small>{{ field.help_text }}</small>
+                            {% endif %}
+
+                            {% for error in field.errors %}
+                                <span class="field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+            <div class="proceso-form-actions">
+
+                <a
+                    href="{% url 'hotel:habitaciones_dashboard' %}"
+                    class="btn-cancelar"
+                >
+                    Volver
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn-crear-proceso"
+                >
+                    Crear proceso y generar enlace
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

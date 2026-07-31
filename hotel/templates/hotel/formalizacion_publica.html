@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra-head %}
+<link rel="stylesheet" href="{% static 'hotel/css/formalizacion_publica.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<main class="formalizacion-publica">
+
+    <div class="formalizacion-publica-container">
+
+        <header class="formalizacion-publica-header">
+
+            <div class="formalizacion-header-content">
+
+                <span class="formalizacion-publica-eyebrow">
+                    By Collection
+                </span>
+
+                <h1>Formalización del alquiler</h1>
+
+                {% if proceso.inquilino %}
+                    <p>
+                        Hola {{ proceso.inquilino.nombre }}.
+                        Revisa las condiciones y descarga tu documentación.
+                    </p>
+                {% endif %}
+
+            </div>
+
+            <div class="
+                formalizacion-status
+                formalizacion-status-{{ proceso.estado|lower }}
+            ">
+                <span class="formalizacion-status-label">
+                    Estado del proceso
+                </span>
+
+                <div class="formalizacion-status-logo" aria-label="By Collection">
+                    <span class="formalizacion-logo-by">BY</span>
+                    <span class="formalizacion-logo-collection">COLLECTION</span>
+                </div>
+
+                <span class="formalizacion-status-badge">
+                    {{ proceso.get_estado_display }}
+                </span>
+            </div>
+
+        </header>
+
+        <section class="formalizacion-resumen-card">
+
+            <h2>Condiciones del alquiler</h2>
+
+            <div class="formalizacion-resumen-grid">
+
+                <div>
+                    <span>Habitación</span>
+                    <strong>{{ proceso.habitacion.nombre }}</strong>
+                </div>
+
+                {% if proceso.habitacion.propiedad %}
+                    <div>
+                        <span>Propiedad</span>
+                        <strong>
+                            {{ proceso.habitacion.propiedad.nombre }}
+                        </strong>
+                    </div>
+                {% endif %}
+
+                <div>
+                    <span>Fecha de inicio</span>
+                    <strong>
+                        {{ proceso.fecha_inicio_contrato|date:"d/m/Y" }}
+                    </strong>
+                </div>
+
+                <div>
+                    <span>Duración</span>
+                    <strong>{{ proceso.duracion_meses }} meses</strong>
+                </div>
+
+                <div>
+                    <span>Precio mensual</span>
+                    <strong>
+                        {{ proceso.precio_mensual|floatformat:2 }} €
+                    </strong>
+                </div>
+
+                <div>
+                    <span>Primera renta</span>
+                    <strong>
+                        {{ proceso.importe_primera_renta|floatformat:2 }} €
+                    </strong>
+                </div>
+
+                <div>
+                    <span>Fianza</span>
+                    <strong>
+                        {{ proceso.fianza|floatformat:2 }} €
+                    </strong>
+                </div>
+
+                <div class="formalizacion-total">
+                    <span>Total inicial</span>
+                    <strong>
+                        {{ proceso.importe_total_inicial|floatformat:2 }} €
+                    </strong>
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="formalizacion-pasos-card">
+
+            <h2>Siguientes pasos</h2>
+
+            <ol>
+                <li>Descarga y revisa el documento.</li>
+                <li>Firma el documento siguiendo las indicaciones.</li>
+                <li>Realiza el pago de la renta inicial y la fianza.</li>
+                <li>Envía el documento firmado y el justificante.</li>
+            </ol>
+
+            {% if proceso.estado == "PENDIENTE" or proceso.estado == "INICIADO" %}
+
+                <a
+                    href="{% url 'hotel:descargar_contrato_formalizacion' proceso.token %}"
+                    class="btn-descargar-contrato"
+                >
+                    Descargar documento
+                </a>
+
+                {% if proceso.fecha_limite %}
+                    <p class="formalizacion-limite">
+                        Disponible hasta el
+                        {{ proceso.fecha_limite|date:"d/m/Y H:i" }}.
+                    </p>
+                {% endif %}
+
+            {% elif proceso.estado == "FORMALIZADO" %}
+
+                <div class="formalizacion-completada">
+                    <strong>Proceso completado</strong>
+                    <p>
+                        La formalización ha sido confirmada correctamente.
+                    </p>
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    </div>
+
+</main>
+
+{% endblock %}

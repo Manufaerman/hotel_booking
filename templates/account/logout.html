@@ -1,0 +1,54 @@
+{% load static %}
+
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>Sesión cerrada | By Colección</title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'hotel/css/auth.css' %}"
+    >
+</head>
+
+<body>
+
+<main class="auth-page">
+
+    <section class="logout-card">
+
+        <div class="logout-symbol logout-symbol-success">
+            ✓
+        </div>
+
+        <span class="auth-eyebrow">
+            By Colección
+        </span>
+
+        <h1>Sesión cerrada</h1>
+
+        <p>
+            Has salido correctamente del panel de gestión.
+        </p>
+
+        <a
+            href="{% url 'login' %}"
+            class="auth-submit auth-link-button"
+        >
+            Volver a iniciar sesión
+        </a>
+
+    </section>
+
+</main>
+
+</body>
+</html>

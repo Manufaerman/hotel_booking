@@ -22,10 +22,9 @@
 
             {% for propiedad in propiedades %}
                 <option value="{{ propiedad.id }}"
-                    {% if propiedad_id|stringformat:"s" == propiedad.id|stringformat:"s" %}
+                    {% if propiedad_id == propiedad.id %}
                         selected
-                    {% endif %}
-                >
+                    {% endif %}>
                     {{ propiedad }}
                 </option>
             {% endfor %}
@@ -66,6 +65,13 @@
                 <div class="form-group">
                     {{ contrato_form.fecha_inicio.label_tag }}
                     {{ contrato_form.fecha_inicio }}
+                    {{ contrato_form.fecha_inicio.errors }}
+                </div>
+
+                 <div class="form-group">
+                    {{ contrato_form.fecha_fin.label_tag }}
+                    {{ contrato_form.fecha_fin }}
+                     {{ contrato_form.fecha_fin.errors }}
                 </div>
 
                 <div class="form-group">
@@ -77,6 +83,56 @@
                     {{ contrato_form.fianza.label_tag }}
                     {{ contrato_form.fianza }}
                 </div>
+
+                <div class="form-check mb-3">
+                <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="tiene_aval"
+                    id="id_tiene_aval"
+                    {% if tiene_aval %}checked{% endif %}>
+
+                <label class="form-check-label" for="id_tiene_aval">
+                    Este contrato tiene avalista
+                </label>
+                </div>
+
+                <div id="datos-aval" class="aval-card"
+    {% if not tiene_aval %} style="display:none;"{% endif %}>
+
+    <div class="aval-card-header">
+        <div class="aval-icon">
+            <i class="fas fa-user-shield"></i>
+        </div>
+
+        <div>
+            <h3>Datos del avalista</h3>
+            <p>Información de la persona que garantiza el contrato</p>
+        </div>
+    </div>
+
+    <div class="aval-grid">
+
+        <div class="aval-field">
+            {{ aval_form.nombre_completo.label_tag }}
+            {{ aval_form.nombre_completo }}
+            {{ aval_form.nombre_completo.errors }}
+        </div>
+
+        <div class="aval-field">
+            {{ aval_form.dni_nie.label_tag }}
+            {{ aval_form.dni_nie }}
+            {{ aval_form.dni_nie.errors }}
+        </div>
+
+        <div class="aval-field aval-field-full">
+            {{ aval_form.domicilio.label_tag }}
+            {{ aval_form.domicilio }}
+            {{ aval_form.domicilio.errors }}
+        </div>
+
+    </div>
+</div>
             </div>
         </section>
 
@@ -85,4 +141,19 @@
 
 </div>
 
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const checkbox = document.getElementById("id_tiene_aval");
+    const datosAval = document.getElementById("datos-aval");
+
+    function actualizarAval() {
+        datosAval.style.display = checkbox.checked ? "block" : "none";
+    }
+
+    checkbox.addEventListener("change", actualizarAval);
+
+    actualizarAval();
+});
+</script>
 {% endblock %}

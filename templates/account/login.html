@@ -1,0 +1,244 @@
+{% load static %}
+
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>Acceso | By Colección</title>
+
+    <link
+        rel="icon"
+        href="{% static 'hotel/img/icons/favicon.ico' %}"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{% static 'hotel/css/auth.css' %}"
+    >
+</head>
+
+<body>
+
+<main class="auth-page">
+
+    <section class="auth-card">
+
+        <div class="auth-brand-panel">
+
+            <a
+                href="{% url 'hotel:home' %}"
+                class="auth-logo"
+                aria-label="Volver a By Colección"
+            >
+                <img
+                    src="{% static 'hotel/img/logo-bycoleccion2.png' %}"
+                    alt="By Colección"
+                >
+            </a>
+
+            <div class="auth-brand-content">
+
+                <span>Área privada</span>
+
+                <h1>
+                    Gestión de<br>
+                    By Colección
+                </h1>
+
+                <p>
+                    Accede al panel de habitaciones, contratos
+                    y procesos de formalización.
+                </p>
+
+            </div>
+
+            <div class="auth-brand-decoration"></div>
+
+        </div>
+
+
+        <div class="auth-form-panel">
+
+            <div class="auth-form-header">
+
+                <span class="auth-eyebrow">
+                    Bienvenida
+                </span>
+
+                <h2>Iniciar sesión</h2>
+
+                <p>
+                    Introduce tus datos para acceder al panel.
+                </p>
+
+            </div>
+
+
+            {% if form.non_field_errors %}
+
+                <div class="auth-alert auth-alert-error">
+
+                    <strong>
+                        No hemos podido iniciar sesión.
+                    </strong>
+
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+            <form
+                method="post"
+                action="{% url 'account_login' %}"
+                class="auth-form"
+            >
+
+                {% csrf_token %}
+
+                <div class="auth-field">
+
+                    <label for="{{ form.login.id_for_label }}">
+                        Usuario o correo electrónico
+                    </label>
+
+                    {{ form.login }}
+
+                    {% for error in form.login.errors %}
+                        <span class="auth-field-error">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="auth-field">
+
+                    <label for="{{ form.password.id_for_label }}">
+                        Contraseña
+                    </label>
+
+                    <div class="auth-password-field">
+
+                        {{ form.password }}
+
+                        <button
+                            type="button"
+                            class="auth-password-toggle"
+                            onclick="alternarContrasena()"
+                            aria-label="Mostrar u ocultar contraseña"
+                        >
+                            Ver
+                        </button>
+
+                    </div>
+
+                    {% for error in form.password.errors %}
+                        <span class="auth-field-error">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+
+                </div>
+
+
+                {% if form.remember %}
+
+                    <label class="auth-remember">
+
+                        {{ form.remember }}
+
+                        <span>
+                            Mantener la sesión iniciada
+                        </span>
+
+                    </label>
+
+                {% endif %}
+
+
+                {% if redirect_field_value %}
+
+                    <input
+                        type="hidden"
+                        name="{{ redirect_field_name }}"
+                        value="{{ redirect_field_value }}"
+                    >
+
+                {% endif %}
+
+
+                <button
+                    type="submit"
+                    class="auth-submit"
+                >
+                    Entrar al panel
+                </button>
+
+            </form>
+
+
+            <p class="auth-support">
+                Acceso exclusivo para personal autorizado.
+            </p>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script>
+function alternarContrasena() {
+    const input = document.getElementById(
+        "{{ form.password.id_for_label }}"
+    );
+
+    const button = document.querySelector(
+        ".auth-password-toggle"
+    );
+
+    if (!input || !button) {
+        return;
+    }
+
+    if (input.type === "password") {
+        input.type = "text";
+        button.textContent = "Ocultar";
+    } else {
+        input.type = "password";
+        button.textContent = "Ver";
+    }
+}
+</script>
+
+</body>
+</html>

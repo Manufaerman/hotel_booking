@@ -25,7 +25,8 @@ SOCIALACCOUNT_PROVIDERS = {
 
 # redirect after log in and sing up
 ACCOUNT_SIGNUP_REDIRECT_URL = "thanks/"
-LOGIN_REDIRECT_URL = "/dashboard/"
+LOGIN_REDIRECT_URL = "hotel:dashboard"
+LOGOUT_REDIRECT_URL = "login"
 
 # Application definition
 
@@ -72,16 +73,20 @@ ROOT_URLCONF = 'HMS.urls'
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['templates', 'hotel/templates/hotel', 'user_profile/templates/user_profile'],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                'django.template.context_processors.request',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+
+        "DIRS": [
+            BASE_DIR / "templates",
+        ],
+
+        "APP_DIRS": True,
+
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
@@ -129,7 +134,6 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # here is where Nginx will search my files in deployment
 """"""
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
 ]
 
 
