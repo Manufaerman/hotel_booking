@@ -756,3 +756,211 @@
     border-color: #9f2f35;
     background: #fffafa;
 }
+
+.form-document-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+
+    margin-bottom: 22px;
+    padding: 18px 20px;
+
+    border: 1px solid rgba(217, 193, 111, 0.55);
+    border-radius: 20px;
+
+    background: #fff8dc;
+    color: #705663;
+}
+
+.form-document-warning > i {
+    margin-top: 3px;
+
+    color: #d4bb62;
+    font-size: 1.3rem;
+}
+
+.form-document-warning strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.form-document-warning p {
+    margin: 0;
+
+    color: #80715d;
+
+    font-size: 0.86rem;
+    line-height: 1.5;
+}
+
+.form-group-full {
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 680px) {
+    .btn-editar-formalizacion {
+        width: 100%;
+    }
+
+    .form-group-full {
+        grid-column: auto;
+    }
+}
+/* =========================================================
+   AVALISTA DEL PROCESO
+========================================================= */
+
+.aval-process-section {
+    overflow: hidden;
+}
+
+.aval-process-toggle {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    width: 100%;
+    margin: 0;
+
+    cursor: pointer;
+}
+
+.aval-process-toggle > input {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    opacity: 0;
+    overflow: hidden;
+}
+
+.aval-process-icon {
+    display: flex;
+    flex: 0 0 52px;
+    align-items: center;
+    justify-content: center;
+
+    width: 52px;
+    height: 52px;
+
+    border-radius: 17px;
+
+    background: var(--mauve);
+    color: var(--yellow);
+
+    font-size: 20px;
+
+    box-shadow:
+        0 10px 23px rgba(112, 86, 99, 0.17);
+}
+
+.aval-process-text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.aval-process-text strong {
+    color: var(--mauve);
+
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.aval-process-text small {
+    color: var(--text-soft);
+
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.aval-switch {
+    position: relative;
+
+    flex: 0 0 50px;
+
+    width: 50px;
+    height: 28px;
+
+    border-radius: 999px;
+
+    background: #dcd4d7;
+
+    transition: background-color 0.2s ease;
+}
+
+.aval-switch span {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+
+    width: 20px;
+    height: 20px;
+
+    border-radius: 50%;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 2px 7px rgba(0, 0, 0, 0.17);
+
+    transition: transform 0.2s ease;
+}
+
+.aval-process-toggle
+input:checked
+~ .aval-switch {
+    background: var(--tiffany);
+}
+
+.aval-process-toggle
+input:checked
+~ .aval-switch
+span {
+    transform: translateX(22px);
+}
+
+.aval-process-fields {
+    margin-top: 22px;
+    padding-top: 22px;
+
+    border-top: 1px solid var(--border);
+}
+
+.aval-process-fields[hidden] {
+    display: none;
+}
+
+.form-group-full {
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 699px) {
+    .aval-process-toggle {
+        gap: 12px;
+    }
+
+    .aval-process-icon {
+        flex-basis: 46px;
+
+        width: 46px;
+        height: 46px;
+
+        border-radius: 15px;
+    }
+
+    .aval-process-text strong {
+        font-size: 18px;
+    }
+
+    .aval-process-text small {
+        display: none;
+    }
+
+    .form-group-full {
+        grid-column: auto;
+    }
+}

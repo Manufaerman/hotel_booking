@@ -1,4 +1,4 @@
-
+import re
 from django import forms
 from django.contrib.auth.models import User
 from hotel.models import Inquilino, ContratoAlquiler, Flat, Habitacion, AvalContrato
@@ -49,59 +49,200 @@ class CrearProcesoFormalizacionForm(forms.ModelForm):
         }
 
 class ContratoAlquilerForm(forms.ModelForm):
+
     propiedad = forms.ModelChoiceField(
-        queryset=Flat.objects.all(),
+        queryset=Flat.objects.all().order_by("nombre"),
         required=True,
-        label="Flat"
+        label="Propiedad",
     )
 
     class Meta:
         model = ContratoAlquiler
+
         fields = [
             "propiedad",
             "habitacion",
             "fecha_inicio",
             "fecha_fin",
             "precio_mensual",
-            "fianza"]
+            "fianza",
+        ]
 
         widgets = {
             "fecha_inicio": forms.DateInput(
-                attrs={"type": "date"}
+                format="%Y-%m-%d",
+                attrs={
+                    "type": "date",
+                },
             ),
             "fecha_fin": forms.DateInput(
-                attrs={"type": "date"}
+                format="%Y-%m-%d",
+                attrs={
+                    "type": "date",
+                },
+            ),
+            "precio_mensual": forms.NumberInput(
+                attrs={
+                    "min": "0.01",
+                    "step": "0.01",
+                },
+            ),
+            "fianza": forms.NumberInput(
+                attrs={
+                    "min": "0",
+                    "step": "0.01",
+                },
             ),
         }
 
         labels = {
+            "habitacion": "Habitación libre",
             "fecha_inicio": "Fecha de inicio",
-            "fecha_fin": "Fecha de finalización",
+            "fecha_fin": "Fecha de renovación o finalización",
+            "precio_mensual": "Precio mensual",
+            "fianza": "Fianza",
         }
 
     def __init__(self, *args, **kwargs):
-        propiedad_id = kwargs.pop("propiedad_id", None)
-        contrato = kwargs.get('instance', None)
-        if not propiedad_id and contrato:
-            propiedad_id = contrato.habitacion.propiedad_id
-        super().__init__(*args, **kwargs)
-        if propiedad_id:
-            habitaciones = Habitacion.objects.filter(propiedad_id=propiedad_id)
-            self.fields["habitacion"].queryset = habitaciones
-            self.fields["propiedad"].initial = propiedad_id
-        else:
+        propiedad_id = kwargs.pop(
+            "propiedad_id",
+            None,
+        )
 
-            self.fields["habitacion"].queryset = Habitacion.objects.none()
+        habitacion_id = kwargs.pop(
+            "habitacion_id",
+            None,
+        )
+
+        contrato = kwargs.get(
+            "instance",
+        )
+
+        super().__init__(*args, **kwargs)
+
+        self.fields[
+            "fecha_inicio"
+        ].input_formats = ["%Y-%m-%d"]
+
+        self.fields[
+            "fecha_fin"
+        ].input_formats = ["%Y-%m-%d"]
+
+        # Si el formulario viene por POST, recuperamos
+        # también la propiedad enviada.
+        if not propiedad_id and self.is_bound:
+            propiedad_id = self.data.get(
+                "propiedad"
+            )
+
+        # Cuando modificamos un contrato existente.
+        if not propiedad_id and contrato:
+            propiedad_id = (
+                contrato.habitacion.propiedad_id
+            )
+
+        habitaciones_libres = (
+            Habitacion.objects.none()
+        )
+
+        if propiedad_id:
+            habitaciones_libres = (
+                Habitacion.objects
+                .filter(
+                    propiedad_id=propiedad_id,
+                )
+                .exclude(
+                    contratos__activo=True,
+                )
+                .distinct()
+                .order_by("nombre")
+            )
+
+            self.fields[
+                "propiedad"
+            ].initial = propiedad_id
+
+        self.fields[
+            "habitacion"
+        ].queryset = habitaciones_libres
+
+        self.fields[
+            "habitacion"
+        ].empty_label = (
+            "Selecciona una habitación libre"
+        )
+
+        if (
+            habitacion_id
+            and habitaciones_libres.filter(
+                pk=habitacion_id
+            ).exists()
+        ):
+            self.fields[
+                "habitacion"
+            ].initial = habitacion_id
+
+    def clean_habitacion(self):
+        habitacion = self.cleaned_data.get(
+            "habitacion"
+        )
+
+        if habitacion is None:
+            raise forms.ValidationError(
+                "Selecciona una habitación libre."
+            )
+
+        contrato_activo = (
+            ContratoAlquiler.objects
+            .filter(
+                habitacion=habitacion,
+                activo=True,
+            )
+        )
+
+        if self.instance and self.instance.pk:
+            contrato_activo = contrato_activo.exclude(
+                pk=self.instance.pk,
+            )
+
+        if contrato_activo.exists():
+            raise forms.ValidationError(
+                "Esta habitación ya tiene un contrato activo."
+            )
+
+        return habitacion
 
 
 class AvalContratoForm(forms.ModelForm):
+
     class Meta:
         model = AvalContrato
+
         fields = [
             "nombre_completo",
             "dni_nie",
             "domicilio",
         ]
+
+        widgets = {
+            "nombre_completo": forms.TextInput(
+                attrs={
+                    "placeholder": "Nombre y apellidos",
+                    "autocomplete": "name",
+                }
+            ),
+            "dni_nie": forms.TextInput(
+                attrs={
+                    "placeholder": "DNI, NIE o pasaporte",
+                }
+            ),
+            "domicilio": forms.TextInput(
+                attrs={
+                    "placeholder": "Domicilio del avalista",
+                    "autocomplete": "street-address",
+                }
+            ),
+        }
 
 
 class UserForm(forms.ModelForm):
@@ -115,14 +256,70 @@ class UserProfileForm(forms.ModelForm):
         fields = ['telefono', 'dni', 'direccion', 'cp', 'ciudad', 'pais', 'cumpleaños']
 
 class InquilinoForm(forms.ModelForm):
+
     class Meta:
         model = Inquilino
-        fields = ['nombre', 'email', 'dni', 'direccion', 'telefono', 'nacionalidad']
+
+        fields = [
+            "nombre",
+            "email",
+            "dni",
+            "direccion",
+            "telefono",
+            "nacionalidad",
+        ]
+
+        widgets = {
+            "telefono": forms.TextInput(
+                attrs={
+                    "type": "tel",
+                    "inputmode": "tel",
+                    "autocomplete": "tel",
+                    "placeholder": "+34 612 345 678",
+                }
+            ),
+        }
+
+        labels = {
+            "telefono": "Teléfono / WhatsApp",
+        }
+
+    def clean_telefono(self):
+        telefono = self.cleaned_data.get("telefono")
+
+        if not telefono:
+            return telefono
+
+        telefono = telefono.strip()
+
+        if telefono.startswith("00"):
+            telefono = f"+{telefono[2:]}"
+
+        if not telefono.startswith("+"):
+            raise forms.ValidationError(
+                "Incluye el prefijo internacional, por ejemplo +34, +57 o +1."
+            )
+
+        solo_numeros = re.sub(
+            r"\D",
+            "",
+            telefono,
+        )
+
+        if len(solo_numeros) < 8:
+            raise forms.ValidationError(
+                "Introduce un número de teléfono válido."
+            )
+
+        if len(solo_numeros) > 15:
+            raise forms.ValidationError(
+                "El número de teléfono es demasiado largo."
+            )
+
+        return telefono
 
 
-from django import forms
 
-from .models import ProcesoFormalizacion
 
 
 class CrearProcesoFormalizacionForm(forms.ModelForm):

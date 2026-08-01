@@ -28,7 +28,7 @@ from .views import (
     home,
     modificar_contrato,
     modificar_inquilino,
-    visitas_view, EliminarProcesoFormalizacionView,
+    visitas_view, EliminarProcesoFormalizacionView, EditarProcesoFormalizacionView,
 )
 
 
@@ -211,6 +211,12 @@ urlpatterns = [
         "formalizaciones/<int:pk>/eliminar/",
         EliminarProcesoFormalizacionView.as_view(),
         name="eliminar_proceso_formalizacion",
+    ),
+
+    path(
+        "formalizaciones/<int:pk>/editar/",
+        EditarProcesoFormalizacionView.as_view(),
+        name="editar_proceso_formalizacion",
     ),
 ]
 

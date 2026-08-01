@@ -1,115 +1,381 @@
-{% extends 'base_dashboard.html' %}
+{% extends "base_dashboard.html" %}
 {% load static %}
 
-
-{% block title %} <title>Visitas</title> {% endblock %}
-
-{% block content %}
-<style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-      background-color: #f5f5f7;
-      color: #1d1d1f;
-      padding: 40px;
-      line-height: 1.6;
-    }
-
-    h1 {
-      font-size: 28px;
-      margin-bottom: 30px;
-      font-weight: 600;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
-      margin-bottom: 50px;
-      background-color: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      overflow: hidden;
-    }
-
-    thead {
-      background-color: #f2f2f2;
-      font-weight: 500;
-    }
-
-    th, td {
-      padding: 14px 18px;
-      text-align: left;
-      font-size: 15px;
-    }
-
-    tbody tr {
-      border-top: 1px solid #eaeaea;
-    }
-
-    tbody tr:hover {
-      background-color: #f9f9f9;
-    }
-
-    th {
-      color: #6e6e73;
-      font-size: 14px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    td {
-      color: #1d1d1f;
-    }
-  </style>
-
-
-<body>
-    <h1>Total de visitas: {{ total }}</h1>
-    <!--
-     <table>
-    <thead>
-      <tr>
-        <th>IP</th>
-        <th>Ruta</th>
-        <th>User-Agent</th>
-        <th>Fecha</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for v in visitas %}
-      <tr>
-        <td>{{ v.ip }}</td>
-        <td>{{ v.path }}</td>
-        <td>{{ v.user_agent|truncatechars:40 }}</td>
-        <td>{{ v.timestamp }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
--->
-  <!-- Tabla 2 -->
-  <table>
-    <thead>
-      <tr>
-        <th>IP</th>
-        <th>Ciudad</th>
-        <th>País</th>
-        <th>Ruta</th>
-        <th>Fecha</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for v in visitas %}
-      <tr>
-        <td>{{ v.ip }}</td>
-        <td>{{ v.city }}</td>
-        <td>{{ v.country }}</td>
-        <td>{{ v.path }}</td>
-        <td>{{ v.timestamp }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-
+{% block title %}
+<title>Visitas | By Colección</title>
 {% endblock %}
 
+{% block extra-head %}
+<link
+    rel="stylesheet"
+    href="{% static 'hotel/css/visitas.css' %}"
+>
+{% endblock %}
+
+{% block content %}
+
+<main class="visits-page">
+
+    <header class="visits-header">
+
+        <div>
+            <span class="visits-eyebrow">
+                Audiencia
+            </span>
+
+            <h1>Quién nos visita</h1>
+
+            <p>
+                Una mirada a las personas que descubren
+                By Colección desde diferentes lugares.
+            </p>
+        </div>
+
+        <span class="visits-header-icon">
+            <i
+                class="fa fa-globe"
+                aria-hidden="true"
+            ></i>
+        </span>
+
+    </header>
+
+
+    <form method="get" class="visits-filters">
+
+        <div class="visit-filter">
+
+            <label for="periodo">
+                Periodo
+            </label>
+
+            <select
+                id="periodo"
+                name="periodo"
+                onchange="this.form.submit()"
+            >
+                <option
+                    value="1"
+                    {% if periodo == "1" %}selected{% endif %}
+                >
+                    Últimas 24 horas
+                </option>
+
+                <option
+                    value="7"
+                    {% if periodo == "7" %}selected{% endif %}
+                >
+                    Últimos 7 días
+                </option>
+
+                <option
+                    value="30"
+                    {% if periodo == "30" %}selected{% endif %}
+                >
+                    Últimos 30 días
+                </option>
+
+                <option
+                    value="90"
+                    {% if periodo == "90" %}selected{% endif %}
+                >
+                    Últimos 90 días
+                </option>
+
+                <option
+                    value="todo"
+                    {% if periodo == "todo" %}selected{% endif %}
+                >
+                    Todo el historial
+                </option>
+            </select>
+
+        </div>
+
+
+        <div class="visit-filter">
+
+            <label for="pais">
+                País
+            </label>
+
+            <select
+                id="pais"
+                name="pais"
+                onchange="this.form.submit()"
+            >
+                <option value="">
+                    Todos los países
+                </option>
+
+                {% for pais in opciones_paises %}
+                    <option
+                        value="{{ pais }}"
+                        {% if pais_seleccionado == pais %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ pais }}
+                    </option>
+                {% endfor %}
+            </select>
+
+        </div>
+
+
+        <div class="visit-filter">
+
+            <label for="region">
+                Provincia o región
+            </label>
+
+            <select
+                id="region"
+                name="region"
+                onchange="this.form.submit()"
+            >
+                <option value="">
+                    Todas las regiones
+                </option>
+
+                {% for region in opciones_regiones %}
+                    <option
+                        value="{{ region }}"
+                        {% if region_seleccionada == region %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ region }}
+                    </option>
+                {% endfor %}
+            </select>
+
+        </div>
+
+
+        {% if pais_seleccionado or region_seleccionada %}
+            <a
+                href="{% url 'hotel:visitas' %}"
+                class="clear-visit-filters"
+            >
+                Limpiar
+            </a>
+        {% endif %}
+
+    </form>
+
+
+    <section class="visits-summary">
+
+        <article class="visit-summary-card">
+
+            <span>
+                <i class="fa fa-users"></i>
+            </span>
+
+            <div>
+                <small>Personas</small>
+                <strong>{{ visitantes_unicos }}</strong>
+            </div>
+
+        </article>
+
+
+        <article class="visit-summary-card yellow">
+
+            <span>
+                <i class="fa fa-eye"></i>
+            </span>
+
+            <div>
+                <small>Páginas vistas</small>
+                <strong>{{ total_paginas }}</strong>
+            </div>
+
+        </article>
+
+
+        <article class="visit-summary-card wine">
+
+            <span>
+                <i class="fa fa-globe"></i>
+            </span>
+
+            <div>
+                <small>Países</small>
+                <strong>{{ paises|length }}</strong>
+            </div>
+
+        </article>
+
+    </section>
+
+
+    <section class="geography-grid">
+
+        <article class="geography-card">
+
+            <header>
+                <span>01</span>
+                <h2>Países</h2>
+            </header>
+
+            {% for pais in paises %}
+                <div class="geography-row">
+                    <div>
+                        <strong>
+                            {{ pais.country }}
+                        </strong>
+
+                        <small>
+                            {{ pais.visitantes }}
+                            visitante{{ pais.visitantes|pluralize }}
+                        </small>
+                    </div>
+
+                    <span>
+                        {{ pais.total }}
+                    </span>
+                </div>
+            {% empty %}
+                <p class="empty-data">
+                    Todavía no hay datos.
+                </p>
+            {% endfor %}
+
+        </article>
+
+
+        <article class="geography-card yellow">
+
+            <header>
+                <span>02</span>
+                <h2>Regiones</h2>
+            </header>
+
+            {% for region in regiones %}
+                <div class="geography-row">
+                    <div>
+                        <strong>
+                            {{ region.region }}
+                        </strong>
+
+                        <small>
+                            {{ region.country }}
+                        </small>
+                    </div>
+
+                    <span>
+                        {{ region.visitantes }}
+                    </span>
+                </div>
+            {% empty %}
+                <p class="empty-data">
+                    Las nuevas visitas mostrarán su región.
+                </p>
+            {% endfor %}
+
+        </article>
+
+
+        <article class="geography-card wine">
+
+            <header>
+                <span>03</span>
+                <h2>Ciudades</h2>
+            </header>
+
+            {% for ciudad in ciudades %}
+                <div class="geography-row">
+                    <div>
+                        <strong>
+                            {{ ciudad.city }}
+                        </strong>
+
+                        <small>
+                            {{ ciudad.region }},
+                            {{ ciudad.country }}
+                        </small>
+                    </div>
+
+                    <span>
+                        {{ ciudad.visitantes }}
+                    </span>
+                </div>
+            {% empty %}
+                <p class="empty-data">
+                    Todavía no hay ciudades registradas.
+                </p>
+            {% endfor %}
+
+        </article>
+
+    </section>
+
+
+    <section class="recent-visits">
+
+        <header>
+            <span>Actividad reciente</span>
+            <h2>Últimas visitas humanas</h2>
+        </header>
+
+        <div class="visits-table-wrapper">
+
+            <table class="visits-table">
+
+                <thead>
+                    <tr>
+                        <th>Ubicación</th>
+                        <th>Página</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for visita in visitas %}
+                        <tr>
+                            <td>
+                                <strong>
+                                    {% if visita.city %}
+                                        {{ visita.city }}
+                                    {% else %}
+                                        Ubicación desconocida
+                                    {% endif %}
+                                </strong>
+
+                                <small>
+                                    {% if visita.region %}
+                                        {{ visita.region }},
+                                    {% endif %}
+
+                                    {{ visita.country|default:"País desconocido" }}
+                                </small>
+                            </td>
+
+                            <td>
+                                {{ visita.path }}
+                            </td>
+
+                            <td>
+                                {{ visita.timestamp|date:"d/m/Y H:i" }}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3">
+                                No hay visitas para estos filtros.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</main>
+
+{% endblock %}

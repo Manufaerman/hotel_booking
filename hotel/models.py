@@ -6,17 +6,66 @@ from django.utils.timezone import now
 import uuid
 from django.db import models
 from django.utils import timezone
+from datetime import timedelta
+import re
+
 
 class Visit(models.Model):
     ip = models.GenericIPAddressField()
-    path = models.CharField(max_length=200)
-    user_agent = models.TextField()
-    timestamp = models.DateTimeField(default=now)
-    city = models.CharField(max_length=100, blank=True, null=True)
-    country = models.CharField(max_length=100, blank=True, null=True)
+
+    path = models.CharField(
+        max_length=200,
+    )
+
+    user_agent = models.TextField(
+        blank=True,
+    )
+
+    timestamp = models.DateTimeField(
+        default=now,
+        db_index=True,
+    )
+
+    city = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+    )
+
+    region = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+    )
+
+    country = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+    )
+
+    country_code = models.CharField(
+        max_length=2,
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
-        return f"{self.ip} - {self.city}, {self.country} - {self.path}"
+        location = ", ".join(
+            part
+            for part in [
+                self.city,
+                self.region,
+                self.country,
+            ]
+            if part
+        )
+
+        return (
+            f"{self.ip} - "
+            f"{location or 'Ubicación desconocida'} - "
+            f"{self.path}"
+        )
 
 
 class Flat(models.Model):
@@ -139,8 +188,6 @@ class Habitacion(models.Model):
             total += contrato.precio_mensual * meses
         return total
 
-    def __str__(self):
-        return f"Proceso de formalización #{self.pk}"
 
     @property
     def proceso_formalizacion_activo(self):
@@ -175,6 +222,12 @@ class Habitacion(models.Model):
 
         return "LIBRE"
 
+    def __str__(self):
+        if self.propiedad:
+            return f"{self.nombre} · {self.propiedad.nombre}"
+
+        return self.nombre
+
 
 class Inquilino(models.Model):
     user = models.OneToOneField(User,
@@ -185,28 +238,83 @@ class Inquilino(models.Model):
     email = models.EmailField(blank=True, null=True)
     dni = models.CharField(max_length=10, null=True,  blank=True)
     direccion = models.CharField(max_length=200, null=True, blank=True)
-    telefono = models.IntegerField(null=True,  blank=True)
+    telefono = models.CharField(
+        max_length=25,
+        null=True,
+        blank=True,
+        verbose_name="Teléfono / WhatsApp",
+        help_text="Incluye el prefijo internacional, por ejemplo +34 o +57.",
+    )
     nacionalidad = models.CharField(max_length=200, default='Española')
+
+    @property
+    def telefono_whatsapp(self):
+        """
+        Devuelve el teléfono en el formato exigido por WhatsApp:
+        únicamente código de país y número, sin espacios ni +.
+        """
+        if not self.telefono:
+            return ""
+
+        telefono = self.telefono.strip()
+
+        if telefono.startswith("00"):
+            telefono = telefono[2:]
+
+        return re.sub(r"\D", "", telefono)
 
     def __str__(self):
         return self.nombre
 
 
-
-
-
 class ContratoAlquiler(models.Model):
-    habitacion = models.ForeignKey(Habitacion, related_name='contratos', on_delete=models.CASCADE)
-    inquilino = models.ForeignKey(Inquilino, related_name='contratos', on_delete=models.CASCADE)
-    fecha_inicio = models.DateField(default=timezone.now)
-    fecha_fin = models.DateField(null=True, blank=True, verbose_name="Fecha de finalización")
-    precio_mensual = models.DecimalField(max_digits=10, decimal_places=2)
-    fianza = models.DecimalField(max_digits=6, decimal_places=2, null=True,  blank=True)
-    activo = models.BooleanField(default=True)
+
+    habitacion = models.ForeignKey(
+        Habitacion,
+        related_name="contratos",
+        on_delete=models.CASCADE,
+    )
+
+    inquilino = models.ForeignKey(
+        Inquilino,
+        related_name="contratos",
+        on_delete=models.CASCADE,
+    )
+
+    fecha_inicio = models.DateField(
+        default=timezone.now,
+    )
+
+    fecha_fin = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name="Fecha de finalización",
+    )
+
+    precio_mensual = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+    )
+
+    fianza = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        null=True,
+        blank=True,
+    )
+
+    activo = models.BooleanField(
+        default=True,
+    )
 
     def save(self, *args, **kwargs):
         if self.fecha_inicio and not self.fecha_fin:
-            self.fecha_fin = self.fecha_inicio + relativedelta(month=6)
+            self.fecha_fin = (
+                self.fecha_inicio
+                + relativedelta(months=6)
+                - timedelta(days=1)
+            )
+
         super().save(*args, **kwargs)
 
     @property
@@ -216,13 +324,20 @@ class ContratoAlquiler(models.Model):
     def finalizar(self):
         self.activo = False
         self.fecha_fin = timezone.now().date()
-        self.save()
+
+        self.save(
+            update_fields=[
+                "activo",
+                "fecha_fin",
+            ]
+        )
 
     def __str__(self):
-        return f"{self.inquilino.nombre} alquila {self.habitacion.nombre} desde {self.fecha_inicio}"
-
-
-from django.db import models
+        return (
+            f"{self.inquilino.nombre} alquila "
+            f"{self.habitacion.nombre} desde "
+            f"{self.fecha_inicio:%d/%m/%Y}"
+        )
 
 
 class AvalContrato(models.Model):
@@ -440,14 +555,24 @@ class ProcesoFormalizacion(models.Model):
         blank=True,
     )
 
-    def __str__(self):
-        if self.contrato_id:
-            return f"Formalización del contrato {self.contrato_id}"
+    tiene_aval = models.BooleanField(
+        default=False,
+    )
 
-        if self.habitacion_id:
-            return f"Formalización de {self.habitacion}"
+    aval_nombre_completo = models.CharField(
+        max_length=150,
+        blank=True,
+    )
 
-        return f"Proceso de formalización {self.pk or 'nuevo'}"
+    aval_dni_nie = models.CharField(
+        max_length=20,
+        blank=True,
+    )
+
+    aval_domicilio = models.CharField(
+        max_length=200,
+        blank=True,
+    )
 
     @property
     def importe_total_inicial(self):
@@ -489,3 +614,29 @@ class ProcesoFormalizacion(models.Model):
         if self.esta_caducado:
             self.estado = self.Estado.CADUCADO
             self.save(update_fields=["estado"])
+
+
+    def __str__(self):
+        habitacion = (
+            self.habitacion.nombre
+            if self.habitacion
+            else "Sin habitación"
+        )
+
+        propiedad = (
+            self.habitacion.propiedad.nombre
+            if self.habitacion
+               and self.habitacion.propiedad
+            else "Sin propiedad"
+        )
+
+        inquilino = (
+            str(self.inquilino)
+            if self.inquilino
+            else "Sin inquilino"
+        )
+
+        return (
+            f"{habitacion} · {propiedad} · "
+            f"{inquilino} · {self.get_estado_display()}"
+        )

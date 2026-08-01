@@ -840,3 +840,44 @@
         border-bottom: 0;
     }
 }
+.btn-editar-formalizacion {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    min-height: 48px;
+    padding: 0 22px;
+
+    border: 0;
+    border-radius: 15px;
+
+    background: #73a5a1;
+    color: #ffffff;
+
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+
+    box-shadow:
+        0 11px 26px rgba(94, 142, 139, 0.2);
+
+    transition:
+        transform 0.2s ease,
+        background-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.btn-editar-formalizacion i {
+    color: #f7e9ad;
+}
+
+.btn-editar-formalizacion:hover {
+    transform: translateY(-2px);
+
+    background: #806872;
+    color: #ffffff;
+
+    box-shadow:
+        0 15px 31px rgba(112, 86, 99, 0.22);
+}

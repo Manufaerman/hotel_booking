@@ -1,9 +1,11 @@
-{% extends 'base_dashboard.html' %}
+{% extends "base_dashboard.html" %}
 {% load static %}
 
 {% block extra-head %}
-<link rel="stylesheet"
-      href="{% static 'hotel/css/habitaciones_dashboard.css' %}">
+<link
+    rel="stylesheet"
+    href="{% static 'hotel/css/habitaciones_dashboard.css' %}"
+>
 {% endblock %}
 
 
@@ -11,42 +13,85 @@
 
 <div class="habitaciones-container">
 
+    <!-- CABECERA -->
     <div class="titulo">
+
         <h1>Estado de habitaciones</h1>
-        <p>Resumen de ocupación y contratos.</p>
+
+        <p>
+            Resumen de ocupación, contratos y formalizaciones.
+        </p>
+
     </div>
 
 
+    <!-- RESUMEN GENERAL -->
     <div class="resumen-habitaciones">
 
         <div class="resumen-card">
+
             <span>Habitaciones totales</span>
-            <strong>{{ total_habitaciones }}</strong>
+
+            <strong>
+                {{ total_habitaciones }}
+            </strong>
+
         </div>
 
         <div class="resumen-card">
+
             <span>Habitaciones ocupadas</span>
-            <strong>{{ ocupadas }}</strong>
+
+            <strong>
+                {{ ocupadas }}
+            </strong>
+
         </div>
 
         <div class="resumen-card">
-            <span>Ingresos actuales</span>
-            <strong>{{ ingresos_actuales }} €</strong>
+
+            <span>En formalización</span>
+
+            <strong>
+                {{ en_formalizacion }}
+            </strong>
+
         </div>
 
         <div class="resumen-card">
+
             <span>Habitaciones libres</span>
-            <strong>{{ libres }}</strong>
+
+            <strong>
+                {{ libres }}
+            </strong>
+
+        </div>
+
+        <div class="resumen-card">
+
+            <span>Ingresos actuales</span>
+
+            <strong>
+                {{ ingresos_actuales }} €
+            </strong>
+
         </div>
 
         <div class="resumen-card alerta">
+
             <span>Dinero no entrando</span>
-            <strong>{{ dinero_no_entrando }} €</strong>
+
+            <strong>
+                {{ dinero_no_entrando }} €
+            </strong>
+
         </div>
 
     </div>
 
 
+    <!-- RESUMEN POR PROPIEDAD -->
     <div class="ranking-card">
 
         <h2>Resumen por propiedad</h2>
@@ -55,11 +100,14 @@
 
             <div class="ranking-row">
 
-                <span>{{ propiedad.nombre }}</span>
+                <span>
+                    {{ propiedad.nombre }}
+                </span>
 
                 <strong>
-                    {{ propiedad.ocupadas }} ocupadas /
-                    {{ propiedad.libres }} libres /
+                    {{ propiedad.ocupadas }} ocupadas ·
+                    {{ propiedad.en_formalizacion }} en formalización ·
+                    {{ propiedad.libres }} libres ·
                     {{ propiedad.total_habitaciones }} total
                 </strong>
 
@@ -67,188 +115,388 @@
 
         {% empty %}
 
-            <p>No hay propiedades disponibles.</p>
+            <p>
+                No hay propiedades disponibles.
+            </p>
 
         {% endfor %}
 
     </div>
 
 
-    {% for habitacion in habitaciones %}
+    <!-- MINI BARRA DE FILTROS -->
+    <nav
+        class="habitaciones-filter-bar"
+        aria-label="Filtros de habitaciones"
+    >
 
-        {% with contrato=habitacion.contrato_activo proceso=habitacion.proceso_formalizacion_activo %}
+        <div class="filter-bar-title">
 
-            <div class="habitacion-card">
+            <i
+                class="fa fa-filter"
+                aria-hidden="true"
+            ></i>
 
-                <div class="cabecera">
+            <span>Filtrar</span>
 
-                    <div>
-                        <h2>{{ habitacion.nombre }}</h2>
-                        <span>{{ habitacion.propiedad }}</span>
-                    </div>
+        </div>
 
 
-                    {% if contrato %}
+        <form
+            method="get"
+            class="filter-property-form"
+        >
 
-                        <span class="badge badge-ocupada">
-                            Ocupada
-                        </span>
+            <input
+                type="hidden"
+                name="estado"
+                value="{{ estado_seleccionado }}"
+            >
 
-                    {% elif proceso %}
+            <label
+                for="filtro-propiedad"
+                class="sr-only"
+            >
+                Propiedad
+            </label>
 
-                        <span class="badge badge-formalizacion">
-                            En formalización
-                        </span>
+            <select
+                id="filtro-propiedad"
+                name="propiedad"
+                onchange="this.form.submit()"
+            >
 
-                    {% else %}
+                <option value="">
+                    Todas las propiedades
+                </option>
 
-                        <span class="badge badge-libre">
-                            Libre
-                        </span>
+                {% for propiedad in propiedades %}
 
+                    <option
+                        value="{{ propiedad.pk }}"
+                        {% if propiedad_seleccionada == propiedad.pk|stringformat:"s" %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ propiedad.nombre }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </form>
+
+
+        <div class="filter-status-nav">
+
+            <a
+                href="?propiedad={{ propiedad_seleccionada }}"
+                class="
+                    filter-status-link
+                    {% if not estado_seleccionado %}
+                        active
                     {% endif %}
+                "
+            >
+                Todas
+            </a>
 
-                </div>
+            <a
+                href="?propiedad={{ propiedad_seleccionada }}&estado=libres"
+                class="
+                    filter-status-link
+                    filter-status-free
+                    {% if estado_seleccionado == 'libres' %}
+                        active
+                    {% endif %}
+                "
+            >
+                Libres
+            </a>
+
+            <a
+                href="?propiedad={{ propiedad_seleccionada }}&estado=ocupadas"
+                class="
+                    filter-status-link
+                    filter-status-occupied
+                    {% if estado_seleccionado == 'ocupadas' %}
+                        active
+                    {% endif %}
+                "
+            >
+                Ocupadas
+            </a>
+
+            <a
+                href="?propiedad={{ propiedad_seleccionada }}&estado=formalizacion"
+                class="
+                    filter-status-link
+                    filter-status-process
+                    {% if estado_seleccionado == 'formalizacion' %}
+                        active
+                    {% endif %}
+                "
+            >
+                En formalización
+            </a>
+
+        </div>
 
 
-                <div class="contenido">
+        {% if propiedad_seleccionada or estado_seleccionado %}
 
-                    <div class="dato">
-                        <span>Precio</span>
-                        <strong>{{ habitacion.precio }} €</strong>
-                    </div>
+            <a
+                href="{% url 'hotel:habitaciones_dashboard' %}"
+                class="filter-reset"
+                title="Eliminar todos los filtros"
+            >
+                <i
+                    class="fa fa-times"
+                    aria-hidden="true"
+                ></i>
+
+                <span>Limpiar</span>
+            </a>
+
+        {% endif %}
+
+    </nav>
 
 
-                    <div class="dato">
-                        <span>Capacidad</span>
-                        <strong>{{ habitacion.capacity }}</strong>
-                    </div>
+    <!-- LISTADO DE HABITACIONES -->
+    <div class="habitaciones-listado">
 
+        {% for habitacion in habitaciones %}
 
-                    <div class="dato">
+            {% with contrato=habitacion.contrato_activo proceso=habitacion.proceso_formalizacion_activo %}
 
-                        <span>Contrato</span>
+                <article class="habitacion-card">
+
+                    <div class="cabecera">
+
+                        <div>
+
+                            <h2>
+                                {{ habitacion.nombre }}
+                            </h2>
+
+                            <span>
+                                {{ habitacion.propiedad }}
+                            </span>
+
+                        </div>
+
 
                         {% if contrato %}
 
-                            <strong class="verde">
-                                Activo
-                            </strong>
+                            <span class="badge badge-ocupada">
+                                Ocupada
+                            </span>
 
                         {% elif proceso %}
 
-                            <strong class="naranja">
-                                Pendiente
-                            </strong>
+                            <span class="badge badge-formalizacion">
+                                En formalización
+                            </span>
 
                         {% else %}
 
-                            <strong class="rojo">
-                                Sin contrato
-                            </strong>
+                            <span class="badge badge-libre">
+                                Libre
+                            </span>
 
                         {% endif %}
 
                     </div>
 
 
-                    {% if contrato %}
+                    <div class="contenido">
 
                         <div class="dato">
-                            <span>Inquilino</span>
+
+                            <span>Precio</span>
+
                             <strong>
-                                {{ contrato.inquilino }}
+                                {{ habitacion.precio }} €
                             </strong>
+
                         </div>
 
 
                         <div class="dato">
-                            <span>Fecha de finalización</span>
-                            <strong>
-                                {% if contrato.fecha_fin %}
-                                    {{ contrato.fecha_fin|date:"d/m/Y" }}
-                                {% else %}
-                                    Sin fecha definida
-                                {% endif %}
-                            </strong>
-                        </div>
 
-                    {% elif proceso %}
+                            <span>Capacidad</span>
 
-                        <div class="dato">
-                            <span>Formalización</span>
                             <strong>
-                                {{ proceso.get_estado_display }}
+                                {{ habitacion.capacity }}
                             </strong>
+
                         </div>
 
 
                         <div class="dato">
-                            <span>Creado</span>
-                            <strong>
-                                {{ proceso.fecha_creacion|date:"d/m/Y H:i" }}
-                            </strong>
+
+                            <span>Contrato</span>
+
+                            {% if contrato %}
+
+                                <strong class="verde">
+                                    Activo
+                                </strong>
+
+                            {% elif proceso %}
+
+                                <strong class="naranja">
+                                    Pendiente
+                                </strong>
+
+                            {% else %}
+
+                                <strong class="rojo">
+                                    Sin contrato
+                                </strong>
+
+                            {% endif %}
+
                         </div>
 
-                    {% endif %}
 
-                </div>
+                        {% if contrato %}
+
+                            <div class="dato">
+
+                                <span>Inquilino</span>
+
+                                <strong>
+                                    {{ contrato.inquilino }}
+                                </strong>
+
+                            </div>
 
 
-                <div class="acciones">
+                            <div class="dato">
 
-                    {% if contrato %}
+                                <span>Fecha de finalización</span>
 
-                        <a
-                            href="{% url 'hotel:modificar_contrato' contrato.pk %}"
-                            class="btn"
-                        >
-                            Modificar contrato
-                        </a>
+                                <strong>
+                                    {% if contrato.fecha_fin %}
+                                        {{ contrato.fecha_fin|date:"d/m/Y" }}
+                                    {% else %}
+                                        Sin fecha definida
+                                    {% endif %}
+                                </strong>
 
-                        <p class="formalizacion-bloqueada">
-                            Para preparar otro alquiler primero debes finalizar
-                            el contrato actual.
-                        </p>
+                            </div>
 
-                    {% elif proceso %}
+                        {% elif proceso %}
 
-                        <a
-                            href="{% url 'hotel:detalle_proceso_formalizacion' proceso.pk %}"
-                            class="btn-formalizacion-detalle"
-                        >
-                            Gestionar formalización
-                        </a>
+                            <div class="dato">
 
-                    {% else %}
+                                <span>Formalización</span>
 
-                        <a
-                            href="{% url 'hotel:newcontract' %}?propiedad={{ habitacion.propiedad_id }}&habitacion={{ habitacion.pk }}"
-                            class="btn"
-                        >
-                            Crear contrato directamente
-                        </a>
+                                <strong>
+                                    {{ proceso.get_estado_display }}
+                                </strong>
 
-                        <a
-                            href="{% url 'hotel:crear_proceso_formalizacion' habitacion.pk %}"
-                            class="btn-formalizacion"
-                        >
-                            Preparar formalización
-                        </a>
+                            </div>
 
-                    {% endif %}
 
-                </div>
+                            <div class="dato">
+
+                                <span>Creado</span>
+
+                                <strong>
+                                    {{ proceso.fecha_creacion|date:"d/m/Y H:i" }}
+                                </strong>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="acciones">
+
+                        {% if contrato %}
+
+                            <a
+                                href="{% url 'hotel:modificar_contrato' contrato.pk %}"
+                                class="btn"
+                            >
+                                Modificar contrato
+                            </a>
+
+                            <p class="formalizacion-bloqueada">
+
+                                Para preparar otro alquiler primero
+                                debes finalizar el contrato actual.
+
+                            </p>
+
+                        {% elif proceso %}
+
+                            <a
+                                href="{% url 'hotel:detalle_proceso_formalizacion' proceso.pk %}"
+                                class="btn-formalizacion-detalle"
+                            >
+                                Gestionar formalización
+                            </a>
+
+                        {% else %}
+
+                            <a
+                                href="{% url 'hotel:newcontract' %}?propiedad={{ habitacion.propiedad_id }}&habitacion={{ habitacion.pk }}"
+                                class="btn"
+                            >
+                                Crear contrato directamente
+                            </a>
+
+                            <a
+                                href="{% url 'hotel:crear_proceso_formalizacion' habitacion.pk %}"
+                                class="btn-formalizacion"
+                            >
+                                Preparar formalización
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </article>
+
+            {% endwith %}
+
+        {% empty %}
+
+            <div class="habitaciones-empty">
+
+                <i
+                    class="fa fa-search"
+                    aria-hidden="true"
+                ></i>
+
+                <h2>
+                    No encontramos habitaciones
+                </h2>
+
+                <p>
+                    No hay habitaciones que coincidan
+                    con los filtros seleccionados.
+                </p>
+
+                <a
+                    href="{% url 'hotel:habitaciones_dashboard' %}"
+                >
+                    Mostrar todas
+                </a>
 
             </div>
 
-        {% endwith %}
+        {% endfor %}
 
-    {% empty %}
-
-        <p>No hay habitaciones registradas.</p>
-
-    {% endfor %}
+    </div>
 
 </div>
 

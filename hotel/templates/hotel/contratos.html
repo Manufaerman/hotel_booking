@@ -1,91 +1,359 @@
-{% extends 'base_dashboard.html' %}
+{% extends "base_dashboard.html" %}
 {% load static %}
+
 {% block extra-head %}
-<link rel="stylesheet" href="{% static 'hotel/css/contratos.css' %}">
+<link
+    rel="stylesheet"
+    href="{% static 'hotel/css/contratos.css' %}"
+>
 {% endblock %}
 
 {% block content %}
-<div class="contracts-header">
 
-    <div>
-        <p class="section-tag">GESTIÓN</p>
+<main class="contracts-page">
 
-        <h1>Contratos</h1>
+    <header class="contracts-header">
 
-        <p class="section-description">
-            Gestiona los contratos activos de todas las propiedades de By Colección.
-        </p>
-    </div>
+        <div>
+            <span class="section-tag">
+                By Colección
+            </span>
 
-    <a href="{% url 'hotel:newcontract' %}" class="new-contract-btn">
-        <i class="fa fa-plus"></i>
-        Nuevo contrato
-    </a>
+            <h1>Contratos</h1>
 
-</div>
+            <p class="section-description">
+                Consulta el estado de los alquileres activos
+                y controla sus próximas renovaciones.
+            </p>
+        </div>
 
-<div class="contracts">
+        <a
+            href="{% url 'hotel:newcontract' %}"
+            class="new-contract-btn"
+        >
+            <i class="fa fa-plus" aria-hidden="true"></i>
+            <span>Nuevo contrato</span>
+        </a>
 
-{% if contratos %}
-    {% for contrato in contratos %}
-        {% if contrato.activo %}
+    </header>
 
-        <div class="contract-card">
 
-            <div class="contract-header">
-                <h3>{{ contrato.habitacion.propiedad }}</h3>
+    <form method="get" class="contracts-filters">
 
-                <span class="status">
-                    Activo
-                </span>
-            </div>
+        <div class="filter-group">
 
-            <div class="contract-info">
+            <span class="filter-icon">
+                <i class="fa fa-building-o" aria-hidden="true"></i>
+            </span>
 
-                <div>
-                    <small>Inquilino</small>
-                    <p>{{ contrato.inquilino }}</p>
-                </div>
+            <div class="filter-field">
 
-                <div>
-                    <small>Habitación</small>
-                    <p>{{ contrato.habitacion }}</p>
-                </div>
+                <label for="filter-property">
+                    Propiedad
+                </label>
 
-                <div>
-                    <small>Precio</small>
-                    <p>{{ contrato.precio_mensual }} €/mes</p>
-                </div>
+                <select
+                    id="filter-property"
+                    name="propiedad"
+                    onchange="this.form.submit()"
+                >
+                    <option value="">
+                        Todas las propiedades
+                    </option>
 
-            </div>
-
-            <div class="contract-actions">
-
-                <a href="{% url 'hotel:modificar_contrato' contrato.id %}" class="btn-edit">
-                    Modificar
-                </a>
-
-                <form method="post" action="{% url 'hotel:finalizar_contrato' contrato.id %}">
-                    {% csrf_token %}
-                    <button class="btn-finish" type="submit">
-                        Finalizar
-                    </button>
-                </form>
-
-                <a href="{% url 'hotel:eliminar_contrato' contrato.id %}" class="btn btn-danger btn-sm">
-                     <i class="fas fa-trash"></i> Eliminar
-                </a>
+                    {% for propiedad in propiedades %}
+                        <option
+                            value="{{ propiedad.pk }}"
+                            {% if propiedad_id == propiedad.pk|stringformat:"s" %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ propiedad.nombre }}
+                        </option>
+                    {% endfor %}
+                </select>
 
             </div>
 
         </div>
 
+
+        <div class="filter-group">
+
+            <span class="filter-icon filter-icon-yellow">
+                <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
+            </span>
+
+            <div class="filter-field">
+
+                <label for="filter-status">
+                    Situación
+                </label>
+
+                <select
+                    id="filter-status"
+                    name="estado"
+                    onchange="this.form.submit()"
+                >
+                    <option value="">
+                        Todos los contratos
+                    </option>
+
+                    <option
+                        value="nuevo"
+                        {% if estado_seleccionado == "nuevo" %}
+                            selected
+                        {% endif %}
+                    >
+                        Nuevos
+                    </option>
+
+                    <option
+                        value="en_curso"
+                        {% if estado_seleccionado == "en_curso" %}
+                            selected
+                        {% endif %}
+                    >
+                        En curso
+                    </option>
+
+                    <option
+                        value="por_terminar"
+                        {% if estado_seleccionado == "por_terminar" %}
+                            selected
+                        {% endif %}
+                    >
+                        Próximos a terminar
+                    </option>
+
+                    <option
+                        value="renovado"
+                        {% if estado_seleccionado == "renovado" %}
+                            selected
+                        {% endif %}
+                    >
+                        Renovados
+                    </option>
+                </select>
+
+            </div>
+
+        </div>
+
+
+        {% if propiedad_id or estado_seleccionado %}
+            <a
+                href="{% url 'hotel:contratos' %}"
+                class="clear-filters"
+            >
+                <i class="fa fa-times" aria-hidden="true"></i>
+                <span>Limpiar</span>
+            </a>
         {% endif %}
-    {% endfor %}
-{% endif %}
 
-</div>
+    </form>
 
 
+    <section class="contracts-list">
+
+        {% for contrato in contratos %}
+
+            <article class="
+                contract-card
+                contract-card-{{ contrato.estado_visual }}
+            ">
+
+                <header class="contract-card-header">
+
+                    <div class="contract-identity">
+
+                        <span class="contract-room-icon">
+                            <i class="fa fa-key" aria-hidden="true"></i>
+                        </span>
+
+                        <div>
+                            <span class="contract-property">
+                                {{ contrato.habitacion.propiedad.nombre }}
+                            </span>
+
+                            <h2>
+                                {{ contrato.habitacion.nombre }}
+                            </h2>
+                        </div>
+
+                    </div>
+
+                    <span class="
+                        contract-status
+                        status-{{ contrato.estado_visual }}
+                    ">
+                        {{ contrato.estado_visual_label }}
+                    </span>
+
+                </header>
+
+
+                <div class="contract-info">
+
+                    <div class="contract-data">
+                        <span>Inquilino</span>
+
+                        <strong>
+                            {{ contrato.inquilino }}
+                        </strong>
+                    </div>
+
+
+                    <div class="contract-data">
+                        <span>Precio mensual</span>
+
+                        <strong>
+                            {{ contrato.precio_mensual|floatformat:2 }} €
+                        </strong>
+                    </div>
+
+
+                    <div class="contract-data">
+                        <span>Inicio</span>
+
+                        <strong>
+                            {{ contrato.fecha_inicio|date:"d/m/Y" }}
+                        </strong>
+                    </div>
+
+
+                    <div class="contract-data">
+
+                        <span>
+                            {% if contrato.es_renovado %}
+                                Fin de renovación
+                            {% else %}
+                                Próxima renovación
+                            {% endif %}
+                        </span>
+
+                        <strong>
+                            {% if contrato.fecha_final_visual %}
+                                {{ contrato.fecha_final_visual|date:"d/m/Y" }}
+                            {% else %}
+                                Sin fecha
+                            {% endif %}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                {% if contrato.fecha_final_visual %}
+
+                    <div class="contract-timeline">
+
+                        <div class="contract-timeline-header">
+
+                            <span>
+                                {% if contrato.es_renovado %}
+                                    Periodo renovado de tres meses
+                                {% else %}
+                                    Vigencia inicial del contrato
+                                {% endif %}
+                            </span>
+
+                            <strong>
+                                {% if contrato.dias_restantes < 0 %}
+                                    Renovación vencida
+
+                                {% elif contrato.dias_restantes == 0 %}
+                                    Finaliza hoy
+
+                                {% elif contrato.dias_restantes == 1 %}
+                                    Queda 1 día
+
+                                {% else %}
+                                    Quedan {{ contrato.dias_restantes }} días
+                                {% endif %}
+                            </strong>
+
+                        </div>
+
+                        <div class="timeline-track">
+                            <span
+                                style="width: {{ contrato.porcentaje_transcurrido }}%;"
+                            ></span>
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+
+                <footer class="contract-actions">
+
+                    <a
+                        href="{% url 'hotel:modificar_contrato' contrato.pk %}"
+                        class="btn-edit"
+                    >
+                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                        <span>Modificar</span>
+                    </a>
+
+
+                    <form
+                        method="post"
+                        action="{% url 'hotel:finalizar_contrato' contrato.pk %}"
+                    >
+                        {% csrf_token %}
+
+                        <button
+                            class="btn-finish"
+                            type="submit"
+                            onclick="return confirm(
+                                '¿Confirmas que quieres finalizar este contrato?'
+                            )"
+                        >
+                            <i class="fa fa-check" aria-hidden="true"></i>
+                            <span>Finalizar</span>
+                        </button>
+                    </form>
+
+
+                    <a
+                        href="{% url 'hotel:eliminar_contrato' contrato.pk %}"
+                        class="btn-delete"
+                    >
+                        <i class="fa fa-trash-o" aria-hidden="true"></i>
+                        <span>Eliminar</span>
+                    </a>
+
+                </footer>
+
+            </article>
+
+        {% empty %}
+
+            <div class="contracts-empty">
+
+                <span>
+                    <i class="fa fa-file-text-o" aria-hidden="true"></i>
+                </span>
+
+                <h2>No hay contratos</h2>
+
+                <p>
+                    No encontramos contratos activos que coincidan
+                    con los filtros seleccionados.
+                </p>
+
+                <a href="{% url 'hotel:contratos' %}">
+                    Mostrar todos
+                </a>
+
+            </div>
+
+        {% endfor %}
+
+    </section>
+
+</main>
 
 {% endblock %}

@@ -1,0 +1,321 @@
+:root {
+    --wine: #806872;
+    --wine-strong: #705663;
+    --tiffany: #73a5a1;
+    --tiffany-pale: #dfefed;
+    --yellow: #f7e9ad;
+    --yellow-pale: #fff8dc;
+    --white: #fff;
+    --cream: #fbf9f5;
+    --text: #42383d;
+    --soft: #81777c;
+    --border: #e8dfdc;
+}
+
+.visits-page {
+    width: min(100% - 40px, 1180px);
+    margin: 0 auto;
+    padding: 48px 0 70px;
+    color: var(--text);
+}
+
+.visits-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    margin-bottom: 28px;
+}
+
+.visits-eyebrow {
+    color: var(--tiffany);
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+}
+
+.visits-header h1 {
+    margin: 8px 0 0;
+    color: var(--wine-strong);
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: clamp(2.7rem, 5vw, 4rem);
+    font-weight: 500;
+}
+
+.visits-header p {
+    max-width: 610px;
+    color: var(--soft);
+}
+
+.visits-header-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 88px;
+    height: 88px;
+    border-radius: 29px;
+    background: var(--wine);
+    color: var(--yellow);
+    font-size: 2rem;
+    box-shadow: 0 17px 38px rgba(112, 86, 99, 0.2);
+}
+
+.visits-filters {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    margin-bottom: 22px;
+    padding: 15px;
+    border: 1px solid var(--border);
+    border-radius: 25px;
+    background: var(--white);
+}
+
+.visit-filter {
+    flex: 1;
+    min-width: 0;
+}
+
+.visit-filter label {
+    display: block;
+    margin: 0 10px 6px;
+    color: var(--tiffany);
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.13em;
+}
+
+.visit-filter select {
+    width: 100%;
+    min-height: 50px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 17px;
+    outline: none;
+    background: var(--tiffany-pale);
+    color: var(--wine-strong);
+    font-weight: 650;
+}
+
+.clear-visit-filters {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+    padding: 0 18px;
+    border-radius: 17px;
+    background: var(--wine);
+    color: var(--white);
+    text-decoration: none;
+}
+
+.visits-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 22px;
+}
+
+.visit-summary-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 21px;
+    border-radius: 23px;
+    background: var(--tiffany-pale);
+}
+
+.visit-summary-card > span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 55px;
+    height: 55px;
+    border-radius: 18px;
+    background: var(--tiffany);
+    color: var(--white);
+    font-size: 1.25rem;
+}
+
+.visit-summary-card.yellow {
+    background: var(--yellow-pale);
+}
+
+.visit-summary-card.yellow > span {
+    background: var(--yellow);
+    color: var(--wine-strong);
+}
+
+.visit-summary-card.wine {
+    background: var(--wine);
+    color: var(--white);
+}
+
+.visit-summary-card.wine > span {
+    background: var(--yellow);
+    color: var(--wine-strong);
+}
+
+.visit-summary-card small {
+    display: block;
+    margin-bottom: 3px;
+    color: var(--soft);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.visit-summary-card.wine small {
+    color: rgba(255,255,255,.7);
+}
+
+.visit-summary-card strong {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 2rem;
+}
+
+.geography-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 22px;
+}
+
+.geography-card,
+.recent-visits {
+    padding: 23px;
+    border: 1px solid var(--border);
+    border-radius: 25px;
+    background: var(--white);
+    box-shadow: 0 16px 40px rgba(112, 86, 99, 0.07);
+}
+
+.geography-card header {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-bottom: 18px;
+}
+
+.geography-card header span {
+    color: var(--tiffany);
+    font-size: 0.7rem;
+    font-weight: 800;
+}
+
+.geography-card h2,
+.recent-visits h2 {
+    margin: 0;
+    color: var(--wine-strong);
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 1.45rem;
+}
+
+.geography-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.geography-row:last-child {
+    border-bottom: 0;
+}
+
+.geography-row strong,
+.geography-row small {
+    display: block;
+}
+
+.geography-row small {
+    margin-top: 3px;
+    color: var(--soft);
+    font-size: 0.72rem;
+}
+
+.geography-row > span {
+    color: var(--tiffany);
+    font-weight: 800;
+}
+
+.recent-visits header {
+    margin-bottom: 20px;
+}
+
+.recent-visits header > span {
+    color: var(--tiffany);
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+}
+
+.visits-table-wrapper {
+    overflow-x: auto;
+}
+
+.visits-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.visits-table th,
+.visits-table td {
+    padding: 14px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+}
+
+.visits-table th {
+    color: var(--soft);
+    font-size: 0.67rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+}
+
+.visits-table td strong,
+.visits-table td small {
+    display: block;
+}
+
+.visits-table td small {
+    margin-top: 3px;
+    color: var(--soft);
+    font-size: 0.72rem;
+}
+
+@media (max-width: 900px) {
+    .geography-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 680px) {
+    .visits-page {
+        width: calc(100% - 24px);
+        padding-top: 25px;
+    }
+
+    .visits-header-icon {
+        display: none;
+    }
+
+    .visits-filters {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .visits-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .geography-card,
+    .recent-visits {
+        padding: 18px;
+        border-radius: 21px;
+    }
+}

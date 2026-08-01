@@ -368,6 +368,14 @@
 
                         </form>
 
+                        <a
+                            href="{% url 'hotel:editar_proceso_formalizacion' proceso.pk %}"
+                            class="btn-editar-formalizacion"
+                        >
+                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                            <span>Modificar datos</span>
+                        </a>
+
                     {% endif %}
 
                 </div>
