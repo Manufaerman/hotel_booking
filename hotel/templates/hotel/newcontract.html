@@ -467,18 +467,37 @@
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    const checkbox = document.getElementById("id_tiene_aval");
-    const datosAval = document.getElementById("datos-aval");
+    const checkbox = document.getElementById(
+        "id_tiene_aval"
+    );
+
+    const datosAval = document.getElementById(
+        "datos-aval"
+    );
 
     if (!checkbox || !datosAval) {
         return;
     }
 
+    const camposAval = datosAval.querySelectorAll(
+        "input, select, textarea"
+    );
+
     function actualizarAval() {
-        datosAval.hidden = !checkbox.checked;
+        const tieneAval = checkbox.checked;
+
+        datosAval.hidden = !tieneAval;
+
+        camposAval.forEach(function (campo) {
+            campo.disabled = !tieneAval;
+        });
     }
 
-    checkbox.addEventListener("change", actualizarAval);
+    checkbox.addEventListener(
+        "change",
+        actualizarAval
+    );
+
     actualizarAval();
 });
 </script>
