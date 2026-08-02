@@ -28,15 +28,53 @@
         </ul>
       </div>
         {% else %}
-        <div class="hero-price-card-alquilada">
-            <div class="price-main">{{ habitacion.price }} €</div>
-            <div class="price-period">/ mes</div>
-            <div class="disponibilidad">Alquilada</div>
-            <ul>
-              <li>Gastos incluidos hasta 200€</li>
-              <li>Internet alta velocidad</li>
-            </ul>
-      </div>
+
+    <aside class="hero-unavailable-card">
+
+        <div class="unavailable-card-top">
+
+            <span class="unavailable-card-icon">
+                <i
+                    class="fa fa-key"
+                    aria-hidden="true"
+                ></i>
+            </span>
+
+            <span class="unavailable-status">
+                Alquilada
+            </span>
+
+        </div>
+
+
+                <span class="unavailable-eyebrow">
+            By Colección
+        </span>
+
+        <h2>
+            Actualmente alquilada
+        </h2>
+
+        <p>
+            Explora otras habitaciones disponibles
+            y encuentra tu próximo espacio.
+        </p>
+
+        <a
+            href="{% url 'hotel:habitaciones_all' %}"
+            class="unavailable-action"
+        >
+            <span>Explorar habitaciones</span>
+
+            <i
+                class="fa fa-arrow-right"
+                aria-hidden="true"
+            ></i>
+        </a>
+
+    </aside>
+
+
         {% endif%}
     </div>
 
