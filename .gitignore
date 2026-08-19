@@ -186,3 +186,4 @@ virtual/
 # Archivos del sistema y del IDE
 .DS_Store
 .idea/
+venv_arm/
