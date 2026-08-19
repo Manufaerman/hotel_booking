@@ -1,0 +1,788 @@
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+:root {
+    --gasto-wine: #6f5a68;
+    --gasto-wine-dark: #51343e;
+    --gasto-wine-soft: #927783;
+
+    --gasto-tiffany: #73a7a3;
+    --gasto-sage: #8fa297;
+
+    --gasto-yellow: #f1d59a;
+    --gasto-pink: #d8c3c8;
+
+    --gasto-cream: #f7f4f0;
+    --gasto-paper: #fffdf9;
+
+    --gasto-text: #392f33;
+    --gasto-text-soft: #746a6d;
+
+    --gasto-border: rgba(81, 52, 62, 0.11);
+}
+
+
+/* =========================================================
+   PÁGINA
+========================================================= */
+
+.gastos-page {
+    width: min(1240px, calc(100% - 56px));
+    margin: 0 auto;
+    padding: 42px 0 60px;
+
+    color: var(--gasto-text);
+}
+
+.gastos-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 30px;
+
+    margin-bottom: 32px;
+}
+
+.gastos-eyebrow {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: var(--gasto-tiffany);
+
+    font-size: 0.69rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+}
+
+.gastos-header h1 {
+    margin: 0;
+
+    color: var(--gasto-wine-dark);
+
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 2.7rem;
+    font-weight: 600;
+    line-height: 1.1;
+}
+
+.gastos-header p {
+    max-width: 600px;
+    margin: 10px 0 0;
+
+    color: var(--gasto-text-soft);
+
+    line-height: 1.6;
+}
+
+.gastos-create-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    min-height: 48px;
+    padding: 0 21px;
+
+    border-radius: 14px;
+
+    background: var(--gasto-wine);
+    color: #ffffff;
+
+    font-size: 0.87rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   RESUMEN
+========================================================= */
+
+.gastos-summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 15px;
+
+    margin-bottom: 25px;
+}
+
+.gastos-summary-card {
+    min-width: 0;
+    min-height: 135px;
+    padding: 23px;
+
+    border: 1px solid var(--gasto-border);
+    border-radius: 20px;
+
+    background: var(--gasto-paper);
+
+    box-shadow:
+        0 12px 30px rgba(55, 38, 45, 0.07);
+}
+
+.gastos-summary-card span {
+    display: block;
+
+    margin-bottom: 14px;
+
+    color: var(--gasto-text-soft);
+
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.gastos-summary-card strong {
+    display: block;
+
+    color: var(--gasto-wine-dark);
+
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 1.9rem;
+    line-height: 1;
+}
+
+.gastos-summary-card small {
+    display: block;
+
+    margin-top: 12px;
+
+    color: var(--gasto-text-soft);
+
+    font-size: 0.7rem;
+}
+
+.gastos-summary-pending {
+    background: #f4e2e4;
+}
+
+.gastos-summary-improvements {
+    background: #e5efed;
+}
+
+.gastos-summary-benefit {
+    background: var(--gasto-wine);
+}
+
+.gastos-summary-benefit span,
+.gastos-summary-benefit strong,
+.gastos-summary-benefit small {
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   FILTROS
+========================================================= */
+
+.gastos-filters {
+    display: grid;
+    grid-template-columns:
+        minmax(145px, 0.8fr)
+        minmax(160px, 1fr)
+        minmax(160px, 1fr)
+        minmax(145px, 0.8fr)
+        auto
+        auto;
+    align-items: end;
+    gap: 12px;
+
+    margin-bottom: 25px;
+    padding: 20px;
+
+    border: 1px solid var(--gasto-border);
+    border-radius: 19px;
+
+    background: var(--gasto-paper);
+}
+
+.gastos-filter-field {
+    min-width: 0;
+}
+
+.gastos-filter-field label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: var(--gasto-wine-soft);
+
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.gastos-filter-field input,
+.gastos-filter-field select {
+    width: 100%;
+    min-height: 43px;
+    padding: 0 12px;
+
+    border: 1px solid rgba(81, 52, 62, 0.15);
+    border-radius: 11px;
+
+    background: #ffffff;
+    color: var(--gasto-text);
+
+    font: inherit;
+    font-size: 0.83rem;
+}
+
+.gastos-filter-button,
+.gastos-clear-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    min-height: 43px;
+    padding: 0 16px;
+
+    border: 0;
+    border-radius: 11px;
+
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.gastos-filter-button {
+    background: var(--gasto-tiffany);
+    color: #ffffff;
+}
+
+.gastos-clear-button {
+    background: var(--gasto-cream);
+    color: var(--gasto-wine);
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   LISTADO
+========================================================= */
+
+.gastos-list-card {
+    overflow: hidden;
+
+    border: 1px solid var(--gasto-border);
+    border-radius: 22px;
+
+    background: var(--gasto-paper);
+
+    box-shadow:
+        0 15px 36px rgba(55, 38, 45, 0.07);
+}
+
+.gastos-list-header {
+    padding: 24px 26px 18px;
+}
+
+.gastos-list-header span {
+    color: var(--gasto-tiffany);
+
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+}
+
+.gastos-list-header h2 {
+    margin: 5px 0 0;
+
+    color: var(--gasto-wine-dark);
+
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 1.7rem;
+}
+
+.gastos-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.gastos-table {
+    width: 100%;
+
+    border-collapse: collapse;
+}
+
+.gastos-table th {
+    padding: 13px 16px;
+
+    border-top: 1px solid var(--gasto-border);
+    border-bottom: 1px solid var(--gasto-border);
+
+    background: var(--gasto-cream);
+    color: var(--gasto-wine-soft);
+
+    font-size: 0.62rem;
+    font-weight: 800;
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.gastos-table td {
+    padding: 16px;
+
+    border-bottom: 1px solid var(--gasto-border);
+
+    color: var(--gasto-text-soft);
+
+    font-size: 0.8rem;
+    vertical-align: middle;
+}
+
+.gastos-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.gastos-table td strong {
+    display: block;
+
+    color: var(--gasto-text);
+}
+
+.gastos-table td small {
+    display: block;
+
+    margin-top: 4px;
+
+    color: var(--gasto-text-soft);
+}
+
+.gasto-category,
+.gasto-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 27px;
+    padding: 0 10px;
+
+    border-radius: 999px;
+
+    font-size: 0.62rem;
+    font-weight: 800;
+}
+
+.gasto-category {
+    background: #eee7ed;
+    color: var(--gasto-wine);
+}
+
+.gasto-paid {
+    background: #dcebdd;
+    color: #47704e;
+}
+
+.gasto-pending {
+    background: #f3dddd;
+    color: #94464d;
+}
+
+.gasto-amount {
+    white-space: nowrap;
+}
+
+.gasto-document {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    color: var(--gasto-tiffany);
+
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.gasto-no-document {
+    color: #aaa1a4;
+}
+
+.gasto-actions {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.gasto-actions form {
+    margin: 0;
+}
+
+.gasto-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 34px;
+    height: 34px;
+    padding: 0;
+
+    border: 0;
+    border-radius: 10px;
+
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.gasto-action-edit {
+    background: #eee7ed;
+    color: var(--gasto-wine);
+}
+
+.gasto-action-state {
+    background: #e2efed;
+    color: #54827f;
+}
+
+.gasto-action-delete {
+    background: #f3dddd;
+    color: #99464d;
+}
+
+
+/* =========================================================
+   FORMULARIO
+========================================================= */
+
+.gasto-form-page {
+    max-width: 980px;
+}
+
+.gasto-form-card {
+    padding: 30px;
+
+    border: 1px solid var(--gasto-border);
+    border-radius: 23px;
+
+    background: var(--gasto-paper);
+
+    box-shadow:
+        0 16px 38px rgba(55, 38, 45, 0.08);
+}
+
+.gasto-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.gasto-form-group {
+    min-width: 0;
+}
+
+.gasto-form-full {
+    grid-column: 1 / -1;
+}
+
+.gasto-form-group label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: var(--gasto-wine-soft);
+
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+}
+
+.gasto-control,
+.gasto-file {
+    width: 100%;
+    min-height: 47px;
+    padding: 0 14px;
+
+    border: 1px solid rgba(81, 52, 62, 0.16);
+    border-radius: 12px;
+
+    background: #ffffff;
+    color: var(--gasto-text);
+
+    font: inherit;
+}
+
+.gasto-textarea {
+    min-height: 100px;
+    padding-top: 13px;
+    padding-bottom: 13px;
+
+    resize: vertical;
+}
+
+.gasto-file {
+    padding-top: 10px;
+}
+
+.gasto-form-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    grid-column: 1 / -1;
+
+    min-height: 50px;
+    padding: 13px 15px;
+
+    border-radius: 12px;
+
+    background: var(--gasto-cream);
+}
+
+.gasto-checkbox {
+    width: 19px;
+    height: 19px;
+
+    accent-color: var(--gasto-wine);
+}
+
+.gasto-form-check label {
+    color: var(--gasto-text);
+
+    font-weight: 700;
+}
+
+.gasto-field-error {
+    display: block;
+
+    margin-top: 6px;
+
+    color: #a4424c;
+
+    font-size: 0.75rem;
+}
+
+.gasto-form-errors {
+    margin-bottom: 20px;
+    padding: 14px;
+
+    border-radius: 11px;
+
+    background: #f3dddd;
+    color: #8f3e46;
+}
+
+.gasto-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 11px;
+
+    margin-top: 27px;
+}
+
+.gasto-form-back,
+.gasto-form-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 47px;
+    padding: 0 20px;
+
+    border: 0;
+    border-radius: 12px;
+
+    font-size: 0.84rem;
+    font-weight: 750;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.gasto-form-back {
+    background: var(--gasto-cream);
+    color: var(--gasto-wine);
+}
+
+.gasto-form-submit {
+    background: var(--gasto-wine);
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   ESTADO VACÍO
+========================================================= */
+
+.gastos-empty {
+    padding: 55px 25px;
+
+    text-align: center;
+}
+
+.gastos-empty > i {
+    color: var(--gasto-tiffany);
+
+    font-size: 2rem;
+}
+
+.gastos-empty h3 {
+    margin: 15px 0 7px;
+
+    color: var(--gasto-wine-dark);
+
+    font-family: "Playfair Display", Georgia, serif;
+}
+
+.gastos-empty p {
+    margin: 0 0 20px;
+
+    color: var(--gasto-text-soft);
+}
+
+.gastos-empty a {
+    display: inline-flex;
+
+    padding: 11px 17px;
+
+    border-radius: 11px;
+
+    background: var(--gasto-wine);
+    color: #ffffff;
+
+    font-weight: 700;
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1050px) {
+    .gastos-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .gastos-filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
+@media (max-width: 700px) {
+    .gastos-page {
+        width: calc(100% - 26px);
+        padding: 27px 0 45px;
+    }
+
+    .gastos-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 20px;
+
+        margin-bottom: 24px;
+    }
+
+    .gastos-header h1 {
+        font-size: 2.2rem;
+    }
+
+    .gastos-create-button {
+        width: 100%;
+    }
+
+    .gastos-summary,
+    .gastos-filters,
+    .gasto-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .gastos-summary-card {
+        min-height: 112px;
+        padding: 20px;
+    }
+
+    .gastos-summary-card strong {
+        font-size: 1.65rem;
+    }
+
+    .gastos-filters {
+        padding: 17px;
+    }
+
+    .gastos-filter-button,
+    .gastos-clear-button {
+        width: 100%;
+    }
+
+    .gastos-list-header {
+        padding: 21px 18px 15px;
+    }
+
+    .gastos-table thead {
+        display: none;
+    }
+
+    .gastos-table,
+    .gastos-table tbody,
+    .gastos-table tr,
+    .gastos-table td {
+        display: block;
+        width: 100%;
+    }
+
+    .gastos-table tr {
+        padding: 16px 18px;
+
+        border-top: 1px solid var(--gasto-border);
+    }
+
+    .gastos-table td {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+
+        padding: 8px 0;
+
+        border: 0;
+
+        text-align: right;
+    }
+
+    .gastos-table td::before {
+        content: attr(data-label);
+
+        color: var(--gasto-wine-soft);
+
+        font-size: 0.62rem;
+        font-weight: 800;
+        text-align: left;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    .gasto-actions {
+        justify-content: flex-end;
+    }
+
+    .gasto-form-card {
+        padding: 22px 17px;
+    }
+
+    .gasto-form-full,
+    .gasto-form-check {
+        grid-column: auto;
+    }
+
+    .gasto-form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .gasto-form-back,
+    .gasto-form-submit {
+        width: 100%;
+    }
+}

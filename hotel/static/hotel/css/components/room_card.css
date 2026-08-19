@@ -1,0 +1,562 @@
+/* =========================================================
+   BY COLECCIÓN — TARJETA OFICIAL DE HABITACIÓN
+========================================================= */
+
+:root {
+    --by-card-wine: #6f5a68;
+    --by-card-wine-dark: #51343e;
+    --by-card-wine-soft: #927783;
+
+    --by-card-tiffany: #73a7a3;
+    --by-card-tiffany-light: #e6f0ef;
+
+    --by-card-yellow: #f1d59a;
+    --by-card-yellow-light: #f7ebbf;
+
+    --by-card-cream: #f7f4f0;
+    --by-card-paper: #fffdf9;
+
+    --by-card-text: #392f33;
+    --by-card-text-soft: #756b6e;
+
+    --by-card-border: rgba(81, 52, 62, 0.1);
+}
+
+
+/* =========================================================
+   TARJETA
+========================================================= */
+
+.by-room-card {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+
+    overflow: hidden;
+
+    border: 1px solid var(--by-card-border);
+    border-radius: 23px;
+
+    background: var(--by-card-paper);
+
+    box-shadow:
+        0 15px 34px rgba(54, 37, 44, 0.12);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+/* =========================================================
+   IMAGEN
+========================================================= */
+
+.by-room-card-image {
+    position: relative;
+
+    width: 100%;
+    aspect-ratio: 4 / 3;
+
+    overflow: hidden;
+
+    background: #e9e3df;
+}
+
+.by-room-card-image-link {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+}
+
+.by-room-card-image img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: center;
+
+    transition: transform 0.5s ease;
+}
+
+
+/* =========================================================
+   COLECCIÓN Y ESTADO
+========================================================= */
+
+.by-room-card-collection,
+.by-room-card-status {
+    position: absolute;
+    top: 14px;
+    z-index: 2;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 29px;
+    padding: 0 12px;
+
+    border-radius: 999px;
+
+    font-size: 0.59rem;
+    font-weight: 800;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+
+    box-shadow:
+        0 7px 17px rgba(42, 27, 34, 0.12);
+}
+
+.by-room-card-collection {
+    left: 14px;
+
+    max-width: calc(100% - 125px);
+
+    overflow: hidden;
+
+    background: rgba(111, 90, 104, 0.95);
+    color: #ffffff;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.by-room-card-status {
+    right: 14px;
+}
+
+.by-room-card-status-available {
+    background: var(--by-card-yellow-light);
+    color: var(--by-card-wine-dark);
+}
+
+.by-room-card-status-rented {
+    background: rgba(111, 90, 104, 0.95);
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   CONTENIDO
+========================================================= */
+
+.by-room-card-content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+
+    min-width: 0;
+    padding: 17px 18px 18px;
+}
+
+.by-room-card-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.by-room-card-identity {
+    min-width: 0;
+}
+
+.by-room-card-eyebrow {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--by-card-tiffany);
+
+    font-size: 0.59rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.17em;
+}
+
+.by-room-card-identity h3 {
+    margin: 0;
+
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    line-height: 1.1;
+}
+
+.by-room-card-identity h3 a {
+    color: var(--by-card-wine-dark);
+    text-decoration: none;
+}
+
+.by-room-card-price {
+    flex-shrink: 0;
+
+    text-align: right;
+}
+
+.by-room-card-price strong {
+    display: block;
+
+    color: var(--by-card-wine-dark);
+
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.by-room-card-price span {
+    display: block;
+
+    margin-top: 5px;
+
+    color: var(--by-card-text-soft);
+
+    font-size: 0.62rem;
+}
+
+
+/* =========================================================
+   DESCRIPCIÓN
+========================================================= */
+
+.by-room-card-description {
+    display: -webkit-box;
+    overflow: hidden;
+
+    min-height: 39px;
+    margin: 15px 0 0;
+
+    color: var(--by-card-text-soft);
+
+    font-size: 0.75rem;
+    line-height: 1.5;
+
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+
+/* =========================================================
+   CARACTERÍSTICAS
+========================================================= */
+
+.by-room-card-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+
+    margin-top: 15px;
+}
+
+.by-room-card-features > span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    min-width: 31px;
+    min-height: 29px;
+    padding: 0 9px;
+
+    border: 1px solid rgba(115, 167, 163, 0.12);
+    border-radius: 999px;
+
+    background: var(--by-card-tiffany-light);
+    color: #5e8582;
+
+    font-size: 0.7rem;
+}
+
+.by-room-card-features i {
+    font-size: 0.7rem;
+}
+
+.by-room-card-features small {
+    color: inherit;
+
+    font-size: 0.61rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   ACCIONES
+========================================================= */
+
+.by-room-card-actions {
+    display: flex;
+    gap: 9px;
+
+    margin-top: auto;
+    padding-top: 17px;
+}
+
+.by-room-card-primary {
+    display: inline-flex;
+    flex: 1;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    min-height: 43px;
+    padding: 0 15px;
+
+    border-radius: 13px;
+
+    background: var(--by-card-wine);
+    color: #ffffff;
+
+    font-size: 0.69rem;
+    font-weight: 750;
+    text-decoration: none;
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.by-room-card-primary i {
+    color: var(--by-card-yellow-light);
+    font-size: 0.72rem;
+}
+
+.by-room-card-whatsapp {
+    display: inline-flex;
+    flex: 0 0 43px;
+    align-items: center;
+    justify-content: center;
+
+    width: 43px;
+    height: 43px;
+
+    border-radius: 13px;
+
+    background: var(--by-card-tiffany);
+    color: #ffffff;
+
+    font-size: 1rem;
+    text-decoration: none;
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+/* =========================================================
+   EFECTOS
+========================================================= */
+
+@media (hover: hover) {
+    .by-room-card:hover {
+        transform: translateY(-4px);
+
+        box-shadow:
+            0 21px 44px rgba(54, 37, 44, 0.16);
+    }
+
+    .by-room-card:hover .by-room-card-image img {
+        transform: scale(1.035);
+    }
+
+    .by-room-card-primary:hover {
+        transform: translateY(-1px);
+
+        background: var(--by-card-wine-dark);
+        color: #ffffff;
+    }
+
+    .by-room-card-whatsapp:hover {
+        transform: translateY(-1px);
+
+        background: #5f918d;
+        color: #ffffff;
+    }
+}
+
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
+@media (max-width: 600px) {
+    .by-room-card {
+        border-radius: 20px;
+    }
+
+    .by-room-card-content {
+        padding: 15px 16px 16px;
+    }
+
+    .by-room-card-collection,
+    .by-room-card-status {
+        top: 12px;
+
+        min-height: 27px;
+        padding: 0 10px;
+
+        font-size: 0.54rem;
+    }
+
+    .by-room-card-collection {
+        left: 12px;
+    }
+
+    .by-room-card-status {
+        right: 12px;
+    }
+
+    .by-room-card-identity h3 {
+        font-size: 1.17rem;
+    }
+
+    .by-room-card-price strong {
+        font-size: 1.08rem;
+    }
+
+    .by-room-card-description {
+        margin-top: 12px;
+
+        font-size: 0.71rem;
+    }
+
+    .by-room-card-features {
+        margin-top: 13px;
+    }
+
+    .by-room-card-actions {
+        padding-top: 15px;
+    }
+}
+/* =========================================================
+   CONTENEDOR GLOBAL DE TARJETAS BY COLECCIÓN
+========================================================= */
+
+.rooms-slider {
+    display: flex;
+    align-items: stretch;
+    gap: 17px;
+
+    width: 100%;
+    padding: 22px max(20px, calc((100vw - 1180px) / 2)) 30px;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: max(
+        20px,
+        calc((100vw - 1180px) / 2)
+    );
+
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+}
+
+.rooms-slider-item {
+    display: flex;
+    flex: 0 0 310px;
+
+    width: 310px;
+    min-width: 310px;
+    max-width: 310px;
+
+    scroll-snap-align: start;
+}
+
+.rooms-slider-item > .by-room-card {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+}
+
+
+/* =========================================================
+   ESCRITORIO GRANDE
+========================================================= */
+
+@media (min-width: 1101px) {
+    .rooms-slider-item {
+        flex-basis: 310px;
+
+        width: 310px;
+        min-width: 310px;
+        max-width: 310px;
+    }
+}
+
+
+/* =========================================================
+   IPAD Y TABLET — DOS TARJETAS
+========================================================= */
+
+@media (min-width: 601px) and (max-width: 1100px) {
+    .rooms-slider {
+        gap: 15px;
+
+        padding-right: 18px;
+        padding-left: 18px;
+
+        scroll-padding-left: 18px;
+    }
+
+    .rooms-slider-item {
+        flex: 0 0 calc((100vw - 51px) / 2);
+
+        width: calc((100vw - 51px) / 2);
+        min-width: calc((100vw - 51px) / 2);
+        max-width: 340px;
+    }
+}
+
+
+/* =========================================================
+   MÓVIL — UNA TARJETA Y PARTE DE LA SIGUIENTE
+========================================================= */
+
+@media (max-width: 600px) {
+    .rooms-slider {
+        gap: 13px;
+
+        padding: 19px 14px 25px;
+
+        scroll-padding-left: 14px;
+        scrollbar-width: none;
+    }
+
+    .rooms-slider::-webkit-scrollbar {
+        display: none;
+    }
+
+    .rooms-slider-item {
+        flex: 0 0 78vw;
+
+        width: 78vw;
+        min-width: 78vw;
+        max-width: 290px;
+    }
+}
+
+
+/* =========================================================
+   MÓVILES PEQUEÑOS
+========================================================= */
+
+@media (max-width: 390px) {
+    .rooms-slider-item {
+        flex-basis: 80vw;
+
+        width: 80vw;
+        min-width: 80vw;
+        max-width: 278px;
+    }
+}

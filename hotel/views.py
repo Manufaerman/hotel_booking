@@ -21,7 +21,7 @@ from .forms import (
     AvalContratoForm,
     ContratoAlquilerForm,
     CrearProcesoFormalizacionForm,
-    InquilinoForm,
+    InquilinoForm, GastoForm,
 )
 
 from .models import (
@@ -162,28 +162,120 @@ def modificar_inquilino(
 
 
 def home(request):
-    flat = Flat.objects.all()
-    habitaciones = Habitacion.objects.all()
-    return render(request, 'home.html', {'flat': flat, 'habitaciones': habitaciones})
+    flats = Flat.objects.all()
+
+    todas_las_habitaciones = (
+        Habitacion.objects
+        .select_related("propiedad")
+        .prefetch_related("contratos")
+        .order_by("propiedad__nombre", "nombre")
+    )
+
+    habitaciones_disponibles = (
+        todas_las_habitaciones
+        .filter(disponible=True)
+        .exclude(contratos__activo=True)
+        .distinct()
+    )
+
+    return render(
+        request,
+        "home.html",
+        {
+            "flat": flats,
+
+            # Carrusel inferior: todas
+            "habitaciones": todas_las_habitaciones,
+
+            # Carrusel superior: solamente libres
+            "habitaciones_disponibles": habitaciones_disponibles,
+        },
+    )
+
+
+def habitacion_galeria(request, id):
+    habitacion = get_object_or_404(
+        Habitacion.objects
+        .select_related("propiedad")
+        .prefetch_related("galeria"),
+        pk=id,
+    )
+
+    multimedia = habitacion.galeria.filter(
+        visible=True,
+    )
+
+    return render(
+        request,
+        "habitacion_galeria.html",
+        {
+            "habitacion": habitacion,
+            "multimedia": multimedia,
+        },
+    )
 
 
 def habitaciones_all(request):
-    habitaciones_tolima = Habitacion.objects.filter(propiedad__nombre__icontains='Tolima')
-    habitaciones_barichara = Habitacion.objects.filter(propiedad__nombre__icontains='Barichara')
-    habitaciones_haro = Habitacion.objects.filter(propiedad__nombre__icontains='Haro')
-    return render(request, 'habitaciones_all.html', {'habitaciones_tolima': habitaciones_tolima,
-                                                     'habitaciones_barichara': habitaciones_barichara,
-                                                     'habitaciones_haro': habitaciones_haro,
-                                                     })
+    habitaciones = (
+        Habitacion.objects
+        .select_related("propiedad")
+        .prefetch_related("contratos")
+        .order_by("propiedad__nombre", "nombre")
+    )
+
+    habitaciones_tolima = habitaciones.filter(
+        propiedad__nombre__icontains="Tolima",
+    )
+
+    habitaciones_barichara = habitaciones.filter(
+        propiedad__nombre__icontains="Barichara",
+    )
+
+    habitaciones_haro = habitaciones.filter(
+        propiedad__nombre__icontains="Haro",
+    )
+
+    return render(
+        request,
+        "habitaciones_all.html",
+        {
+            "habitaciones_tolima": habitaciones_tolima,
+            "habitaciones_barichara": habitaciones_barichara,
+            "habitaciones_haro": habitaciones_haro,
+        },
+    )
 
 
 def flat_detail(request, id):
-    piso = get_object_or_404(Flat, id=id)
-    habitaciones = Habitacion.objects.filter(propiedad=piso, disponible=True)
-    habitaciones_disponibles = len(habitaciones)
-    habitaciones = Habitacion.objects.filter(propiedad=piso)
-    return render(request, 'flat.html', {'piso': piso, 'habitaciones': habitaciones, 'habitaciones_disponibles': habitaciones_disponibles})
+    piso = get_object_or_404(
+        Flat,
+        pk=id,
+    )
 
+    habitaciones = (
+        Habitacion.objects
+        .filter(propiedad=piso)
+        .prefetch_related("contratos")
+        .order_by("nombre")
+    )
+
+    habitaciones_disponibles = (
+        habitaciones
+        .filter(disponible=True)
+        .exclude(contratos__activo=True)
+        .distinct()
+        .count()
+    )
+
+    return render(
+        request,
+        "flat.html",
+        {
+            "piso": piso,
+            "habitaciones": habitaciones,
+            "habitaciones_disponibles": habitaciones_disponibles,
+        },
+    )
 
 def visitas_view(request):
     periodo = request.GET.get(
@@ -2096,3 +2188,368 @@ class ConfirmarFormalizacionView(
         return redirect(
             "hotel:habitaciones_dashboard"
         )
+
+class GastosDashboardView(LoginRequiredMixin, View):
+
+        template_name = "hotel/gastos_dashboard.html"
+
+        def get(self, request):
+            hoy = timezone.localdate()
+
+            mes_seleccionado = request.GET.get(
+                "mes",
+                f"{hoy.year}-{hoy.month:02d}",
+            )
+
+            propiedad_id = request.GET.get(
+                "propiedad",
+                "",
+            )
+
+            categoria = request.GET.get(
+                "categoria",
+                "",
+            )
+
+            estado_pago = request.GET.get(
+                "estado",
+                "",
+            )
+
+            try:
+                year, month = map(
+                    int,
+                    mes_seleccionado.split("-"),
+                )
+
+                if month < 1 or month > 12:
+                    raise ValueError
+
+            except (TypeError, ValueError):
+                year = hoy.year
+                month = hoy.month
+                mes_seleccionado = (
+                    f"{year}-{month:02d}"
+                )
+
+            gastos = (
+                Gasto.objects
+                .select_related(
+                    "propiedad",
+                    "habitacion",
+                )
+                .filter(
+                    fecha__year=year,
+                    fecha__month=month,
+                )
+                .order_by(
+                    "-fecha",
+                    "-fecha_creacion",
+                )
+            )
+
+            if propiedad_id:
+                try:
+                    propiedad_id = int(
+                        propiedad_id
+                    )
+
+                    gastos = gastos.filter(
+                        propiedad_id=propiedad_id,
+                    )
+
+                except (TypeError, ValueError):
+                    propiedad_id = ""
+
+            categorias_validas = {
+                valor
+                for valor, etiqueta in Gasto.CATEGORIAS
+            }
+
+            if categoria in categorias_validas:
+                gastos = gastos.filter(
+                    categoria=categoria,
+                )
+            else:
+                categoria = ""
+
+            if estado_pago == "pagado":
+                gastos = gastos.filter(
+                    pagado=True,
+                )
+
+            elif estado_pago == "pendiente":
+                gastos = gastos.filter(
+                    pagado=False,
+                )
+
+            else:
+                estado_pago = ""
+
+            total_gastos = (
+                    gastos.aggregate(
+                        total=Sum("importe")
+                    )["total"]
+                    or Decimal("0.00")
+            )
+
+            total_pendiente = (
+                    gastos.filter(
+                        pagado=False,
+                    )
+                    .aggregate(
+                        total=Sum("importe")
+                    )["total"]
+                    or Decimal("0.00")
+            )
+
+            total_mejoras = (
+                    gastos.filter(
+                        categoria__in=[
+                            "mejora",
+                            "mobiliario",
+                        ],
+                    )
+                    .aggregate(
+                        total=Sum("importe")
+                    )["total"]
+                    or Decimal("0.00")
+            )
+
+            ingresos_mensuales = (
+                    ContratoAlquiler.objects
+                    .filter(
+                        activo=True,
+                    )
+                    .aggregate(
+                        total=Sum("precio_mensual")
+                    )["total"]
+                    or Decimal("0.00")
+            )
+
+            beneficio_estimado = (
+                    ingresos_mensuales
+                    - total_gastos
+            )
+
+            return render(
+                request,
+                self.template_name,
+                {
+                    "gastos": gastos,
+                    "propiedades": (
+                        Flat.objects
+                        .all()
+                        .order_by("nombre")
+                    ),
+                    "categorias": Gasto.CATEGORIAS,
+                    "mes_seleccionado": mes_seleccionado,
+                    "propiedad_seleccionada": propiedad_id,
+                    "categoria_seleccionada": categoria,
+                    "estado_seleccionado": estado_pago,
+                    "total_gastos": total_gastos,
+                    "total_pendiente": total_pendiente,
+                    "total_mejoras": total_mejoras,
+                    "ingresos_mensuales": ingresos_mensuales,
+                    "beneficio_estimado": beneficio_estimado,
+                },
+            )
+
+class CrearGastoView(LoginRequiredMixin, View):
+
+        template_name = "hotel/gasto_form.html"
+
+        def get(self, request):
+            propiedad_id = request.GET.get(
+                "propiedad"
+            )
+
+            form = GastoForm(
+                propiedad_id=propiedad_id,
+            )
+
+            return render(
+                request,
+                self.template_name,
+                {
+                    "form": form,
+                    "titulo": "Registrar gasto",
+                    "subtitulo": (
+                        "Añade un nuevo gasto a la contabilidad "
+                        "de By Colección."
+                    ),
+                    "texto_boton": "Guardar gasto",
+                },
+            )
+
+        def post(self, request):
+            propiedad_id = request.POST.get(
+                "propiedad"
+            )
+
+            form = GastoForm(
+                request.POST,
+                request.FILES,
+                propiedad_id=propiedad_id,
+            )
+
+            if form.is_valid():
+                gasto = form.save()
+
+                messages.success(
+                    request,
+                    (
+                        f'El gasto "{gasto.concepto}" '
+                        "se ha registrado correctamente."
+                    ),
+                )
+
+                return redirect(
+                    "hotel:gastos_dashboard"
+                )
+
+            messages.error(
+                request,
+                "Revisa los campos señalados.",
+            )
+
+            return render(
+                request,
+                self.template_name,
+                {
+                    "form": form,
+                    "titulo": "Registrar gasto",
+                    "subtitulo": (
+                        "Añade un nuevo gasto a la contabilidad "
+                        "de By Colección."
+                    ),
+                    "texto_boton": "Guardar gasto",
+                },
+            )
+
+class EditarGastoView(LoginRequiredMixin, View):
+
+        template_name = "hotel/gasto_form.html"
+
+        def get(self, request, pk):
+            gasto = get_object_or_404(
+                Gasto,
+                pk=pk,
+            )
+
+            form = GastoForm(
+                instance=gasto,
+                propiedad_id=gasto.propiedad_id,
+            )
+
+            return render(
+                request,
+                self.template_name,
+                {
+                    "form": form,
+                    "gasto": gasto,
+                    "titulo": "Editar gasto",
+                    "subtitulo": gasto.concepto,
+                    "texto_boton": "Guardar cambios",
+                },
+            )
+
+        def post(self, request, pk):
+            gasto = get_object_or_404(
+                Gasto,
+                pk=pk,
+            )
+
+            propiedad_id = request.POST.get(
+                "propiedad"
+            )
+
+            form = GastoForm(
+                request.POST,
+                request.FILES,
+                instance=gasto,
+                propiedad_id=propiedad_id,
+            )
+
+            if form.is_valid():
+                form.save()
+
+                messages.success(
+                    request,
+                    "El gasto se ha actualizado correctamente.",
+                )
+
+                return redirect(
+                    "hotel:gastos_dashboard"
+                )
+
+            messages.error(
+                request,
+                "Revisa los campos señalados.",
+            )
+
+            return render(
+                request,
+                self.template_name,
+                {
+                    "form": form,
+                    "gasto": gasto,
+                    "titulo": "Editar gasto",
+                    "subtitulo": gasto.concepto,
+                    "texto_boton": "Guardar cambios",
+                },
+            )
+
+class CambiarEstadoGastoView(LoginRequiredMixin, View):
+
+        def post(self, request, pk):
+            gasto = get_object_or_404(
+                Gasto,
+                pk=pk,
+            )
+
+            gasto.pagado = not gasto.pagado
+
+            gasto.save(
+                update_fields=[
+                    "pagado",
+                ]
+            )
+
+            if gasto.pagado:
+                mensaje = "El gasto se ha marcado como pagado."
+            else:
+                mensaje = "El gasto se ha marcado como pendiente."
+
+            messages.success(
+                request,
+                mensaje,
+            )
+
+            return redirect(
+                request.POST.get(
+                    "next",
+                    "hotel:gastos_dashboard",
+                )
+            )
+
+class EliminarGastoView(LoginRequiredMixin, View):
+
+        def post(self, request, pk):
+            gasto = get_object_or_404(
+                Gasto,
+                pk=pk,
+            )
+
+            concepto = gasto.concepto
+
+            gasto.delete()
+
+            messages.success(
+                request,
+                f'El gasto "{concepto}" ha sido eliminado.',
+            )
+
+            return redirect(
+                "hotel:gastos_dashboard"
+            )

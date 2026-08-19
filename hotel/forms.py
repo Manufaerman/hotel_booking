@@ -6,6 +6,205 @@ from user_profile.models import UserProfile
 from django import forms
 from .models import ProcesoFormalizacion
 
+from django import forms
+from django.utils import timezone
+
+from .models import (
+    Flat,
+    Habitacion,
+    Gasto,
+)
+
+
+class GastoForm(forms.ModelForm):
+
+    class Meta:
+        model = Gasto
+
+        fields = [
+            "propiedad",
+            "habitacion",
+            "concepto",
+            "categoria",
+            "importe",
+            "fecha",
+            "pagado",
+            "proveedor",
+            "justificante",
+            "notas",
+        ]
+
+        labels = {
+            "propiedad": "Propiedad",
+            "habitacion": "Habitación",
+            "concepto": "Concepto",
+            "categoria": "Categoría",
+            "importe": "Importe",
+            "fecha": "Fecha",
+            "pagado": "Pagado",
+            "proveedor": "Proveedor",
+            "justificante": "Factura o justificante",
+            "notas": "Notas",
+        }
+
+        widgets = {
+            "propiedad": forms.Select(
+                attrs={
+                    "class": "gasto-control",
+                },
+            ),
+            "habitacion": forms.Select(
+                attrs={
+                    "class": "gasto-control",
+                },
+            ),
+            "concepto": forms.TextInput(
+                attrs={
+                    "class": "gasto-control",
+                    "placeholder": "Ej. Reparación de la ducha",
+                },
+            ),
+            "categoria": forms.Select(
+                attrs={
+                    "class": "gasto-control",
+                },
+            ),
+            "importe": forms.NumberInput(
+                attrs={
+                    "class": "gasto-control",
+                    "min": "0.01",
+                    "step": "0.01",
+                    "placeholder": "0,00",
+                },
+            ),
+            "fecha": forms.DateInput(
+                format="%Y-%m-%d",
+                attrs={
+                    "class": "gasto-control",
+                    "type": "date",
+                },
+            ),
+            "pagado": forms.CheckboxInput(
+                attrs={
+                    "class": "gasto-checkbox",
+                },
+            ),
+            "proveedor": forms.TextInput(
+                attrs={
+                    "class": "gasto-control",
+                    "placeholder": "Nombre del proveedor",
+                },
+            ),
+            "justificante": forms.ClearableFileInput(
+                attrs={
+                    "class": "gasto-file",
+                    "accept": ".pdf,.jpg,.jpeg,.png,.webp",
+                },
+            ),
+            "notas": forms.Textarea(
+                attrs={
+                    "class": "gasto-control gasto-textarea",
+                    "rows": 3,
+                    "placeholder": "Información adicional",
+                },
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        propiedad_id = kwargs.pop(
+            "propiedad_id",
+            None,
+        )
+
+        super().__init__(
+            *args,
+            **kwargs,
+        )
+
+        self.fields[
+            "fecha"
+        ].input_formats = ["%Y-%m-%d"]
+
+        self.fields[
+            "propiedad"
+        ].queryset = Flat.objects.all().order_by(
+            "nombre"
+        )
+
+        if not propiedad_id and self.is_bound:
+            propiedad_id = self.data.get(
+                "propiedad"
+            )
+
+        if (
+            not propiedad_id
+            and self.instance
+            and self.instance.pk
+        ):
+            propiedad_id = self.instance.propiedad_id
+
+        if propiedad_id:
+            self.fields[
+                "habitacion"
+            ].queryset = (
+                Habitacion.objects
+                .filter(
+                    propiedad_id=propiedad_id,
+                )
+                .order_by("nombre")
+            )
+        else:
+            self.fields[
+                "habitacion"
+            ].queryset = Habitacion.objects.none()
+
+        self.fields[
+            "habitacion"
+        ].required = False
+
+        self.fields[
+            "habitacion"
+        ].empty_label = (
+            "Gasto general de la propiedad"
+        )
+
+        if not self.is_bound and not self.instance.pk:
+            self.fields[
+                "fecha"
+            ].initial = timezone.localdate()
+
+    def clean_justificante(self):
+        archivo = self.cleaned_data.get(
+            "justificante"
+        )
+
+        if not archivo:
+            return archivo
+
+        extensiones_permitidas = (
+            ".pdf",
+            ".jpg",
+            ".jpeg",
+            ".png",
+            ".webp",
+        )
+
+        if not archivo.name.lower().endswith(
+            extensiones_permitidas
+        ):
+            raise forms.ValidationError(
+                "El justificante debe ser PDF, JPG, PNG o WEBP."
+            )
+
+        limite = 10 * 1024 * 1024
+
+        if archivo.size > limite:
+            raise forms.ValidationError(
+                "El justificante no puede superar los 10 MB."
+            )
+
+        return archivo
+
 
 class CrearProcesoFormalizacionForm(forms.ModelForm):
 
@@ -118,7 +317,10 @@ class ContratoAlquilerForm(forms.ModelForm):
             "instance",
         )
 
-        super().__init__(*args, **kwargs)
+        super().__init__(
+            *args,
+            **kwargs,
+        )
 
         self.fields[
             "fecha_inicio"
@@ -128,15 +330,18 @@ class ContratoAlquilerForm(forms.ModelForm):
             "fecha_fin"
         ].input_formats = ["%Y-%m-%d"]
 
-        # Si el formulario viene por POST, recuperamos
-        # también la propiedad enviada.
+        # En un POST recuperamos la propiedad enviada.
         if not propiedad_id and self.is_bound:
             propiedad_id = self.data.get(
                 "propiedad"
             )
 
-        # Cuando modificamos un contrato existente.
-        if not propiedad_id and contrato:
+        # Al modificar un contrato utilizamos su propiedad.
+        if (
+            not propiedad_id
+            and contrato
+            and contrato.habitacion_id
+        ):
             propiedad_id = (
                 contrato.habitacion.propiedad_id
             )
@@ -146,13 +351,37 @@ class ContratoAlquilerForm(forms.ModelForm):
         )
 
         if propiedad_id:
+            contratos_activos = (
+                ContratoAlquiler.objects
+                .filter(
+                    activo=True,
+                )
+            )
+
+            # Cuando modificamos un contrato, no contamos
+            # ese mismo contrato como impedimento.
+            if contrato and contrato.pk:
+                contratos_activos = (
+                    contratos_activos.exclude(
+                        pk=contrato.pk,
+                    )
+                )
+
             habitaciones_libres = (
                 Habitacion.objects
                 .filter(
                     propiedad_id=propiedad_id,
                 )
                 .exclude(
-                    contratos__activo=True,
+                    pk__in=contratos_activos.values(
+                        "habitacion_id"
+                    ),
+                )
+                .exclude(
+                    procesos_formalizacion__estado__in=[
+                        ProcesoFormalizacion.Estado.PENDIENTE,
+                        ProcesoFormalizacion.Estado.INICIADO,
+                    ],
                 )
                 .distinct()
                 .order_by("nombre")
@@ -175,42 +404,12 @@ class ContratoAlquilerForm(forms.ModelForm):
         if (
             habitacion_id
             and habitaciones_libres.filter(
-                pk=habitacion_id
+                pk=habitacion_id,
             ).exists()
         ):
             self.fields[
                 "habitacion"
             ].initial = habitacion_id
-
-    def clean_habitacion(self):
-        habitacion = self.cleaned_data.get(
-            "habitacion"
-        )
-
-        if habitacion is None:
-            raise forms.ValidationError(
-                "Selecciona una habitación libre."
-            )
-
-        contrato_activo = (
-            ContratoAlquiler.objects
-            .filter(
-                habitacion=habitacion,
-                activo=True,
-            )
-        )
-
-        if self.instance and self.instance.pk:
-            contrato_activo = contrato_activo.exclude(
-                pk=self.instance.pk,
-            )
-
-        if contrato_activo.exists():
-            raise forms.ValidationError(
-                "Esta habitación ya tiene un contrato activo."
-            )
-
-        return habitacion
 
 
 class AvalContratoForm(forms.ModelForm):

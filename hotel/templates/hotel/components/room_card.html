@@ -1,0 +1,163 @@
+<article class="by-room-card">
+
+    <div class="by-room-card-image">
+
+        <a
+            href="{% url 'hotel:habitacion_galeria' habitacion.id %}"
+            class="by-room-card-image-link"
+            aria-label="Descubrir {{ habitacion.nombre }}"
+        >
+            <img
+                src="{{ habitacion.image.url }}"
+                alt="{{ habitacion.nombre }}"
+                loading="lazy"
+            >
+        </a>
+
+        <span class="by-room-card-collection">
+            Colección {{ habitacion.propiedad.nombre }}
+        </span>
+
+        {% if habitacion.contrato_activo or not habitacion.disponible %}
+
+            <span class="by-room-card-status by-room-card-status-rented">
+                Alquilada
+            </span>
+
+        {% else %}
+
+            <span class="by-room-card-status by-room-card-status-available">
+                Disponible
+            </span>
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="by-room-card-content">
+
+        <div class="by-room-card-heading">
+
+            <div class="by-room-card-identity">
+
+                <span class="by-room-card-eyebrow">
+                    {{ habitacion.propiedad.nombre }}
+                </span>
+
+                <h3>
+                    <a href="{% url 'hotel:habitaciones' habitacion.id %}">
+                        {{ habitacion.nombre }}
+                    </a>
+                </h3>
+
+            </div>
+
+            <div class="by-room-card-price">
+
+                <strong>
+                    {{ habitacion.precio|floatformat:0 }} €
+                </strong>
+
+                <span>
+                    / mes
+                </span>
+
+            </div>
+
+        </div>
+
+
+        {% if habitacion.subtitle %}
+
+            <p class="by-room-card-description">
+                {{ habitacion.subtitle }}
+            </p>
+
+        {% endif %}
+
+
+        <div
+            class="by-room-card-features"
+            aria-label="Características de la habitación"
+        >
+
+            <span title="Capacidad">
+                <i class="fa-solid fa-user"></i>
+                <small>{{ habitacion.capacity }}</small>
+            </span>
+
+            <span title="{{ habitacion.get_bed_display }}">
+                <i class="fa-solid fa-bed"></i>
+                <small>{{ habitacion.get_bed_display }}</small>
+            </span>
+
+            <span title="{{ habitacion.get_bathroom_display }}">
+                <i class="fa-solid fa-bath"></i>
+                <small>{{ habitacion.get_bathroom_display }}</small>
+            </span>
+
+            {% if habitacion.tv %}
+                <span title="Televisión">
+                    <i class="fa-solid fa-tv"></i>
+                </span>
+            {% endif %}
+
+            {% if habitacion.aire_acondicionado %}
+                <span title="Aire acondicionado">
+                    <i class="fa-solid fa-snowflake"></i>
+                </span>
+            {% endif %}
+
+            {% if habitacion.terrace %}
+                <span title="Terraza">
+                    <i class="fa-solid fa-umbrella-beach"></i>
+                </span>
+            {% endif %}
+
+            {% if habitacion.escritorio %}
+                <span title="Escritorio">
+                    <i class="fa-solid fa-laptop"></i>
+                </span>
+            {% endif %}
+
+            {% if habitacion.armario %}
+                <span title="Armario">
+                    <i class="fa-solid fa-shirt"></i>
+                </span>
+            {% endif %}
+
+        </div>
+
+
+        <div class="by-room-card-actions">
+
+            <a
+                href="{% url 'hotel:habitaciones' habitacion.id %}"
+                class="by-room-card-primary"
+            >
+                Descubrir habitación
+
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+
+            {% if habitacion.disponible and not habitacion.contrato_activo %}
+
+                <a
+                    href="https://wa.me/34639446142?text=Hola,%20me%20gustaría%20recibir%20información%20sobre%20{{ habitacion.nombre|urlencode }}%20de%20{{ habitacion.propiedad.nombre|urlencode }}"
+                    class="by-room-card-whatsapp"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Consultar {{ habitacion.nombre }} por WhatsApp"
+                    title="Consultar por WhatsApp"
+                >
+                    <i class="fa-brands fa-whatsapp"></i>
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</article>

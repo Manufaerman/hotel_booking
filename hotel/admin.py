@@ -4,11 +4,9 @@ from .models import Flat, Habitacion, Inquilino, ContratoAlquiler, Gasto, Invent
 # Register your models here.
 
 
-class AdminHabitacion(admin.ModelAdmin):
-    list_display = ['id', 'nombre', 'propiedad', 'disponible']
 
 
-admin.site.register(Habitacion, AdminHabitacion)
+
 
 
 class AdminInquilino(admin.ModelAdmin):
@@ -70,6 +68,44 @@ class GastoAdmin(admin.ModelAdmin):
         "notas",
     )
 
+from django.contrib import admin
 
+from .models import Habitacion, MultimediaHabitacion
+
+
+class MultimediaHabitacionInline(admin.TabularInline):
+    model = MultimediaHabitacion
+    extra = 1
+
+    fields = [
+        "imagen",
+        "video",
+        "titulo",
+        "orden",
+        "visible",
+    ]
+
+    ordering = ["orden"]
+
+
+@admin.register(Habitacion)
+class HabitacionAdmin(admin.ModelAdmin):
+    list_display = [
+        "nombre",
+        "propiedad",
+        "precio",
+        "disponible",
+        "grupo_cocina",
+        "grupo_bano"
+    ]
+
+    list_filter = [
+        "propiedad",
+        "disponible",
+    ]
+
+    inlines = [
+        MultimediaHabitacionInline,
+    ]
 
 

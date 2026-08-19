@@ -1,23 +1,38 @@
 /* =========================================================
-   VARIABLES GENERALES
+   BY COLECCIÓN — HABITACIÓN
 ========================================================= */
 
 :root {
-    --mauve: #74515d;
-    --mauve-dark: #6f5a68;
-    --mauve-light: #8a7a82;
+    --room-wine: #6f5a68;
+    --room-wine-dark: #51343e;
+    --room-wine-soft: #927783;
 
-    --sage: #747763;
-    --sage-soft: #7f9088;
+    --room-pink-chalk: #ddcbd0;
 
-    --cream: #f7f4f0;
-    --cream-dark: #f3eee7;
+    --room-sage: #8fa297;
+    --room-sage-dark: #687b70;
 
-    --text-dark: #3f3937;
-    --text-medium: #5e5a56;
-    --text-soft: #6b6662;
+    --room-tiffany: #73a7a3;
+    --room-tiffany-light: #e7f0ef;
 
-    --border-soft: #e7ded6;
+    --room-yellow: #f1d59a;
+    --room-yellow-light: #f7ebbf;
+
+    --room-cream: #f5f0e9;
+    --room-cream-dark: #ece5de;
+    --room-paper: #fffdf9;
+
+    --room-text: #392f33;
+    --room-text-medium: #5e5558;
+    --room-text-soft: #746a6d;
+
+    --room-border: rgba(81, 52, 62, 0.11);
+
+    --room-shadow-soft:
+        0 16px 40px rgba(66, 43, 51, 0.07);
+
+    --room-shadow-medium:
+        0 20px 48px rgba(65, 40, 50, 0.13);
 }
 
 
@@ -47,6 +62,9 @@ body {
     margin: 0;
 
     overflow-x: hidden;
+
+    background: var(--room-cream);
+    color: var(--room-text);
 }
 
 img,
@@ -55,618 +73,631 @@ iframe {
     display: block;
 
     max-width: 100%;
-    height: auto;
 }
 
-.contenido-habitacion {
-    width: 100%;
-    max-width: 100%;
-    padding: 45px;
+a {
+    text-decoration: none;
 }
 
 
 /* =========================================================
-   TIPOGRAFÍA
-========================================================= */
-
-.letra {
-    max-width: 850px;
-
-    font-family: "Playfair Display", serif;
-    font-size: 19px;
-    line-height: 1.9;
-
-    color: var(--text-medium);
-}
-
-.big-letra {
-    margin-bottom: 14px;
-
-    font-family: "Playfair Display", serif;
-    font-size: 56px;
-    line-height: 1.05;
-
-    color: var(--text-dark);
-}
-
-.midium-letra {
-    margin-top: 10px;
-    margin-bottom: 42px;
-
-    font-size: 22px;
-    line-height: 1.5;
-
-    color: var(--text-soft);
-}
-
-.size-letra {
-    font-family: Baskerville, Georgia, serif;
-    font-size: 50px;
-}
-
-
-/* =========================================================
-   INFORMACIÓN PRINCIPAL DE LA HABITACIÓN
-========================================================= */
-
-.cajon {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-
-    gap: 70px;
-
-    width: 100%;
-    margin-top: 0;
-    padding-bottom: 28px;
-
-    border-bottom: 1px solid #e5e5e5;
-}
-
-.sub-cajon {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    min-width: 100px;
-
-    text-align: center;
-}
-
-.sub-cajon i {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 56px;
-    height: 56px;
-    margin-bottom: 14px;
-
-    border-radius: 50%;
-
-    background: var(--cream-dark);
-    color: var(--mauve);
-
-    font-size: 22px;
-}
-
-.sub-cajon span {
-    color: #666;
-    font-size: 15px;
-}
-
-.capacity {
-    margin: 0;
-
-    color: var(--text-soft);
-    font-size: 16px;
-}
-
-.descripcion-piso {
-    margin-top: 10px;
-    padding-top: 10px;
-    padding-bottom: 30px;
-}
-
-.descripcion-piso p {
-    margin-bottom: 0;
-}
-
-
-/* =========================================================
-   TARJETAS DE HABITACIONES
-========================================================= */
-
-.rooms-section {
-    width: 100%;
-    max-width: 100%;
-
-    margin-top: 50px;
-    padding: 50px 0 35px;
-
-    overflow: hidden;
-
-    background: var(--mauve);
-
-    box-shadow:
-        inset 0 18px 30px rgba(0, 0, 0, 0.22);
-}
-
-.rooms-header {
-    margin-bottom: 25px;
-
-    color: #f7f1ed;
-}
-
-.rooms-header .eyebrow {
-    display: block;
-
-    margin-bottom: 8px;
-
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-
-    opacity: 0.75;
-}
-
-.rooms-header h2 {
-    margin: 0 0 8px;
-
-    font-family: "Playfair Display", serif;
-    font-size: 42px;
-
-    color: #fff;
-}
-
-.rooms-header p {
-    max-width: 700px;
-    margin: 0;
-
-    color: rgba(255, 255, 255, 0.85);
-}
-
-.scroll-cards-wrapper {
-    display: block;
-
-    width: 100%;
-    max-width: 100%;
-
-    padding-bottom: 20px;
-
-    overflow-x: auto;
-    overflow-y: hidden;
-
-    scrollbar-width: thin;
-
-    -webkit-overflow-scrolling: touch;
-
-    scroll-snap-type: x proximity;
-}
-
-.cartas {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-
-    width: max-content;
-    min-width: 100%;
-
-    gap: 16px;
-}
-
-.room-card {
-    flex: 0 0 350px;
-
-    width: 350px;
-    min-width: 350px;
-    max-width: 350px;
-
-    overflow: hidden;
-
-    border: none;
-    border-radius: 16px;
-
-    background: #f7f7f7;
-
-    box-shadow:
-        0 18px 35px rgba(0, 0, 0, 0.25);
-
-    scroll-snap-align: start;
-}
-
-
-/* =========================================================
-   HERO Y NAVEGACIÓN DE LA HABITACIÓN
+   CABECERA DE LA HABITACIÓN
 ========================================================= */
 
 .flat-intro-nav {
     width: 100%;
-    max-width: 100%;
+    padding: 58px 0 46px;
 
-    padding: 70px 0 55px;
-
-    background: var(--mauve-dark);
-    color: var(--cream-dark);
+    background: #6f5a68;
+    color: var(--room-cream);
 }
 
-.flat-intro-nav .eyebrow {
-    margin-bottom: 12px;
-
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-
-    opacity: 0.75;
-}
-
-.flat-intro-nav h1 {
-    margin-bottom: 14px;
-
-    font-family: "Playfair Display", serif;
-    font-size: 3rem;
-    line-height: 1.1;
-}
-
-.flat-intro-text {
-    max-width: 650px;
-
-    font-size: 1.05rem;
-    line-height: 1.6;
-
-    opacity: 0.88;
+.flat-intro-nav .container {
+    width: min(1180px, calc(100% - 48px));
+    max-width: none;
+    margin-right: auto;
+    margin-left: auto;
 }
 
 .hero-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(250px, 320px);
+    gap: clamp(45px, 8vw, 105px);
+    align-items: center;
 
     width: 100%;
-
-    gap: 80px;
 }
 
 .hero-left {
-    flex: 1;
     min-width: 0;
+    max-width: 650px;
+}
+
+.hero-left .eyebrow,
+.flat-intro-nav .eyebrow {
+    margin: 0 0 14px;
+
+    color: rgba(255, 255, 255, 0.68);
+
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.19em;
+}
+
+.hero-left h1,
+.flat-intro-nav h1 {
     max-width: 620px;
-}
-
-.hero-price-card,
-/* =========================================================
-   HABITACIÓN ALQUILADA
-========================================================= */
-
-.hero-unavailable-card {
-    position: relative;
-
-    flex: 0 0 330px;
-
-    width: 330px;
-    min-width: 330px;
-    padding: 28px;
-
-    overflow: hidden;
-
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 29px;
-
-    background: #806872;
-    color: #ffffff;
-
-    box-shadow:
-        0 24px 54px rgba(52, 32, 43, 0.25);
-}
-
-.unavailable-card-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
-
-    margin-bottom: 28px;
-}
-
-.unavailable-card-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    width: 58px;
-    height: 58px;
-
-    border-radius: 20px;
-
-    background: #73a5a1;
-    color: #f7e9ad;
-
-    font-size: 1.4rem;
-
-    box-shadow:
-        0 13px 27px rgba(45, 67, 65, 0.2);
-}
-
-.unavailable-status {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    min-height: 31px;
-    padding: 0 13px;
-
-    border-radius: 999px;
-
-    background: #f7e9ad;
-    color: #705663;
-
-    font-size: 0.64rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-}
-
-.unavailable-eyebrow {
-    display: block;
-
-    margin-bottom: 9px;
-
-    color: #f7e9ad;
-
-    font-size: 0.64rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-}
-
-.hero-unavailable-card h2 {
     margin: 0;
 
     color: #ffffff;
 
     font-family: "Playfair Display", Georgia, serif;
-    font-size: 1.72rem;
+    font-size: clamp(3.1rem, 5.2vw, 5.2rem);
     font-weight: 500;
-    line-height: 1.15;
-    letter-spacing: -0.02em;
+    line-height: 0.97;
+    letter-spacing: -0.025em;
 }
 
-.hero-unavailable-card p {
-    margin: 15px 0 23px;
+.flat-intro-text {
+    max-width: 600px;
+    margin: 20px 0 0;
 
-    color: rgba(255, 255, 255, 0.76);
+    color: rgba(255, 255, 255, 0.78);
 
-    font-size: 0.88rem;
+    font-size: 1rem;
     line-height: 1.6;
 }
 
-.unavailable-action {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-
-    min-height: 51px;
-    padding: 0 17px;
-
-    border-radius: 17px;
-
-    background: #ffffff;
-    color: #705663;
-
-    font-size: 0.77rem;
-    font-weight: 750;
-    text-decoration: none;
-
-    transition:
-        transform 0.2s ease,
-        background-color 0.2s ease,
-        color 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-.unavailable-action i {
-    color: #73a5a1;
-
-    transition:
-        transform 0.2s ease;
-}
-
-.unavailable-action:hover {
-    transform: translateY(-2px);
-
-    background: #dfefed;
-    color: #705663;
-
-    box-shadow:
-        0 13px 27px rgba(44, 30, 38, 0.18);
-}
-
-.unavailable-action:hover i {
-    transform: translateX(3px);
-}
-
 
 /* =========================================================
-   HABITACIÓN ALQUILADA — TABLET
+   PRECIO — HABITACIÓN DISPONIBLE
 ========================================================= */
-
-@media (max-width: 992px) {
-    .hero-unavailable-card {
-        flex-basis: 300px;
-
-        width: 300px;
-        min-width: 300px;
-    }
-}
-
-
-/* =========================================================
-   HABITACIÓN ALQUILADA — MÓVIL
-========================================================= */
-
-@media (max-width: 768px) {
-    .hero-unavailable-card {
-        flex: none;
-
-        width: 100%;
-        min-width: 0;
-        padding: 24px;
-
-        border-radius: 25px;
-    }
-
-    .unavailable-card-top {
-        margin-bottom: 23px;
-    }
-
-    .hero-unavailable-card h2 {
-        max-width: 430px;
-
-        font-size: 1.65rem;
-    }
-
-    .hero-unavailable-card p {
-        max-width: 500px;
-    }
-}
-
-
-/* =========================================================
-   HABITACIÓN ALQUILADA — MÓVIL PEQUEÑO
-========================================================= */
-
-@media (max-width: 390px) {
-    .hero-unavailable-card {
-        padding: 21px;
-
-        border-radius: 22px;
-    }
-
-    .unavailable-card-icon {
-        width: 52px;
-        height: 52px;
-
-        border-radius: 18px;
-    }
-
-    .hero-unavailable-card h2 {
-        font-size: 1.48rem;
-    }
-
-    .unavailable-action {
-        min-height: 49px;
-        padding: 0 15px;
-
-        border-radius: 16px;
-    }
-}
 
 .hero-price-card {
-    background: #5f8e8a;
-}
+    width: 100%;
+    max-width: 300px;
+    padding: 27px;
 
-.hero-price-card-alquilada {
-    background: rgba(109, 106, 101, 0.78);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 25px;
 
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
+    background: var(--room-tiffany);
+    color: #ffffff;
+
+    box-shadow:
+        0 20px 45px rgba(43, 64, 61, 0.18);
 }
 
 .price-main {
-    font-size: 54px;
-    line-height: 1;
-    font-weight: 700;
+    color: #ffffff;
 
-    color: #fff;
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1;
 }
 
 .price-period {
-    margin-top: 6px;
-    margin-bottom: 20px;
+    margin: 7px 0 18px;
 
-    font-size: 18px;
+    color: rgba(255, 255, 255, 0.76);
 
-    opacity: 0.85;
+    font-size: 1rem;
 }
 
 .disponibilidad {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
-    margin: 14px 0 12px;
-    padding: 4px 10px;
+    min-height: 28px;
+    margin-bottom: 14px;
+    padding: 0 11px;
 
     border-radius: 999px;
 
-    background: rgba(0, 0, 0, 0.15);
+    background: rgba(69, 105, 101, 0.42);
+    color: #ffffff;
 
-    color: var(--cream);
-
-    font-size: 11px;
-    font-weight: 700;
-    text-align: center;
+    font-size: 0.61rem;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 0.15em;
 }
 
-.hero-price-card ul,
-.hero-price-card-alquilada ul {
+.hero-price-card ul {
     margin: 0;
     padding: 0;
 
     list-style: none;
 }
 
-.hero-price-card li,
-.hero-price-card-alquilada li {
-    margin-bottom: 9px;
+.hero-price-card li {
+    margin-bottom: 8px;
 
-    color: rgba(243, 238, 231, 0.9);
+    color: rgba(255, 255, 255, 0.88);
 
-    font-size: 15px;
+    font-size: 0.84rem;
+    line-height: 1.4;
 }
 
-.hero-price-card li::before,
-.hero-price-card-alquilada li::before {
+.hero-price-card li:last-child {
+    margin-bottom: 0;
+}
+
+.hero-price-card li::before {
     content: "✓";
 
     margin-right: 8px;
+
+    color: var(--room-yellow-light);
 }
+
+
+/* =========================================================
+   HABITACIÓN ALQUILADA — SIMPLE
+========================================================= */
+
+.room-rented-message {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+
+    width: 100%;
+    max-width: 310px;
+    padding: 4px 0;
+
+    color: #ffffff;
+}
+
+.room-rented-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 29px;
+    padding: 0 13px;
+
+    border-radius: 999px;
+
+    background: var(--room-yellow-light);
+    color: var(--room-wine-dark);
+
+    font-size: 0.61rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+}
+
+.room-rented-message a {
+    display: inline-flex;
+    align-items: center;
+    gap: 11px;
+
+    padding-bottom: 4px;
+
+    border-bottom: 1px solid rgba(241, 213, 154, 0.5);
+
+    color: #ffffff;
+
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-decoration: none;
+
+    transition:
+        gap 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.room-rented-message a:hover {
+    gap: 16px;
+
+    border-color: #ffffff;
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   NAVEGACIÓN INTERNA
+========================================================= */
 
 .flat-anchor-nav {
     display: flex;
     flex-wrap: wrap;
+    gap: 11px;
 
-    gap: 14px;
-
-    margin-top: 34px;
+    margin-top: 40px;
 }
 
 .flat-anchor-nav a {
-    padding: 11px 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
-    border: 1px solid rgba(243, 238, 231, 0.45);
+    min-height: 42px;
+    padding: 0 20px;
+
+    border: 1px solid rgba(255, 255, 255, 0.36);
     border-radius: 999px;
 
-    color: var(--cream-dark);
+    color: rgba(255, 255, 255, 0.9);
 
-    font-size: 0.9rem;
-    font-weight: 600;
+    font-size: 0.82rem;
+    font-weight: 650;
     text-decoration: none;
 
     transition:
-        background-color 0.25s ease,
-        color 0.25s ease,
-        border-color 0.25s ease;
+        background-color 0.22s ease,
+        border-color 0.22s ease,
+        color 0.22s ease,
+        transform 0.22s ease;
 }
 
-.flat-anchor-nav a:hover,
-.flat-anchor-nav a:focus,
-.flat-anchor-nav a:active {
-    border-color: var(--cream);
+.flat-anchor-nav a:hover {
+    transform: translateY(-2px);
 
-    background: var(--cream);
-    color: var(--mauve-dark);
+    border-color: var(--room-cream);
+
+    background: var(--room-cream);
+    color: var(--room-wine-dark);
+}
+
+
+/* =========================================================
+   CARACTERÍSTICAS
+========================================================= */
+
+.room-features-section {
+    width: 100%;
+    padding: 55px 0 35px;
+
+    background: var(--room-cream);
+}
+
+.room-features-section > .section-eyebrow,
+.room-features-section > .section-title,
+.room-features-section > .room-features-grid,
+.room-information-card,
+.room-living-section,
+.conditions-section {
+    width: min(1120px, calc(100% - 48px));
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.section-eyebrow {
+    margin-bottom: 9px;
+
+    color: var(--room-wine-soft);
+
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.19em;
+}
+
+.section-title {
+    margin: 0 0 30px;
+
+    color: var(--room-wine-dark);
+
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    font-weight: 500;
+    line-height: 1.08;
+}
+
+.room-features-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit, minmax(135px, 1fr));
+    gap: 14px;
+}
+
+.room-feature-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    min-width: 0;
+    min-height: 133px;
+    padding: 20px 14px;
+
+    border: 1px solid var(--room-border);
+    border-radius: 19px;
+
+    background: rgba(255, 253, 249, 0.72);
+
+    text-align: center;
+
+    transition:
+        transform 0.22s ease,
+        background-color 0.22s ease,
+        box-shadow 0.22s ease;
+}
+
+.room-feature-card i {
+    color: var(--room-wine);
+
+    font-size: 1.5rem;
+}
+
+.room-feature-card span {
+    color: var(--room-text-medium);
+
+    font-size: 0.88rem;
+    line-height: 1.3;
+}
+
+
+/* =========================================================
+   ENCABEZADOS EDITORIALES
+========================================================= */
+
+.room-section-heading {
+    margin-bottom: 28px;
+}
+
+.room-section-heading > span {
+    display: block;
+
+    margin-bottom: 9px;
+
+    color: var(--room-tiffany);
+
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.19em;
+}
+
+.room-section-heading h2 {
+    margin: 0;
+
+    color: var(--room-wine-dark);
+
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: clamp(2rem, 3.5vw, 3.2rem);
+    font-weight: 500;
+    line-height: 1.08;
+}
+
+.room-section-heading > p {
+    max-width: 680px;
+    margin: 15px 0 0;
+
+    color: var(--room-text-soft);
+
+    font-size: 0.96rem;
+    line-height: 1.65;
+}
+
+
+/* =========================================================
+   INFORMACIÓN
+========================================================= */
+
+.room-information-card {
+    margin-top: 42px;
+    padding: 36px;
+
+    border: 1px solid var(--room-border);
+    border-radius: 25px;
+
+    background: var(--room-paper);
+
+    box-shadow: var(--room-shadow-soft);
+}
+
+.room-information-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.room-information-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+
+    min-width: 0;
+    padding: 20px;
+
+    border: 1px solid rgba(81, 52, 62, 0.05);
+    border-radius: 18px;
+
+    background: var(--room-cream);
+
+    transition:
+        transform 0.22s ease,
+        box-shadow 0.22s ease,
+        background-color 0.22s ease;
+}
+
+.room-information-item > i {
+    display: flex;
+    flex: 0 0 43px;
+    align-items: center;
+    justify-content: center;
+
+    width: 43px;
+    height: 43px;
+
+    border-radius: 14px;
+
+    background: var(--room-wine);
+    color: var(--room-yellow);
+
+    font-size: 1rem;
+}
+
+.room-information-item > div {
+    min-width: 0;
+}
+
+.room-information-item strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--room-wine-dark);
+
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 1.08rem;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+.room-information-item p {
+    margin: 0;
+
+    color: var(--room-text-soft);
+
+    font-size: 0.84rem;
+    line-height: 1.55;
+}
+
+
+/* =========================================================
+   CONVIVENCIA — ROSA TIZA
+========================================================= */
+
+.room-living-section {
+    margin-top: 45px;
+    padding: 42px;
+
+    border: 1px solid rgba(81, 52, 62, 0.1);
+    border-radius: 27px;
+
+    background: var(--room-pink-chalk);
+
+    box-shadow:
+        0 18px 44px rgba(81, 52, 62, 0.1);
+}
+
+.room-living-section .room-section-heading > span {
+    color: var(--room-wine);
+}
+
+.room-living-section .room-section-heading h2 {
+    color: var(--room-wine-dark);
+}
+
+.room-living-section .room-section-heading > p {
+    color: #6f5e64;
+}
+
+.room-living-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.room-living-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    min-width: 0;
+    min-height: 112px;
+    padding: 19px;
+
+    border: 1px solid rgba(81, 52, 62, 0.09);
+    border-radius: 18px;
+
+    background: rgba(255, 253, 249, 0.74);
+
+    box-shadow:
+        0 9px 22px rgba(81, 52, 62, 0.06);
+
+    transition:
+        transform 0.22s ease,
+        background-color 0.22s ease,
+        box-shadow 0.22s ease;
+}
+
+.room-living-card > i {
+    display: flex;
+    flex: 0 0 45px;
+    align-items: center;
+    justify-content: center;
+
+    width: 45px;
+    height: 45px;
+
+    border-radius: 14px;
+
+    background: var(--room-wine);
+    color: var(--room-yellow-light);
+
+    font-size: 1.05rem;
+}
+
+.room-living-card > div {
+    min-width: 0;
+}
+
+.room-living-card span {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--room-wine-soft);
+
+    font-size: 0.62rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+}
+
+.room-living-card strong {
+    display: block;
+
+    color: var(--room-wine-dark);
+
+    font-size: 0.86rem;
+    font-weight: 650;
+    line-height: 1.45;
+}
+
+.room-living-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+
+    margin-top: 18px;
+    padding: 18px 20px;
+
+    border: 1px solid rgba(81, 52, 62, 0.09);
+    border-radius: 17px;
+
+    background: rgba(113, 84, 92, 0.09);
+}
+
+.room-living-note i {
+    flex-shrink: 0;
+
+    margin-top: 3px;
+
+    color: var(--room-wine);
+    font-size: 1rem;
+}
+
+.room-living-note p {
+    margin: 0;
+
+    color: #604f55;
+
+    font-size: 0.87rem;
+    line-height: 1.6;
 }
 
 
@@ -675,9 +706,7 @@ iframe {
 ========================================================= */
 
 .room-gallery {
-    width: 100%;
-    max-width: 1400px;
-
+    width: min(1400px, calc(100% - 48px));
     margin: 50px auto;
 }
 
@@ -685,12 +714,9 @@ iframe {
 .carousel-inner,
 .carousel-item {
     width: 100%;
-    max-width: 100%;
 }
 
 .carousel-item img {
-    display: block;
-
     width: 100%;
     height: 550px;
 
@@ -701,137 +727,84 @@ iframe {
 
 
 /* =========================================================
-   CARACTERÍSTICAS DE LA HABITACIÓN
+   CONDICIONES — SAGE
 ========================================================= */
 
-.room-features-section {
-    width: 100%;
-    max-width: 100%;
+.conditions-section {
+    margin-top: 45px;
+    padding: 42px;
 
-    padding: 50px 70px 30px;
+    border: 1px solid rgba(81, 104, 91, 0.12);
+    border-radius: 27px;
+
+    background: var(--room-sage);
+
+    box-shadow:
+        0 20px 48px rgba(71, 92, 80, 0.15);
 }
 
-.section-eyebrow {
-    margin-bottom: 8px;
-
-    color: var(--mauve-light);
-
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
+.conditions-section .room-section-heading > span {
+    color: var(--room-yellow-light);
 }
 
-.section-title {
-    margin-bottom: 28px;
-
-    font-family: "Playfair Display", serif;
-    font-size: 2.4rem;
-    line-height: 1.2;
-
-    color: var(--mauve-dark);
+.conditions-section .room-section-heading h2 {
+    color: #ffffff;
 }
 
-.room-features-grid {
+.conditions-section .room-section-heading > p {
+    color: rgba(255, 255, 255, 0.76);
+}
+
+.conditions-grid {
     display: grid;
-
-    grid-template-columns:
-        repeat(auto-fit, minmax(140px, 1fr));
-
-    gap: 16px;
-
-    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 13px;
 }
 
-.room-feature-card {
+.condition-item {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+
+    min-width: 0;
+    min-height: 72px;
+    padding: 14px 17px;
+
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 17px;
+
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+
+    transition:
+        transform 0.22s ease,
+        background-color 0.22s ease,
+        box-shadow 0.22s ease;
+}
+
+.condition-item i {
+    display: flex;
+    flex: 0 0 40px;
     align-items: center;
     justify-content: center;
 
-    min-width: 0;
-    min-height: 135px;
-    padding: 22px 16px;
+    width: 40px;
+    height: 40px;
 
-    gap: 12px;
+    border-radius: 13px;
 
-    border: 1px solid var(--border-soft);
-    border-radius: 20px;
+    background: var(--room-paper);
+    color: var(--room-sage-dark);
 
-    background: var(--cream);
-
-    text-align: center;
-}
-
-.room-feature-card i {
-    color: var(--mauve-dark);
-    font-size: 26px;
-}
-
-.room-feature-card span {
-    color: #4a4a4a;
     font-size: 0.95rem;
 }
 
+.condition-item span {
+    color: #ffffff;
 
-/* =========================================================
-   INVENTARIO Y NOTAS
-========================================================= */
-
-.room-notes {
-    width: 100%;
-    max-width: 100%;
-
-    margin-top: 40px;
-    padding: 30px 34px;
-
-    border: 1px solid rgba(122, 95, 114, 0.1);
-    border-radius: 24px;
-
-    background: #fff;
-
-    box-shadow:
-        0 18px 45px rgba(0, 0, 0, 0.05);
-}
-
-.room-notes h4 {
-    margin: 0 0 22px;
-
-    font-family: "Playfair Display", serif;
-    font-size: 32px;
-    font-weight: 600;
-
-    color: #7a5f72;
-}
-
-.note-item {
-    display: flex;
-    align-items: flex-start;
-
-    min-width: 0;
-
-    gap: 14px;
-
-    margin-bottom: 16px;
-
-    color: #333;
-
-    font-size: 16px;
-    line-height: 1.55;
-}
-
-.note-item:last-child {
-    margin-bottom: 0;
-}
-
-.note-item i {
-    flex-shrink: 0;
-
-    min-width: 22px;
-    margin-top: 3px;
-
-    color: #7a5f72;
-
-    font-size: 17px;
+    font-size: 0.88rem;
+    font-weight: 650;
+    line-height: 1.4;
 }
 
 
@@ -839,33 +812,20 @@ iframe {
    SECCIONES DE DETALLE
 ========================================================= */
 
-.space-section {
-    width: 100%;
-    max-width: 100%;
-
-    margin-top: 60px;
-
-    background: #eef2ee;
-}
-
+.space-section,
 .terraza-section {
     width: 100%;
-    max-width: 100%;
+    margin-top: 55px;
 
-    margin-top: 60px;
-
-    background: #e5ece5;
+    background: var(--room-sage-light, #e7eeea);
 }
 
 .room-detail {
     display: flex;
     align-items: center;
-
-    width: 100%;
-    max-width: 100%;
-
     gap: 60px;
 
+    width: 100%;
     padding: 60px 0;
 }
 
@@ -879,239 +839,88 @@ iframe {
 }
 
 .room-image img {
-    display: block;
-
     width: 100%;
-    height: 600px;
+    height: 560px;
 
     object-fit: cover;
 
-    border-radius: 28px;
+    border-radius: 27px;
 
-    box-shadow:
-        0 20px 50px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--room-shadow-medium);
 }
 
 .room-content {
     flex: 1;
-
     min-width: 0;
 }
 
 .section-label {
-    color: #8d6e63;
+    color: var(--room-wine-soft);
 
-    font-size: 12px;
-    font-weight: 600;
+    font-size: 0.7rem;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 0.18em;
 }
 
 .room-content h2 {
-    margin: 15px 0 20px;
+    margin: 14px 0 19px;
 
-    font-family: "Playfair Display", serif;
-    font-size: 52px;
-    line-height: 1.15;
+    color: var(--room-wine-dark);
+
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: clamp(2.5rem, 4vw, 3.4rem);
+    font-weight: 500;
+    line-height: 1.1;
 }
 
 .room-content p {
     max-width: 600px;
 
-    font-size: 18px;
+    color: var(--room-text-medium);
+
+    font-size: 1rem;
     line-height: 1.7;
 }
 
 .features-list {
-    margin-top: 25px;
+    margin: 24px 0 0;
     padding: 0;
 
     list-style: none;
 }
 
 .features-list li {
-    margin-bottom: 12px;
-}
-
-
-/* =========================================================
-   CONDICIONES
-========================================================= */
-
-.conditions-section {
-    width: 100%;
-    max-width: 100%;
-
-    margin-top: 60px;
-    padding: 45px;
-
-    border-radius: 24px;
-
-    background: var(--sage-soft);
-}
-
-.conditions-title {
-    margin-bottom: 30px;
-
-    font-family: "Playfair Display", serif;
-    font-size: 34px;
-
-    color: var(--cream);
-}
-
-.conditions-grid {
-    display: grid;
-
-    grid-template-columns:
-        repeat(2, minmax(0, 1fr));
-
-    gap: 20px;
-
-    width: 100%;
-}
-
-.condition-item {
-    display: flex;
-    align-items: center;
-
-    min-width: 0;
-
-    gap: 14px;
-
-    color: var(--cream);
-}
-
-.condition-item i {
-    display: flex;
-    flex-shrink: 0;
-    align-items: center;
-    justify-content: center;
-
-    width: 42px;
-    height: 42px;
-
-    border-radius: 50%;
-
-    background: var(--cream);
-    color: var(--sage);
-}
-
-
-/* =========================================================
-   UBICACIÓN
-========================================================= */
-
-.location-section {
-    width: 100%;
-    max-width: 100%;
-
-    padding: 28px 0 45px;
-
-    background: var(--sage);
-}
-
-.location-section .eyebrow {
-    display: block;
-
-    margin-bottom: 12px;
-
-    color: rgba(247, 244, 240, 0.7);
-
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-}
-
-.location-title {
     margin-bottom: 10px;
 
-    font-family: "Playfair Display", serif;
-    font-size: 50px;
-    font-weight: 700;
-    line-height: 1.2;
-
-    color: var(--cream);
+    color: var(--room-text-medium);
 }
 
-.location-subtitle {
-    margin-bottom: 16px;
 
-    font-family: Georgia, serif;
-    font-size: 16px;
+/* =========================================================
+   EFECTOS DE ESCRITORIO
+========================================================= */
 
-    color: rgba(247, 244, 240, 0.85);
-}
+@media (hover: hover) {
+    .room-feature-card:hover,
+    .room-information-item:hover,
+    .room-living-card:hover {
+        transform: translateY(-3px);
 
-.map-box {
-    width: 90%;
-    max-width: 100%;
+        background: var(--room-paper);
 
-    margin: 16px auto 22px;
+        box-shadow:
+            0 13px 28px rgba(81, 52, 62, 0.09);
+    }
 
-    overflow: hidden;
+    .condition-item:hover {
+        transform: translateY(-3px);
 
-    border: 8px solid var(--cream);
-    border-radius: 28px;
+        background: rgba(255, 255, 255, 0.16);
 
-    box-shadow:
-        0 25px 60px rgba(0, 0, 0, 0.35);
-}
-
-.map-box iframe {
-    display: block;
-
-    width: 100%;
-    height: 380px;
-
-    border: 0;
-
-    filter: grayscale(100%) contrast(90%);
-}
-
-.location-points {
-    display: grid;
-
-    grid-template-columns:
-        repeat(4, minmax(0, 1fr));
-
-    width: 100%;
-
-    gap: 18px;
-
-    margin-top: 35px;
-    padding: 22px;
-
-    border-radius: 20px;
-
-    background: var(--cream);
-}
-
-.location-point {
-    display: flex;
-    align-items: center;
-
-    min-width: 0;
-
-    gap: 14px;
-
-    color: #3b3b3b;
-
-    font-weight: 500;
-}
-
-.location-point i {
-    display: flex;
-    flex-shrink: 0;
-    align-items: center;
-    justify-content: center;
-
-    width: 42px;
-    height: 42px;
-
-    border-radius: 50%;
-
-    background: var(--mauve);
-    color: #fff;
+        box-shadow:
+            0 12px 27px rgba(61, 82, 69, 0.12);
+    }
 }
 
 
@@ -1120,41 +929,43 @@ iframe {
 ========================================================= */
 
 @media (max-width: 992px) {
-
-    .contenido-habitacion {
-        padding: 35px 28px;
+    .flat-intro-nav {
+        padding: 48px 0 40px;
     }
 
-    .big-letra {
-        font-size: 46px;
-    }
-
-    .midium-letra {
-        font-size: 20px;
-    }
-
-    .cajon {
-        gap: 35px;
+    .flat-intro-nav .container {
+        width: calc(100% - 40px);
     }
 
     .hero-header {
+        grid-template-columns:
+            minmax(0, 1fr)
+            minmax(230px, 280px);
         gap: 40px;
     }
 
+    .hero-left h1,
     .flat-intro-nav h1 {
+        font-size: 3.7rem;
+    }
+
+    .hero-price-card {
+        padding: 24px;
+    }
+
+    .price-main {
         font-size: 2.6rem;
     }
 
-    .room-features-section {
-        padding: 45px 30px 25px;
+    .room-living-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .room-detail,
     .room-detail.reverse {
         flex-direction: column;
         align-items: stretch;
-
-        gap: 35px;
+        gap: 34px;
     }
 
     .room-image {
@@ -1164,16 +975,7 @@ iframe {
     }
 
     .room-image img {
-        height: 480px;
-    }
-
-    .room-content h2 {
-        font-size: 44px;
-    }
-
-    .location-points {
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
+        height: 470px;
     }
 }
 
@@ -1182,258 +984,189 @@ iframe {
    MÓVIL
 ========================================================= */
 
-@media (max-width: 768px) {
-
-    .contenido-habitacion {
-        padding: 28px 18px;
-    }
-
-    .big-letra {
-        font-size: 38px;
-        line-height: 1.1;
-    }
-
-    .midium-letra {
-        margin-bottom: 30px;
-
-        font-size: 18px;
-    }
-
-    .letra {
-        font-size: 17px;
-        line-height: 1.75;
-    }
-
-    .size-letra {
-        font-size: 38px;
-    }
-
-    .cajon {
-        display: grid;
-
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
-
-        gap: 24px 16px;
-    }
-
-    .sub-cajon {
-        min-width: 0;
-    }
-
-    .sub-cajon i {
-        width: 50px;
-        height: 50px;
-
-        font-size: 20px;
-    }
-
-    .rooms-section {
-        margin-top: 35px;
-        padding: 40px 0 25px;
-    }
-
-    .rooms-header h2 {
-        font-size: 34px;
-    }
-
-    .scroll-cards-wrapper {
-        padding-right: 18px;
-    }
-
-    .cartas {
-        gap: 14px;
-    }
-
-    .room-card {
-        flex-basis: calc(100vw - 54px);
-
-        width: calc(100vw - 54px);
-        min-width: calc(100vw - 54px);
-        max-width: 360px;
-    }
-
+@media (max-width: 700px) {
     .flat-intro-nav {
-        padding: 45px 18px 38px;
+        padding: 38px 0 34px;
     }
 
-    .flat-intro-nav h1 {
-        font-size: 2.2rem;
-    }
-
-    .flat-intro-text {
-        font-size: 1rem;
+    .flat-intro-nav .container {
+        width: calc(100% - 28px);
     }
 
     .hero-header {
-        flex-direction: column;
-        align-items: stretch;
-
-        width: 100%;
-
-        gap: 28px;
+        display: block;
     }
 
-    .hero-left {
+    .hero-left h1,
+    .flat-intro-nav h1 {
+        font-size: 3rem;
+    }
+
+    .flat-intro-text {
+        margin-top: 14px;
+
+        font-size: 0.92rem;
+    }
+
+    .hero-price-card {
         width: 100%;
         max-width: none;
-        min-width: 0;
+        margin-top: 30px;
     }
 
-    .hero-price-card,
-    .hero-price-card-alquilada {
-        width: 100%;
-        max-width: 100%;
-        min-width: 0;
-    }
+    .room-rented-message {
+        max-width: none;
+        margin-top: 30px;
+        padding-top: 22px;
 
-    .price-main {
-        font-size: 44px;
+        border-top: 1px solid rgba(255, 255, 255, 0.18);
     }
 
     .flat-anchor-nav {
-        gap: 10px;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 9px;
 
-        margin-top: 28px;
+        margin-top: 30px;
     }
 
     .flat-anchor-nav a {
-        flex: 1 1 calc(50% - 10px);
+        width: 100%;
+        min-height: 40px;
+        padding: 0 12px;
 
-        padding: 10px 14px;
-
-        font-size: 0.85rem;
-        text-align: center;
-    }
-
-    .room-gallery {
-        margin: 30px auto;
-    }
-
-    .carousel-item img {
-        height: 360px;
-
-        border-radius: 16px;
+        font-size: 0.76rem;
     }
 
     .room-features-section {
-        padding: 35px 18px 20px;
+        padding: 40px 0 25px;
+    }
+
+    .room-features-section > .section-eyebrow,
+    .room-features-section > .section-title,
+    .room-features-section > .room-features-grid,
+    .room-information-card,
+    .room-living-section,
+    .conditions-section {
+        width: calc(100% - 28px);
     }
 
     .section-title {
-        font-size: 2rem;
+        margin-bottom: 23px;
+
+        font-size: 2.1rem;
     }
 
     .room-features-grid {
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
-
-        gap: 12px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
     }
 
     .room-feature-card {
-        min-height: 120px;
-        padding: 18px 10px;
+        min-height: 112px;
+        padding: 16px 9px;
 
         border-radius: 16px;
     }
 
+    .room-feature-card i {
+        font-size: 1.35rem;
+    }
+
     .room-feature-card span {
-        font-size: 0.88rem;
+        font-size: 0.82rem;
     }
 
-    .room-notes {
-        margin-top: 28px;
-        padding: 24px 20px;
+    .room-information-card,
+    .room-living-section,
+    .conditions-section {
+        padding: 25px 18px;
 
-        border-radius: 18px;
+        border-radius: 21px;
     }
 
-    .room-notes h4 {
-        font-size: 27px;
+    .room-information-card {
+        margin-top: 30px;
     }
 
-    .note-item {
-        gap: 11px;
+    .room-living-section,
+    .conditions-section {
+        margin-top: 30px;
+    }
 
-        font-size: 15px;
+    .room-information-grid,
+    .room-living-grid,
+    .conditions-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .room-section-heading {
+        margin-bottom: 22px;
+    }
+
+    .room-section-heading h2 {
+        font-size: 2rem;
+    }
+
+    .room-section-heading > p {
+        margin-top: 12px;
+
+        font-size: 0.89rem;
+        line-height: 1.55;
+    }
+
+    .room-information-item {
+        padding: 17px;
+    }
+
+    .room-living-card {
+        min-height: 92px;
+        padding: 16px;
+    }
+
+    .room-living-note {
+        padding: 16px;
+    }
+
+    .condition-item {
+        min-height: 65px;
+        padding: 13px 15px;
+    }
+
+    .room-gallery {
+        width: calc(100% - 28px);
+        margin: 32px auto;
+    }
+
+    .carousel-item img {
+        height: 330px;
+
+        border-radius: 17px;
     }
 
     .space-section,
     .terraza-section {
-        margin-top: 40px;
+        margin-top: 35px;
     }
 
     .room-detail {
+        gap: 28px;
+
         padding: 40px 0;
     }
 
     .room-image img {
-        height: 380px;
+        height: 370px;
 
         border-radius: 20px;
     }
 
     .room-content h2 {
-        margin: 12px 0 16px;
-
-        font-size: 36px;
+        font-size: 2.3rem;
     }
 
     .room-content p {
-        font-size: 16px;
-        line-height: 1.65;
-    }
-
-    .conditions-section {
-        margin-top: 40px;
-        padding: 30px 20px;
-
-        border-radius: 18px;
-    }
-
-    .conditions-title {
-        font-size: 29px;
-    }
-
-    .conditions-grid {
-        grid-template-columns: 1fr;
-
-        gap: 16px;
-    }
-
-    .location-section {
-        padding: 45px 0;
-    }
-
-    .location-title {
-        font-size: 38px;
-    }
-
-    .map-box {
-        width: 100%;
-
-        border-width: 6px;
-        border-radius: 20px;
-    }
-
-    .map-box iframe {
-        height: 340px;
-    }
-
-    .location-points {
-        grid-template-columns: 1fr;
-
-        gap: 15px;
-
-        margin-top: 25px;
-        padding: 18px;
-
-        border-radius: 16px;
-    }
-
-    .location-point {
-        font-size: 15px;
+        font-size: 0.94rem;
     }
 }
 
@@ -1442,233 +1175,492 @@ iframe {
    MÓVILES PEQUEÑOS
 ========================================================= */
 
-@media (max-width: 480px) {
-
-    .contenido-habitacion {
-        padding: 24px 14px;
-    }
-
-    .big-letra {
-        font-size: 32px;
-    }
-
-    .midium-letra {
-        font-size: 17px;
-    }
-
-    .cajon {
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
-
-        gap: 22px 10px;
-    }
-
-    .capacity,
-    .sub-cajon span {
-        font-size: 14px;
-    }
-
-    .rooms-header h2 {
-        font-size: 30px;
-    }
-
-    .room-card {
-        flex-basis: calc(100vw - 40px);
-
-        width: calc(100vw - 40px);
-        min-width: calc(100vw - 40px);
-        max-width: none;
-    }
-
-    .flat-intro-nav {
-        width: 100%;
-        max-width: 100%;
-
-        padding-left: 18px;
-        padding-right: 18px;
-    }
-
+@media (max-width: 420px) {
+    .hero-left h1,
     .flat-intro-nav h1 {
-        font-size: 1.9rem;
-    }
-
-    .hero-price-card,
-    .hero-price-card-alquilada {
-        padding: 22px 20px;
-
-        border-radius: 18px;
-    }
-
-    .price-main {
-        font-size: 38px;
+        font-size: 2.55rem;
     }
 
     .flat-anchor-nav {
-        flex-direction: column;
-    }
-
-    .flat-anchor-nav a {
-        flex: none;
-
-        width: 100%;
-    }
-
-    .carousel-item img {
-        height: 290px;
+        grid-template-columns: 1fr;
     }
 
     .room-features-grid {
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .room-feature-card {
-        min-height: 110px;
-        padding: 16px 8px;
+    .room-information-card,
+    .room-living-section,
+    .conditions-section {
+        width: calc(100% - 20px);
+        padding: 22px 15px;
     }
 
-    .room-feature-card i {
-        font-size: 23px;
+    .room-section-heading h2 {
+        font-size: 1.8rem;
     }
 
-    .section-title {
-        font-size: 1.75rem;
+    .room-information-item,
+    .room-living-card {
+        gap: 12px;
+    }
+
+    .room-information-item strong {
+        font-size: 1rem;
+    }
+
+    .room-living-card strong,
+    .condition-item span {
+        font-size: 0.82rem;
+    }
+
+    .carousel-item img {
+        height: 280px;
     }
 
     .room-image img {
         height: 310px;
     }
+}
+/* =========================================================
+   TARJETAS DE HABITACIONES — COMPACTAS
+========================================================= */
 
-    .room-content h2 {
-        font-size: 31px;
+.scroll-cards-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+
+    width: 100%;
+    padding: 24px 20px 30px;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 20px;
+
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+}
+
+.scroll-card {
+    flex: 0 0 292px;
+
+    width: 292px;
+    min-width: 292px;
+    max-width: 292px;
+
+    scroll-snap-align: start;
+}
+
+.room-card {
+    position: relative;
+
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+
+    overflow: hidden;
+
+    border: 1px solid var(--room-border);
+    border-radius: 21px;
+
+    background: var(--room-paper);
+
+    box-shadow:
+        0 14px 30px rgba(47, 34, 40, 0.12);
+}
+
+
+/* =========================================================
+   IMAGEN
+========================================================= */
+
+.room-card .card-img-top,
+.room-card > img,
+.room-card > a:first-child img {
+    display: block;
+
+    width: 100%;
+    height: 178px;
+
+    object-fit: cover;
+    object-position: center;
+
+    border-radius: 0;
+}
+
+
+/* =========================================================
+   ETIQUETA DE COLECCIÓN
+========================================================= */
+
+.collection-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 2;
+
+    padding: 6px 11px;
+
+    border-radius: 999px;
+
+    background: rgba(111, 90, 104, 0.94);
+    color: #ffffff;
+
+    font-size: 0.62rem;
+    font-weight: 700;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: 0.02em;
+
+    box-shadow:
+        0 6px 15px rgba(45, 30, 37, 0.12);
+}
+
+
+/* =========================================================
+   INTERIOR
+========================================================= */
+
+.room-card .card-body {
+    padding: 15px 16px 17px;
+}
+
+.collection-name {
+    margin: 0 0 5px;
+
+    color: var(--room-tiffany);
+
+    font-size: 0.59rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+}
+
+.room-title,
+.card-title {
+    margin: 0;
+
+    color: var(--room-wine-dark);
+
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    line-height: 1.15;
+}
+
+
+/* =========================================================
+   TÍTULO Y ESTADO
+========================================================= */
+
+.room-card .title-row,
+.room-card .room-title-row,
+.room-card .card-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    margin-bottom: 8px;
+}
+
+.room-card .badge-alquilada,
+.room-card .disponibilidad {
+    flex-shrink: 0;
+
+    min-height: 25px;
+    margin: 0;
+    padding: 0 10px;
+
+    border-radius: 999px;
+
+    font-size: 0.55rem;
+    font-weight: 800;
+    line-height: 25px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+
+/* =========================================================
+   UBICACIÓN
+========================================================= */
+
+.room-card .room-location,
+.room-card .location,
+.room-card .card-location {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    margin: 5px 0 0;
+
+    color: var(--room-text-soft);
+
+    font-size: 0.68rem;
+    line-height: 1.3;
+}
+
+.room-card .room-location i,
+.room-card .location i,
+.room-card .card-location i {
+    color: var(--room-wine-soft);
+    font-size: 0.66rem;
+}
+
+
+/* =========================================================
+   CARACTERÍSTICAS
+========================================================= */
+
+.room-card .card-features,
+.room-card .room-features,
+.room-card .caracteristicas-habitacion {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    margin: 12px 0 0;
+    padding: 0;
+
+    border: 0;
+    background: transparent;
+}
+
+.room-card .card-features span,
+.room-card .room-features span,
+.room-card .caracteristicas-habitacion span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    min-height: 25px;
+    padding: 0 9px;
+
+    border-radius: 999px;
+
+    background: #eee7ed;
+    color: var(--room-wine);
+
+    font-size: 0.61rem;
+    font-weight: 650;
+    line-height: 1;
+}
+
+
+/* Listados interiores antiguos */
+
+.room-card ul {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px 10px;
+
+    margin: 12px 0 0;
+    padding: 0;
+
+    list-style: none;
+}
+
+.room-card ul li {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    min-width: 0;
+    margin: 0;
+
+    color: var(--room-text-soft);
+
+    font-size: 0.65rem;
+    line-height: 1.3;
+}
+
+.room-card ul li i {
+    flex-shrink: 0;
+
+    color: var(--room-wine-soft);
+    font-size: 0.65rem;
+}
+
+
+/* =========================================================
+   DESCRIPCIÓN
+========================================================= */
+
+.room-card .card-text,
+.room-card .room-description {
+    display: -webkit-box;
+    overflow: hidden;
+
+    margin: 13px 0 0;
+
+    color: var(--room-text-soft);
+
+    font-size: 0.72rem;
+    line-height: 1.45;
+
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+
+/* =========================================================
+   PRECIO Y ACCIONES
+========================================================= */
+
+.room-card .price-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    margin-top: 15px;
+    padding: 0;
+}
+
+.room-card .price-block {
+    min-width: 0;
+}
+
+.room-card .precio {
+    margin: 0;
+
+    color: var(--room-wine-dark);
+
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.room-card .price-label {
+    margin-top: 4px;
+
+    color: var(--room-text-soft);
+
+    font-size: 0.64rem;
+}
+
+.room-card .contact-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    width: 38px;
+    height: 38px;
+    margin: 0;
+
+    border-radius: 12px;
+
+    background: var(--room-tiffany);
+    color: #ffffff;
+}
+
+.room-card .contact-chip i {
+    color: #ffffff;
+    font-size: 18px;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 992px) {
+    .scroll-cards-wrapper {
+        gap: 15px;
+        padding-right: 18px;
+        padding-left: 18px;
+
+        scroll-padding-left: 18px;
     }
 
-    .conditions-title {
-        font-size: 26px;
+    .scroll-card {
+        flex-basis: 280px;
+
+        width: 280px;
+        min-width: 280px;
+        max-width: 280px;
     }
 
-    .map-box iframe {
-        height: 280px;
+    .room-card .card-img-top,
+    .room-card > img,
+    .room-card > a:first-child img {
+        height: 170px;
     }
 }
 
+
 /* =========================================================
-   TARJETA ALQUILADA — ESCRITORIO
+   MÓVIL
 ========================================================= */
 
-@media (min-width: 993px) {
-    .hero-unavailable-card {
-        flex: 0 0 390px;
+@media (max-width: 700px) {
+    .scroll-cards-wrapper {
+        gap: 13px;
+        padding: 20px 14px 26px;
 
-        width: 390px;
-        min-width: 390px;
-        padding: 27px 29px;
-
-        border-radius: 30px;
+        scroll-padding-left: 14px;
+        scrollbar-width: none;
     }
 
-    .unavailable-card-top {
-        margin-bottom: 22px;
+    .scroll-cards-wrapper::-webkit-scrollbar {
+        display: none;
     }
 
-    .unavailable-card-icon {
-        width: 56px;
-        height: 56px;
+    .scroll-card {
+        flex: 0 0 72vw;
 
+        width: 72vw;
+        min-width: 72vw;
+        max-width: 275px;
+    }
+
+    .room-card {
         border-radius: 19px;
     }
 
-    .unavailable-eyebrow {
-        margin-bottom: 7px;
+    .room-card .card-img-top,
+    .room-card > img,
+    .room-card > a:first-child img {
+        height: 158px;
     }
 
-    .hero-unavailable-card h2 {
-        max-width: none;
-
-        font-size: 1.75rem;
-        line-height: 1.12;
+    .room-card .card-body {
+        padding: 14px 15px 16px;
     }
 
-    .hero-unavailable-card p {
-        max-width: 310px;
-
-        margin: 12px 0 20px;
-
-        font-size: 0.84rem;
-        line-height: 1.5;
+    .room-title,
+    .card-title {
+        font-size: 1.08rem;
     }
 
-    .unavailable-action {
-        min-height: 50px;
-
-        padding: 0 18px;
+    .room-card ul {
+        gap: 5px 8px;
     }
 }
 
 
 /* =========================================================
-   TARJETA ALQUILADA — TABLET HORIZONTAL
+   MÓVILES PEQUEÑOS
 ========================================================= */
 
-@media (min-width: 769px) and (max-width: 992px) {
-    .hero-unavailable-card {
-        flex: 0 0 340px;
+@media (max-width: 420px) {
+    .scroll-card {
+        flex-basis: 74vw;
 
-        width: 340px;
-        min-width: 340px;
-        padding: 25px;
-
-        border-radius: 27px;
+        width: 74vw;
+        min-width: 74vw;
+        max-width: 265px;
     }
 
-    .hero-unavailable-card h2 {
-        font-size: 1.6rem;
+    .room-card .card-img-top,
+    .room-card > img,
+    .room-card > a:first-child img {
+        height: 150px;
     }
-
-    .hero-unavailable-card p {
-        margin: 12px 0 19px;
-    }
-}
-/* Rosa antiguo para la tarjeta alquilada */
-
-.hero-unavailable-card {
-    border-color: rgba(255, 255, 255, 0.22);
-
-    background: #9a7882;
-    color: #fffaf6;
-
-    box-shadow:
-        0 24px 55px rgba(64, 39, 50, 0.24);
-}
-
-.hero-unavailable-card h2 {
-    color: #fffaf6;
-}
-
-.hero-unavailable-card p {
-    color: rgba(255, 250, 246, 0.8);
-}
-
-.unavailable-eyebrow {
-    color: #f7e9ad;
-}
-
-.unavailable-card-icon {
-    background: #73a5a1;
-    color: #f7e9ad;
-}
-
-.unavailable-status {
-    background: #f7e9ad;
-    color: #705663;
-}
-
-.unavailable-action {
-    background: #fffaf6;
-    color: #806872;
-}
-
-.unavailable-action:hover {
-    background: #dfefed;
-    color: #705663;
 }

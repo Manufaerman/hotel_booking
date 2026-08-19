@@ -69,7 +69,7 @@ class Visit(models.Model):
 
 
 class Flat(models.Model):
-    ROOM_CATEGORIES = {
+    ROOM_CATEGORIES = [
         ('ONE',
          'Disfruta de este moderno apartamento de un dormitorio, diseñado para ofrecer confort y estilo. Cuenta con aire acondicionado, una luminosa zona de estar y un baño totalmente equipado.\n Terraza privada ideal para relajarte o trabajar al aire libre.\n Ubicación estratégica, cerca del Aeropuerto de Madrid-Barajas y IFEMA. ¡Reserva tu estancia y vive Madrid con el máximo confort!'),
         ('TWO',
@@ -77,11 +77,11 @@ class Flat(models.Model):
         ('3AC',
          'Amplio y moderno apartamento de tres dormitorios. Su diseño elegante y funcional ofrece una luminosa sala de estar, cocina totalmente equipada y baño completo. \n  Aire acondicionado para un confort ideal todo el año. \n  Ubicación estratégica, con excelentes conexiones y todos los servicios cercanos ¡Reserva tu estancia y disfruta de la comodidad con estilo!'),
         ('PLUS', 'Antigua casa española de carácter auténtico, rodeada por la calma de un jardín sencillo presidido por un olivo centenario. Sus dos cocinas y espacios luminosos la convierten en un lugar ideal tanto para el teletrabajo como para disfrutar de largas comidas al aire libre, en un ambiente sereno y acogedor de inspiración mediterránea.')
-    }
-    TIPO_ALQUILER = {
+    ]
+    TIPO_ALQUILER = [
         ('habitaciones', 'Alquiler por habitaciones'),
         ('completo', 'Alquiler piso completo')
-    }
+    ]
 
     TIPO_REPARTO_GASTOS = [
         ("IGUAL", "A partes iguales"),
@@ -131,19 +131,37 @@ class Flat(models.Model):
         return reverse('hotel:roomandflats', args=[str(self.id)])
 
 class Habitacion(models.Model):
-    BATHROOM = {
+    BATHROOM = [
         ('ONE',
          'En suite'),
         ('TWO',
          'Compartido'),
-    }
-    BED = {
+    ]
+    BED = [
         ('ONE',
          'Doble'),
         ('TWO',
          'Simple'),
-    }
+    ]
+    grupo_cocina = models.CharField(
+        max_length=80,
+        blank=True,
+        verbose_name="Grupo de cocina",
+        help_text=(
+            "Habitaciones con el mismo texto comparten cocina. "
+            "Ejemplo: HARO_COCINA_1."
+        ),
+    )
 
+    grupo_bano = models.CharField(
+        max_length=80,
+        blank=True,
+        verbose_name="Grupo de baño",
+        help_text=(
+            "Habitaciones con el mismo texto comparten baño. "
+            "Ejemplo: HARO_BANO_PLANTA_BAJA."
+        ),
+    )
 
     propiedad = models.ForeignKey(Flat, related_name='habitaciones', null=True, blank=True, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=100, unique=True)
@@ -228,6 +246,60 @@ class Habitacion(models.Model):
 
         return self.nombre
 
+    @property
+    def otras_inquilinas_vivienda(self):
+        if not self.propiedad_id:
+            return 0
+
+        return max(
+            self.propiedad.habitaciones.count() - 1,
+            0,
+        )
+
+    @property
+    def otras_inquilinas_cocina(self):
+        if not self.propiedad_id:
+            return 0
+
+        if self.grupo_cocina:
+            return (
+                Habitacion.objects
+                .filter(
+                    propiedad_id=self.propiedad_id,
+                    grupo_cocina=self.grupo_cocina,
+                )
+                .exclude(pk=self.pk)
+                .count()
+            )
+
+        # Si no definimos un grupo especial,
+        # suponemos que todas comparten la misma cocina.
+        return self.otras_inquilinas_vivienda
+
+    @property
+    def otras_inquilinas_bano(self):
+        if not self.propiedad_id:
+            return 0
+
+        # Según tus choices actuales:
+        # ONE = En suite
+        # TWO = Compartido
+        if self.bathroom != "TWO":
+            return 0
+
+        if self.grupo_bano:
+            return (
+                Habitacion.objects
+                .filter(
+                    propiedad_id=self.propiedad_id,
+                    grupo_bano=self.grupo_bano,
+                )
+                .exclude(pk=self.pk)
+                .count()
+            )
+
+        return self.otras_inquilinas_vivienda
+
 
 class Inquilino(models.Model):
     user = models.OneToOneField(User,
@@ -307,23 +379,70 @@ class ContratoAlquiler(models.Model):
         default=True,
     )
 
-    def save(self, *args, **kwargs):
-        if self.fecha_inicio and not self.fecha_fin:
-            self.fecha_fin = (
-                self.fecha_inicio
-                + relativedelta(months=6)
-                - timedelta(days=1)
-            )
-
-        super().save(*args, **kwargs)
-
     @property
     def tiene_aval(self):
         return hasattr(self, "aval")
 
+    def save(self, *args, **kwargs):
+        if self.fecha_inicio and not self.fecha_fin:
+            self.fecha_fin = (
+                    self.fecha_inicio
+                    + relativedelta(months=6)
+                    - timedelta(days=1)
+            )
+
+        super().save(*args, **kwargs)
+
+        self.actualizar_disponibilidad_habitacion()
+
+    def delete(self, *args, **kwargs):
+        habitacion_id = self.habitacion_id
+
+        resultado = super().delete(
+            *args,
+            **kwargs,
+        )
+
+        if habitacion_id:
+            hay_contrato_activo = (
+                ContratoAlquiler.objects
+                .filter(
+                    habitacion_id=habitacion_id,
+                    activo=True,
+                )
+                .exists()
+            )
+
+            Habitacion.objects.filter(
+                pk=habitacion_id
+            ).update(
+                disponible=not hay_contrato_activo
+            )
+
+        return resultado
+
+    def actualizar_disponibilidad_habitacion(self):
+        if not self.habitacion_id:
+            return
+
+        hay_contrato_activo = (
+            ContratoAlquiler.objects
+            .filter(
+                habitacion_id=self.habitacion_id,
+                activo=True,
+            )
+            .exists()
+        )
+
+        Habitacion.objects.filter(
+            pk=self.habitacion_id
+        ).update(
+            disponible=not hay_contrato_activo
+        )
+
     def finalizar(self):
         self.activo = False
-        self.fecha_fin = timezone.now().date()
+        self.fecha_fin = timezone.localdate()
 
         self.save(
             update_fields=[
@@ -355,12 +474,18 @@ class AvalContrato(models.Model):
     def __str__(self):
         return f"Aval de {self.contrato}"
 
+from django.core.exceptions import ValidationError
+from django.db import models
+from django.utils import timezone
+
+
 class Gasto(models.Model):
 
     CATEGORIAS = [
         ("limpieza", "Limpieza"),
         ("suministros", "Suministros"),
         ("reparacion", "Reparación"),
+        ("mejora", "Mejoras"),
         ("mobiliario", "Mobiliario"),
         ("comunidad", "Comunidad"),
         ("impuestos", "Impuestos"),
@@ -370,7 +495,7 @@ class Gasto(models.Model):
     propiedad = models.ForeignKey(
         Flat,
         on_delete=models.CASCADE,
-        related_name="gastos"
+        related_name="gastos",
     )
 
     habitacion = models.ForeignKey(
@@ -378,30 +503,113 @@ class Gasto(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name="gastos"
+        related_name="gastos",
     )
 
-    concepto = models.CharField(max_length=150)
+    concepto = models.CharField(
+        max_length=150,
+    )
 
     categoria = models.CharField(
         max_length=30,
         choices=CATEGORIAS,
-        default="otros"
+        default="otros",
     )
 
     importe = models.DecimalField(
         max_digits=10,
-        decimal_places=2
+        decimal_places=2,
     )
 
-    fecha = models.DateField(default=timezone.now)
+    fecha = models.DateField(
+        default=timezone.localdate,
+    )
 
-    pagado = models.BooleanField(default=False)
+    pagado = models.BooleanField(
+        default=False,
+    )
 
-    notas = models.TextField(blank=True, null=True)
+    proveedor = models.CharField(
+        max_length=150,
+        blank=True,
+    )
+
+    justificante = models.FileField(
+        upload_to="gastos/justificantes/%Y/%m/",
+        null=True,
+        blank=True,
+    )
+
+    notas = models.TextField(
+        blank=True,
+    )
+
+    fecha_creacion = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    class Meta:
+        ordering = [
+            "-fecha",
+            "-fecha_creacion",
+        ]
+
+        indexes = [
+            models.Index(
+                fields=[
+                    "fecha",
+                ],
+            ),
+            models.Index(
+                fields=[
+                    "propiedad",
+                    "fecha",
+                ],
+            ),
+            models.Index(
+                fields=[
+                    "categoria",
+                    "fecha",
+                ],
+            ),
+        ]
+
+        verbose_name = "Gasto"
+        verbose_name_plural = "Gastos"
+
+    def clean(self):
+        super().clean()
+
+        if (
+            self.habitacion_id
+            and self.propiedad_id
+            and self.habitacion.propiedad_id
+            != self.propiedad_id
+        ):
+            raise ValidationError(
+                {
+                    "habitacion": (
+                        "La habitación seleccionada no pertenece "
+                        "a esta propiedad."
+                    ),
+                }
+            )
+
+        if self.importe is not None and self.importe <= 0:
+            raise ValidationError(
+                {
+                    "importe": (
+                        "El importe debe ser superior a cero."
+                    ),
+                }
+            )
 
     def __str__(self):
-        return f"{self.propiedad} - {self.concepto} - {self.importe} €"
+        return (
+            f"{self.propiedad} · "
+            f"{self.concepto} · "
+            f"{self.importe} €"
+        )
 
 
 class Iteminventario(models.Model):
@@ -640,3 +848,72 @@ class ProcesoFormalizacion(models.Model):
             f"{habitacion} · {propiedad} · "
             f"{inquilino} · {self.get_estado_display()}"
         )
+
+from django.core.exceptions import ValidationError
+from django.db import models
+
+
+class MultimediaHabitacion(models.Model):
+
+    habitacion = models.ForeignKey(
+        "Habitacion",
+        on_delete=models.CASCADE,
+        related_name="galeria",
+    )
+
+    imagen = models.ImageField(
+        upload_to="habitaciones/galeria/imagenes/",
+        null=True,
+        blank=True,
+    )
+
+    video = models.FileField(
+        upload_to="habitaciones/galeria/videos/",
+        null=True,
+        blank=True,
+    )
+
+    titulo = models.CharField(
+        max_length=120,
+        blank=True,
+    )
+
+    orden = models.PositiveIntegerField(
+        default=0,
+    )
+
+    visible = models.BooleanField(
+        default=True,
+    )
+
+    def clean(self):
+        super().clean()
+
+        if not self.imagen and not self.video:
+            raise ValidationError(
+                "Debes añadir una imagen o un vídeo."
+            )
+
+        if self.imagen and self.video:
+            raise ValidationError(
+                "Cada elemento debe contener una imagen o un vídeo, no ambos."
+            )
+
+        if self.video and self.video.size > 12 * 1024 * 1024:
+            raise ValidationError({
+                "video": "El vídeo no puede superar los 12 MB.",
+            })
+
+    @property
+    def es_video(self):
+        return bool(self.video)
+
+    class Meta:
+        ordering = ["orden", "pk"]
+        verbose_name = "Elemento de galería"
+        verbose_name_plural = "Galería de habitaciones"
+
+    def __str__(self):
+        tipo = "Vídeo" if self.video else "Imagen"
+
+        return f"{self.habitacion.nombre} · {tipo} · {self.orden}"

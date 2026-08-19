@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    {{ habitacion.nombre }} | By Colección
+{% endblock %}
+
+{% block extra-head %}
+<link
+    rel="stylesheet"
+    href="{% static 'hotel/css/habitacion_galeria.css' %}"
+>
+{% endblock %}
+
+{% block content %}
+
+<section class="gallery-room-bar">
+
+    <div class="gallery-room-main">
+
+        <div class="gallery-room-identity">
+
+            <span>
+                Descubre
+            </span>
+
+            <strong>
+                {{ habitacion.nombre }}
+            </strong>
+
+            {% if habitacion.propiedad %}
+                <small>
+                    Colección {{ habitacion.propiedad.nombre }}
+                </small>
+            {% endif %}
+
+        </div>
+
+
+        <div class="gallery-room-price">
+
+            <strong>
+                {{ habitacion.precio|floatformat:0 }} €
+            </strong>
+
+            <span>
+                / mes
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <nav
+        class="gallery-room-navigation"
+        aria-label="Información de la habitación"
+    >
+
+        <a
+            href="{% url 'hotel:habitaciones' habitacion.id %}#pagos"
+            class="gallery-nav-link"
+        >
+            <i class="fas fa-credit-card"></i>
+            <span>Pagos</span>
+        </a>
+
+
+        <a
+            href="{% url 'hotel:habitaciones' habitacion.id %}#convivencia"
+            class="gallery-nav-link"
+        >
+            <i class="fas fa-user-friends"></i>
+            <span>Convivencia</span>
+        </a>
+
+
+        <a
+            href="{% url 'hotel:habitaciones' habitacion.id %}#gastos"
+            class="gallery-nav-link"
+        >
+            <i class="fas fa-receipt"></i>
+            <span>Gastos</span>
+        </a>
+
+
+        <a
+            href="{% url 'hotel:habitaciones' habitacion.id %}"
+            class="gallery-nav-link gallery-nav-link-primary"
+        >
+            <span>Toda la información</span>
+            <i class="fas fa-arrow-right"></i>
+        </a>
+
+    </nav>
+
+</section>
+
+
+<main class="gallery-page">
+
+    <section class="room-masonry-gallery">
+
+        {# Fotografías antiguas del modelo Habitacion #}
+
+        {% if habitacion.image %}
+
+            <figure class="gallery-media gallery-media-featured">
+
+                <img
+                    src="{{ habitacion.image.url }}"
+                    alt="{{ habitacion.nombre }}"
+                >
+
+                <span class="gallery-media-number">
+                    01
+                </span>
+
+            </figure>
+
+        {% endif %}
+
+
+        {% if habitacion.image2 %}
+
+            <figure class="gallery-media gallery-media-portrait">
+
+                <img
+                    src="{{ habitacion.image2.url }}"
+                    alt="{{ habitacion.nombre }}"
+                >
+
+                <span class="gallery-media-number">
+                    02
+                </span>
+
+            </figure>
+
+        {% endif %}
+
+
+        {% if habitacion.image3 %}
+
+            <figure class="gallery-media gallery-media-landscape">
+
+                <img
+                    src="{{ habitacion.image3.url }}"
+                    alt="{{ habitacion.nombre }}"
+                >
+
+                <span class="gallery-media-number">
+                    03
+                </span>
+
+            </figure>
+
+        {% endif %}
+
+
+        {# Multimedia del modelo MultimediaHabitacion #}
+
+        {% for elemento in multimedia %}
+
+            <figure
+                class="
+                    gallery-media
+                    {% if elemento.video %}
+                        gallery-media-video
+                    {% endif %}
+                "
+            >
+
+                {% if elemento.video %}
+
+                    <video
+                        autoplay
+                        muted
+                        loop
+                        playsinline
+                        preload="metadata"
+                        aria-label="{{ elemento.titulo|default:habitacion.nombre }}"
+                    >
+
+                        <source
+                            src="{{ elemento.video.url }}"
+                        >
+
+                    </video>
+
+
+                    <span class="gallery-video-indicator">
+
+                        <i class="fas fa-play"></i>
+
+                    </span>
+
+                {% elif elemento.imagen %}
+
+                    <img
+                        src="{{ elemento.imagen.url }}"
+                        alt="{{ elemento.titulo|default:habitacion.nombre }}"
+                    >
+
+                {% endif %}
+
+
+                {% if elemento.titulo %}
+
+                    <figcaption>
+                        {{ elemento.titulo }}
+                    </figcaption>
+
+                {% endif %}
+
+            </figure>
+
+        {% endfor %}
+
+    </section>
+
+
+    <footer class="gallery-closing">
+
+        <div class="gallery-closing-copy">
+
+            <span>
+                Toda la información, sin vueltas
+            </span>
+
+            <h2>
+                ¿Quieres conocer mejor {{ habitacion.nombre }}?
+            </h2>
+
+            <p>
+                Consulta pagos, gastos, convivencia,
+                condiciones y todos los detalles
+                antes de reservar.
+            </p>
+
+        </div>
+
+
+        <div class="gallery-closing-actions">
+
+            <a
+                href="{% url 'hotel:habitaciones' habitacion.id %}#pagos"
+                class="gallery-closing-secondary"
+            >
+                Ver pagos
+            </a>
+
+            <a
+                href="{% url 'hotel:habitaciones' habitacion.id %}"
+                class="gallery-closing-primary"
+            >
+                Toda la información
+
+                <i class="fas fa-arrow-right"></i>
+            </a>
+
+        </div>
+
+    </footer>
+
+</main>
+
+{% endblock %}

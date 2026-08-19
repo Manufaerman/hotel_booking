@@ -28,7 +28,15 @@ from .views import (
     home,
     modificar_contrato,
     modificar_inquilino,
-    visitas_view, EliminarProcesoFormalizacionView, EditarProcesoFormalizacionView,
+    visitas_view,
+    EliminarProcesoFormalizacionView,
+    EditarProcesoFormalizacionView,
+    habitacion_galeria,
+    GastosDashboardView,
+    CrearGastoView,
+    EditarGastoView,
+    CambiarEstadoGastoView,
+    EliminarGastoView,
 )
 
 
@@ -79,11 +87,21 @@ urlpatterns = [
         name="habitaciones_all",
     ),
 
+    # Galería visual
     path(
-        "habitaciones/<int:id>",
+        "habitaciones/<int:id>/galeria/",
+        habitacion_galeria,
+        name="habitacion_galeria",
+    ),
+
+    # Información completa existente
+    path(
+        "habitaciones/<int:id>/",
         habitaciones,
         name="habitaciones",
     ),
+
+
 
     path(
         "contacto/",
@@ -218,6 +236,36 @@ urlpatterns = [
         EditarProcesoFormalizacionView.as_view(),
         name="editar_proceso_formalizacion",
     ),
+
+path(
+    "dashboard/gastos/",
+    GastosDashboardView.as_view(),
+    name="gastos_dashboard",
+),
+
+path(
+    "dashboard/gastos/nuevo/",
+    CrearGastoView.as_view(),
+    name="crear_gasto",
+),
+
+path(
+    "dashboard/gastos/<int:pk>/editar/",
+    EditarGastoView.as_view(),
+    name="editar_gasto",
+),
+
+path(
+    "dashboard/gastos/<int:pk>/estado/",
+    CambiarEstadoGastoView.as_view(),
+    name="cambiar_estado_gasto",
+),
+
+path(
+    "dashboard/gastos/<int:pk>/eliminar/",
+    EliminarGastoView.as_view(),
+    name="eliminar_gasto",
+),
 ]
 
 

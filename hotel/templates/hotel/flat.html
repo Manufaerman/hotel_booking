@@ -130,75 +130,60 @@ Descubre {{ piso.nombre }}, una propiedad exclusiva de By Collection en Madrid, 
     </div>
 </section>
 
-<section class="rooms-section" style="" id="habitaciones">
+<section
+    class="rooms-section"
+    id="habitaciones"
+>
+
     <div class="container">
 
         <div class="rooms-header">
+
             <span class="eyebrow">
                 Explora las habitaciones de
             </span>
 
-            <h2>{{piso.nombre}}</h2>
+            <h2>
+                {{ piso.nombre }}
+            </h2>
 
             <p>
-                Todas nuestras habitaciones están equipadas para que solo lleves contigo lo puesto.
+                Habitaciones completamente equipadas para disfrutar
+                de una estancia cómoda desde el primer día.
             </p>
+
         </div>
 
     </div>
 
-    <div class="scroll-cards-wrapper" style="">
-      {% for habitacion in habitaciones %}
-        <div class="scroll-card card mx-2 shadow-sm" style="width: 350px; border: none; background: #f7f7f7; border-radius: 12px; overflow: hidden;">
-          <a href="{% url 'hotel:habitaciones' habitacion.id %}">
-            <img src="{{ habitacion.image.url }}" class="img-fluid card-img-top" alt="Imagen de habitación" style="height: 200px; object-fit: cover;">
-          </a>
-             <div class="collection-badge">
-            Colección {{ habitacion.propiedad.name }}
+
+    <div class="rooms-slider">
+
+        {% for habitacion in habitaciones %}
+
+            <div class="rooms-slider-item">
+
+                {% include "hotel/components/room_card.html" with habitacion=habitacion %}
+
             </div>
 
-          <div class="card-body px-3 py-3 d-flex flex-column justify-content-between" style="height: 100%;">
-            <div>
-              <h5 class="card-title mb-1"><strong>{{ habitacion.nombre }}</strong></h5>
-              <h6 class="text-muted mb-3" style="font-size: 0.9rem;">
-                <i class="fas fa-map-marker-alt me-1"></i> Madrid, España
-              </h6>
+        {% empty %}
 
-              <div class="row gx-2 gy-1 text-muted mb-3" style="background:#EFEFEF; border-radius: 6px; font-size: 0.85rem; padding: 10px;">
-                <div class="col-6"><i class="fas fa-users me-1"></i>{{ habitacion.capacity }}</div>
-                <div class="col-6"><i class="fas fa-bed me-1"></i>{{ habitacion.get_bed_display }}</div>
-                <div class="col-6"><i class="fas fa-wind me-1"></i>{% if habitacion.aire_acondicionado %}Sí{% else %}No{% endif %}</div>
-                <div class="col-6"><i class="fas fa-tv me-1"></i>Televisión</div>
-                <div class="col-6"><i class="fas fa-umbrella-beach me-1"></i>{% if habitacion.terrace %}Terraza: Sí{% else %}Terraza: No{% endif %}</div>
-                {% if habitacion.doble_bed %}
-                  <div class="col-6"><i class="fas fa-bed me-1"></i>Doble</div>
-                {% endif %}
-              </div>
+            <div class="rooms-slider-empty">
 
-              <p class="card-text mb-3" style="font-size: 0.92rem;">{{ habitacion.subtitle }}</p>
+                <span>
+                    By Colección
+                </span>
+
+                <p>
+                    Esta colección todavía no tiene habitaciones
+                    disponibles para mostrar.
+                </p>
+
             </div>
 
+        {% endfor %}
 
-            <div class="price-row" style="">
-                {% if habitacion.disponible %}
-                <div class="price-block">
-                    <div class="precio" style="">{{ habitacion.precio }}€</div>
-                    <div class="price-label">por mes</div>
-                </div>
-                <a href="https://wa.me/34639446142?text=Hola,%20me%20gustar%C3%ADa%20recibir%20informaci%C3%B3n {{ habitacion.propiedad }} {{ habitacion.nombre }}"
-                   class="contact-chip"
-                   target="_blank">
-                    <i class="fa-brands fa-whatsapp"></i>
-                </a>
-                {% else %}
-
-              <div class="badge-alquilada">Alquilada</div>
-
-                {% endif %}
-            </div>
-          </div>
-        </div>
-      {% endfor %}
     </div>
 
 </section>

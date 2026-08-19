@@ -1,141 +1,554 @@
-
-
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load static %}
 
-{% block title %} By Collection | Alquiler de habitaciones premium en Madrid {% endblock%}
+{% block title %}
+    By Colección | Alquiler de habitaciones premium en Madrid
+{% endblock %}
 
 {% block extra-head %}
-<!-- Main StyleSheet -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-<link href="https://fonts.googleapis.com/css2?family=Parisienne&display=swap" rel="stylesheet">
-<link rel="icon" href="data:;base64,iVBORw0KGgo="> <!-- to avoid favicon error in terminal -->
-<link rel="stylesheet" href="{% static 'hotel/css/home.css' %}">
 
+<link
+    href="https://fonts.googleapis.com/css2?family=Parisienne&display=swap"
+    rel="stylesheet"
+>
 
+<link
+    rel="stylesheet"
+    href="{% static 'hotel/css/home.css' %}"
+>
+
+<style>
+    /*
+       Ajustes propios de Hummingbird.
+       Permanecen aquí para que la tarjeta se integre inmediatamente
+       sin depender de reglas antiguas de investment-section.
+    */
+
+    .flats-grid > [class*="col-"] {
+        display: flex;
+        margin-bottom: 30px;
+    }
+
+    .flats-grid .flat-card {
+        width: 100%;
+    }
+
+    .hummingbird-property-card {
+        position: relative;
+
+        display: flex;
+        flex-direction: column;
+
+        width: 100%;
+        min-height: 100%;
+
+        overflow: hidden;
+
+        border-top: 6px solid #d9b46d;
+    }
+
+    .hummingbird-image-wrap {
+        position: relative;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        min-height: 330px;
+        padding: 45px;
+
+        overflow: hidden;
+
+        background: #604550;
+    }
+
+    .hummingbird-image-wrap::before {
+        content: "";
+
+        position: absolute;
+        top: 24px;
+        right: 24px;
+        bottom: 24px;
+        left: 24px;
+
+        border: 1px solid rgba(241, 213, 154, 0.36);
+        border-radius: 20px;
+
+        pointer-events: none;
+    }
+
+    .hummingbird-logo {
+        position: relative;
+        z-index: 2;
+
+        display: block;
+
+        width: min(78%, 290px);
+        max-height: 210px;
+
+        object-fit: contain;
+    }
+
+    .hummingbird-visual-fallback {
+        position: absolute;
+        z-index: 1;
+
+        color: #f1d59a;
+
+        font-family: "Playfair Display", Georgia, serif;
+        font-size: clamp(2.2rem, 4vw, 4rem);
+        font-weight: 500;
+        text-align: center;
+    }
+
+    .hummingbird-property-card .flat-info {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
+    }
+
+    .hummingbird-property-card .flat-title-row {
+        align-items: flex-start;
+    }
+
+    .hummingbird-property-card .flat-title-row h3 {
+        color: #563943;
+    }
+
+    .hummingbird-tag {
+        display: inline-flex;
+        align-items: center;
+
+        padding: 7px 11px;
+        border-radius: 999px;
+
+        background: #f5e8aa;
+        color: #604550;
+
+        font-size: 0.63rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+    }
+
+    .hummingbird-description {
+        margin: 17px 0 22px;
+
+        color: #756a6e;
+        font-size: 0.96rem;
+        line-height: 1.65;
+    }
+
+    .hummingbird-features {
+        margin-bottom: 25px;
+    }
+
+    .hummingbird-property-card .flat-cta {
+        margin-top: auto;
+    }
+
+    @media (max-width: 768px) {
+        .hummingbird-image-wrap {
+            min-height: 285px;
+            padding: 35px;
+        }
+
+        .hummingbird-logo {
+            width: min(74%, 245px);
+        }
+
+        .hummingbird-visual-fallback {
+            font-size: 2.6rem;
+        }
+    }
+</style>
 
 {% endblock %}
 
+
 {% block content %}
 
+<section class="home-opening">
 
-<div class="hero-section" style="">
-  <div class="hero-content" style="">
+    <section class="available-slider">
 
-    <!-- Título -->
-    <h3 class="hero-kicker"> By Collection</h3>
-    <h1 class="hero-title" style="">Espacios diseñados para vivir Madrid</h1>
-    <!-- Subtítulo -->
-    <p class="hero-subtitle" style="">
-      Habitaciones y apartamentos cuidadosamente seleccionados.
-    </p>
+        <header class="available-slider-header">
 
-    <!-- Precio -->
-    <div class="price-badge" style="">
-      Desde 550 €/mes
+            <div>
+                <span>Disponibles ahora</span>
+
+                <h2>
+                    Tu próximo espacio
+                </h2>
+            </div>
+
+            <p>
+                Desliza para descubrir las habitaciones disponibles.
+            </p>
+
+        </header>
+
+
+        {% if habitaciones_disponibles %}
+
+            <div class="available-slider-track">
+
+                {% for habitacion in habitaciones_disponibles %}
+
+                    <article class="available-room-card">
+
+                        <a
+                            href="{% url 'hotel:habitacion_galeria' habitacion.id %}"
+                            class="available-room-image"
+                        >
+
+                            {% if habitacion.image %}
+
+                                <img
+                                    src="{{ habitacion.image.url }}"
+                                    alt="{{ habitacion.nombre }}"
+                                    loading="lazy"
+                                >
+
+                            {% endif %}
+
+                            <span class="available-room-badge">
+                                Disponible
+                            </span>
+
+                        </a>
+
+
+                        <div class="available-room-body">
+
+                            <span class="available-room-collection">
+                                Colección {{ habitacion.propiedad.nombre }}
+                            </span>
+
+
+                            <div class="available-room-title-row">
+
+                                <h3>
+                                    <a href="{% url 'hotel:habitacion_galeria' habitacion.id %}">
+                                        {{ habitacion.nombre }}
+                                    </a>
+                                </h3>
+
+                                <div class="available-room-price">
+                                    <strong>
+                                        {{ habitacion.precio|floatformat:0 }} €
+                                    </strong>
+
+                                    <span>/ mes</span>
+                                </div>
+
+                            </div>
+
+
+                            {% if habitacion.subtitle %}
+
+                                <p>
+                                    {{ habitacion.subtitle|truncatechars:90 }}
+                                </p>
+
+                            {% endif %}
+
+
+                            <div class="available-room-footer">
+
+                                <a
+                                    href="{% url 'hotel:habitacion_galeria' habitacion.id %}"
+                                    class="available-room-link"
+                                >
+                                    Descubrir
+
+                                    <i class="fas fa-arrow-right"></i>
+                                </a>
+
+                                <a
+                                    href="https://wa.me/34639446142?text=Hola,%20me%20gustaría%20recibir%20información%20sobre%20{{ habitacion.propiedad|urlencode }}%20{{ habitacion.nombre|urlencode }}"
+                                    class="available-room-whatsapp"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="Consultar por WhatsApp"
+                                >
+                                    <i class="fa-brands fa-whatsapp"></i>
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="available-slider-empty">
+
+                <span>By Colección</span>
+
+                <strong>
+                    Actualmente no hay habitaciones disponibles.
+                </strong>
+
+                <p>
+                    Muy pronto tendremos nuevos espacios preparados
+                    para recibirte.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</section>
+
+
+<section class="hero-section">
+
+    <div class="hero-content">
+
+        <h3 class="hero-kicker">
+            By Colección
+        </h3>
+
+        <h1 class="hero-title">
+            Espacios diseñados para vivir Madrid
+        </h1>
+
+        <p class="hero-subtitle">
+            Habitaciones y apartamentos cuidadosamente seleccionados.
+        </p>
+
+        <div class="price-badge">
+            Desde 550 €/mes
+        </div>
+
     </div>
 
-  </div>
-</div>
+</section>
+
 
 <section class="flat-section">
-<div class="row flats-grid" style="">
-  {% for room in flat %}
-    <div class="col-md-6">
-      <a href="{% url 'hotel:flat' room.id %}" class="flat-card">
 
-        <div class="flat-image-wrap">
-          <img src="{{ room.image3.url }}" alt="{{ room }}" class="flat-image">
-        </div>
+    <div class="row flats-grid">
 
-        <div class="flat-info">
-          <div class="flat-title-row">
-            <h3>{{ room }}</h3>
+        {% for room in flat %}
 
-            {% if room.tipo_alquiler == "habitaciones" %}
-                <span class="rental-badge rental-rooms">Por habitaciones</span>
-            {% else %}
-                <span class="rental-badge rental-full">Piso completo</span>
-            {% endif %}
-          </div>
+            <div class="col-12 col-md-6">
 
-          <div class="flat-features">
-            <span><i class="fas fa-user-group"></i>{{ room.capacity }} personas</span>
-            <span><i class="fas fa-bed"></i>{{ room.bed }} camas</span>
+                <a
+                    href="{% url 'hotel:flat' room.id %}"
+                    class="flat-card"
+                >
 
-            {% if room.doble_bed %}
-              <span><i class="fas fa-bed"></i>Cama doble</span>
-            {% endif %}
+                    <div class="flat-image-wrap">
 
-            <span><i class="fas fa-tv"></i>TV</span>
-            <span><i class="fas fa-umbrella-beach"></i>Terraza</span>
+                        {% if room.image3 %}
 
-            {% if room.aire_acondicionado %}
-              <span><i class="fas fa-wind"></i>Aire acondicionado</span>
-            {% endif %}
-          </div>
+                            <img
+                                src="{{ room.image3.url }}"
+                                alt="{{ room }}"
+                                class="flat-image"
+                                loading="lazy"
+                            >
 
-          <div class="flat-cta">Descubrir propiedad</div>
-        </div>
+                        {% endif %}
 
-      </a>
-    </div>
-  {% endfor %}
-</div>
-</section>
-<!-- Card fija del proyecto -->
+                    </div>
 
-<section class="investment-section">
-<div class="row flats-grid">
-    <div class="col-md-6">
-        <a href="" class="investment-card">
 
-            <div class="investment-top"></div>
+                    <div class="flat-info">
 
-            <div class="investment-image-wrap">
-                <img src="{% static 'hotel/img/logo-hp23.png' %}"
-                     alt="Hummingbird Project"
-                     class="investment-image">
+                        <div class="flat-title-row">
+
+                            <h3>
+                                {{ room }}
+                            </h3>
+
+                            {% if room.tipo_alquiler == "habitaciones" %}
+
+                                <span class="rental-badge rental-rooms">
+                                    Por habitaciones
+                                </span>
+
+                            {% else %}
+
+                                <span class="rental-badge rental-full">
+                                    Piso completo
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="flat-features">
+
+                            <span>
+                                <i class="fas fa-user-group"></i>
+                                {{ room.capacity }} personas
+                            </span>
+
+                            <span>
+                                <i class="fas fa-bed"></i>
+                                {{ room.bed }} camas
+                            </span>
+
+                            {% if room.doble_bed %}
+
+                                <span>
+                                    <i class="fas fa-bed"></i>
+                                    Cama doble
+                                </span>
+
+                            {% endif %}
+
+                            <span>
+                                <i class="fas fa-tv"></i>
+                                TV
+                            </span>
+
+                            <span>
+                                <i class="fas fa-umbrella-beach"></i>
+                                Terraza
+                            </span>
+
+                            {% if room.aire_acondicionado %}
+
+                                <span>
+                                    <i class="fas fa-wind"></i>
+                                    Aire acondicionado
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="flat-cta">
+                            Descubrir propiedad
+                        </div>
+
+                    </div>
+
+                </a>
+
             </div>
 
-            <div class="investment-info">
+        {% endfor %}
 
-                <span class="investment-tag">
-                    PRIVATE REAL ESTATE
-                </span>
 
-                <h3>Hummingbird</h3>
+        <!-- Hummingbird forma parte de la misma cuadrícula -->
 
-                <p>
-                    Capital privado para invertir en activos inmobiliarios
-                    de alta calidad.
-                </p>
+        <div class="col-12 col-md-6">
 
-                <p>
-                    Construimos patrimonio a largo plazo mediante proyectos
-                    cuidadosamente seleccionados.
-                </p>
+            <a
+                href="#"
+                class="flat-card hummingbird-property-card"
+            >
 
-                <div class="hummingbird-btn">
-                    Más información →
+                <div class="flat-image-wrap hummingbird-image-wrap">
+
+                    <span class="hummingbird-visual-fallback">
+                        Hummingbird
+                    </span>
+
+                    <img
+                        src="{% static 'hotel/img/logo-hp23.png' %}"
+                        alt=""
+                        class="hummingbird-logo"
+                        loading="lazy"
+                        onerror="this.style.display='none';"
+                    >
+
                 </div>
 
-            </div>
 
-        </a>
+                <div class="flat-info">
+
+                    <div class="flat-title-row">
+
+                        <h3>
+                            Hummingbird
+                        </h3>
+
+                        <span class="hummingbird-tag">
+                            Private Real Estate
+                        </span>
+
+                    </div>
+
+
+                    <p class="hummingbird-description">
+                        Capital privado para invertir en activos inmobiliarios
+                        de alta calidad y construir patrimonio a largo plazo
+                        mediante proyectos cuidadosamente seleccionados.
+                    </p>
+
+
+                    <div class="flat-features hummingbird-features">
+
+                        <span>
+                            <i class="fas fa-building"></i>
+                            Real estate
+                        </span>
+
+                        <span>
+                            <i class="fas fa-chart-line"></i>
+                            Inversión
+                        </span>
+
+                        <span>
+                            <i class="fas fa-key"></i>
+                            Activos seleccionados
+                        </span>
+
+                    </div>
+
+
+                    <div class="flat-cta">
+                        Más información
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
     </div>
-</div>
+
 </section>
 
+
 <section class="fedora-hero">
+
     <div class="fedora-image">
-        <img src="{% static 'hotel/img/fedora.jpg'%}" alt="Fedora">
+
+        <img
+            src="{% static 'hotel/img/fedora.jpg' %}"
+            alt="Fedora"
+            loading="lazy"
+        >
+
     </div>
 
-    <div class="fedora-content">
-        <span class="fedora-label">Boutique Aparthotel</span>
 
-        <h2 class="fedora-title">Fedora</h2>
+    <div class="fedora-content">
+
+        <span class="fedora-label">
+            Boutique Aparthotel
+        </span>
+
+        <h2 class="fedora-title">
+            Fedora
+        </h2>
 
         <p class="fedora-text">
             Una casa familiar reinterpretada para viajeros que buscan
@@ -148,111 +561,244 @@
             cuidadosamente curada.
         </p>
 
-        <a href="#" class="fedora-button">
-            Descubrir Fedora →
+        <a
+            href="#"
+            class="fedora-button"
+        >
+            Descubrir Fedora
+            <i class="fas fa-arrow-right"></i>
         </a>
-    </div>
-</section>
 
-<section>
-    <div class="banner" style="background-color: #D8C3C8;">
-      <div class="letra" style="width: 80%; font-family: 'Playfair Display', serif; color: #2c2c2c;">
-
-        <!-- Título principal -->
-        <h1 style="font-size: 2.4rem; font-weight: 400; margin-bottom: 1rem;">
-          Book a stylish Room "long term" in Madrid
-        </h1>
-
-        <!-- Subtítulo -->
-        <h6 style="font-size: 1.1rem; font-weight: 400; margin-bottom: 1rem;">
-          Hermosas habitaciones completamente equipadas e independientes en alquiler
-        </h6>
-
-        <!-- Precio en dorado -->
-        <h6 style="font-size: 1.3rem; color: #c1a867; font-weight: bold;">
-          Desde 550 Euros/mes
-        </h6>
-
-      </div>
     </div>
 
 </section>
 
+<section class="pink-collection-section">
 
+    <header class="pink-collection-header">
 
-<section>
-    <div class="scroll-cards-wrapper habitaciones-seccion " style="">
-  {% for habitacion in habitaciones %}
-    <div class="scroll-card card mx-2 shadow-sm" style="width: 350px; border: none; background: #f7f7f7; border-radius: 12px; overflow: hidden;">
-      <a href="{% url 'hotel:habitaciones' habitacion.id %}">
-        <img src="{{ habitacion.image.url }}" class="img-fluid card-img-top" alt="Imagen de habitación" style="height: 200px; object-fit: cover;">
-      </a>
-         <div class="collection-badge">
-        Colección {{ habitacion.propiedad.nombre }}
+        <div class="pink-collection-title">
+
+            <span>
+                By Colección Madrid
+            </span>
+
+            <h2>
+                Book a stylish room<br>
+                long term in Madrid
+            </h2>
+
         </div>
 
-      <div class="card-body px-3 py-3 d-flex flex-column justify-content-between" style="height: 100%;">
+
+        <div class="pink-collection-copy">
+
+            <p>
+                Hermosas habitaciones completamente equipadas
+                e independientes en alquiler.
+            </p>
+
+            <strong>
+                Desde 550 euros al mes
+            </strong>
+
+        </div>
+
+    </header>
+
+
+    <div class="pink-collection-subheader">
+
         <div>
+            <span>
+                Explora la colección
+            </span>
 
-            <div class="flat-title-row">
-                <h5 class="card-title mb-1"><strong>{{ habitacion.nombre }}</strong></h5>
-                {% if habitacion.disponible %}
-                <span class="rental-badge rental-rooms">Disponible</span>
-                {% endif %}
-            </div>
-
-          <h6 class="text-muted mb-3" style="font-size: 0.9rem;">
-            <i class="fas fa-map-marker-alt me-1"></i> Madrid, España
-          </h6>
-
-          <div class="row  text-muted " style="background:#EFEFEF; border-radius: 6px; font-size: 0.85rem; padding: 10px;">
-            <div class="col-6"><i class="fas fa-users me-1"></i>{{ habitacion.capacity }}</div>
-            <div class="col-6"><i class="fas fa-bed me-1"></i>{{ habitacion.get_bed_display }}</div>
-            <div class="col-6"><i class="fas fa-wind me-1"></i>{% if habitacion.aire_acondicionado %}Sí{% else %}No{% endif %}</div>
-            <div class="col-6"><i class="fas fa-tv me-1"></i>Televisión</div>
-            <div class="col-6"><i class="fas fa-umbrella-beach me-1"></i>{% if habitacion.terrace %}Terraza: Sí{% else %}Terraza: No{% endif %}</div>
-            {% if habitacion.doble_bed %}
-              <div class="col-6"><i class="fas fa-bed me-1"></i>Doble</div>
-            {% endif %}
-          </div>
-
-          <p class="card-text mb-3" style="font-size: 0.92rem;">{{ habitacion.subtitle }}</p>
+            <p>
+                Habitaciones disponibles y espacios que forman parte
+                del universo By Colección.
+            </p>
         </div>
 
-
-
-        <div class="price-row" style=";">
-            {% if habitacion.disponible %}
-
-            <div class="price-block">
-                <div class="precio" style="">{{ habitacion.precio }}€ mes</div>
-                <div class="price-label">por mes</div>
-            </div>
-            <a href="https://wa.me/34639446142?text=Hola,%20me%20gustar%C3%ADa%20recibir%20informaci%C3%B3n {{ habitacion.propiedad }} {{ habitacion.nombre }}"
-               class="contact-chip"
-               target="_blank">
-                <i class="fa-brands fa-whatsapp"></i>
-            </a>
-            {% else %}
-
-          <div class="badge-alquilada">Alquilada</div>
-
-            {% endif %}
+        <div class="pink-scroll-hint">
+            Desliza para descubrir
+            <i class="fas fa-arrow-right"></i>
         </div>
-      </div>
-        </div>
-      {% endfor %}
+
     </div>
+
+
+    {% if habitaciones %}
+
+        <div class="collection-rooms-scroll">
+
+            {% for habitacion in habitaciones %}
+
+                <article class="collection-room-card">
+
+                    <a
+                        href="{% url 'hotel:habitacion_galeria' habitacion.id %}"
+                        class="collection-room-image"
+                    >
+
+                        {% if habitacion.image %}
+
+                            <img
+                                src="{{ habitacion.image.url }}"
+                                alt="{{ habitacion.nombre }}"
+                                loading="lazy"
+                            >
+
+                        {% endif %}
+
+
+                        <span class="collection-room-property">
+                            Colección {{ habitacion.propiedad.nombre }}
+                        </span>
+
+
+                        {% if habitacion.contrato_activo or not habitacion.disponible %}
+
+                            <span class="
+                                collection-room-status
+                                collection-room-rented
+                            ">
+                                Alquilada
+                            </span>
+
+                        {% else %}
+
+                            <span class="
+                                collection-room-status
+                                collection-room-available
+                            ">
+                                Disponible
+                            </span>
+
+                        {% endif %}
+
+                    </a>
+
+
+                    <div class="collection-room-content">
+
+                        <div class="collection-room-heading">
+
+                            <div>
+                                <span>
+                                    {{ habitacion.propiedad.nombre }}
+                                </span>
+
+                                <h3>
+                                    <a href="{% url 'hotel:habitacion_galeria' habitacion.id %}">
+                                        {{ habitacion.nombre }}
+                                    </a>
+                                </h3>
+                            </div>
+
+
+                            <div class="collection-room-price">
+
+                                <strong>
+                                    {{ habitacion.precio|floatformat:0 }} €
+                                </strong>
+
+                                <small>
+                                    / mes
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+                        {% if habitacion.subtitle %}
+
+                            <p class="collection-room-description">
+                                {{ habitacion.subtitle|truncatechars:90 }}
+                            </p>
+
+                        {% endif %}
+
+
+                        <div class="collection-room-features">
+
+                            <span>
+                                <i class="fas fa-user"></i>
+                                {{ habitacion.capacity }}
+                            </span>
+
+                            <span>
+                                <i class="fas fa-bed"></i>
+                                {{ habitacion.get_bed_display }}
+                            </span>
+
+                            {% if habitacion.aire_acondicionado %}
+
+                                <span>
+                                    <i class="fas fa-wind"></i>
+                                    Aire
+                                </span>
+
+                            {% endif %}
+
+                            {% if habitacion.terrace %}
+
+                                <span>
+                                    <i class="fas fa-umbrella-beach"></i>
+                                    Terraza
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="collection-room-actions">
+
+                            <a
+                                href="{% url 'hotel:habitacion_galeria' habitacion.id %}"
+                                class="collection-room-discover"
+                            >
+                                Ver habitación
+
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+
+
+                            {% if not habitacion.contrato_activo and habitacion.disponible %}
+
+                                <a
+                                    href="https://wa.me/34639446142?text=Hola,%20me%20gustaría%20recibir%20información%20sobre%20{{ habitacion.propiedad|urlencode }}%20{{ habitacion.nombre|urlencode }}"
+                                    class="collection-room-whatsapp"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="Consultar por WhatsApp"
+                                >
+                                    <i class="fa-brands fa-whatsapp"></i>
+                                </a>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="collection-rooms-empty">
+            Todavía no hay habitaciones en la colección.
+        </div>
+
+    {% endif %}
+
 </section>
-
-
 
 
 {% endblock %}
-
-
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-
-
-</html>

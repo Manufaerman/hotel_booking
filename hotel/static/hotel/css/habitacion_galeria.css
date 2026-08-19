@@ -1,0 +1,1188 @@
+/* =========================================================
+   BY COLECCIÓN — GALERÍA DE HABITACIÓN
+   Safari / Firefox / Chrome
+========================================================= */
+
+:root {
+    --gallery-wine: #745f6d;
+    --gallery-wine-dark: #4b2938;
+    --gallery-wine-soft: #927783;
+
+    --gallery-rose-muted: #c9a7ad;
+    --gallery-rose-muted-dark: #a77f89;
+
+    --gallery-tiffany: #72a5a1;
+    --gallery-tiffany-light: #dcebea;
+
+    --gallery-yellow: #f3e5a4;
+    --gallery-yellow-soft: #fbf4cf;
+
+    --gallery-cream: #f5f0e9;
+    --gallery-paper: #fffdf9;
+
+    --gallery-text: #352a2f;
+    --gallery-text-soft: #756a6e;
+    --gallery-border: rgba(75, 41, 56, 0.11);
+
+    --gallery-shadow:
+        0 18px 45px rgba(55, 34, 43, 0.12);
+
+    /*
+       CONTENEDOR GENERAL
+
+       Más adelante llevaremos estas mismas medidas
+       al base.html para que toda la web comparta eje.
+    */
+
+    --gallery-container: 1440px;
+    --gallery-side: clamp(28px, 6vw, 96px);
+}
+
+
+/* =========================================================
+   AJUSTES GENERALES
+========================================================= */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    width: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    width: 100%;
+    margin: 0;
+    overflow-x: hidden;
+
+    background: var(--gallery-cream);
+    color: var(--gallery-text);
+}
+
+
+/* =========================================================
+   BARRA SECUNDARIA DE HABITACIÓN
+========================================================= */
+
+.gallery-room-bar {
+    position: sticky;
+    top: 0;
+    z-index: 900;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    width: 100%;
+    min-height: 58px;
+
+    /*
+       IMPORTANTE:
+       mismo margen horizontal que la galería.
+    */
+
+    padding:
+        8px
+        max(
+            var(--gallery-side),
+            calc((100vw - var(--gallery-container)) / 2)
+        );
+
+    border-bottom:
+        1px solid rgba(75, 41, 56, 0.12);
+
+    background:
+        rgba(201, 167, 173, 0.97);
+
+    box-shadow:
+        0 7px 20px rgba(75, 41, 56, 0.10);
+
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+
+/* =========================================================
+   NOMBRE + PRECIO
+========================================================= */
+
+.gallery-room-main {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+
+    gap: 22px;
+
+    min-width: 0;
+}
+
+.gallery-room-identity {
+    display: grid;
+    grid-template-columns: auto auto;
+
+    align-items: baseline;
+
+    gap: 2px 10px;
+
+    min-width: 0;
+}
+
+.gallery-room-identity > span {
+    color: var(--gallery-wine-dark);
+
+    font-size: 0.56rem;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: 0.19em;
+}
+
+.gallery-room-identity > strong {
+    min-width: 0;
+
+    color: var(--gallery-wine-dark);
+
+    font-family:
+        "Playfair Display",
+        Georgia,
+        serif;
+
+    font-size: 1.35rem;
+    font-weight: 500;
+
+    line-height: 1;
+}
+
+.gallery-room-identity > small {
+    grid-column: 2;
+
+    color:
+        rgba(75, 41, 56, 0.62);
+
+    font-size: 0.62rem;
+    letter-spacing: 0.035em;
+}
+
+
+/* =========================================================
+   PRECIO
+========================================================= */
+
+.gallery-room-price {
+    min-width: 84px;
+
+    padding-left: 20px;
+
+    border-left:
+        1px solid rgba(75, 41, 56, 0.16);
+
+    text-align: right;
+}
+
+.gallery-room-price strong {
+    display: block;
+
+    color: var(--gallery-wine-dark);
+
+    font-family:
+        "Playfair Display",
+        Georgia,
+        serif;
+
+    font-size: 1.2rem;
+    font-weight: 600;
+
+    line-height: 1;
+
+    white-space: nowrap;
+}
+
+.gallery-room-price span {
+    color:
+        rgba(75, 41, 56, 0.58);
+
+    font-size: 0.62rem;
+}
+
+
+/* =========================================================
+   NAVEGACIÓN DE HABITACIÓN
+========================================================= */
+
+.gallery-room-navigation {
+    display: flex;
+    flex: 1;
+
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 6px;
+
+    min-width: 0;
+}
+
+.gallery-nav-link {
+    display: inline-flex;
+    flex-shrink: 0;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    min-height: 36px;
+
+    padding:
+        0 11px;
+
+    border-radius: 10px;
+
+    color: var(--gallery-wine-dark);
+
+    font-size: 0.70rem;
+    font-weight: 700;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    transition:
+        background-color 0.22s ease,
+        color 0.22s ease;
+}
+
+.gallery-nav-link i {
+    color: var(--gallery-wine-dark);
+
+    font-size: 0.68rem;
+}
+
+.gallery-nav-link:hover {
+    background:
+        rgba(255, 255, 255, 0.28);
+
+    color: var(--gallery-wine-dark);
+}
+
+.gallery-nav-link-primary {
+    margin-left: 5px;
+
+    padding-right: 14px;
+    padding-left: 14px;
+
+    background: var(--gallery-wine-dark);
+    color: #ffffff;
+
+    font-weight: 800;
+}
+
+.gallery-nav-link-primary i {
+    color: var(--gallery-yellow);
+}
+
+.gallery-nav-link-primary:hover {
+    background: var(--gallery-wine);
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   CONTENIDO GENERAL
+
+   El padding lateral se elimina aquí.
+   El propio masonry controla el ancho.
+========================================================= */
+
+.gallery-page {
+    width: 100%;
+    max-width: 100%;
+
+    padding:
+        42px 0
+        80px;
+
+    overflow: hidden;
+
+    background: var(--gallery-cream);
+}
+
+
+/* =========================================================
+   GALERÍA MASONRY
+
+   MISMO EJE HORIZONTAL QUE LA BARRA ROSA
+========================================================= */
+
+.room-masonry-gallery {
+    width:
+        calc(100% - (var(--gallery-side) * 2));
+
+    max-width:
+        var(--gallery-container);
+
+    margin:
+        0 auto;
+
+    -webkit-columns: 3;
+    -moz-columns: 3;
+    columns: 3;
+
+    -webkit-column-gap: 20px;
+    -moz-column-gap: 20px;
+    column-gap: 20px;
+}
+
+
+/* =========================================================
+   ELEMENTO DE GALERÍA
+========================================================= */
+
+.gallery-media {
+    position: relative;
+
+    display: inline-block;
+
+    width: 100%;
+
+    margin:
+        0 0 20px;
+
+    vertical-align: top;
+
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;
+    break-inside: avoid;
+
+    overflow: hidden;
+
+    border:
+        1px solid var(--gallery-border);
+
+    border-radius: 25px;
+
+    background: #ddd4d0;
+
+    box-shadow:
+        var(--gallery-shadow);
+}
+
+
+/* =========================================================
+   IMÁGENES Y VÍDEOS
+========================================================= */
+
+.gallery-media img,
+.gallery-media video {
+    display: block;
+
+    width: 100%;
+    height: auto;
+
+    min-height: 310px;
+    max-height: 680px;
+
+    object-fit: cover;
+    object-position: center;
+
+    -webkit-transform: none;
+    transform: none;
+}
+
+
+/* =========================================================
+   ALTURAS IMÁGENES ANTIGUAS
+========================================================= */
+
+.gallery-media-featured img {
+    height: 510px;
+}
+
+.gallery-media-portrait img {
+    height: 650px;
+}
+
+.gallery-media-landscape img {
+    height: 390px;
+}
+
+
+/* =========================================================
+   ALTURAS ALTERNADAS
+========================================================= */
+
+.gallery-media:nth-child(5n + 1) img,
+.gallery-media:nth-child(5n + 1) video {
+    height: 540px;
+}
+
+.gallery-media:nth-child(5n + 2) img,
+.gallery-media:nth-child(5n + 2) video {
+    height: 390px;
+}
+
+.gallery-media:nth-child(5n + 3) img,
+.gallery-media:nth-child(5n + 3) video {
+    height: 610px;
+}
+
+.gallery-media:nth-child(5n + 4) img,
+.gallery-media:nth-child(5n + 4) video {
+    height: 445px;
+}
+
+.gallery-media:nth-child(5n + 5) img,
+.gallery-media:nth-child(5n + 5) video {
+    height: 520px;
+}
+
+
+/* =========================================================
+   NÚMERO DE FOTO
+========================================================= */
+
+.gallery-media-number {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+
+    z-index: 2;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 38px;
+    height: 38px;
+
+    padding: 0 10px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.42);
+
+    border-radius: 999px;
+
+    background:
+        rgba(75, 41, 56, 0.72);
+
+    color: #ffffff;
+
+    font-size: 0.67rem;
+    font-weight: 800;
+
+    letter-spacing: 0.09em;
+
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+}
+
+
+/* =========================================================
+   INDICADOR DE VÍDEO
+========================================================= */
+
+.gallery-video-indicator {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+
+    z-index: 2;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 42px;
+    height: 42px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.45);
+
+    border-radius: 50%;
+
+    background: var(--gallery-wine);
+    color: var(--gallery-yellow);
+
+    font-size: 0.72rem;
+
+    box-shadow:
+        0 8px 24px rgba(40, 22, 30, 0.25);
+}
+
+
+/* =========================================================
+   PIE DE FOTO
+========================================================= */
+
+.gallery-media figcaption {
+    position: absolute;
+
+    right: 14px;
+    bottom: 14px;
+    left: 14px;
+
+    z-index: 2;
+
+    padding:
+        12px 15px;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.2);
+
+    border-radius: 13px;
+
+    background:
+        rgba(75, 41, 56, 0.84);
+
+    color: #ffffff;
+
+    font-size: 0.78rem;
+    font-weight: 600;
+
+    line-height: 1.4;
+
+    -webkit-backdrop-filter: blur(9px);
+    backdrop-filter: blur(9px);
+}
+
+
+/* =========================================================
+   CIERRE DE GALERÍA
+
+   TAMBIÉN COMPARTE EL MISMO EJE
+========================================================= */
+
+.gallery-closing {
+    display: flex;
+
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 50px;
+
+    width:
+        calc(100% - (var(--gallery-side) * 2));
+
+    max-width:
+        var(--gallery-container);
+
+    margin:
+        54px auto 0;
+
+    padding:
+        38px 0 0;
+
+    border-top:
+        1px solid rgba(75, 41, 56, 0.13);
+}
+
+.gallery-closing-copy {
+    max-width: 720px;
+}
+
+.gallery-closing-copy > span {
+    display: block;
+
+    margin-bottom: 9px;
+
+    color: var(--gallery-wine-soft);
+
+    font-size: 0.68rem;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: 0.19em;
+}
+
+.gallery-closing-copy h2 {
+    margin: 0;
+
+    color: var(--gallery-wine-dark);
+
+    font-family:
+        "Playfair Display",
+        Georgia,
+        serif;
+
+    font-size:
+        clamp(1.8rem, 3vw, 3rem);
+
+    font-weight: 500;
+
+    line-height: 1.1;
+}
+
+.gallery-closing-copy p {
+    max-width: 620px;
+
+    margin:
+        13px 0 0;
+
+    color: var(--gallery-text-soft);
+
+    font-size: 0.96rem;
+    line-height: 1.65;
+}
+
+
+/* =========================================================
+   BOTONES DEL CIERRE
+========================================================= */
+
+.gallery-closing-actions {
+    display: flex;
+    flex-shrink: 0;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+.gallery-closing-secondary,
+.gallery-closing-primary {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 12px;
+
+    min-height: 50px;
+
+    padding:
+        0 19px;
+
+    border-radius: 14px;
+
+    font-size: 0.8rem;
+    font-weight: 800;
+
+    text-decoration: none;
+
+    white-space: nowrap;
+
+    transition:
+        background-color 0.22s ease,
+        color 0.22s ease,
+        border-color 0.22s ease;
+}
+
+.gallery-closing-secondary {
+    border:
+        1px solid rgba(75, 41, 56, 0.16);
+
+    background:
+        rgba(255, 255, 255, 0.46);
+
+    color:
+        var(--gallery-wine-dark);
+}
+
+.gallery-closing-secondary:hover {
+    border-color:
+        rgba(75, 41, 56, 0.28);
+
+    background: #ffffff;
+}
+
+.gallery-closing-primary {
+    border:
+        1px solid var(--gallery-wine-dark);
+
+    background:
+        var(--gallery-wine-dark);
+
+    color: #ffffff;
+}
+
+.gallery-closing-primary i {
+    color:
+        var(--gallery-yellow);
+}
+
+.gallery-closing-primary:hover {
+    border-color:
+        var(--gallery-wine);
+
+    background:
+        var(--gallery-wine);
+}
+
+
+/* =========================================================
+   TABLET GRANDE
+========================================================= */
+
+@media (max-width: 1120px) {
+
+    :root {
+        --gallery-side:
+            clamp(24px, 4vw, 52px);
+    }
+
+    .gallery-room-bar {
+        gap: 14px;
+    }
+
+    .gallery-room-main {
+        gap: 14px;
+    }
+
+    .gallery-room-price {
+        padding-left: 14px;
+    }
+
+    .gallery-nav-link {
+        padding-right: 8px;
+        padding-left: 8px;
+
+        font-size: 0.66rem;
+    }
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1050px) {
+
+    .room-masonry-gallery {
+        -webkit-columns: 2;
+        -moz-columns: 2;
+        columns: 2;
+    }
+
+    .gallery-room-identity > small {
+        display: none;
+    }
+
+    .gallery-closing {
+        align-items: center;
+
+        gap: 30px;
+    }
+}
+
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
+@media (max-width: 700px) {
+
+    :root {
+        --gallery-side: 14px;
+    }
+
+
+    /* =====================================================
+       BARRA SECUNDARIA
+    ===================================================== */
+
+    .gallery-room-bar {
+        position: sticky;
+        top: 0;
+
+        z-index: 900;
+
+        display: block;
+
+        width: 100%;
+
+        min-height: 0;
+
+        padding: 0;
+
+        overflow: hidden;
+
+        background:
+            rgba(201, 167, 173, 0.98);
+
+        border-bottom:
+            1px solid rgba(75, 41, 56, 0.12);
+
+        box-shadow:
+            0 6px 18px rgba(75, 41, 56, 0.10);
+
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+    }
+
+
+    /* =====================================================
+       PRIMERA FILA
+    ===================================================== */
+
+    .gallery-room-main {
+        display: flex;
+
+        align-items: center;
+        justify-content: space-between;
+
+        gap: 10px;
+
+        width: 100%;
+
+        padding:
+            8px
+            var(--gallery-side)
+            6px;
+    }
+
+    .gallery-room-identity {
+        display: flex;
+        flex: 1;
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 1px;
+
+        min-width: 0;
+    }
+
+    .gallery-room-identity > span {
+        font-size: 0.5rem;
+
+        letter-spacing: 0.17em;
+    }
+
+    .gallery-room-identity > strong {
+        display: block;
+
+        max-width: 100%;
+
+        overflow: hidden;
+
+        font-size: 1.05rem;
+
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .gallery-room-identity > small {
+        display: none;
+    }
+
+    .gallery-room-price {
+        flex-shrink: 0;
+
+        min-width: auto;
+
+        padding: 0;
+
+        border: 0;
+
+        text-align: right;
+    }
+
+    .gallery-room-price strong {
+        font-size: 1rem;
+    }
+
+    .gallery-room-price span {
+        font-size: 0.58rem;
+    }
+
+
+    /* =====================================================
+       SEGUNDA FILA: NAVEGACIÓN
+    ===================================================== */
+
+    .gallery-room-navigation {
+        display: flex;
+
+        justify-content: flex-start;
+
+        gap: 4px;
+
+        width: 100%;
+
+        padding:
+            5px
+            var(--gallery-side)
+            7px;
+
+        overflow-x: auto;
+        overflow-y: hidden;
+
+        border-top:
+            1px solid rgba(75, 41, 56, 0.08);
+
+        scrollbar-width: none;
+
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .gallery-room-navigation::-webkit-scrollbar {
+        display: none;
+    }
+
+    .gallery-nav-link {
+        min-height: 30px;
+
+        padding:
+            0 9px;
+
+        border:
+            1px solid rgba(75, 41, 56, 0.10);
+
+        border-radius: 999px;
+
+        background:
+            rgba(255, 255, 255, 0.14);
+
+        color:
+            var(--gallery-wine-dark);
+
+        font-size: 0.62rem;
+    }
+
+    .gallery-nav-link i {
+        color:
+            var(--gallery-wine-dark);
+
+        font-size: 0.6rem;
+    }
+
+    .gallery-nav-link-primary {
+        margin-left: 0;
+
+        border-color:
+            var(--gallery-wine-dark);
+
+        background:
+            var(--gallery-wine-dark);
+
+        color:
+            #ffffff;
+    }
+
+    .gallery-nav-link-primary i {
+        color:
+            var(--gallery-yellow);
+    }
+
+
+    /* =====================================================
+       CONTENIDO
+    ===================================================== */
+
+    .gallery-page {
+        padding:
+            20px 0
+            48px;
+    }
+
+
+    /* =====================================================
+       MASONRY MÓVIL
+    ===================================================== */
+
+    .room-masonry-gallery {
+        width:
+            calc(100% - (var(--gallery-side) * 2));
+
+        -webkit-columns: 2;
+        -moz-columns: 2;
+        columns: 2;
+
+        -webkit-column-gap: 10px;
+        -moz-column-gap: 10px;
+        column-gap: 10px;
+    }
+
+    .gallery-media {
+        margin:
+            0 0 10px;
+
+        border-radius: 17px;
+
+        box-shadow:
+            0 10px 25px
+            rgba(55, 34, 43, 0.1);
+
+        -webkit-column-break-inside: avoid;
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+
+    /* =====================================================
+       ALTURAS MÓVIL
+    ===================================================== */
+
+    .gallery-media img,
+    .gallery-media video,
+    .gallery-media-featured img,
+    .gallery-media-portrait img,
+    .gallery-media-landscape img,
+    .gallery-media:nth-child(5n + 1) img,
+    .gallery-media:nth-child(5n + 1) video,
+    .gallery-media:nth-child(5n + 2) img,
+    .gallery-media:nth-child(5n + 2) video,
+    .gallery-media:nth-child(5n + 3) img,
+    .gallery-media:nth-child(5n + 3) video,
+    .gallery-media:nth-child(5n + 4) img,
+    .gallery-media:nth-child(5n + 4) video,
+    .gallery-media:nth-child(5n + 5) img,
+    .gallery-media:nth-child(5n + 5) video {
+
+        min-height: 220px;
+        max-height: none;
+
+        -webkit-transform: none;
+        transform: none;
+    }
+
+    .gallery-media:nth-child(odd) img,
+    .gallery-media:nth-child(odd) video {
+        height: 300px;
+    }
+
+    .gallery-media:nth-child(even) img,
+    .gallery-media:nth-child(even) video {
+        height: 230px;
+    }
+
+
+    /* =====================================================
+       OVERLAYS
+    ===================================================== */
+
+    .gallery-media-number {
+        top: 10px;
+        left: 10px;
+
+        min-width: 31px;
+        height: 31px;
+
+        font-size: 0.58rem;
+    }
+
+    .gallery-video-indicator {
+        top: 10px;
+        right: 10px;
+
+        width: 34px;
+        height: 34px;
+    }
+
+    .gallery-media figcaption {
+        right: 8px;
+        bottom: 8px;
+        left: 8px;
+
+        padding:
+            9px 10px;
+
+        border-radius: 10px;
+
+        font-size: 0.68rem;
+    }
+
+
+    /* =====================================================
+       CIERRE MÓVIL
+    ===================================================== */
+
+    .gallery-closing {
+        display: block;
+
+        width:
+            calc(100% - (var(--gallery-side) * 2));
+
+        margin-top: 34px;
+
+        padding:
+            28px 0
+            0;
+    }
+
+    .gallery-closing-copy > span {
+        margin-bottom: 7px;
+
+        font-size: 0.6rem;
+    }
+
+    .gallery-closing-copy h2 {
+        font-size: 1.8rem;
+    }
+
+    .gallery-closing-copy p {
+        margin-top: 10px;
+
+        font-size: 0.88rem;
+        line-height: 1.55;
+    }
+
+    .gallery-closing-actions {
+        display: grid;
+
+        grid-template-columns:
+            1fr 1fr;
+
+        gap: 8px;
+
+        width: 100%;
+
+        margin-top: 22px;
+    }
+
+    .gallery-closing-secondary,
+    .gallery-closing-primary {
+        width: 100%;
+
+        min-width: 0;
+        min-height: 48px;
+
+        padding:
+            0 12px;
+
+        font-size: 0.72rem;
+    }
+}
+
+
+/* =========================================================
+   MÓVILES MUY PEQUEÑOS
+========================================================= */
+
+@media (max-width: 390px) {
+
+    :root {
+        --gallery-side: 10px;
+    }
+
+    .gallery-room-identity > strong {
+        font-size: 1rem;
+    }
+
+    .gallery-nav-link {
+        padding-right: 8px;
+        padding-left: 8px;
+    }
+
+    .room-masonry-gallery {
+        -webkit-column-gap: 8px;
+        -moz-column-gap: 8px;
+        column-gap: 8px;
+    }
+
+    .gallery-media {
+        margin-bottom: 8px;
+
+        border-radius: 14px;
+    }
+
+    .gallery-closing-actions {
+        grid-template-columns: 1fr;
+    }
+}

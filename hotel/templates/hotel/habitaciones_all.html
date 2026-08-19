@@ -2,49 +2,169 @@
 {% load static %}
 
 {% block extra-head %}
-<link rel="stylesheet" href="{% static 'hotel/css/habitaciones_all.css'%}">
+<link
+    rel="stylesheet"
+    href="{% static 'hotel/css/habitaciones_all.css' %}"
+>
+
+<link
+    rel="stylesheet"
+    href="{% static 'hotel/css/components/room_card.css' %}"
+>
 {% endblock %}
+
+{% block title %}
+Habitaciones en Madrid | By Colección
+{% endblock %}
+
 {% block description %}
-Explora las colecciones de By Collection y encuentra habitaciones premium en Madrid con espacios cuidadosamente diseñados para una estancia cómoda y tranquila.
+Explora las colecciones de By Colección y encuentra habitaciones
+premium en Madrid con espacios cuidadosamente diseñados para una
+estancia cómoda y tranquila.
 {% endblock %}
+
 {% block content %}
+
+
 <section class="collection collection-tolima">
-  <div class="collection-header">
-    <span>Colección</span>
-    <h2>Tolima</h2>
-  </div>
+
+    <header class="collection-header">
+
+        <span>
+            Colección
+        </span>
+
+        <h2>
+            Tolima
+        </h2>
+
+    </header>
 
 
-  <div class="rooms-scroll">
-    {% for habitacion in habitaciones_tolima %}
-      {% include "hotel/components/habitacion_card.html" %}
-    {% endfor %}
-  </div>
+    <div class="rooms-slider">
+
+        {% for habitacion in habitaciones_tolima %}
+
+            <div class="rooms-slider-item">
+
+                {% include "hotel/components/room_card.html" with habitacion=habitacion %}
+
+            </div>
+
+        {% empty %}
+
+            <div class="collection-empty">
+
+                <span>
+                    By Colección
+                </span>
+
+                <p>
+                    En este momento no hay habitaciones para mostrar
+                    en la colección Tolima.
+                </p>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
 </section>
+
 
 <section class="collection collection-barichara">
-  <div class="collection-header">
-    <span>Colección</span>
-    <h2>Barichara</h2>
-  </div>
 
-  <div class="rooms-scroll">
-    {% for habitacion in habitaciones_barichara %}
-      {% include "hotel/components/habitacion_card.html" %}
-    {% endfor %}
-  </div>
+    <header class="collection-header">
+
+        <span>
+            Colección
+        </span>
+
+        <h2>
+            Barichara
+        </h2>
+
+    </header>
+
+
+    <div class="rooms-slider">
+
+        {% for habitacion in habitaciones_barichara %}
+
+            <div class="rooms-slider-item">
+
+                {% include "hotel/components/room_card.html" with habitacion=habitacion %}
+
+            </div>
+
+        {% empty %}
+
+            <div class="collection-empty">
+
+                <span>
+                    By Colección
+                </span>
+
+                <p>
+                    En este momento no hay habitaciones para mostrar
+                    en la colección Barichara.
+                </p>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
 </section>
+
 
 <section class="collection collection-haro">
-  <div class="collection-header">
-    <span>Colección</span>
-    <h2>Haro</h2>
-  </div>
 
-  <div class="rooms-scroll">
-    {% for habitacion in habitaciones_haro %}
-      {% include "hotel/components/habitacion_card.html" %}
-    {% endfor %}
-  </div>
+    <header class="collection-header">
+
+        <span>
+            Colección
+        </span>
+
+        <h2>
+            Haro
+        </h2>
+
+    </header>
+
+
+    <div class="rooms-slider">
+
+        {% for habitacion in habitaciones_haro %}
+
+            <div class="rooms-slider-item">
+
+                {% include "hotel/components/room_card.html" with habitacion=habitacion %}
+
+            </div>
+
+        {% empty %}
+
+            <div class="collection-empty">
+
+                <span>
+                    By Colección
+                </span>
+
+                <p>
+                    En este momento no hay habitaciones para mostrar
+                    en la colección Haro.
+                </p>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
 </section>
+
+
 {% endblock %}

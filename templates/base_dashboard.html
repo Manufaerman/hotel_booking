@@ -235,8 +235,25 @@
                     aria-hidden="true"
                 ></i>
             </a>
+            <!-- Gastos -->
+            <a
+                href="{% url 'hotel:gastos_dashboard' %}"
+                class="
+                    sidebar-link
 
-
+                    {% if request.resolver_match.url_name == 'gastos_dashboard' or request.resolver_match.url_name == 'crear_gasto' or request.resolver_match.url_name == 'editar_gasto' %}
+                        active
+                    {% endif %}
+                "
+                aria-label="Gestión de gastos"
+                title="Gestión de gastos"
+                data-label="Gastos"
+            >
+                <i
+                    class="fa fa-credit-card"
+                    aria-hidden="true"
+                ></i>
+            </a>
             <!-- Visitas -->
 
             <a
