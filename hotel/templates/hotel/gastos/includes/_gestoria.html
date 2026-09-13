@@ -1,0 +1,229 @@
+<section
+    class="gastos-gestoria-section"
+    id="gestoria"
+>
+
+    <header class="gastos-section-heading">
+
+        <div>
+            <span class="gastos-eyebrow">
+                Documentación
+            </span>
+
+            <h2>
+                Preparar envío a gestoría
+            </h2>
+
+            <p>
+                Revisa qué gastos tienen factura y cuáles
+                necesitan documentación.
+            </p>
+        </div>
+
+        {% if gestoria_lista %}
+
+            <span class="gasto-status gasto-paid">
+                Todo preparado
+            </span>
+
+        {% else %}
+
+            <span class="gasto-status gasto-pending">
+                Revisión pendiente
+            </span>
+
+        {% endif %}
+
+    </header>
+
+
+    <form
+        method="get"
+        action="{% url 'hotel:gastos_dashboard' %}#gestoria"
+        class="gastos-gestoria-filters"
+    >
+        <input
+            type="hidden"
+            name="pais"
+            value="ES"
+        >
+
+        {% if propiedad_seleccionada %}
+            <input
+                type="hidden"
+                name="propiedad"
+                value="{{ propiedad_seleccionada }}"
+            >
+        {% endif %}
+
+
+        <label>
+            Año
+
+            <input
+                type="number"
+                name="gestoria_anio"
+                min="2020"
+                max="2100"
+                value="{{ gestoria_anio }}"
+            >
+        </label>
+
+
+        <label>
+            Trimestre
+
+            <select name="gestoria_trimestre">
+
+                {% for valor, etiqueta in trimestres %}
+
+                    <option
+                        value="{{ valor }}"
+                        {% if gestoria_trimestre == valor %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ etiqueta }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+        </label>
+
+
+        <button
+            type="submit"
+            class="gastos-filter-button"
+        >
+            Ver periodo
+        </button>
+
+    </form>
+
+
+    <div class="gastos-status-grid">
+
+        <article class="gastos-status-card">
+            <span>Total para gestoría</span>
+            <strong>{{ numero_gastos_gestoria }}</strong>
+            <small>
+                {{ total_gastos_gestoria|floatformat:2 }} €
+            </small>
+        </article>
+
+        <article class="gastos-status-card is-ready">
+            <span>Listos para enviar</span>
+            <strong>{{ numero_gastos_gestoria_completos }}</strong>
+            <small>
+                {{ total_gastos_gestoria_completos|floatformat:2 }} €
+            </small>
+        </article>
+
+        <article class="gastos-status-card is-warning">
+            <span>Sin justificante</span>
+            <strong>{{ numero_gastos_gestoria_sin_justificante }}</strong>
+            <small>
+                {{ total_gastos_gestoria_sin_justificante|floatformat:2 }} €
+            </small>
+        </article>
+
+        <article class="gastos-status-card">
+            <span>Solo internos</span>
+            <strong>{{ numero_gastos_internos }}</strong>
+            <small>
+                {{ total_gastos_internos|floatformat:2 }} €
+            </small>
+        </article>
+
+    </div>
+
+
+    {% if gastos_gestoria_sin_justificante %}
+
+        <div class="gastos-pending-list">
+
+            {% for gasto in gastos_gestoria_sin_justificante %}
+
+                <article class="gastos-pending-item">
+
+                    <div>
+                        <h3>{{ gasto.titulo }}</h3>
+
+                        <p>
+                            {{ gasto.fecha|date:"d/m/Y" }}
+
+                            {% if gasto.propiedad %}
+                                · {{ gasto.propiedad.nombre }}
+                            {% else %}
+                                · Sociedad
+                            {% endif %}
+                        </p>
+
+                        <small>
+                            {{ gasto.get_categoria_display }}
+                            · {{ gasto.importe|floatformat:2 }} €
+                        </small>
+                    </div>
+
+
+                    <form
+                        method="post"
+                        enctype="multipart/form-data"
+                        action="{% url 'hotel:editar_gasto' gasto.pk %}"
+                        class="gasto-quick-upload"
+                    >
+                        {% csrf_token %}
+
+                        <input
+                            type="hidden"
+                            name="accion"
+                            value="subir_justificante"
+                        >
+
+                        <input
+                            type="hidden"
+                            name="next"
+                            value="{{ request.get_full_path }}#gestoria"
+                        >
+
+                        <input
+                            id="justificante-{{ gasto.pk }}"
+                            type="file"
+                            name="justificante"
+                            accept=".pdf,.jpg,.jpeg,.png,.webp"
+                            required
+                            hidden
+                            onchange="this.form.submit();"
+                        >
+
+                        <label
+                            for="justificante-{{ gasto.pk }}"
+                            class="gastos-create-button"
+                        >
+                            <i class="fa fa-upload"></i>
+                            Añadir factura
+                        </label>
+
+                    </form>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="gastos-chart-empty">
+            <span>🌿</span>
+
+            <p>
+                No falta ningún justificante para
+                {{ gestoria_periodo }}.
+            </p>
+        </div>
+
+    {% endif %}
+
+</section>

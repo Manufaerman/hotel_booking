@@ -1,0 +1,120 @@
+<section
+    class="gastos-summary"
+    aria-label="Resumen financiero"
+>
+
+    <!-- TOTAL HISTÓRICO / PREVISIÓN -->
+
+    <article
+        class="
+            gastos-summary-card
+            gastos-summary-expected
+        "
+    >
+
+        {% if es_argentina %}
+
+            <span>
+                Total invertido en
+                {{ proyecto_actual.nombre|default:"Fedora" }}
+            </span>
+
+            <strong>
+                {{ total_historico|default:0|floatformat:2 }}
+                US$
+            </strong>
+
+            <small>
+                Acumulado desde el inicio del proyecto
+            </small>
+
+        {% else %}
+
+            <span>
+                Esperado en {{ nombre_mes_actual }}
+            </span>
+
+            <strong>
+                {{ total_esperado_mes|default:0|floatformat:2 }}
+                €
+            </strong>
+
+            <small>
+                Previsión y movimientos registrados
+            </small>
+
+        {% endif %}
+
+    </article>
+
+
+    <!-- GASTADO ESTE MES -->
+
+    <article class="gastos-summary-card gastos-summary-current">
+
+        <span>
+            Gastado este mes
+        </span>
+
+        <strong>
+            {{ total_mes_actual|default:0|floatformat:2 }}
+            {{ simbolo_moneda }}
+        </strong>
+
+        <small>
+            Total real de {{ nombre_mes_actual }}
+        </small>
+
+    </article>
+
+
+    <!-- PENDIENTE PREVISTO -->
+
+    <article
+        class="
+            gastos-summary-card
+            gastos-summary-pending
+        "
+    >
+
+        <span>
+            Pendiente previsto
+        </span>
+
+        <strong>
+            {{ pendiente_previsto_mes|default:0|floatformat:2 }}
+            {{ simbolo_moneda }}
+        </strong>
+
+        <small>
+            Gastos esperados todavía no producidos
+        </small>
+
+    </article>
+
+
+    <!-- MES ANTERIOR -->
+
+    <article
+        class="
+            gastos-summary-card
+            gastos-summary-year
+        "
+    >
+
+        <span>
+            Total de {{ nombre_mes_anterior }}
+        </span>
+
+        <strong>
+            {{ total_mes_anterior|default:0|floatformat:2 }}
+            {{ simbolo_moneda }}
+        </strong>
+
+        <small>
+            Referencia del mes anterior
+        </small>
+
+    </article>
+
+</section>

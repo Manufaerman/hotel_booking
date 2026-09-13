@@ -1,0 +1,815 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block title %}
+    Proyectos | By Colección
+{% endblock %}
+
+{% block extra-head %}
+<link
+    rel="stylesheet"
+    href="{% static 'hotel/css/proyectos_dashboard.css' %}"
+>
+{% endblock %}
+
+{% block content %}
+{% url 'hotel:crear_proyecto' as crear_proyecto_url %}
+<main class="proyectos-page">
+
+    <!-- ===================================================
+         ENCABEZADO
+    ==================================================== -->
+
+
+
+
+    <!-- ===================================================
+         MENSAJES
+    ==================================================== -->
+
+    {% if messages %}
+
+        <div
+            class="proyectos-messages"
+            aria-live="polite"
+        >
+
+            {% for message in messages %}
+
+                <div
+                    class="
+                        proyectos-message
+                        {% if message.tags %}
+                            proyectos-message-{{ message.tags }}
+                        {% endif %}
+                    "
+                    role="status"
+                >
+                    <span
+                        class="proyectos-message-icon"
+                        aria-hidden="true"
+                    >
+                        {% if "success" in message.tags %}
+                            ✓
+                        {% elif "error" in message.tags %}
+                            !
+                        {% else %}
+                            i
+                        {% endif %}
+                    </span>
+
+                    <p>
+                        {{ message }}
+                    </p>
+
+                    <button
+                        type="button"
+                        class="proyectos-message-close"
+                        aria-label="Cerrar mensaje"
+                        onclick="this.closest('.proyectos-message').remove();"
+                    >
+                        ×
+                    </button>
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- ===================================================
+         RESUMEN
+    ==================================================== -->
+
+    <section class="proyectos-summary">
+
+        <article class="proyectos-summary-card">
+
+            <span>
+                Proyectos visibles
+            </span>
+
+            <strong>
+                {{ numero_proyectos|default:0 }}
+            </strong>
+
+            <small>
+                Con los filtros actuales
+            </small>
+
+        </article>
+
+
+        <article class="proyectos-summary-card proyectos-summary-active">
+
+            <span>
+                En marcha
+            </span>
+
+            <strong>
+                {{ numero_activos|default:0 }}
+            </strong>
+
+            <small>
+                Proyectos actualmente activos
+            </small>
+
+        </article>
+
+
+        <article class="proyectos-summary-card proyectos-summary-paused">
+
+            <span>
+                Pausados
+            </span>
+
+            <strong>
+                {{ numero_pausados|default:0 }}
+            </strong>
+
+            <small>
+                Pendientes de reactivación
+            </small>
+
+        </article>
+
+
+        <article class="proyectos-summary-card proyectos-summary-finished">
+
+            <span>
+                Finalizados
+            </span>
+
+            <strong>
+                {{ numero_finalizados|default:0 }}
+            </strong>
+
+            <small>
+                Proyectos completados
+            </small>
+
+        </article>
+
+    </section>
+
+
+    <!-- ===================================================
+         TOTALES POR PAÍS
+    ==================================================== -->
+
+    <section class="proyectos-country-summary">
+
+        <article class="proyectos-country-card">
+
+            <div>
+                <span class="proyectos-country-flag">
+                    🇪🇸
+                </span>
+
+                <div>
+                    <small>
+                        España
+                    </small>
+
+                    <h2>
+                        Inversión acumulada
+                    </h2>
+                </div>
+            </div>
+
+            <strong>
+                {{ total_españa|default:0|floatformat:2 }} €
+            </strong>
+
+        </article>
+
+
+        <article class="proyectos-country-card">
+
+            <div>
+                <span class="proyectos-country-flag">
+                    🇦🇷
+                </span>
+
+                <div>
+                    <small>
+                        Argentina
+                    </small>
+
+                    <h2>
+                        Inversión acumulada
+                    </h2>
+                </div>
+            </div>
+
+            <strong>
+                $ {{ total_argentina|default:0|floatformat:2 }}
+            </strong>
+
+        </article>
+
+    </section>
+
+
+    <!-- ===================================================
+         FILTROS
+    ==================================================== -->
+
+    <section class="proyectos-content-card">
+
+        <header class="proyectos-section-header">
+
+            <div>
+                <span class="proyectos-eyebrow">
+                    Cartera
+                </span>
+
+                <h2>
+                    Todos los proyectos
+                </h2>
+            </div>
+
+            <span class="proyectos-results-count">
+                {{ numero_proyectos }}
+                proyecto{{ numero_proyectos|pluralize }}
+            </span>
+
+        </header>
+
+
+        <form
+            method="get"
+            action="{% url 'hotel:proyectos_dashboard' %}#listado-proyectos"
+            class="proyectos-filters"
+        >
+
+            <div class="proyectos-filter-search">
+
+                <label for="proyectos-busqueda">
+                    Buscar
+                </label>
+
+                <div class="proyectos-search-control">
+
+                    <i
+                        class="fa fa-search"
+                        aria-hidden="true"
+                    ></i>
+
+                    <input
+                        id="proyectos-busqueda"
+                        type="search"
+                        name="q"
+                        value="{{ busqueda }}"
+                        placeholder="Nombre, ciudad o provincia"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="proyectos-filter-field">
+
+                <label for="proyectos-pais">
+                    País
+                </label>
+
+                <select
+                    id="proyectos-pais"
+                    name="pais"
+                >
+                    <option value="">
+                        Todos
+                    </option>
+
+                    {% for valor, etiqueta in paises %}
+
+                        <option
+                            value="{{ valor }}"
+                            {% if pais_seleccionado == valor %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ etiqueta }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <div class="proyectos-filter-field">
+
+                <label for="proyectos-estado">
+                    Estado
+                </label>
+
+                <select
+                    id="proyectos-estado"
+                    name="estado"
+                >
+                    <option value="">
+                        Todos
+                    </option>
+
+                    {% for valor, etiqueta in estados %}
+
+                        <option
+                            value="{{ valor }}"
+                            {% if estado_seleccionado == valor %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ etiqueta }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="proyectos-filter-submit"
+            >
+                <i
+                    class="fa fa-filter"
+                    aria-hidden="true"
+                ></i>
+
+                Filtrar
+            </button>
+
+
+            <a
+                href="{% url 'hotel:proyectos_dashboard' %}#listado-proyectos"
+                class="proyectos-filter-clear"
+            >
+                Limpiar
+            </a>
+
+        </form>
+
+
+        <!-- ===================================================
+             LISTADO
+        ==================================================== -->
+
+        <div id="listado-proyectos">
+
+            {% if proyectos %}
+
+                <div class="proyectos-grid">
+
+                    {% for proyecto in proyectos %}
+
+                        <article
+                            class="
+                                proyecto-card
+                                {% if not proyecto.activo %}
+                                    proyecto-card-inactive
+                                {% endif %}
+                            "
+                        >
+
+                            <header class="proyecto-card-header">
+
+                                <div class="proyecto-card-location">
+
+                                    <span>
+                                        {% if proyecto.pais == "AR" %}
+                                            🇦🇷
+                                        {% else %}
+                                            🇪🇸
+                                        {% endif %}
+                                    </span>
+
+                                    <small>
+                                        {% if proyecto.provincia %}
+
+                                            {{ proyecto.provincia }}
+
+                                        {% elif proyecto.ciudad %}
+
+                                            {{ proyecto.ciudad }}
+
+                                        {% else %}
+
+                                            Sin ubicación
+
+                                        {% endif %}
+                                    </small>
+
+                                </div>
+
+
+                                <span
+                                    class="
+                                        proyecto-status
+                                        proyecto-status-{{ proyecto.estado }}
+                                    "
+                                >
+                                    {{ proyecto.get_estado_display }}
+                                </span>
+
+                            </header>
+
+
+                            <div class="proyecto-card-main">
+
+                                <span class="proyecto-type">
+                                    {{ proyecto.get_tipo_display }}
+                                </span>
+
+                                <h3>
+                                    {{ proyecto.nombre }}
+                                </h3>
+
+                                {% if proyecto.descripcion %}
+
+                                    <p>
+                                        {{ proyecto.descripcion|truncatewords:24 }}
+                                    </p>
+
+                                {% else %}
+
+                                    <p class="proyecto-description-empty">
+                                        Todavía no se ha añadido una
+                                        descripción del proyecto.
+                                    </p>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="proyecto-financial-summary">
+
+                                <div>
+                                    <span>
+                                        Este mes
+                                    </span>
+
+                                    <strong>
+                                        {% if proyecto.pais == "AR" %}
+                                            $
+                                        {% endif %}
+
+                                        {{ proyecto.total_mes|floatformat:2 }}
+
+                                        {% if proyecto.pais == "ES" %}
+                                            €
+                                        {% endif %}
+                                    </strong>
+                                </div>
+
+
+                                <div>
+                                    <span>
+                                        {{ anio_actual }}
+                                    </span>
+
+                                    <strong>
+                                        {% if proyecto.pais == "AR" %}
+                                            $
+                                        {% endif %}
+
+                                        {{ proyecto.total_anio|floatformat:2 }}
+
+                                        {% if proyecto.pais == "ES" %}
+                                            €
+                                        {% endif %}
+                                    </strong>
+                                </div>
+
+
+                                <div>
+                                    <span>
+                                        Histórico
+                                    </span>
+
+                                    <strong>
+                                        {% if proyecto.pais == "AR" %}
+                                            $
+                                        {% endif %}
+
+                                        {{ proyecto.total_historico|floatformat:2 }}
+
+                                        {% if proyecto.pais == "ES" %}
+                                            €
+                                        {% endif %}
+                                    </strong>
+                                </div>
+
+                            </div>
+
+
+                            {% if proyecto.numero_sin_factura %}
+
+                                <div class="proyecto-document-warning">
+
+                                    <i
+                                        class="fa fa-file-circle-exclamation"
+                                        aria-hidden="true"
+                                    ></i>
+
+                                    <span>
+                                        {{ proyecto.numero_sin_factura }}
+                                        gasto{{ proyecto.numero_sin_factura|pluralize }}
+                                        sin factura
+                                    </span>
+
+                                </div>
+
+                            {% else %}
+
+                                <div class="proyecto-document-ready">
+
+                                    <i
+                                        class="fa fa-circle-check"
+                                        aria-hidden="true"
+                                    ></i>
+
+                                    <span>
+                                        Documentación al día
+                                    </span>
+
+                                </div>
+
+                            {% endif %}
+
+
+                            <footer class="proyecto-card-actions">
+
+                                <a
+                                    href="{% url 'hotel:editar_proyecto' proyecto.pk %}"
+                                    class="proyecto-action proyecto-action-edit"
+                                >
+                                    <i
+                                        class="fa fa-pencil"
+                                        aria-hidden="true"
+                                    ></i>
+
+                                    Editar
+                                </a>
+
+
+                                <form
+                                    method="post"
+                                    action="{% url 'hotel:cambiar_estado_proyecto' proyecto.pk %}"
+                                    class="proyecto-state-form"
+                                >
+                                    {% csrf_token %}
+
+                                    {% if proyecto.estado == "pausado" %}
+
+                                        <input
+                                            type="hidden"
+                                            name="estado"
+                                            value="en_progreso"
+                                        >
+
+                                        <button
+                                            type="submit"
+                                            class="proyecto-action proyecto-action-state"
+                                        >
+                                            <i
+                                                class="fa fa-play"
+                                                aria-hidden="true"
+                                            ></i>
+
+                                            Reactivar
+                                        </button>
+
+                                    {% elif proyecto.estado == "finalizado" %}
+
+                                        <input
+                                            type="hidden"
+                                            name="estado"
+                                            value="planificacion"
+                                        >
+
+                                        <button
+                                            type="submit"
+                                            class="proyecto-action proyecto-action-state"
+                                        >
+                                            <i
+                                                class="fa fa-rotate-left"
+                                                aria-hidden="true"
+                                            ></i>
+
+                                            Reabrir
+                                        </button>
+
+                                    {% else %}
+
+                                        <input
+                                            type="hidden"
+                                            name="estado"
+                                            value="pausado"
+                                        >
+
+                                        <button
+                                            type="submit"
+                                            class="proyecto-action proyecto-action-state"
+                                        >
+                                            <i
+                                                class="fa fa-pause"
+                                                aria-hidden="true"
+                                            ></i>
+
+                                            Pausar
+                                        </button>
+
+                                    {% endif %}
+
+                                </form>
+
+                            </footer>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="proyectos-empty">
+
+                    <span aria-hidden="true">
+                        🌱
+                    </span>
+
+                    <h3>
+                        No hay proyectos para estos filtros
+                    </h3>
+
+                    <p>
+                        Limpia los filtros o registra el primer
+                        proyecto de By Colección.
+                    </p>
+
+                    <a
+                        href="{% url 'hotel:crear_proyecto' %}"
+                        class="proyectos-create-simple"
+                    >
+                        Crear proyecto
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+
+    <!-- ===================================================
+         ÚLTIMOS GASTOS DE PROYECTOS
+    ==================================================== -->
+
+    <section class="proyectos-content-card">
+
+        <header class="proyectos-section-header">
+
+            <div>
+                <span class="proyectos-eyebrow">
+                    Actividad
+                </span>
+
+                <h2>
+                    Últimos gastos de proyectos
+                </h2>
+            </div>
+
+        </header>
+
+
+        {% if ultimos_gastos %}
+
+            <div class="proyectos-expenses-list">
+
+                {% for gasto in ultimos_gastos %}
+
+                    <article class="proyecto-expense">
+
+                        <div class="proyecto-expense-date">
+                            <span>
+                                {{ gasto.fecha|date:"d" }}
+                            </span>
+
+                            <small>
+                                {{ gasto.fecha|date:"M Y" }}
+                            </small>
+                        </div>
+
+
+                        <div class="proyecto-expense-info">
+
+                            <strong>
+                                {{ gasto.titulo }}
+                            </strong>
+
+                            <span>
+                                {{ gasto.proyecto.nombre }}
+                                · {{ gasto.get_categoria_display }}
+                            </span>
+
+                        </div>
+
+
+                        <strong class="proyecto-expense-amount">
+
+                            {% if gasto.proyecto.pais == "AR" %}
+                                $
+                            {% endif %}
+
+                            {{ gasto.importe|floatformat:2 }}
+
+                            {% if gasto.proyecto.pais == "ES" %}
+                                €
+                            {% endif %}
+
+                        </strong>
+
+
+                        {% if gasto.justificante %}
+
+                            <a
+                                href="{{ gasto.justificante.url }}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="proyecto-expense-document"
+                                aria-label="Ver factura"
+                                title="Ver factura"
+                            >
+                                <i
+                                    class="fa fa-file"
+                                    aria-hidden="true"
+                                ></i>
+                            </a>
+
+                        {% elif gasto.destino_gestoria == "gestoria" %}
+
+                            <span
+                                class="proyecto-expense-missing"
+                                title="Falta la factura"
+                            >
+                                <i
+                                    class="fa fa-triangle-exclamation"
+                                    aria-hidden="true"
+                                ></i>
+                            </span>
+
+                        {% endif %}
+
+
+                        <a
+                            href="{% url 'hotel:editar_gasto' gasto.pk %}"
+                            class="proyecto-expense-edit"
+                            aria-label="Editar gasto"
+                            title="Editar gasto"
+                        >
+                            <i
+                                class="fa fa-pencil"
+                                aria-hidden="true"
+                            ></i>
+                        </a>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="proyectos-empty proyectos-empty-small">
+
+                <span aria-hidden="true">
+                    🧾
+                </span>
+
+                <p>
+                    Todavía no hay gastos vinculados
+                    a los proyectos mostrados.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</main>
+
+{% endblock %}

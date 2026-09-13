@@ -1,0 +1,522 @@
+/* =========================================================
+   BY COLECCIÓN — FORMULARIO DE PROYECTO
+========================================================= */
+
+:root {
+    --form-wine: #56293b;
+    --form-wine-dark: #3f1d2b;
+    --form-wine-soft: #745f6d;
+
+    --form-tiffany: #72a5a1;
+    --form-tiffany-dark: #4f817d;
+    --form-tiffany-light: #dcebea;
+
+    --form-yellow-light: #fbf4cf;
+    --form-danger: #a75e4c;
+    --form-danger-light: #f7e5df;
+
+    --form-cream: #f5f0e9;
+    --form-paper: #fffdf9;
+    --form-white: #ffffff;
+
+    --form-text: #352a2f;
+    --form-text-soft: #756a6e;
+
+    --form-border: rgba(75, 41, 56, 0.11);
+    --form-border-strong: rgba(75, 41, 56, 0.2);
+
+    --form-shadow:
+        0 20px 50px rgba(55, 34, 43, 0.1);
+
+    --form-container: 980px;
+    --form-side: clamp(16px, 5vw, 64px);
+}
+
+
+/* =========================================================
+   BASE
+========================================================= */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--form-cream);
+    color: var(--form-text);
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid rgba(114, 165, 161, 0.3);
+    outline-offset: 3px;
+}
+
+
+/* =========================================================
+   CONTENEDOR
+========================================================= */
+
+.proyecto-form-page {
+    width: min(
+        calc(100% - (var(--form-side) * 2)),
+        var(--form-container)
+    );
+    margin: 0 auto;
+    padding: clamp(22px, 5vw, 55px) 0 80px;
+}
+
+.proyectos-eyebrow {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--form-tiffany-dark);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   ENCABEZADO
+========================================================= */
+
+.proyecto-form-header {
+    margin-bottom: 28px;
+}
+
+.proyecto-form-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 28px;
+    color: var(--form-wine);
+    font-size: 0.82rem;
+    font-weight: 750;
+    text-decoration: none;
+}
+
+.proyecto-form-back:hover {
+    color: var(--form-tiffany-dark);
+}
+
+.proyecto-form-header h1 {
+    margin: 0;
+    color: var(--form-wine);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(2.5rem, 7vw, 4.5rem);
+    font-weight: 500;
+    line-height: 1;
+}
+
+.proyecto-form-header p {
+    max-width: 650px;
+    margin: 13px 0 0;
+    color: var(--form-text-soft);
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   MENSAJES
+========================================================= */
+
+.proyectos-messages {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.proyectos-message {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 15px;
+    border: 1px solid var(--form-border);
+    border-radius: 15px;
+    background: var(--form-paper);
+}
+
+.proyectos-message-success {
+    background: var(--form-tiffany-light);
+    color: var(--form-tiffany-dark);
+}
+
+.proyectos-message-error {
+    background: var(--form-danger-light);
+    color: var(--form-danger);
+}
+
+.proyectos-message-icon {
+    display: grid;
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+    place-items: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.65);
+    font-weight: 900;
+}
+
+.proyectos-message p {
+    margin: 0;
+}
+
+
+/* =========================================================
+   TARJETA DEL FORMULARIO
+========================================================= */
+
+.proyecto-form-card {
+    padding: clamp(20px, 4vw, 38px);
+    border: 1px solid var(--form-border);
+    border-radius: 28px;
+    background: var(--form-paper);
+    box-shadow: var(--form-shadow);
+}
+
+.proyecto-form {
+    display: grid;
+    gap: 28px;
+}
+
+.proyecto-form-errors {
+    padding: 14px 16px;
+    border: 1px solid rgba(167, 94, 76, 0.25);
+    border-radius: 14px;
+    background: var(--form-danger-light);
+    color: var(--form-danger);
+}
+
+.proyecto-form-errors p {
+    margin: 0;
+}
+
+
+/* =========================================================
+   SECCIONES
+========================================================= */
+
+.proyecto-form-section {
+    min-width: 0;
+    margin: 0;
+    padding: 0 0 27px;
+    border: 0;
+    border-bottom: 1px solid var(--form-border);
+}
+
+.proyecto-form-section:last-of-type {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+.proyecto-form-section legend {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 0;
+    color: var(--form-wine);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.35rem;
+    font-weight: 600;
+}
+
+.proyecto-form-section legend span {
+    display: grid;
+    flex: 0 0 32px;
+    width: 32px;
+    height: 32px;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--form-tiffany-light);
+    color: var(--form-tiffany-dark);
+    font-family: system-ui, sans-serif;
+    font-size: 0.76rem;
+    font-weight: 850;
+}
+
+
+/* =========================================================
+   CAMPOS
+========================================================= */
+
+.proyecto-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.proyecto-form-group {
+    display: grid;
+    align-content: start;
+    gap: 7px;
+    min-width: 0;
+}
+
+.proyecto-form-full {
+    grid-column: 1 / -1;
+}
+
+.proyecto-form-group label {
+    color: var(--form-wine-soft);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.proyectos-control {
+    width: 100%;
+    min-height: 48px;
+    padding: 10px 13px;
+    border: 1px solid var(--form-border-strong);
+    border-radius: 13px;
+    background: var(--form-white);
+    color: var(--form-text);
+    transition:
+        border-color 150ms ease,
+        box-shadow 150ms ease,
+        background-color 150ms ease;
+}
+
+.proyectos-control:hover {
+    border-color: rgba(75, 41, 56, 0.32);
+}
+
+.proyectos-control:focus {
+    border-color: var(--form-tiffany);
+    outline: 0;
+    box-shadow:
+        0 0 0 4px rgba(114, 165, 161, 0.14);
+}
+
+.proyectos-control::placeholder {
+    color: rgba(117, 106, 110, 0.62);
+}
+
+.proyectos-textarea {
+    min-height: 125px;
+    resize: vertical;
+    line-height: 1.55;
+}
+
+.proyecto-field-error {
+    color: var(--form-danger);
+    font-size: 0.74rem;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   CHECKBOX DE ESTADO
+========================================================= */
+
+.proyecto-form-check {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    min-height: 76px;
+    padding: 14px;
+    border: 1px solid var(--form-border);
+    border-radius: 14px;
+    background: var(--form-cream);
+}
+
+.proyectos-checkbox {
+    flex: 0 0 auto;
+    width: 19px;
+    height: 19px;
+    margin: 2px 0 0;
+    accent-color: var(--form-tiffany-dark);
+}
+
+.proyecto-form-check label {
+    display: grid;
+    gap: 4px;
+    cursor: pointer;
+}
+
+.proyecto-form-check strong {
+    color: var(--form-wine);
+    font-size: 0.84rem;
+}
+
+.proyecto-form-check small {
+    color: var(--form-text-soft);
+    font-size: 0.72rem;
+    line-height: 1.45;
+}
+
+.proyecto-form-check .proyecto-field-error {
+    width: 100%;
+}
+
+
+/* =========================================================
+   ACCIONES
+========================================================= */
+
+.proyecto-form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 11px;
+    padding-top: 4px;
+}
+
+.proyecto-form-cancel,
+.proyecto-form-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 47px;
+    padding: 10px 20px;
+    border-radius: 13px;
+    font-size: 0.84rem;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.proyecto-form-cancel {
+    border: 1px solid var(--form-border);
+    background: transparent;
+    color: var(--form-wine);
+}
+
+.proyecto-form-submit {
+    border: 1px solid var(--form-wine);
+    background: var(--form-wine);
+    box-shadow:
+        0 8px 18px rgba(75, 41, 56, 0.16);
+    color: var(--form-white);
+    cursor: pointer;
+}
+
+.proyecto-form-submit:hover {
+    background: var(--form-wine-dark);
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 760px) {
+    :root {
+        --form-side: 13px;
+    }
+
+    .proyecto-form-page {
+        padding-top: 17px;
+        padding-bottom: 50px;
+    }
+
+    .proyecto-form-back {
+        margin-bottom: 22px;
+    }
+
+    .proyecto-form-header {
+        margin-bottom: 21px;
+    }
+
+    .proyecto-form-header h1 {
+        font-size: 2.65rem;
+    }
+
+    .proyecto-form-card {
+        padding: 18px;
+        border-radius: 21px;
+    }
+
+    .proyecto-form {
+        gap: 23px;
+    }
+
+    .proyecto-form-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .proyecto-form-full {
+        grid-column: 1;
+    }
+
+    .proyecto-form-section {
+        padding-bottom: 23px;
+    }
+
+    .proyecto-form-section legend {
+        margin-bottom: 17px;
+        font-size: 1.2rem;
+    }
+
+    .proyecto-form-actions {
+        display: grid;
+        grid-template-columns: 0.8fr 1.2fr;
+    }
+
+    .proyecto-form-cancel,
+    .proyecto-form-submit {
+        width: 100%;
+        padding-inline: 10px;
+    }
+}
+
+
+/* =========================================================
+   MÓVIL PEQUEÑO
+========================================================= */
+
+@media (max-width: 420px) {
+    .proyecto-form-header p {
+        font-size: 0.85rem;
+    }
+
+    .proyecto-form-card {
+        padding: 15px;
+    }
+
+    .proyecto-form-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .proyecto-form-submit {
+        grid-row: 1;
+    }
+
+    .proyecto-form-cancel {
+        grid-row: 2;
+    }
+}
+
+
+/* =========================================================
+   ACCESIBILIDAD
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
+}

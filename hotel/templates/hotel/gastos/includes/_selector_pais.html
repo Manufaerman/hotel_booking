@@ -1,0 +1,145 @@
+
+<!-- CABECERA COMPACTA -->
+
+
+
+
+
+
+
+
+<!-- PAÍS -->
+
+<nav
+    class="gastos-country-switch"
+    aria-label="País de los gastos"
+>
+
+    <a
+        href="{% url 'hotel:gastos_dashboard' %}?pais=ES"
+        class="
+            gastos-country-button
+            {% if es_espana %}
+                is-selected
+            {% endif %}
+        "
+    >
+        España
+    </a>
+
+
+    <a
+        href="{% url 'hotel:gastos_dashboard' %}?pais=AR"
+        class="
+            gastos-country-button
+            {% if es_argentina %}
+                is-selected
+            {% endif %}
+        "
+    >
+        Argentina
+    </a>
+
+</nav>
+
+
+<!-- PROYECTO ARGENTINO -->
+
+{% if es_argentina and proyectos_disponibles %}
+
+    <nav
+        class="gastos-project-switch"
+        aria-label="Proyecto argentino"
+    >
+
+        {% for proyecto in proyectos_disponibles %}
+
+            <a
+                href="{% url 'hotel:gastos_dashboard' %}?pais=AR&proyecto={{ proyecto.pk }}"
+                class="
+                    gastos-project-button
+                    {% if proyecto_actual.pk == proyecto.pk %}
+                        is-selected
+                    {% endif %}
+                "
+            >
+                {{ proyecto.nombre }}
+            </a>
+
+        {% endfor %}
+
+    </nav>
+
+{% endif %}
+
+
+<!-- MENSAJES -->
+
+{% if messages %}
+
+    <div
+        class="gastos-messages"
+        aria-live="polite"
+    >
+
+        {% for message in messages %}
+
+            <div
+                class="
+                    gastos-message
+                    gastos-message-{{ message.tags|default:'info' }}
+                "
+            >
+
+                <span aria-hidden="true">
+                    {% if "success" in message.tags %}
+                        ✓
+                    {% elif "error" in message.tags %}
+                        !
+                    {% else %}
+                        i
+                    {% endif %}
+                </span>
+
+                <p>
+                    {{ message }}
+                </p>
+
+                <button
+                    type="button"
+                    aria-label="Cerrar mensaje"
+                    onclick="this.parentElement.remove();"
+                >
+                    ×
+                </button>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+{% endif %}
+
+
+<!-- ADVERTENCIA DE CONVERSIÓN -->
+
+{% if es_argentina and hay_gastos_sin_conversion %}
+
+    <aside class="gastos-conversion-warning">
+
+        <div>
+            <strong>
+                {{ numero_sin_conversion }}
+                gasto{{ numero_sin_conversion|pluralize }}
+                sin convertir
+            </strong>
+
+            <p>
+                Falta registrar su cotización blue.
+            </p>
+        </div>
+
+    </aside>
+
+{% endif %}

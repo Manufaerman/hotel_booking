@@ -520,198 +520,797 @@ img {
     letter-spacing: 0.4px;
 }
 
+/* =========================================================
+   PROPIEDADES — COLECCIÓN AZUL PETRÓLEO
+========================================================= */
 
 /* =========================================================
-   PROPIEDADES
+   PROPIEDADES — FONDO SAGE
 ========================================================= */
 
 .flat-section {
-    width: 100%;
-    padding: 62px 35px 45px;
+    position: relative;
 
-    background: var(--home-cream);
+    width: 100%;
+    margin: 30px 0;
+    padding:
+        clamp(78px, 9vw, 112px)
+        clamp(18px, 5vw, 70px)
+        clamp(58px, 8vw, 96px);
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at 92% 4%,
+            rgba(229, 236, 229, 0.32),
+            transparent 32%
+        ),
+        radial-gradient(
+            circle at 5% 100%,
+            rgba(243, 229, 164, 0.14),
+            transparent 35%
+        ),
+        linear-gradient(
+            145deg,
+            #9aaa9f 0%,
+            #899c91 50%,
+            #74877c 100%
+        );
 }
 
+.flat-section::before {
+    content: "";
+
+    position: absolute;
+    top: -105px;
+    right: -90px;
+
+    width: 280px;
+    height: 280px;
+
+    border:
+        1px solid rgba(255, 253, 249, 0.18);
+
+    border-radius: 50%;
+
+    pointer-events: none;
+}
+
+.flat-section::after {
+    content: "NUESTRAS CASAS  ·  ESPACIOS CON IDENTIDAD PROPIA";
+
+    position: absolute;
+    top: 34px;
+    left: clamp(32px, 7vw, 104px);
+    z-index: 2;
+
+    color: #fff8e1;
+
+    font-size: 0.67rem;
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: 0.2em;
+}
+
+
+/* =========================================================
+   SEPARACIÓN
+========================================================= */
+
 .flats-grid {
+    position: relative;
+    z-index: 1;
+
     width: min(1320px, 100%);
     margin: 0 auto;
     padding: 0;
+
+    row-gap: 48px;
 }
 
 .flats-grid > [class*="col-"] {
     display: flex;
 
-    margin-bottom: 30px;
+    margin-bottom: 0;
 }
 
+
+/* =========================================================
+   TARJETAS EN CREMA SAGE
+========================================================= */
+
 .flat-card {
+    position: relative;
+
     display: flex;
     flex-direction: column;
 
     width: 100%;
     min-height: 100%;
-    padding: 14px;
+    padding: 13px;
 
     overflow: hidden;
 
-    border: 1px solid var(--home-border);
-    border-radius: 26px;
+    border:
+        1px solid rgba(255, 253, 249, 0.42);
 
-    background: #faf7f3;
-    color: inherit;
+    border-radius: 27px;
 
-    box-shadow: var(--home-shadow-soft);
+    background:
+        linear-gradient(
+            155deg,
+            #f4f0e9 0%,
+            #ecebe3 58%,
+            #e4e7df 100%
+        );
+
+    color: #352f31;
+
+    box-shadow:
+        0 22px 52px rgba(64, 76, 68, 0.2);
+
+    text-decoration: none;
 
     transition:
-        transform 0.3s ease,
-        box-shadow 0.3s ease;
+        transform 220ms ease,
+        box-shadow 220ms ease,
+        border-color 220ms ease;
 }
 
 .flat-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-6px);
 
-    box-shadow: var(--home-shadow-medium);
+    border-color:
+        rgba(243, 229, 164, 0.65);
+
+    color: #352f31;
+
+    box-shadow:
+        0 30px 65px rgba(55, 69, 60, 0.27);
 }
 
-.flat-image-wrap {
+
+/* =========================================================
+   ETIQUETAS
+========================================================= */
+
+.rental-rooms {
+    background: #dfe8df;
+    color: #596a5f;
+}
+
+.rental-full {
+    background: #eee2d4;
+    color: #785f54;
+}
+
+
+/* =========================================================
+   CARACTERÍSTICAS
+========================================================= */
+
+.flat-features span {
+    border:
+        1px solid rgba(100, 119, 106, 0.08);
+
+    background:
+        rgba(158, 171, 162, 0.17);
+
+    color: #626e66;
+}
+
+.flat-features i {
+    color: #7e9386;
+}
+
+.rental-rooms {
+    background: #e1e8e1;
+    color: #68776d;
+}
+
+/* =========================================================
+   BOTÓN — VANITY GREEN
+========================================================= */
+
+.flat-cta {
+    background:
+        linear-gradient(
+            145deg,
+            #8eaaa5,
+            #789792
+        );
+
+    color: #fffdf9;
+
+    box-shadow:
+        0 10px 22px rgba(91, 124, 118, 0.17);
+}
+
+.flat-card:hover .flat-cta {
+    background:
+        linear-gradient(
+            145deg,
+            #829f9a,
+            #6f8d88
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 14px 27px rgba(79, 113, 107, 0.22);
+}
+
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .flat-section {
+        margin: 24px 0;
+        padding:
+            64px
+            10px
+            48px;
+    }
+
+    .flat-section::after {
+        content: "NUESTRAS CASAS";
+
+        top: 27px;
+        left: 22px;
+
+        font-size: 0.61rem;
+    }
+
+    .flats-grid {
+        row-gap: 36px;
+    }
+
+    .flats-grid > [class*="col-"] {
+        margin-bottom: 0;
+    }
+}
+
+
+/* Círculo decorativo */
+
+.flat-section {
+    position: relative;
+
     width: 100%;
-    height: 330px;
+    margin: 30px 0;
+    padding:
+        clamp(78px, 9vw, 112px)
+        clamp(18px, 5vw, 70px)
+        clamp(58px, 8vw, 96px);
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at 92% 4%,
+            rgba(241, 237, 229, 0.3),
+            transparent 34%
+        ),
+        radial-gradient(
+            circle at 5% 100%,
+            rgba(216, 195, 200, 0.2),
+            transparent 36%
+        ),
+        linear-gradient(
+            145deg,
+            #aeb9b0 0%,
+            #9eaba2 50%,
+            #8f9d94 100%
+        );
+}
+
+
+/* Cabecera editorial */
+
+.flat-section::after {
+    content: "NUESTRAS CASAS  ·  ESPACIOS CON IDENTIDAD PROPIA";
+
+    position: absolute;
+    top: 34px;
+    left: clamp(32px, 7vw, 104px);
+    z-index: 2;
+
+    color: #f3e5a4;
+
+    font-size: 0.67rem;
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: 0.2em;
+}
+
+
+/* =========================================================
+   CUADRÍCULA
+========================================================= */
+
+.flats-grid {
+    position: relative;
+    z-index: 1;
+
+    width: min(1320px, 100%);
+    margin: 0 auto;
+    padding: 0;
+
+    row-gap: 30px;
+}
+
+.flats-grid > [class*="col-"] {
+    display: flex;
+
+    margin-bottom: 0;
+}
+
+
+/* =========================================================
+   TARJETA DE PROPIEDAD
+========================================================= */
+
+.flat-card {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    min-height: 100%;
+    padding: 13px;
+
+    overflow: hidden;
+
+    border:
+        1px solid rgba(255, 255, 255, 0.34);
+
+    border-radius: 27px;
+
+    background:
+        linear-gradient(
+            155deg,
+            #f5efec 0%,
+            #eee5e4 58%,
+            #e8e1e2 100%
+        );
+
+    color: #352a2f;
+
+    box-shadow:
+        0 22px 55px rgba(12, 31, 44, 0.3);
+
+    text-decoration: none;
+
+    transition:
+        transform 220ms ease,
+        box-shadow 220ms ease,
+        border-color 220ms ease;
+}
+
+.flat-card:hover {
+    transform: translateY(-6px);
+
+    border-color:
+        rgba(243, 229, 164, 0.72);
+
+    color: #352a2f;
+
+    box-shadow:
+        0 30px 68px rgba(17, 38, 40, 0.34);
+}
+
+.flat-card:focus-visible {
+    outline:
+        4px solid rgba(243, 229, 164, 0.7);
+
+    outline-offset: 4px;
+}
+
+
+/* =========================================================
+   IMAGEN
+========================================================= */
+
+.flat-image-wrap {
+    position: relative;
+
+    width: 100%;
+    height: clamp(290px, 34vw, 430px);
 
     overflow: hidden;
 
     border-radius: 20px;
 
-    background: #ddd4d0;
+    background: #dcebea;
+}
+
+.flat-image-wrap::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            180deg,
+            transparent 58%,
+            rgba(20, 43, 45, 0.16)
+        );
+
+    pointer-events: none;
 }
 
 .flat-image {
+    display: block;
+
     width: 100%;
     height: 100%;
 
     object-fit: cover;
+    object-position: center;
 
-    transition: transform 0.4s ease;
+    transition:
+        transform 550ms cubic-bezier(
+            0.2,
+            0.7,
+            0.2,
+            1
+        );
 }
 
 .flat-card:hover .flat-image {
     transform: scale(1.035);
 }
 
+
+/* =========================================================
+   INFORMACIÓN
+========================================================= */
+
 .flat-info {
     display: flex;
     flex: 1;
     flex-direction: column;
 
-    padding: 22px 8px 8px;
+    padding: 23px 10px 9px;
 }
 
 .flat-title-row {
     display: flex;
     align-items: center;
-    gap: 12px;
+    flex-wrap: wrap;
+    gap: 10px 12px;
 
-    margin-bottom: 12px;
+    margin-bottom: 18px;
 }
 
 .flat-title-row h3,
 .flat-info h3 {
     margin: 0;
 
-    color: #2e2929;
+    color: #4b2938;
 
-    font-family: "Playfair Display", Georgia, serif;
-    font-size: 30px;
-    font-weight: 700;
+    font-family:
+        "Playfair Display",
+        Georgia,
+        serif;
+
+    font-size: clamp(1.75rem, 3vw, 2.4rem);
+    font-weight: 600;
     line-height: 1;
+    letter-spacing: -0.025em;
     text-transform: uppercase;
 }
+
+
+/* =========================================================
+   TIPO DE ALQUILER
+========================================================= */
 
 .rental-badge {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
 
-    padding: 5px 10px;
+    min-height: 27px;
+    padding: 6px 11px;
 
     border-radius: 999px;
 
-    font-size: 10px;
-    font-weight: 700;
+    font-size: 0.61rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
     white-space: nowrap;
 }
 
 .rental-rooms {
-    background: #e7eee4;
-    color: #52614d;
+    background: #dcebea;
+    color: #315f63;
 }
 
 .rental-full {
-    background: #eee3d8;
-    color: #785846;
+    background: #fbf4cf;
+    color: #745044;
 }
+
+
+/* =========================================================
+   CARACTERÍSTICAS
+========================================================= */
 
 .flat-features {
     display: flex;
+    align-items: center;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
 
-    margin-top: 4px;
+    margin-top: auto;
 }
 
 .flat-features span {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
 
-    padding: 9px 13px;
+    min-height: 35px;
+    padding: 8px 11px;
+
+    border:
+        1px solid rgba(49, 95, 99, 0.08);
 
     border-radius: 999px;
 
-    background: rgba(113, 84, 92, 0.08);
-    color: #4c4546;
+    background:
+        rgba(114, 165, 161, 0.12);
 
-    font-size: 13px;
-    font-weight: 500;
+    color: #52615f;
+
+    font-size: 0.76rem;
+    font-weight: 650;
+    line-height: 1;
 }
 
 .flat-features i {
-    color: var(--home-wine);
-    font-size: 13px;
+    color: #4f8885;
+    font-size: 0.77rem;
 }
 
+
+/* =========================================================
+   BOTÓN
+========================================================= */
+
 .flat-cta {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 10px;
+    justify-content: space-between;
+    gap: 16px;
 
-    width: fit-content;
-    min-height: 44px;
-    margin: auto auto 0;
-    padding: 0 24px;
+    width: 100%;
+    min-height: 48px;
+    margin: 22px 0 0;
+    padding: 12px 18px;
 
-    border: 1px solid var(--home-wine);
-    border-radius: 999px;
+    border: 0;
+    border-radius: 14px;
 
-    background: transparent;
-    color: var(--home-wine);
+    background:
+        linear-gradient(
+            145deg,
+            #3e7476,
+            #28575b
+        );
 
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.8px;
+    color: #ffffff;
+
+    font-size: 0.8rem;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: 0.02em;
+
+    box-shadow:
+        0 10px 22px rgba(36, 72, 76, 0.19);
 
     transition:
-        background-color 0.25s ease,
-        color 0.25s ease;
+        transform 160ms ease,
+        background 160ms ease,
+        box-shadow 160ms ease;
+}
+
+.flat-cta::after {
+    content: "→";
+
+    color: #f3e5a4;
+
+    font-size: 1.05rem;
+    line-height: 1;
+
+    transition: transform 160ms ease;
 }
 
 .flat-card:hover .flat-cta {
-    background: var(--home-wine);
+    background:
+        linear-gradient(
+            145deg,
+            #315f63,
+            #1f4548
+        );
+
     color: #ffffff;
+
+    box-shadow:
+        0 14px 27px rgba(36, 72, 76, 0.25);
+}
+
+.flat-card:hover .flat-cta::after {
+    transform: translateX(4px);
 }
 
 
+/* =========================================================
+   PROPIEDADES — TABLET
+========================================================= */
+
+@media (max-width: 1024px) {
+
+    .flat-section {
+        padding:
+            72px
+            22px
+            48px;
+    }
+
+    .flat-section::after {
+        top: 29px;
+        left: 34px;
+    }
+
+    .flat-image-wrap {
+        height: 290px;
+    }
+
+    .flat-title-row {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+    }
+}
+
+
+/* =========================================================
+   PROPIEDADES — MÓVIL
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .flat-section {
+        padding:
+            64px
+            10px
+            38px;
+    }
+
+    .flat-section::after {
+        content: "NUESTRAS CASAS";
+
+        top: 27px;
+        left: 22px;
+
+        font-size: 0.61rem;
+    }
+
+    .flats-grid {
+        margin: 0;
+        padding: 0;
+    }
+
+    .flats-grid > [class*="col-"] {
+        padding-right: 6px;
+        padding-left: 6px;
+
+        margin-bottom: 18px;
+    }
+
+    .flat-card {
+        padding: 10px;
+
+        border-radius: 22px;
+    }
+
+    .flat-image-wrap {
+        height: clamp(245px, 68vw, 355px);
+
+        border-radius: 17px;
+    }
+
+    .flat-info {
+        padding: 18px 8px 7px;
+    }
+
+    .flat-title-row {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+
+        margin-bottom: 15px;
+    }
+
+    .flat-title-row h3,
+    .flat-info h3 {
+        font-size: 1.65rem;
+    }
+
+    .flat-features {
+        gap: 7px;
+    }
+
+    .flat-features span {
+        min-height: 32px;
+        padding: 7px 9px;
+
+        font-size: 0.7rem;
+    }
+
+    .flat-cta {
+        min-height: 46px;
+        margin-top: 18px;
+        padding: 11px 15px;
+
+        font-size: 0.76rem;
+    }
+}
+
+
+/* =========================================================
+   PROPIEDADES — MÓVILES PEQUEÑOS
+========================================================= */
+
+@media (max-width: 420px) {
+
+    .flat-section {
+        padding-right: 7px;
+        padding-left: 7px;
+    }
+
+    .flat-section::after {
+        left: 17px;
+    }
+
+    .flat-card {
+        border-radius: 19px;
+    }
+
+    .flat-image-wrap {
+        height: 230px;
+    }
+
+    .flat-info {
+        padding-right: 6px;
+        padding-left: 6px;
+    }
+}
+
+
+/* =========================================================
+   ACCESIBILIDAD
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .flat-card,
+    .flat-image,
+    .flat-cta,
+    .flat-cta::after {
+        transition: none;
+    }
+}
 /* =========================================================
    HUMMINGBIRD INTEGRADO EN PROPIEDADES
 ========================================================= */
@@ -1383,20 +1982,7 @@ img {
         height: 235px;
     }
 
-    .flat-section {
-        padding-right: 22px;
-        padding-left: 22px;
-    }
 
-    .flat-image-wrap {
-        height: 290px;
-    }
-
-    .flat-title-row {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 8px;
-    }
 
     .hummingbird-image-wrap {
         min-height: 290px;
@@ -1526,44 +2112,6 @@ img {
         font-size: 1.05rem;
     }
 
-    .flat-section {
-        padding: 45px 14px 25px;
-    }
-
-    .flats-grid > [class*="col-"] {
-        margin-bottom: 22px;
-    }
-
-    .flat-card {
-        padding: 12px;
-
-        border-radius: 22px;
-    }
-
-    .flat-image-wrap {
-        height: 270px;
-
-        border-radius: 18px;
-    }
-
-    .flat-info {
-        padding: 18px 6px 6px;
-    }
-
-    .flat-title-row h3,
-    .flat-info h3 {
-        font-size: 26px;
-    }
-
-    .flat-features {
-        gap: 8px;
-    }
-
-    .flat-features span {
-        padding: 8px 10px;
-
-        font-size: 12px;
-    }
 
     .hummingbird-image-wrap {
         min-height: 270px;
@@ -1668,14 +2216,6 @@ img {
         font-size: 0.96rem;
     }
 
-    .flat-image-wrap {
-        height: 240px;
-    }
-
-    .flat-title-row h3,
-    .flat-info h3 {
-        font-size: 24px;
-    }
 
     .fedora-image {
         height: 330px;
@@ -1775,10 +2315,7 @@ img {
 ========================================================= */
 
 @media (max-width: 420px) {
-    .flat-features span {
-        width: 100%;
-        justify-content: flex-start;
-    }
+
 
     .fedora-title {
         font-size: 48px;
@@ -1791,5 +2328,472 @@ img {
     .collection-room-card {
         flex-basis: 86vw;
         width: 86vw;
+    }
+}
+
+/* =========================================================
+   COLECCIÓN DE PROPIEDADES — BLOQUE EDITORIAL SAGE
+========================================================= */
+
+.hero-section,
+.flat-section {
+    background:
+        radial-gradient(
+            circle at 94% 3%,
+            rgba(245, 240, 232, 0.32),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 4% 98%,
+            rgba(216, 195, 200, 0.2),
+            transparent 34%
+        ),
+        linear-gradient(
+            145deg,
+            #b5beb6 0%,
+            #a7b2a9 52%,
+            #98a59c 100%
+        );
+}
+
+
+/* =========================================================
+   PRESENTACIÓN EDITORIAL
+========================================================= */
+
+.hero-section {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+    min-height: auto;
+    margin: 0;
+    padding:
+        clamp(72px, 10vw, 128px)
+        max(
+            28px,
+            calc((100vw - 1320px) / 2)
+        )
+        clamp(58px, 8vw, 92px);
+
+    overflow: hidden;
+
+    color: #352a2f;
+}
+
+.hero-section::after {
+    content: "";
+
+    position: absolute;
+    right: max(
+        28px,
+        calc((100vw - 1320px) / 2)
+    );
+    bottom: 0;
+    left: max(
+        28px,
+        calc((100vw - 1320px) / 2)
+    );
+
+    height: 1px;
+
+    background:
+        rgba(75, 41, 56, 0.16);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+
+    width: 100%;
+    max-width: 850px;
+}
+
+.hero-kicker {
+    margin: 0 0 20px;
+
+    color: #5f675f;
+
+    font-size: 0.7rem;
+    font-weight: 850;
+    line-height: 1.2;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+}
+
+.hero-title {
+    max-width: 830px;
+    margin: 0 0 24px;
+
+    color: #352a2f;
+
+    font-family:
+        "Playfair Display",
+        Georgia,
+        serif;
+
+    font-size: clamp(3.5rem, 7vw, 6.5rem);
+    font-weight: 500;
+    line-height: 0.92;
+    letter-spacing: -0.045em;
+}
+
+.hero-subtitle {
+    max-width: 610px;
+    margin: 0 0 30px;
+
+    color: #5f595b;
+
+    font-size: clamp(1rem, 1.5vw, 1.15rem);
+    line-height: 1.6;
+}
+
+.price-badge {
+    display: inline-flex;
+    align-items: center;
+
+    min-height: 42px;
+    padding: 0 19px;
+
+    border:
+        1px solid rgba(117, 92, 58, 0.09);
+
+    border-radius: 999px;
+
+    background:
+        rgba(243, 229, 164, 0.58);
+
+    color: #775e37;
+
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+}
+
+
+/* =========================================================
+   PROPIEDADES — CONTINUACIÓN DEL MISMO BLOQUE
+========================================================= */
+
+.flat-section {
+    position: relative;
+
+    width: 100%;
+    margin: 0;
+    padding:
+        clamp(76px, 9vw, 108px)
+        clamp(18px, 5vw, 70px)
+        clamp(58px, 8vw, 96px);
+
+    overflow: hidden;
+}
+
+
+/* Eliminamos el círculo grande anterior */
+
+.flat-section::before {
+    display: none;
+}
+
+
+/* Etiqueta editorial */
+
+.flat-section::after {
+    content: "NUESTRAS CASAS  ·  ESPACIOS CON IDENTIDAD PROPIA";
+
+    position: absolute;
+    top: 34px;
+    left: max(
+        28px,
+        calc((100vw - 1320px) / 2)
+    );
+    z-index: 2;
+
+    color: #f8edba;
+
+    font-size: 0.68rem;
+    font-weight: 850;
+    line-height: 1.3;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   CUADRÍCULA
+========================================================= */
+
+.flats-grid {
+    position: relative;
+    z-index: 1;
+
+    width: min(1320px, 100%);
+    margin: 0 auto;
+    padding: 0;
+
+    row-gap: 42px;
+}
+
+.flats-grid > [class*="col-"] {
+    display: flex;
+
+    margin-bottom: 0;
+}
+
+
+/* =========================================================
+   TARJETAS — CREMA EMPOLVADO
+========================================================= */
+
+.flat-card {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+    min-height: 100%;
+    padding: 12px;
+
+    overflow: hidden;
+
+    border:
+        1px solid rgba(255, 252, 247, 0.58);
+
+    border-radius: 27px;
+
+    background:
+        linear-gradient(
+            155deg,
+            #f3ece8 0%,
+            #ece5e2 58%,
+            #e5dfdd 100%
+        );
+
+    color: #352a2f;
+
+    box-shadow:
+        0 20px 48px rgba(68, 77, 69, 0.17);
+
+    text-decoration: none;
+
+    transition:
+        transform 220ms ease,
+        box-shadow 220ms ease,
+        border-color 220ms ease;
+}
+
+.flat-card:hover {
+    transform: translateY(-5px);
+
+    border-color:
+        rgba(243, 229, 164, 0.72);
+
+    color: #352a2f;
+
+    box-shadow:
+        0 28px 60px rgba(59, 70, 61, 0.23);
+}
+
+
+/* =========================================================
+   BOTÓN — SAGE OSCURO
+========================================================= */
+
+.flat-cta {
+    background:
+        linear-gradient(
+            145deg,
+            #81948a,
+            #6d8176
+        );
+
+    color: #fffdf9;
+
+    box-shadow:
+        0 10px 22px rgba(78, 99, 86, 0.17);
+}
+
+.flat-card:hover .flat-cta {
+    background:
+        linear-gradient(
+            145deg,
+            #758a7e,
+            #61766b
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 14px 27px rgba(70, 91, 78, 0.22);
+}
+
+
+/* =========================================================
+   DETALLES DE LAS TARJETAS
+========================================================= */
+
+.flat-features span {
+    border:
+        1px solid rgba(100, 119, 106, 0.09);
+
+    background:
+        rgba(158, 171, 162, 0.17);
+
+    color: #626e66;
+}
+
+.flat-features i {
+    color: #7a9183;
+}
+
+.rental-rooms {
+    background: #dfe7df;
+    color: #627368;
+}
+
+.rental-full {
+    background: #eee1d5;
+    color: #785f54;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1024px) {
+
+    .hero-section {
+        padding:
+            82px
+            34px
+            66px;
+    }
+
+    .hero-section::after {
+        right: 34px;
+        left: 34px;
+    }
+
+    .flat-section {
+        padding:
+            72px
+            22px
+            54px;
+    }
+
+    .flat-section::after {
+        top: 29px;
+        left: 34px;
+    }
+}
+
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .hero-section {
+        min-height: auto;
+        padding:
+            58px
+            18px
+            48px;
+    }
+
+    .hero-section::after {
+        right: 18px;
+        left: 18px;
+    }
+
+    .hero-kicker {
+        margin-bottom: 17px;
+
+        font-size: 0.63rem;
+    }
+
+    .hero-title {
+        max-width: 520px;
+        margin-bottom: 22px;
+
+        font-size: clamp(3rem, 12vw, 4.7rem);
+        line-height: 0.92;
+    }
+
+    .hero-subtitle {
+        max-width: 440px;
+        margin-bottom: 25px;
+
+        font-size: 0.98rem;
+    }
+
+    .price-badge {
+        min-height: 39px;
+        padding: 0 16px;
+
+        font-size: 0.78rem;
+    }
+
+    .flat-section {
+        margin: 0;
+        padding:
+            66px
+            10px
+            44px;
+    }
+
+    .flat-section::after {
+        content: "NUESTRAS CASAS";
+
+        top: 28px;
+        left: 18px;
+
+        font-size: 0.61rem;
+    }
+
+    .flats-grid {
+        row-gap: 30px;
+    }
+
+    .flats-grid > [class*="col-"] {
+        margin-bottom: 0;
+    }
+}
+
+
+/* =========================================================
+   MÓVILES PEQUEÑOS
+========================================================= */
+
+@media (max-width: 420px) {
+
+    .hero-section {
+        padding:
+            48px
+            15px
+            42px;
+    }
+
+    .hero-title {
+        font-size: clamp(2.65rem, 13vw, 3.7rem);
+    }
+
+    .hero-section::after {
+        right: 15px;
+        left: 15px;
+    }
+
+    .flat-section {
+        padding-right: 7px;
+        padding-left: 7px;
+    }
+
+    .flat-section::after {
+        left: 15px;
     }
 }

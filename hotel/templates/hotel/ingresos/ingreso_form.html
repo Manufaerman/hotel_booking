@@ -1,0 +1,199 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block title %}
+    Registrar ingreso | By Colección
+{% endblock %}
+
+{% block extra-head %}
+<link
+    rel="stylesheet"
+    href="{% static 'hotel/css/ingreso_form.css' %}"
+>
+{% endblock %}
+
+{% block content %}
+
+<main class="ingreso-page">
+
+    <header class="ingreso-header">
+
+        <div class="ingreso-header-icon">
+            <i
+                class="fa fa-arrow-up"
+                aria-hidden="true"
+            ></i>
+        </div>
+
+        <div>
+            <span class="ingreso-eyebrow">
+                Control financiero
+            </span>
+
+            <h1>
+                {{ titulo }}
+            </h1>
+
+            <p>
+                {{ subtitulo }}
+            </p>
+        </div>
+
+    </header>
+
+
+    <section class="ingreso-card">
+
+        <form
+            method="post"
+            class="ingreso-form"
+            novalidate
+        >
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="ingreso-form-errors">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+
+            <div class="ingreso-grid">
+
+                <div class="ingreso-group ingreso-full">
+
+                    <label for="{{ form.propiedad.id_for_label }}">
+                        {{ form.propiedad.label }}
+                    </label>
+
+                    {{ form.propiedad }}
+
+                    {% for error in form.propiedad.errors %}
+                        <span class="ingreso-error">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="ingreso-group">
+
+                    <label for="{{ form.importe.id_for_label }}">
+                        {{ form.importe.label }}
+                    </label>
+
+                    <div class="ingreso-money-field">
+                        {{ form.importe }}
+                        <span>€</span>
+                    </div>
+
+                    {% for error in form.importe.errors %}
+                        <span class="ingreso-error">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="ingreso-group">
+
+                    <label for="{{ form.fecha.id_for_label }}">
+                        {{ form.fecha.label }}
+                    </label>
+
+                    {{ form.fecha }}
+
+                    {% for error in form.fecha.errors %}
+                        <span class="ingreso-error">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="ingreso-group">
+
+                    <label for="{{ form.pagador.id_for_label }}">
+                        {{ form.pagador.label }}
+                    </label>
+
+                    {{ form.pagador }}
+
+                    {% for error in form.pagador.errors %}
+                        <span class="ingreso-error">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="ingreso-group">
+
+                    <label for="{{ form.concepto.id_for_label }}">
+                        {{ form.concepto.label }}
+                    </label>
+
+                    {{ form.concepto }}
+
+                    {% for error in form.concepto.errors %}
+                        <span class="ingreso-error">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="ingreso-group ingreso-full">
+
+                    <label for="{{ form.notas.id_for_label }}">
+                        {{ form.notas.label }}
+                    </label>
+
+                    {{ form.notas }}
+
+                    {% for error in form.notas.errors %}
+                        <span class="ingreso-error">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <div class="ingreso-actions">
+
+                <a
+                    href="{% url 'hotel:dashboard' %}"
+                    class="ingreso-back"
+                >
+                    Cancelar
+                </a>
+
+                <button
+                    type="submit"
+                    class="ingreso-submit"
+                >
+                    <i
+                        class="fa fa-check"
+                        aria-hidden="true"
+                    ></i>
+
+                    {{ texto_boton }}
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+</main>
+
+{% endblock %}

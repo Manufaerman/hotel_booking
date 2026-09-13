@@ -157,27 +157,30 @@ a {
 /* =========================================================
    LOGOTIPO DE ESCRITORIO
 ========================================================= */
-.logo-escritorio {
-    display: block;
-
-    width: 100%;
-    height: auto;
-
-    filter: brightness(0) invert(1);
-}
+/* =========================================================
+   LOGOTIPO DEL SIDEBAR DE ESCRITORIO
+========================================================= */
 
 .sidebar-logo-box {
     display: flex;
     align-items: center;
     justify-content: center;
 
+    flex: 0 0 108px;
+
     width: 100%;
-    padding: 22px 8px 25px;
+    max-width: var(--sidebar-width);
+    height: 108px;
+    min-width: 0;
+
+    padding: 16px 18px;
 
     border-bottom:
         1px solid rgba(255, 255, 255, 0.11);
+
     overflow: hidden;
 }
+
 
 .sidebar-logo-link {
     display: flex;
@@ -185,22 +188,33 @@ a {
     justify-content: center;
 
     width: 100%;
+    max-width: 100%;
+    height: 100%;
+    min-width: 0;
 
+    overflow: hidden;
     text-decoration: none;
 }
 
-.logo-blanco {
+
+.sidebar-logo-box .logo-escritorio,
+.sidebar-logo-box .logo-blanco {
     display: block;
 
     width: 100%;
-    height: auto;
+    max-width: 100%;
+    height: 100%;
+    max-height: 72px;
+
+    margin: 0;
+
+    object-fit: contain;
+    object-position: center;
 
     filter: brightness(0) invert(1);
 
-    clip-path: inset(0 0 25% 0);
-
-    transform: scale(1.15);
-    transform-origin: center top;
+    clip-path: none;
+    transform: none;
 }
 
 
@@ -434,49 +448,68 @@ a {
         filter: brightness(0) invert(1);
     }
 
-    .mobile-brand-bar {
-        position: sticky;
-        top: 0;
-        z-index: 950;
+    /* Cabecera superior móvil */
 
-        display: flex;
-        align-items: center;
-        justify-content: center;
+.mobile-brand-bar {
+    position: sticky;
+    top: 0;
+    z-index: 950;
 
-        width: 100%;
-        height: 64px;
-        padding: 9px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-        border-bottom:
-            1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+    height: 64px;
+    min-height: 64px;
+    padding: 8px 16px;
 
-        background: var(--dashboard-mauve);
+    border-bottom:
+        1px solid rgba(255, 255, 255, 0.1);
 
-        box-shadow:
-            0 7px 20px rgba(63, 47, 57, 0.11);
-    }
+    background: var(--dashboard-mauve);
 
-    .mobile-brand-link {
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    box-shadow:
+        0 7px 20px rgba(63, 47, 57, 0.11);
 
-        height: 100%;
-    }
+    overflow: hidden;
+}
 
-    .mobile-brand-logo {
-        display: block;
 
-        width: 150px;
-        max-width: 72vw;
-        max-height: 45px;
+.mobile-brand-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-        object-fit: contain;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
 
-        filter:
-            brightness(0)
-            invert(1);
-    }
+    overflow: hidden;
+}
+
+
+.logo-movil {
+    display: block;
+
+    width: auto;
+    max-width: min(170px, 72vw);
+
+    height: auto;
+    max-height: 44px;
+
+    margin: 0;
+
+    object-fit: contain;
+    object-position: center;
+
+    filter:
+        brightness(0)
+        invert(1);
+
+    clip-path: none;
+    transform: none;
+}
 
     /* Contenido */
 
@@ -519,19 +552,22 @@ a {
     }
 
     .sidebar-navigation {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 4px;
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    align-items: center;
+    gap: 3px;
 
-        width: 100%;
-        height: 100%;
-        padding: 8px 10px;
-    }
+    width: 100%;
+    height: 100%;
+    padding: 8px 6px;
+
+    overflow: hidden;
+}
 
     .sidebar-link {
         width: 100%;
         height: 52px;
-
+        min-width: 0;
         border-radius: 13px;
     }
 

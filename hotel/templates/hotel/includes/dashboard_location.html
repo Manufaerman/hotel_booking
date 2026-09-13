@@ -1,0 +1,441 @@
+<style>
+/* =========================================================
+   UBICACIÓN DEL DASHBOARD
+========================================================= */
+
+.dashboard-location {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+
+    width: 100%;
+    min-height: 72px;
+    margin: 0 0 18px;
+    padding: 13px 18px;
+
+    box-sizing: border-box;
+
+    border-bottom:
+        1px solid rgba(81, 52, 62, 0.1);
+
+    background:
+        rgba(247, 244, 240, 0.94);
+
+    color: #51343e;
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+
+/* =========================================================
+   TEXTO Y RUTA
+========================================================= */
+
+.dashboard-location-copy {
+    display: grid;
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 6px;
+}
+
+.dashboard-breadcrumb {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+
+    font-size: 1.05rem;
+    line-height: 1.2;
+}
+
+.dashboard-breadcrumb li {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.dashboard-breadcrumb a,
+.dashboard-breadcrumb span,
+.dashboard-breadcrumb strong {
+    display: inline-block;
+    max-width: 100%;
+}
+
+.dashboard-breadcrumb a {
+    color: #927783;
+
+    font-weight: 750;
+    text-decoration: none;
+
+    transition: color 150ms ease;
+}
+
+.dashboard-breadcrumb a:hover {
+    color: #51343e;
+}
+
+.dashboard-breadcrumb a:focus-visible {
+    border-radius: 4px;
+
+    outline:
+        3px solid rgba(114, 165, 161, 0.38);
+
+    outline-offset: 3px;
+}
+
+.dashboard-breadcrumb span {
+    color: #765f69;
+    font-weight: 750;
+}
+
+.dashboard-breadcrumb strong {
+    overflow: hidden;
+
+    color: #51343e;
+    font-weight: 900;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.dashboard-location-note {
+    margin: 0;
+
+    color: #786d71;
+
+    font-size: 0.72rem;
+    font-weight: 650;
+    line-height: 1.3;
+}
+
+
+/* =========================================================
+   BOTÓN DE ACCIÓN
+========================================================= */
+
+.dashboard-location-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 48px;
+
+    width: 48px;
+    height: 48px;
+    margin: 0;
+
+    border: 0;
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #62384b,
+            #422333
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 10px 24px rgba(66, 35, 51, 0.26);
+
+    text-decoration: none;
+
+    transition:
+        transform 150ms ease,
+        box-shadow 150ms ease,
+        background-color 150ms ease;
+}
+
+.dashboard-location-action i {
+    color: inherit;
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.dashboard-location-action:hover {
+    transform: translateY(-2px);
+
+    color: #ffffff;
+
+    box-shadow:
+        0 14px 29px rgba(66, 35, 51, 0.32);
+}
+
+.dashboard-location-action:active {
+    transform: translateY(0);
+}
+
+.dashboard-location-action:focus-visible {
+    outline:
+        4px solid rgba(114, 165, 161, 0.4);
+
+    outline-offset: 3px;
+}
+
+
+/* =========================================================
+   TABLET Y MÓVIL
+========================================================= */
+
+@media (max-width: 650px) {
+
+    .dashboard-location {
+        position: sticky;
+        top: 64px;
+        z-index: 900;
+
+        gap: 16px;
+
+        width: 100%;
+        max-width: 100%;
+        min-height: 66px;
+
+        margin: 0 0 14px;
+        padding: 9px 12px;
+
+        overflow: visible;
+
+        border-radius: 0;
+
+        background:
+            rgba(247, 244, 240, 0.97);
+
+        box-shadow:
+            0 7px 20px rgba(55, 38, 45, 0.08);
+    }
+
+    .dashboard-location-copy {
+        gap: 3px;
+    }
+
+    .dashboard-breadcrumb {
+        gap: 5px;
+
+        font-size: 0.98rem;
+        line-height: 1.25;
+    }
+
+    .dashboard-location-note {
+        overflow: hidden;
+
+        max-width: 100%;
+
+        font-size: 0.65rem;
+        line-height: 1.25;
+
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .dashboard-location-action {
+        flex-basis: 46px;
+
+        width: 46px;
+        height: 46px;
+
+        border-radius: 15px;
+    }
+}
+
+
+/* =========================================================
+   MÓVILES PEQUEÑOS
+========================================================= */
+
+@media (max-width: 380px) {
+
+    /*
+       La barra superior del logo mide 58px
+       en este breakpoint.
+    */
+
+    .dashboard-location {
+        top: 58px;
+
+        gap: 10px;
+        min-height: 62px;
+        padding: 8px 10px;
+    }
+
+    .dashboard-breadcrumb {
+        font-size: 0.9rem;
+    }
+
+    .dashboard-location-note {
+        font-size: 0.61rem;
+    }
+
+    .dashboard-location-action {
+        flex-basis: 44px;
+
+        width: 44px;
+        height: 44px;
+
+        border-radius: 14px;
+    }
+}
+
+
+/* =========================================================
+   ACCESIBILIDAD
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .dashboard-breadcrumb a,
+    .dashboard-location-action {
+        transition: none;
+    }
+}
+</style>
+
+
+<header class="dashboard-location">
+
+    <div class="dashboard-location-copy">
+
+        <nav aria-label="Ubicación actual">
+
+            <ol class="dashboard-breadcrumb">
+
+                <li>
+                    <a href="{% url 'hotel:dashboard' %}">
+                        Dashboard
+                    </a>
+                </li>
+
+                <li aria-hidden="true">
+                    <span>/</span>
+                </li>
+
+                <li>
+                    <strong>
+
+                        {% if request.resolver_match.url_name == "gastos_dashboard" %}
+                            Gastos
+
+                        {% elif request.resolver_match.url_name == "crear_gasto" %}
+                            Nuevo gasto
+
+                        {% elif request.resolver_match.url_name == "editar_gasto" %}
+                            Editar gasto
+
+                        {% elif request.resolver_match.url_name == "proyectos_dashboard" %}
+                            Proyectos
+
+                        {% elif request.resolver_match.url_name == "crear_proyecto" %}
+                            Nuevo proyecto
+
+                        {% elif request.resolver_match.url_name == "editar_proyecto" %}
+                            Editar proyecto
+
+                        {% elif request.resolver_match.url_name == "habitaciones_dashboard" %}
+                            Habitaciones
+
+                        {% elif request.resolver_match.url_name == "newcontract" %}
+                            Nuevo contrato
+
+                        {% elif request.resolver_match.url_name == "contratos" %}
+                            Contratos
+
+                        {% elif request.resolver_match.url_name == "visitas" %}
+                            Visitas
+
+                        {% else %}
+                            Panel
+                        {% endif %}
+
+                    </strong>
+                </li>
+
+            </ol>
+
+        </nav>
+
+
+        <p class="dashboard-location-note">
+
+            {% if request.resolver_match.url_name == "gastos_dashboard" %}
+                Control y análisis de gastos
+
+            {% elif request.resolver_match.url_name == "crear_gasto" %}
+                Registrar un nuevo movimiento
+
+            {% elif request.resolver_match.url_name == "editar_gasto" %}
+                Modificar movimiento
+
+            {% elif request.resolver_match.url_name == "proyectos_dashboard" %}
+                Planificación y seguimiento
+
+            {% elif request.resolver_match.url_name == "crear_proyecto" %}
+                Registrar un nuevo proyecto
+
+            {% elif request.resolver_match.url_name == "editar_proyecto" %}
+                Modificar proyecto
+
+            {% elif request.resolver_match.url_name == "habitaciones_dashboard" %}
+                Estado de las habitaciones
+
+            {% elif request.resolver_match.url_name == "newcontract" %}
+                Formalización del alquiler
+
+            {% elif request.resolver_match.url_name == "contratos" %}
+                Gestión de contratos
+
+            {% elif request.resolver_match.url_name == "visitas" %}
+                Actividad de la web
+
+            {% else %}
+                Resumen general
+            {% endif %}
+
+        </p>
+
+    </div>
+
+
+    {% if request.resolver_match.url_name == "gastos_dashboard" %}
+
+        <a
+            href="{% url 'hotel:crear_gasto' %}"
+            class="dashboard-location-action"
+            aria-label="Añadir gasto"
+            title="Añadir gasto"
+        >
+            <i class="fa fa-plus" aria-hidden="true"></i>
+        </a>
+
+    {% elif request.resolver_match.url_name == "proyectos_dashboard" %}
+
+        <a
+            href="{% url 'hotel:crear_proyecto' %}"
+            class="dashboard-location-action"
+            aria-label="Añadir proyecto"
+            title="Añadir proyecto"
+        >
+            <i class="fa fa-plus" aria-hidden="true"></i>
+        </a>
+
+    {% elif request.resolver_match.url_name == "contratos" %}
+
+        <a
+            href="{% url 'hotel:newcontract' %}"
+            class="dashboard-location-action"
+            aria-label="Crear contrato"
+            title="Crear contrato"
+        >
+            <i class="fa fa-plus" aria-hidden="true"></i>
+        </a>
+
+    {% endif %}
+
+</header>

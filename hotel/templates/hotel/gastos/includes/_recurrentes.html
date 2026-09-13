@@ -1,0 +1,206 @@
+<section class="gastos-recurring-section">
+
+    <header class="gastos-recurring-header">
+
+        <div>
+            <span class="gastos-eyebrow">
+                Automatización
+            </span>
+
+            <h2>
+                Gastos fijos configurados
+            </h2>
+
+            <p>
+                Movimientos generados automáticamente
+                con la frecuencia indicada.
+            </p>
+        </div>
+
+        <a
+            href="{% url 'hotel:crear_gasto' %}?pais={{ pais_actual }}{% if proyecto_actual %}&proyecto={{ proyecto_actual.pk }}{% endif %}"
+            class="gastos-create-button"
+        >
+            <i class="fa fa-plus"></i>
+            Añadir gasto fijo
+        </a>
+
+    </header>
+
+
+    {% if gastos_recurrentes %}
+
+        <div class="gastos-recurring-grid">
+
+            {% for recurrente in gastos_recurrentes %}
+
+                <article
+                    class="
+                        gasto-recurring-card
+                        {% if not recurrente.activo %}
+                            gasto-recurring-card-paused
+                        {% endif %}
+                    "
+                >
+
+                    <header class="gasto-recurring-card-header">
+
+                        <div class="gasto-recurring-icon">
+                            <i class="fa fa-repeat"></i>
+                        </div>
+
+                        <div class="gasto-recurring-title">
+
+                            <span>
+                                {{ recurrente.get_frecuencia_display }}
+                            </span>
+
+                            <h3>
+                                {{ recurrente.nombre }}
+                            </h3>
+
+                        </div>
+
+                        {% if recurrente.activo %}
+
+                            <span class="gasto-recurring-status gasto-recurring-active">
+                                Activo
+                            </span>
+
+                        {% else %}
+
+                            <span class="gasto-recurring-status gasto-recurring-paused">
+                                Pausado
+                            </span>
+
+                        {% endif %}
+
+                    </header>
+
+
+                    <div class="gasto-recurring-amount">
+
+                        {% if recurrente.importe %}
+
+                            {{ recurrente.importe|floatformat:2 }}
+                            {{ simbolo_moneda }}
+
+                        {% else %}
+
+                            Importe pendiente
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <dl class="gasto-recurring-details">
+
+                        <div>
+                            <dt>Categoría</dt>
+                            <dd>
+                                {{ recurrente.get_categoria_display }}
+                            </dd>
+                        </div>
+
+                        <div>
+                            <dt>Destino</dt>
+
+                            <dd>
+                                {% if recurrente.proyecto %}
+
+                                    {{ recurrente.proyecto.nombre }}
+
+                                {% elif recurrente.propiedad %}
+
+                                    {{ recurrente.propiedad.nombre }}
+
+                                    {% if recurrente.habitacion %}
+                                        · {{ recurrente.habitacion.nombre }}
+                                    {% endif %}
+
+                                {% else %}
+
+                                    Sociedad
+
+                                {% endif %}
+                            </dd>
+                        </div>
+
+                        <div>
+                            <dt>Comienza</dt>
+
+                            <dd>
+                                {% if recurrente.fecha_inicio %}
+                                    {{ recurrente.fecha_inicio|date:"d/m/Y" }}
+                                {% else %}
+                                    Sin fecha
+                                {% endif %}
+                            </dd>
+                        </div>
+
+                        <div>
+                            <dt>Generación</dt>
+
+                            <dd>
+                                Día {{ recurrente.dia_generacion|default:"1" }}
+                            </dd>
+                        </div>
+
+                    </dl>
+
+
+                    <footer class="gasto-recurring-actions">
+
+                        <a
+                            href="{% url 'hotel:editar_gasto_recurrente' recurrente.pk %}"
+                            class="gasto-recurring-action gasto-recurring-edit"
+                        >
+                            <i class="fa fa-pencil"></i>
+                            Editar
+                        </a>
+
+                        <form
+                            method="post"
+                            action="{% url 'hotel:eliminar_gasto_recurrente' recurrente.pk %}"
+                            onsubmit="return confirm('¿Eliminar este gasto fijo y todos sus movimientos?');"
+                        >
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="gasto-recurring-action gasto-recurring-delete"
+                            >
+                                <i class="fa fa-trash"></i>
+                                Eliminar
+                            </button>
+                        </form>
+
+                    </footer>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="gastos-recurring-empty">
+
+            <span aria-hidden="true">🌱</span>
+
+            <h3>
+                No hay gastos fijos configurados
+            </h3>
+
+            <p>
+                Los gastos esporádicos continúan disponibles
+                desde el listado de movimientos.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</section>

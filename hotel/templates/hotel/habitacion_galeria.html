@@ -101,60 +101,7 @@
 
     <section class="room-masonry-gallery">
 
-        {# Fotografías antiguas del modelo Habitacion #}
 
-        {% if habitacion.image %}
-
-            <figure class="gallery-media gallery-media-featured">
-
-                <img
-                    src="{{ habitacion.image.url }}"
-                    alt="{{ habitacion.nombre }}"
-                >
-
-                <span class="gallery-media-number">
-                    01
-                </span>
-
-            </figure>
-
-        {% endif %}
-
-
-        {% if habitacion.image2 %}
-
-            <figure class="gallery-media gallery-media-portrait">
-
-                <img
-                    src="{{ habitacion.image2.url }}"
-                    alt="{{ habitacion.nombre }}"
-                >
-
-                <span class="gallery-media-number">
-                    02
-                </span>
-
-            </figure>
-
-        {% endif %}
-
-
-        {% if habitacion.image3 %}
-
-            <figure class="gallery-media gallery-media-landscape">
-
-                <img
-                    src="{{ habitacion.image3.url }}"
-                    alt="{{ habitacion.nombre }}"
-                >
-
-                <span class="gallery-media-number">
-                    03
-                </span>
-
-            </figure>
-
-        {% endif %}
 
 
         {# Multimedia del modelo MultimediaHabitacion #}
@@ -218,6 +165,270 @@
 
     </section>
 
+    <section>
+        {% if tiene_plantas %}
+
+<section class="habitacion-plantas">
+
+    <header class="plantas-presentacion">
+
+        <div>
+
+            <span class="eyebrow">
+                LA VIDA EN ESTA HABITACIÓN
+            </span>
+
+            {% if habitacion_alquilada %}
+
+                <h2>
+                    Ahora en convivencia
+                </h2>
+
+                <p>
+                    Esta habitación ya está escribiendo una nueva
+                    historia entre personas, hojas y pequeños
+                    rituales cotidianos.
+                </p>
+
+            {% else %}
+
+                <h2>
+                    Tu compañera de habitación
+                </h2>
+
+                <p>
+                    Aquí ya vive alguien. Es tranquila, agradece
+                    un poco de luz y espera compartir esta
+                    habitación con su próxima compañera.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <div
+            class="
+                plantas-estado-vivo
+                {% if habitacion_alquilada %}
+                    plantas-estado-vivo-activo
+                {% endif %}
+            "
+        >
+
+            <span class="plantas-estado-icono">
+                {% if habitacion_alquilada %}
+                    🌿
+                {% else %}
+                    🌱
+                {% endif %}
+            </span>
+
+            <div>
+
+                <strong>
+                    {% if habitacion_alquilada %}
+                        Planta feliz
+                    {% else %}
+                        Esperando compañía
+                    {% endif %}
+                </strong>
+
+                <small>
+                    {% if habitacion_alquilada %}
+
+                        {% if residente_actual_publico %}
+                            En convivencia con
+                            {{ residente_actual_publico }}
+                        {% else %}
+                            Actualmente acompañada
+                        {% endif %}
+
+                    {% else %}
+                        Preparada para conocerte
+                    {% endif %}
+                </small>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    {% if plantas_habitacion %}
+
+        <div class="plantas-grupo">
+
+            {% for planta in plantas_habitacion %}
+
+                <article class="planta-card">
+
+                    {% if planta.foto %}
+
+                        <img
+                            src="{{ planta.foto.url }}"
+                            alt="{{ planta.nombre_completo }}"
+                        >
+
+                    {% endif %}
+
+
+                    <div class="planta-info">
+
+                        <span class="planta-estado">
+
+                            {% if habitacion_alquilada %}
+                                EN CONVIVENCIA
+                            {% else %}
+                                RESIDENTE DE LA HABITACIÓN
+                            {% endif %}
+
+                        </span>
+
+                        <h3>
+                            {{ planta.nombre_completo }}
+                        </h3>
+
+
+                        {% if planta.especie %}
+
+                            <p class="planta-especie">
+                                {{ planta.especie }}
+                            </p>
+
+                        {% endif %}
+
+
+                        {% if habitacion_alquilada %}
+
+                            <p class="planta-convivencia-copy">
+
+                                {% if residente_actual_publico %}
+
+                                    Actualmente comparte sus días
+                                    con {{ residente_actual_publico }}.
+
+                                {% else %}
+
+                                    Actualmente comparte esta habitación
+                                    y está creando nuevos recuerdos.
+
+                                {% endif %}
+
+                            </p>
+
+                        {% else %}
+
+                            <p class="planta-convivencia-copy">
+                                Si eliges esta habitación, también
+                                compartirás hogar con ella.
+                            </p>
+
+                        {% endif %}
+
+
+                        {% if planta.ubicacion %}
+
+                            <p class="planta-ubicacion">
+                                📍 {{ planta.ubicacion }}
+                            </p>
+
+                        {% endif %}
+
+
+                        <a href="{% url 'hotel:planta_detail' planta.slug %}">
+                            Conocer su historia
+                        </a>
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+
+    {% if plantas_compartidas %}
+
+        <div class="plantas-grupo plantas-grupo-compartidas">
+
+            <h3>
+                También viven en las zonas compartidas
+            </h3>
+
+            <p>
+                Su cuidado forma parte de la vida común
+                de la vivienda.
+            </p>
+
+
+            {% for planta in plantas_compartidas %}
+
+                <article class="planta-card">
+
+                    {% if planta.foto %}
+
+                        <img
+                            src="{{ planta.foto.url }}"
+                            alt="{{ planta.nombre_completo }}"
+                        >
+
+                    {% endif %}
+
+
+                    <div class="planta-info">
+
+                        <span>
+                            RESIDENTE COMPARTIDA
+                        </span>
+
+                        <h3>
+                            {{ planta.nombre_completo }}
+                        </h3>
+
+
+                        {% if planta.especie %}
+
+                            <p class="planta-especie">
+                                {{ planta.especie }}
+                            </p>
+
+                        {% endif %}
+
+
+                        {% if planta.ubicacion %}
+
+                            <p class="planta-ubicacion">
+                                📍 {{ planta.ubicacion }}
+                            </p>
+
+                        {% endif %}
+
+
+                        <a href="{% url 'hotel:planta_detail' planta.slug %}">
+                            Conocer su historia
+                        </a>
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endif %}
+
+    </section>
+    
 
     <footer class="gallery-closing">
 
@@ -263,5 +474,99 @@
     </footer>
 
 </main>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const gallery = document.querySelector(".room-masonry-gallery");
+
+    if (!gallery) {
+        return;
+    }
+
+    const lightbox = document.createElement("div");
+    lightbox.className = "gallery-lightbox";
+    lightbox.setAttribute("role", "dialog");
+    lightbox.setAttribute("aria-modal", "true");
+    lightbox.setAttribute("aria-label", "Fotografía ampliada");
+
+    const closeButton = document.createElement("button");
+    closeButton.className = "gallery-lightbox-close";
+    closeButton.type = "button";
+    closeButton.setAttribute("aria-label", "Cerrar fotografía");
+    closeButton.innerHTML = "&times;";
+
+    const enlargedImage = document.createElement("img");
+    enlargedImage.className = "gallery-lightbox-media";
+    enlargedImage.alt = "";
+
+    lightbox.appendChild(closeButton);
+    lightbox.appendChild(enlargedImage);
+    document.body.appendChild(lightbox);
+
+    let previouslyFocusedElement = null;
+
+    function openLightbox(image) {
+        previouslyFocusedElement = image;
+
+        enlargedImage.src = image.currentSrc || image.src;
+        enlargedImage.alt = image.alt || "";
+
+        lightbox.classList.add("is-open");
+        document.body.classList.add("gallery-lightbox-open");
+
+        closeButton.focus();
+    }
+
+    function closeLightbox() {
+        lightbox.classList.remove("is-open");
+        document.body.classList.remove("gallery-lightbox-open");
+
+        enlargedImage.removeAttribute("src");
+
+        if (previouslyFocusedElement) {
+            previouslyFocusedElement.focus();
+        }
+    }
+
+    gallery.addEventListener("click", function (event) {
+        const image = event.target.closest(".gallery-media img");
+
+        if (image) {
+            openLightbox(image);
+        }
+    });
+
+    gallery.querySelectorAll(".gallery-media img").forEach(function (image) {
+        image.tabIndex = 0;
+        image.setAttribute("role", "button");
+        image.setAttribute("aria-label", "Ampliar fotografía");
+
+        image.addEventListener("keydown", function (event) {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                openLightbox(image);
+            }
+        });
+    });
+
+    lightbox.addEventListener("click", function (event) {
+        if (
+            event.target === lightbox ||
+            event.target === closeButton
+        ) {
+            closeLightbox();
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (
+            event.key === "Escape" &&
+            lightbox.classList.contains("is-open")
+        ) {
+            closeLightbox();
+        }
+    });
+});
+</script>
 
 {% endblock %}

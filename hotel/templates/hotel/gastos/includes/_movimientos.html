@@ -1,0 +1,612 @@
+<section
+    class="gastos-list-card"
+    id="movimientos"
+>
+
+    <header class="gastos-list-header">
+
+        <div>
+            <span class="gastos-eyebrow">
+                Movimientos
+            </span>
+
+            <h2>
+                {% if vista_listado == "fijos" %}
+                    Gastos fijos
+                {% elif vista_listado == "puntuales" %}
+                    Gastos esporádicos
+                {% elif vista_listado == "sin_factura" %}
+                    Gastos sin factura
+                {% else %}
+                    Últimos movimientos
+                {% endif %}
+            </h2>
+
+            <p>
+                {% if periodo_explicito %}
+                    Periodo {{ mes_seleccionado }}
+                {% else %}
+                    Últimos 10, sin limitar por mes
+                {% endif %}
+            </p>
+        </div>
+
+        <span class="gastos-list-count">
+            {{ numero_movimientos_listado }}
+            movimiento{{ numero_movimientos_listado|pluralize }}
+        </span>
+
+    </header>
+
+
+    <nav
+        class="gastos-view-tabs"
+        aria-label="Tipo de movimientos"
+    >
+
+        <a
+            href="?pais={{ pais_actual }}{% if proyecto_actual %}&proyecto={{ proyecto_actual.pk }}{% endif %}&vista_listado=ultimos#movimientos"
+            class="gastos-view-tab {% if vista_listado == 'ultimos' %}is-active{% endif %}"
+        >
+            Últimos 10
+        </a>
+
+        <a
+            href="?pais={{ pais_actual }}{% if proyecto_actual %}&proyecto={{ proyecto_actual.pk }}{% endif %}&vista_listado=fijos#movimientos"
+            class="gastos-view-tab {% if vista_listado == 'fijos' %}is-active{% endif %}"
+        >
+            Fijos
+        </a>
+
+        <a
+            href="?pais={{ pais_actual }}{% if proyecto_actual %}&proyecto={{ proyecto_actual.pk }}{% endif %}&vista_listado=puntuales#movimientos"
+            class="gastos-view-tab {% if vista_listado == 'puntuales' %}is-active{% endif %}"
+        >
+            Esporádicos
+        </a>
+
+        <a
+            href="?pais={{ pais_actual }}{% if proyecto_actual %}&proyecto={{ proyecto_actual.pk }}{% endif %}&vista_listado=sin_factura#movimientos"
+            class="gastos-view-tab {% if vista_listado == 'sin_factura' %}is-active{% endif %}"
+        >
+            Sin factura
+
+            {% if numero_gastos_gestoria_sin_justificante %}
+                <span>
+                    {{ numero_gastos_gestoria_sin_justificante }}
+                </span>
+            {% endif %}
+        </a>
+
+    </nav>
+
+
+    <form
+        method="get"
+        action="{% url 'hotel:gastos_dashboard' %}#movimientos"
+        class="gastos-filters gastos-movimientos-filters"
+    >
+        <input
+            type="hidden"
+            name="pais"
+            value="{{ pais_actual }}"
+        >
+
+        {% if proyecto_actual %}
+            <input
+                type="hidden"
+                name="proyecto"
+                value="{{ proyecto_actual.pk }}"
+            >
+        {% endif %}
+
+        <input
+            type="hidden"
+            name="vista_listado"
+            value="{{ vista_listado }}"
+        >
+
+
+        <div class="gastos-filter-field">
+
+            <label for="filtro-mes">
+                Periodo
+            </label>
+
+            <input
+                id="filtro-mes"
+                type="month"
+                name="mes"
+                value="{% if periodo_explicito %}{{ mes_seleccionado }}{% endif %}"
+            >
+
+        </div>
+
+
+        {% if es_espana %}
+
+            <div class="gastos-filter-field">
+
+                <label for="filtro-propiedad">
+                    Propiedad
+                </label>
+
+                <select
+                    id="filtro-propiedad"
+                    name="propiedad"
+                >
+                    <option value="">
+                        Todas
+                    </option>
+
+                    <option
+                        value="empresa"
+                        {% if propiedad_seleccionada == "empresa" %}
+                            selected
+                        {% endif %}
+                    >
+                        Sociedad
+                    </option>
+
+                    {% for propiedad in propiedades %}
+
+                        <option
+                            value="{{ propiedad.pk }}"
+                            {% if propiedad_seleccionada == propiedad.pk %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ propiedad.nombre }}
+                        </option>
+
+                    {% endfor %}
+                </select>
+
+            </div>
+
+        {% endif %}
+
+
+        <details class="gastos-more-filters">
+
+            <summary>
+                <i class="fa fa-sliders"></i>
+                Más filtros
+            </summary>
+
+            <div class="gastos-more-filters-content">
+
+                <div class="gastos-filter-field">
+
+                    <label for="filtro-categoria">
+                        Categoría
+                    </label>
+
+                    <select
+                        id="filtro-categoria"
+                        name="categoria"
+                    >
+                        <option value="">
+                            Todas
+                        </option>
+
+                        {% for valor, etiqueta in categorias %}
+
+                            <option
+                                value="{{ valor }}"
+                                {% if categoria_seleccionada == valor %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ etiqueta }}
+                            </option>
+
+                        {% endfor %}
+                    </select>
+
+                </div>
+
+
+                <div class="gastos-filter-field">
+
+                    <label for="filtro-tipo">
+                        Tipo
+                    </label>
+
+                    <select
+                        id="filtro-tipo"
+                        name="tipo"
+                    >
+                        <option value="">
+                            Todos
+                        </option>
+
+                        {% for valor, etiqueta in tipos %}
+
+                            <option
+                                value="{{ valor }}"
+                                {% if tipo_seleccionado == valor %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ etiqueta }}
+                            </option>
+
+                        {% endfor %}
+                    </select>
+
+                </div>
+
+
+                <div class="gastos-filter-field">
+
+                    <label for="filtro-estado">
+                        Pago
+                    </label>
+
+                    <select
+                        id="filtro-estado"
+                        name="estado"
+                    >
+                        <option value="">
+                            Todos
+                        </option>
+
+                        <option
+                            value="pagado"
+                            {% if estado_seleccionado == "pagado" %}
+                                selected
+                            {% endif %}
+                        >
+                            Pagados
+                        </option>
+
+                        <option
+                            value="pendiente"
+                            {% if estado_seleccionado == "pendiente" %}
+                                selected
+                            {% endif %}
+                        >
+                            Pendientes
+                        </option>
+                    </select>
+
+                </div>
+
+            </div>
+
+        </details>
+
+
+        <button
+            type="submit"
+            class="gastos-filter-button"
+        >
+            <i class="fa fa-filter"></i>
+            Filtrar
+        </button>
+
+        <a
+            href="{% url 'hotel:gastos_dashboard' %}?pais={{ pais_actual }}{% if proyecto_actual %}&proyecto={{ proyecto_actual.pk }}{% endif %}#movimientos"
+            class="gastos-clear-button"
+        >
+            Limpiar
+        </a>
+
+    </form>
+
+
+    {% if movimientos_recientes %}
+
+        <div class="gastos-table-wrapper">
+
+            <table class="gastos-table">
+
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Gasto</th>
+                        <th>Destino</th>
+                        <th>Categoría</th>
+                        <th>Importe</th>
+                        <th>Pago</th>
+                        <th>Factura</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for gasto in movimientos_recientes %}
+
+                        <tr>
+
+                            <td data-label="Fecha">
+                                {{ gasto.fecha|date:"d/m/Y" }}
+                            </td>
+
+
+                            <td data-label="Gasto">
+
+                                <strong>
+                                    {{ gasto.titulo }}
+                                </strong>
+
+                                <small>
+                                    {% if gasto.gasto_recurrente_id %}
+                                        Fijo
+                                    {% else %}
+                                        Esporádico
+                                    {% endif %}
+                                </small>
+
+                            </td>
+
+
+                            <td data-label="Destino">
+
+                                {% if gasto.proyecto %}
+
+                                    <span class="gasto-destination">
+                                        {{ gasto.proyecto.nombre }}
+                                    </span>
+
+                                {% elif gasto.propiedad %}
+
+                                    <span class="gasto-destination">
+                                        {{ gasto.propiedad.nombre }}
+                                    </span>
+
+                                    {% if gasto.habitacion %}
+                                        <small>{{ gasto.habitacion.nombre }}</small>
+                                    {% else %}
+                                        <small>Toda la propiedad</small>
+                                    {% endif %}
+
+                                {% else %}
+
+                                    <span class="gasto-destination">
+                                        Sociedad
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td data-label="Categoría">
+
+                                <span class="gasto-category">
+                                    {{ gasto.get_categoria_display }}
+                                </span>
+
+                                {% if gasto.tipo_suministro %}
+                                    <small>
+                                        {{ gasto.get_tipo_suministro_display }}
+                                    </small>
+                                {% endif %}
+
+                            </td>
+
+
+                            <td data-label="Importe">
+
+                                {% if es_argentina %}
+
+                                    {% if gasto.importe_usd %}
+
+                                        <strong class="gasto-amount">
+                                            {{ gasto.importe_usd|floatformat:2 }}
+                                            US$
+                                        </strong>
+
+                                        <small>
+                                            {{ gasto.importe|floatformat:2 }}
+                                            ARS
+                                        </small>
+
+                                    {% else %}
+
+                                        <strong class="gasto-document-missing">
+                                            Sin convertir
+                                        </strong>
+
+                                        <small>
+                                            {{ gasto.importe|floatformat:2 }}
+                                            ARS
+                                        </small>
+
+                                    {% endif %}
+
+                                {% else %}
+
+                                    <strong class="gasto-amount">
+                                        {{ gasto.importe|floatformat:2 }} €
+                                    </strong>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td data-label="Pago">
+
+                                {% if gasto.pagado %}
+
+                                    <span class="gasto-status gasto-paid">
+                                        Pagado
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="gasto-status gasto-pending">
+                                        Pendiente
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td data-label="Factura">
+
+                                {% if gasto.justificante %}
+
+                                    <a
+                                        href="{{ gasto.justificante.url }}"
+                                        class="gasto-document"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        <i class="fa fa-file"></i>
+                                        Ver
+                                    </a>
+
+                                {% elif gasto.destino_gestoria == "gestoria" %}
+
+                                    <span class="gasto-document-missing">
+                                        Falta
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="gasto-no-document">
+                                        —
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td data-label="Acciones">
+
+                                <div class="gasto-actions">
+
+                                    <a
+                                        href="{% url 'hotel:editar_gasto' gasto.pk %}"
+                                        class="gasto-action gasto-action-edit"
+                                        aria-label="Editar gasto"
+                                    >
+                                        <i class="fa fa-pencil"></i>
+                                    </a>
+
+
+                                    <form
+                                        method="post"
+                                        action="{% url 'hotel:cambiar_estado_gasto' gasto.pk %}"
+                                    >
+                                        {% csrf_token %}
+
+                                        <input
+                                            type="hidden"
+                                            name="next"
+                                            value="{{ request.get_full_path }}#movimientos"
+                                        >
+
+                                        <button
+                                            type="submit"
+                                            class="gasto-action gasto-action-state"
+                                            aria-label="Cambiar estado"
+                                        >
+                                            {% if gasto.pagado %}
+                                                <i class="fa fa-clock"></i>
+                                            {% else %}
+                                                <i class="fa fa-check"></i>
+                                            {% endif %}
+                                        </button>
+
+                                    </form>
+
+
+                                    <form
+                                        method="post"
+                                        action="{% url 'hotel:eliminar_gasto' gasto.pk %}"
+                                        onsubmit="return confirm('¿Eliminar este movimiento?');"
+                                    >
+                                        {% csrf_token %}
+
+                                        <input
+                                            type="hidden"
+                                            name="next"
+                                            value="{{ request.get_full_path }}#movimientos"
+                                        >
+
+                                        <button
+                                            type="submit"
+                                            class="gasto-action gasto-action-delete"
+                                            aria-label="Eliminar gasto"
+                                        >
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <div class="movimientos-slider-footer">
+
+            <button
+                type="button"
+                class="movimientos-slider-button"
+                id="movimientos-prev"
+                aria-label="Movimientos anteriores"
+            >
+                <i class="fa fa-arrow-left"></i>
+            </button>
+
+            <span
+                id="movimientos-page-status"
+                aria-live="polite"
+            ></span>
+
+            <button
+                type="button"
+                class="movimientos-slider-button"
+                id="movimientos-next"
+                aria-label="Movimientos siguientes"
+            >
+                <i class="fa fa-arrow-right"></i>
+            </button>
+
+        </div>
+
+    {% else %}
+
+        <div class="gastos-empty">
+
+            <span aria-hidden="true">🌱</span>
+
+            <h3>
+                No hay movimientos
+            </h3>
+
+            <p>
+                No se encontraron gastos para esta selección.
+            </p>
+
+            <a
+                href="{% url 'hotel:crear_gasto' %}?pais={{ pais_actual }}{% if proyecto_actual %}&proyecto={{ proyecto_actual.pk }}{% endif %}"
+                class="gastos-create-button"
+            >
+                Añadir gasto
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</section>

@@ -1,0 +1,105 @@
+{% if request.resolver_match.url_name != "home" %}
+
+<header class="dashboard-location public-location">
+
+    <div class="dashboard-location-copy">
+
+        <nav aria-label="Ubicación actual">
+            <ol class="dashboard-breadcrumb">
+
+                <li>
+                    <a
+                        href="{% url 'hotel:home' %}"
+                        aria-label="Volver al inicio"
+                    >
+                        Inicio
+                    </a>
+                </li>
+
+                <li aria-hidden="true">
+                    <span>/</span>
+                </li>
+
+                <li>
+                    <strong>
+
+                        {% if request.resolver_match.url_name == "habitaciones" %}
+                                                       {{ habitacion.nombre|default:"Habitación" }}
+
+                        {% elif request.resolver_match.url_name == "habitacion_galeria" %}
+                            Galería de {{ habitacion.nombre|default:"habitación" }}
+
+                        {% elif request.resolver_match.url_name == "planta_detail" %}
+                            {{ planta.nombre_completo|default:"Residente" }}
+
+                        {% elif request.resolver_match.url_name == "pisos" %}
+                            Propiedades
+
+                        {% elif request.resolver_match.url_name == "contacto" %}
+                            Contacto
+
+                        {% elif request.resolver_match.url_name == "login" %}
+                            Acceso
+
+                        {% else %}
+                            {{ page_title|default:"By Collection" }}
+                        {% endif %}
+
+                    </strong>
+                </li>
+
+            </ol>
+        </nav>
+
+
+        <p class="dashboard-location-note">
+
+            {% if request.resolver_match.url_name == "habitaciones" %}
+                Información de la habitación
+
+            {% elif request.resolver_match.url_name == "habitacion_galeria" %}
+                Fotografías y residentes permanentes
+
+            {% elif request.resolver_match.url_name == "planta_detail" %}
+                Historia y cuidados
+
+            {% elif request.resolver_match.url_name == "pisos" %}
+                Espacios de By Collection
+
+            {% elif request.resolver_match.url_name == "contacto" %}
+                Estamos aquí para ayudarte
+
+            {% elif request.resolver_match.url_name == "login" %}
+                Área privada
+
+            {% else %}
+                Explora By Collection
+            {% endif %}
+
+        </p>
+
+    </div>
+
+
+    <button
+        type="button"
+        class="dashboard-location-action public-location-back"
+        aria-label="Volver a la página anterior"
+        title="Volver"
+        onclick="
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href='{% url 'hotel:home' %}';
+            }
+        "
+    >
+        <i
+            class="fa fa-arrow-left"
+            aria-hidden="true"
+        ></i>
+    </button>
+
+</header>
+
+{% endif %}

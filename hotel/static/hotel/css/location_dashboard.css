@@ -1,0 +1,319 @@
+/* =========================================================
+   BY COLECCIÓN — BARRA DE UBICACIÓN COMPARTIDA
+========================================================= */
+
+.dashboard-location {
+    position: relative;
+    z-index: 80;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+
+    width: 100%;
+    min-height: 68px;
+    margin: 0;
+    padding: 10px 18px;
+
+    box-sizing: border-box;
+
+    border-bottom:
+        1px solid rgba(81, 52, 62, 0.10);
+
+    background:
+        rgba(247, 244, 240, 0.97);
+
+    color: #51343e;
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+
+    box-shadow:
+        0 5px 18px rgba(55, 38, 45, 0.06);
+}
+
+
+/* =========================================================
+   CONTENIDO
+========================================================= */
+
+.dashboard-location-copy {
+    display: grid;
+    flex: 1 1 auto;
+
+    min-width: 0;
+    gap: 4px;
+}
+
+.dashboard-breadcrumb {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+
+    font-size: 1rem;
+    line-height: 1.25;
+}
+
+.dashboard-breadcrumb li {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.dashboard-breadcrumb a,
+.dashboard-breadcrumb span,
+.dashboard-breadcrumb strong {
+    display: inline-block;
+    max-width: 100%;
+}
+
+.dashboard-breadcrumb a {
+    color: #927783;
+
+    font-weight: 750;
+    text-decoration: none;
+
+    transition: color 150ms ease;
+}
+
+.dashboard-breadcrumb a:hover {
+    color: #51343e;
+}
+
+.dashboard-breadcrumb a:focus-visible {
+    border-radius: 4px;
+
+    outline:
+        3px solid rgba(114, 165, 161, 0.38);
+
+    outline-offset: 3px;
+}
+
+.dashboard-breadcrumb span {
+    color: #765f69;
+    font-weight: 700;
+}
+
+.dashboard-breadcrumb strong {
+    overflow: hidden;
+
+    color: #51343e;
+    font-weight: 900;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.dashboard-location-note {
+    overflow: hidden;
+
+    max-width: 100%;
+    margin: 0;
+
+    color: #786d71;
+
+    font-size: 0.7rem;
+    font-weight: 650;
+    line-height: 1.3;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   BOTÓN DE ACCIÓN
+========================================================= */
+
+.dashboard-location-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 46px;
+
+    width: 46px;
+    height: 46px;
+    margin: 0;
+    padding: 0;
+
+    border: 0;
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #62384b,
+            #422333
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 9px 22px rgba(66, 35, 51, 0.24);
+
+    cursor: pointer;
+    text-decoration: none;
+
+    transition:
+        transform 150ms ease,
+        box-shadow 150ms ease;
+}
+
+.dashboard-location-action i {
+    color: inherit;
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.dashboard-location-action:hover {
+    transform: translateY(-2px);
+
+    color: #ffffff;
+
+    box-shadow:
+        0 13px 27px rgba(66, 35, 51, 0.3);
+}
+
+.dashboard-location-action:active {
+    transform: translateY(0);
+}
+
+.dashboard-location-action:focus-visible {
+    outline:
+        4px solid rgba(114, 165, 161, 0.38);
+
+    outline-offset: 3px;
+}
+
+
+/* =========================================================
+   VERSIÓN PÚBLICA
+========================================================= */
+
+.public-location {
+    margin: 0;
+}
+
+.public-location-back {
+    background:
+        linear-gradient(
+            145deg,
+            #72a5a1,
+            #527f7b
+        );
+
+    box-shadow:
+        0 9px 22px rgba(82, 127, 123, 0.24);
+}
+
+.public-location-back:hover {
+    box-shadow:
+        0 13px 27px rgba(82, 127, 123, 0.3);
+}
+
+
+/* =========================================================
+   TABLET Y MÓVIL
+========================================================= */
+
+@media (max-width: 650px) {
+
+    .dashboard-location {
+        gap: 12px;
+
+        min-height: 64px;
+        margin: 0;
+        padding: 8px 12px;
+
+        border-radius: 0;
+    }
+
+    .dashboard-location-copy {
+        gap: 3px;
+    }
+
+    .dashboard-breadcrumb {
+        gap: 5px;
+
+        font-size: 0.94rem;
+    }
+
+    .dashboard-location-note {
+        font-size: 0.63rem;
+    }
+
+    .dashboard-location-action {
+        flex-basis: 44px;
+
+        width: 44px;
+        height: 44px;
+
+        border-radius: 14px;
+    }
+
+    /*
+       La posición sticky debe activarse únicamente si
+       la cabecera superior también es sticky.
+    */
+
+    .public-location {
+        position: sticky;
+        top: 64px;
+        z-index: 900;
+    }
+}
+
+
+/* =========================================================
+   MÓVILES PEQUEÑOS
+========================================================= */
+
+@media (max-width: 380px) {
+
+    .dashboard-location {
+        gap: 9px;
+        min-height: 60px;
+        padding: 7px 9px;
+    }
+
+    .dashboard-breadcrumb {
+        font-size: 0.86rem;
+    }
+
+    .dashboard-location-note {
+        font-size: 0.59rem;
+    }
+
+    .dashboard-location-action {
+        flex-basis: 42px;
+
+        width: 42px;
+        height: 42px;
+    }
+
+    .public-location {
+        top: 58px;
+    }
+}
+
+
+/* =========================================================
+   MOVIMIENTO REDUCIDO
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .dashboard-breadcrumb a,
+    .dashboard-location-action {
+        transition: none;
+    }
+}

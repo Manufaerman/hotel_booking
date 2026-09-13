@@ -1,0 +1,1055 @@
+/* =========================================================
+   BY COLECCIÓN — RESIDENTE PERMANENTE
+========================================================= */
+
+:root {
+    --plant-wine: #745f6d;
+    --plant-wine-dark: #4b2938;
+    --plant-wine-soft: #927783;
+
+    --plant-rose: #c9a7ad;
+    --plant-tiffany: #72a5a1;
+    --plant-tiffany-dark: #527d79;
+    --plant-tiffany-light: #dcebea;
+
+    --plant-yellow: #f3e5a4;
+    --plant-yellow-soft: #fbf4cf;
+
+    --plant-cream: #f5f0e9;
+    --plant-paper: #fffdf9;
+
+    --plant-text: #352a2f;
+    --plant-text-soft: #756a6e;
+
+    --plant-border: rgba(75, 41, 56, 0.12);
+    --plant-shadow: 0 22px 55px rgba(55, 34, 43, 0.12);
+
+    --plant-container: 1240px;
+    --plant-content: 920px;
+    --plant-side: clamp(20px, 6vw, 80px);
+}
+
+
+/* =========================================================
+   BASE
+========================================================= */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    overflow-x: hidden;
+    background: var(--plant-cream);
+    color: var(--plant-text);
+}
+
+.planta-hero,
+.planta-cuidados,
+.planta-historia,
+.planta-comentarios {
+    width: calc(100% - (var(--plant-side) * 2));
+    margin-right: auto;
+    margin-left: auto;
+}
+
+
+/* =========================================================
+   ETIQUETAS DE SECCIÓN
+========================================================= */
+
+.planta-hero span,
+.planta-cuidados > span,
+.planta-historia > span,
+.planta-comentarios > span {
+    display: block;
+    margin-bottom: 10px;
+
+    color: var(--plant-tiffany-dark);
+
+    font-size: 0.68rem;
+    font-weight: 800;
+
+    line-height: 1.3;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+}
+
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.planta-hero {
+    display: grid;
+    grid-template-columns:
+        minmax(340px, 0.92fr)
+        minmax(0, 1.08fr);
+
+    align-items: stretch;
+
+    max-width: var(--plant-container);
+    min-height: 620px;
+
+    margin-top: 48px;
+    margin-bottom: 74px;
+
+    overflow: hidden;
+
+    border: 1px solid var(--plant-border);
+    border-radius: 34px;
+
+    background: var(--plant-paper);
+    box-shadow: var(--plant-shadow);
+}
+
+
+/* Cuando no existe fotografía */
+
+.planta-hero > div:only-child {
+    grid-column: 1 / -1;
+    min-height: 500px;
+}
+
+
+/* Fotografía */
+
+.planta-hero > img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+    min-height: 620px;
+
+    object-fit: cover;
+    object-position: center;
+
+    background: var(--plant-tiffany-light);
+}
+
+
+/* Contenido */
+
+.planta-hero > div {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+
+    min-width: 0;
+    padding: clamp(44px, 7vw, 90px);
+
+    background:
+        radial-gradient(
+            circle at 90% 5%,
+            rgba(243, 229, 164, 0.44),
+            transparent 34%
+        ),
+        linear-gradient(
+            145deg,
+            var(--plant-paper),
+            rgba(220, 235, 234, 0.72)
+        );
+}
+
+.planta-hero > div::before {
+    content: "";
+
+    position: absolute;
+    top: 38px;
+    right: 38px;
+
+    width: 86px;
+    height: 86px;
+
+    border: 1px solid rgba(114, 165, 161, 0.18);
+    border-radius: 50%;
+
+    box-shadow:
+        0 0 0 14px rgba(114, 165, 161, 0.05),
+        0 0 0 28px rgba(114, 165, 161, 0.025);
+
+    pointer-events: none;
+}
+
+.planta-hero h1 {
+    position: relative;
+    z-index: 1;
+
+    max-width: 680px;
+    margin: 0 0 22px;
+
+    color: var(--plant-wine-dark);
+
+    font-family:
+        "Playfair Display",
+        Georgia,
+        serif;
+
+    font-size: clamp(3.3rem, 7vw, 6.8rem);
+    font-weight: 500;
+
+    line-height: 0.92;
+    letter-spacing: -0.045em;
+}
+
+.planta-hero h1::after {
+    content: "";
+
+    display: block;
+
+    width: 70px;
+    height: 3px;
+
+    margin-top: 25px;
+
+    border-radius: 999px;
+    background: var(--plant-rose);
+}
+
+.planta-hero > div > p {
+    margin: 4px 0;
+
+    color: var(--plant-wine);
+    font-size: 0.92rem;
+    font-weight: 700;
+
+    line-height: 1.5;
+}
+
+.planta-hero > div > div {
+    max-width: 570px;
+    margin-top: 22px;
+
+    color: var(--plant-text-soft);
+    font-size: 1rem;
+
+    line-height: 1.75;
+}
+
+.planta-hero > div > div p {
+    margin: 0 0 12px;
+}
+
+.planta-hero > div > div p:last-child {
+    margin-bottom: 0;
+}
+
+
+/* =========================================================
+   SECCIONES GENERALES
+========================================================= */
+
+.planta-cuidados,
+.planta-historia,
+.planta-comentarios {
+    max-width: var(--plant-content);
+}
+
+.planta-cuidados h2,
+.planta-historia h2,
+.planta-comentarios h2 {
+    margin: 0;
+
+    color: var(--plant-wine-dark);
+
+    font-family:
+        "Playfair Display",
+        Georgia,
+        serif;
+
+    font-size: clamp(2.15rem, 5vw, 3.7rem);
+    font-weight: 500;
+
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+}
+
+
+/* =========================================================
+   CUIDADOS
+========================================================= */
+
+.planta-cuidados {
+    position: relative;
+
+    margin-bottom: 88px;
+    padding: clamp(34px, 6vw, 64px);
+
+    overflow: hidden;
+
+    border: 1px solid rgba(75, 41, 56, 0.10);
+    border-radius: 28px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(251, 244, 207, 0.96),
+            rgba(255, 253, 249, 0.96)
+        );
+
+    box-shadow: 0 16px 40px rgba(55, 34, 43, 0.08);
+}
+
+.planta-cuidados::after {
+    content: "✦";
+
+    position: absolute;
+    right: clamp(22px, 5vw, 55px);
+    bottom: clamp(18px, 4vw, 42px);
+
+    color: rgba(116, 95, 109, 0.12);
+
+    font-family:
+        "Playfair Display",
+        Georgia,
+        serif;
+
+    font-size: clamp(5rem, 12vw, 9rem);
+    line-height: 1;
+
+    pointer-events: none;
+}
+
+.planta-cuidados h2 {
+    position: relative;
+    z-index: 1;
+
+    max-width: 660px;
+    margin-bottom: 25px;
+}
+
+.planta-cuidados > p {
+    position: relative;
+    z-index: 1;
+
+    max-width: 690px;
+    margin: 0 0 13px;
+
+    color: var(--plant-text-soft);
+    font-size: 1rem;
+
+    line-height: 1.75;
+}
+
+.planta-cuidados > p:last-child {
+    margin-bottom: 0;
+}
+
+
+/* =========================================================
+   HISTORIA
+========================================================= */
+
+.planta-historia {
+    margin-bottom: 92px;
+}
+
+.planta-historia > h2 {
+    max-width: 720px;
+    margin-bottom: 48px;
+}
+
+.planta-historia > p {
+    padding: 28px;
+
+    border: 1px dashed rgba(75, 41, 56, 0.2);
+    border-radius: 18px;
+
+    color: var(--plant-text-soft);
+    text-align: center;
+}
+
+
+/* Línea cronológica */
+
+.evento-planta {
+    position: relative;
+
+    margin-left: 12px;
+    padding:
+        0 0
+        42px
+        46px;
+
+    border-left: 1px solid rgba(75, 41, 56, 0.18);
+}
+
+.evento-planta:last-of-type {
+    padding-bottom: 4px;
+}
+
+.evento-planta::before {
+    content: "";
+
+    position: absolute;
+    top: 3px;
+    left: -7px;
+
+    width: 13px;
+    height: 13px;
+
+    border: 3px solid var(--plant-cream);
+    border-radius: 50%;
+
+    background: var(--plant-tiffany);
+
+    box-shadow:
+        0 0 0 1px rgba(82, 125, 121, 0.42),
+        0 5px 14px rgba(55, 34, 43, 0.13);
+}
+
+.evento-planta time {
+    display: inline-flex;
+
+    margin-bottom: 10px;
+    padding: 6px 10px;
+
+    border-radius: 999px;
+
+    background: var(--plant-tiffany-light);
+    color: var(--plant-tiffany-dark);
+
+    font-size: 0.65rem;
+    font-weight: 800;
+
+    letter-spacing: 0.07em;
+}
+
+.evento-planta h3 {
+    margin: 0 0 9px;
+
+    color: var(--plant-wine-dark);
+
+    font-family:
+        "Playfair Display",
+        Georgia,
+        serif;
+
+    font-size: clamp(1.35rem, 3vw, 1.75rem);
+    font-weight: 500;
+
+    line-height: 1.2;
+}
+
+.evento-planta p {
+    max-width: 690px;
+    margin: 0;
+
+    color: var(--plant-text-soft);
+    font-size: 0.95rem;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   COMENTARIOS
+========================================================= */
+
+.planta-comentarios {
+    margin-bottom: 110px;
+    padding-top: 65px;
+
+    border-top: 1px solid rgba(75, 41, 56, 0.13);
+}
+
+.planta-comentarios > h2 {
+    margin-bottom: 40px;
+}
+
+.planta-comentarios > article {
+    position: relative;
+
+    margin-bottom: 18px;
+    padding: clamp(27px, 5vw, 45px);
+
+    overflow: hidden;
+
+    border: 1px solid var(--plant-border);
+    border-radius: 24px;
+
+    background: var(--plant-paper);
+    box-shadow: 0 14px 38px rgba(55, 34, 43, 0.08);
+}
+
+.planta-comentarios > article::before {
+    content: "“";
+
+    position: absolute;
+    top: -13px;
+    right: 22px;
+
+    color: rgba(201, 167, 173, 0.25);
+
+    font-family:
+        "Playfair Display",
+        Georgia,
+        serif;
+
+    font-size: 9rem;
+    line-height: 1;
+
+    pointer-events: none;
+}
+
+.planta-comentarios blockquote {
+    position: relative;
+    z-index: 1;
+
+    max-width: 720px;
+    margin: 0 0 23px;
+
+    color: var(--plant-text);
+
+    font-family:
+        "Playfair Display",
+        Georgia,
+        serif;
+
+    font-size: clamp(1.2rem, 3vw, 1.65rem);
+    font-style: italic;
+
+    line-height: 1.5;
+}
+
+.planta-comentarios article > p {
+    display: inline-block;
+    margin: 0 10px 0 0;
+
+    color: var(--plant-wine-dark);
+    font-size: 0.77rem;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+}
+
+.planta-comentarios article > small {
+    color: var(--plant-text-soft);
+    font-size: 0.73rem;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+    :root {
+        --plant-side: clamp(18px, 4vw, 38px);
+    }
+
+    .planta-hero {
+        grid-template-columns:
+            minmax(280px, 0.9fr)
+            minmax(0, 1.1fr);
+
+        min-height: 540px;
+        margin-top: 32px;
+        margin-bottom: 58px;
+
+        border-radius: 28px;
+    }
+
+    .planta-hero > img {
+        min-height: 540px;
+    }
+
+    .planta-hero > div {
+        padding: clamp(34px, 5vw, 54px);
+    }
+
+    .planta-hero h1 {
+        font-size: clamp(3rem, 7vw, 4.7rem);
+    }
+
+    .planta-cuidados {
+        margin-bottom: 70px;
+    }
+
+    .planta-historia {
+        margin-bottom: 72px;
+    }
+
+    .planta-comentarios {
+        margin-bottom: 80px;
+    }
+}
+
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
+@media (max-width: 680px) {
+    :root {
+        --plant-side: 14px;
+    }
+
+    .planta-hero {
+        display: flex;
+        flex-direction: column;
+
+        min-height: 0;
+
+        margin-top: 18px;
+        margin-bottom: 42px;
+
+        border-radius: 22px;
+    }
+
+    .planta-hero > img {
+        width: 100%;
+        height: auto;
+        min-height: 0;
+        max-height: 460px;
+
+        aspect-ratio: 4 / 5;
+        object-fit: cover;
+    }
+
+    .planta-hero > div,
+    .planta-hero > div:only-child {
+        min-height: 0;
+        padding: 30px 24px 34px;
+    }
+
+    .planta-hero > div::before {
+        top: 24px;
+        right: 22px;
+
+        width: 54px;
+        height: 54px;
+    }
+
+    .planta-hero span,
+    .planta-cuidados > span,
+    .planta-historia > span,
+    .planta-comentarios > span {
+        margin-bottom: 8px;
+        font-size: 0.59rem;
+        letter-spacing: 0.17em;
+    }
+
+    .planta-hero h1 {
+        max-width: calc(100% - 20px);
+        margin-bottom: 18px;
+
+        font-size: clamp(2.8rem, 15vw, 4.2rem);
+        line-height: 0.96;
+    }
+
+    .planta-hero h1::after {
+        width: 54px;
+        margin-top: 19px;
+    }
+
+    .planta-hero > div > p {
+        font-size: 0.82rem;
+    }
+
+    .planta-hero > div > div {
+        margin-top: 18px;
+        font-size: 0.93rem;
+        line-height: 1.65;
+    }
+
+    .planta-cuidados,
+    .planta-historia,
+    .planta-comentarios {
+        width: calc(100% - 28px);
+    }
+
+    .planta-cuidados {
+        margin-bottom: 54px;
+        padding: 28px 22px;
+
+        border-radius: 21px;
+    }
+
+    .planta-cuidados::after {
+        right: 14px;
+        bottom: 10px;
+        font-size: 5.5rem;
+    }
+
+    .planta-cuidados h2,
+    .planta-historia h2,
+    .planta-comentarios h2 {
+        font-size: 2.1rem;
+    }
+
+    .planta-cuidados h2 {
+        padding-right: 20px;
+        margin-bottom: 20px;
+    }
+
+    .planta-cuidados > p {
+        font-size: 0.92rem;
+        line-height: 1.65;
+    }
+
+    .planta-historia {
+        margin-bottom: 58px;
+    }
+
+    .planta-historia > h2 {
+        margin-bottom: 34px;
+    }
+
+    .evento-planta {
+        margin-left: 7px;
+        padding: 0 0 34px 30px;
+    }
+
+    .evento-planta h3 {
+        font-size: 1.4rem;
+    }
+
+    .evento-planta p {
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+    .planta-comentarios {
+        margin-bottom: 64px;
+        padding-top: 46px;
+    }
+
+    .planta-comentarios > h2 {
+        margin-bottom: 28px;
+    }
+
+    .planta-comentarios > article {
+        padding: 25px 21px;
+        border-radius: 19px;
+    }
+
+    .planta-comentarios > article::before {
+        top: -7px;
+        right: 12px;
+        font-size: 6rem;
+    }
+
+    .planta-comentarios blockquote {
+        margin-bottom: 18px;
+        padding-right: 12px;
+
+        font-size: 1.2rem;
+        line-height: 1.48;
+    }
+
+    .planta-comentarios article > p {
+        display: block;
+        margin: 0 0 5px;
+    }
+}
+
+
+/* =========================================================
+   MOVIMIENTO REDUCIDO
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+    }
+}
+
+.evento-planta-actual {
+    margin-bottom: 38px;
+    padding: clamp(26px, 5vw, 42px);
+
+    border: 1px solid rgba(82, 125, 121, 0.20);
+    border-radius: 24px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(220, 235, 234, 0.90),
+            rgba(255, 253, 249, 0.96)
+        );
+
+    box-shadow:
+        0 15px 36px rgba(55, 34, 43, 0.08);
+}
+
+.evento-planta-actual::before {
+    display: none;
+}
+
+.evento-planta-badge {
+    display: inline-flex;
+    align-items: center;
+
+    margin-bottom: 14px;
+    padding: 7px 11px;
+
+    border-radius: 999px;
+
+    background: #72a5a1;
+    color: #fff;
+
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.11em;
+}
+
+.evento-planta-actual h3 {
+    margin: 0 0 10px;
+
+    color: #4b2938;
+
+    font-family:
+        "Playfair Display",
+        Georgia,
+        serif;
+
+    font-size: clamp(1.45rem, 3vw, 2rem);
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+.evento-planta-actual p {
+    margin: 0;
+    color: #756a6e;
+    font-size: 0.92rem;
+    line-height: 1.6;
+}
+/* =========================================================
+   CONVIVENCIA ACTUAL
+========================================================= */
+
+.evento-planta-actual {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 24px;
+
+    margin: 42px 0 48px;
+    padding: clamp(28px, 5vw, 45px);
+
+    border: 1px solid rgba(82, 125, 121, 0.18);
+    border-radius: 26px;
+
+    background:
+        radial-gradient(
+            circle at 100% 0,
+            rgba(243, 229, 164, 0.42),
+            transparent 38%
+        ),
+        linear-gradient(
+            135deg,
+            rgba(220, 235, 234, 0.95),
+            rgba(255, 253, 249, 0.96)
+        );
+
+    box-shadow:
+        0 18px 42px rgba(55, 34, 43, 0.09);
+}
+
+.evento-planta-icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 76px;
+    height: 76px;
+
+    border: 1px solid rgba(82, 125, 121, 0.18);
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.70);
+
+    font-size: 2rem;
+
+    box-shadow:
+        0 12px 28px rgba(55, 34, 43, 0.08);
+}
+
+.evento-planta-actual-contenido {
+    min-width: 0;
+}
+
+.evento-planta-badge {
+    display: inline-flex;
+    align-items: center;
+
+    margin-bottom: 12px;
+    padding: 7px 11px;
+
+    border-radius: 999px;
+
+    background: #72a5a1;
+    color: #fff;
+
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.11em;
+}
+
+.evento-planta-actual h3 {
+    margin: 0 0 9px;
+
+    color: #4b2938;
+
+    font-family:
+        "Playfair Display",
+        Georgia,
+        serif;
+
+    font-size: clamp(1.55rem, 3vw, 2.1rem);
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+.evento-planta-actual p {
+    max-width: 630px;
+    margin: 0;
+
+    color: #756a6e;
+    font-size: 0.94rem;
+    line-height: 1.65;
+}
+
+
+/* =========================================================
+   ESTADOS SIN HISTORIA
+========================================================= */
+
+.planta-estado-vacio {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 13px;
+
+    padding: 30px;
+
+    border: 1px dashed rgba(75, 41, 56, 0.18);
+    border-radius: 20px;
+
+    color: #756a6e;
+    text-align: center;
+}
+
+.planta-estado-vacio > span {
+    font-size: 1.5rem;
+}
+
+.planta-estado-vacio p {
+    margin: 0;
+}
+
+
+/* =========================================================
+   RECUERDOS EN CREACIÓN
+========================================================= */
+
+.planta-recuerdos-creandose {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 22px;
+
+    padding: clamp(27px, 5vw, 42px);
+
+    border: 1px dashed rgba(82, 125, 121, 0.28);
+    border-radius: 24px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 253, 249, 0.82),
+            rgba(220, 235, 234, 0.50)
+        );
+}
+
+.planta-recuerdos-icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 64px;
+    height: 64px;
+
+    border-radius: 50%;
+
+    background: #dcebea;
+
+    font-size: 1.7rem;
+}
+
+.planta-recuerdos-creandose h3 {
+    margin: 0 0 7px;
+
+    color: #4b2938;
+
+    font-family:
+        "Playfair Display",
+        Georgia,
+        serif;
+
+    font-size: clamp(1.35rem, 3vw, 1.75rem);
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+.planta-recuerdos-creandose p {
+    max-width: 620px;
+    margin: 0;
+
+    color: #756a6e;
+    font-size: 0.92rem;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
+@media (max-width: 680px) {
+    .evento-planta-actual {
+        grid-template-columns: 1fr;
+        gap: 17px;
+
+        margin-top: 30px;
+        margin-bottom: 38px;
+        padding: 24px 21px;
+
+        border-radius: 21px;
+    }
+
+    .evento-planta-icono {
+        width: 58px;
+        height: 58px;
+        font-size: 1.55rem;
+    }
+
+    .evento-planta-actual h3 {
+        font-size: 1.55rem;
+    }
+
+    .planta-recuerdos-creandose {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 24px 21px;
+        border-radius: 20px;
+    }
+
+    .planta-recuerdos-icono {
+        width: 56px;
+        height: 56px;
+        font-size: 1.45rem;
+    }
+}

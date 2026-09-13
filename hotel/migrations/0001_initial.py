@@ -97,8 +97,8 @@ class Migration(migrations.Migration):
                 ('fecha', models.DateField(default=django.utils.timezone.now)),
                 ('pagado', models.BooleanField(default=False)),
                 ('notas', models.TextField(blank=True, null=True)),
-                ('propiedad', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='gastos', to='hotel.flat')),
-                ('habitacion', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='gastos', to='hotel.habitacion')),
+                ('propiedad', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='gasto', to='hotel.flat')),
+                ('habitacion', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='gasto', to='hotel.habitacion')),
             ],
         ),
         migrations.CreateModel(

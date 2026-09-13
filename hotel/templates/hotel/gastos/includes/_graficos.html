@@ -1,0 +1,280 @@
+<section
+    class="gastos-analytics gastos-insights"
+    id="centro-analisis"
+>
+
+    <header class="gastos-analytics-header gastos-insights-header">
+
+    <h2>
+        Centro de análisis
+    </h2>
+
+
+    <div class="gastos-slider-controls">
+
+        <button
+            type="button"
+            id="gastos-slider-prev"
+            aria-label="Gráfico anterior"
+        >
+            <i
+                class="fa fa-arrow-left"
+                aria-hidden="true"
+            ></i>
+        </button>
+
+        <button
+            type="button"
+            id="gastos-slider-next"
+            aria-label="Gráfico siguiente"
+        >
+            <i
+                class="fa fa-arrow-right"
+                aria-hidden="true"
+            ></i>
+        </button>
+
+    </div>
+
+</header>
+
+
+    <div
+        class="gastos-slider"
+        id="gastos-slider"
+    >
+
+        <!-- PREVISIÓN -->
+
+        <article class="gastos-slide">
+
+            <div class="gastos-slide-card">
+
+                <header class="gastos-slide-header">
+
+                    <div>
+                        <span class="gastos-slide-kicker">
+                            Previsión
+                        </span>
+
+                        <h3>
+                            Gastos esperados en
+                            {{ nombre_mes_actual }}
+                        </h3>
+                    </div>
+
+                    <strong class="gastos-slide-total">
+                        {{ total_esperado_mes|floatformat:2 }}
+                        {{ simbolo_moneda }}
+                    </strong>
+
+                </header>
+
+
+                <div class="gastos-slide-metrics">
+
+                    <div>
+                        <span>Gastado</span>
+
+                        <strong>
+                            {{ total_mes_actual|floatformat:2 }}
+                            {{ simbolo_moneda }}
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Pendiente</span>
+
+                        <strong>
+                            {{ pendiente_previsto_mes|floatformat:2 }}
+                            {{ simbolo_moneda }}
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span>Fijo mensual</span>
+
+                        <strong>
+                            {{ total_fijo_mensual|floatformat:2 }}
+                            {{ simbolo_moneda }}
+                        </strong>
+                    </div>
+
+                </div>
+
+
+                {% if grafico_esperado_labels %}
+
+                    <div class="gastos-chart-container gastos-chart-slider">
+                        <canvas id="gastos-chart-esperado"></canvas>
+                    </div>
+
+                {% else %}
+
+                    <div class="gastos-chart-empty">
+                        <span>🌱</span>
+                        <p>Todavía no hay una previsión disponible.</p>
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </article>
+
+
+        <!-- MES ACTUAL -->
+
+        <article class="gastos-slide">
+
+            <div class="gastos-slide-card">
+
+                <header class="gastos-slide-header">
+
+                    <div>
+                        <span class="gastos-slide-kicker">
+                            Mes actual
+                        </span>
+
+                        <h3>
+                            Distribución por categorías
+                        </h3>
+                    </div>
+
+                    <strong class="gastos-slide-total">
+                        {{ total_mes_actual|floatformat:2 }}
+                        {{ simbolo_moneda }}
+                    </strong>
+
+                </header>
+
+
+                {% if grafico_mes_labels %}
+
+                    <div class="gastos-chart-container gastos-chart-slider">
+                        <canvas id="gastos-chart-mes"></canvas>
+                    </div>
+
+                {% else %}
+
+                    <div class="gastos-chart-empty">
+                        <span>🌿</span>
+                        <p>No hay movimientos este mes.</p>
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </article>
+
+
+        <!-- MES ANTERIOR -->
+
+        <article class="gastos-slide">
+
+            <div class="gastos-slide-card">
+
+                <header class="gastos-slide-header">
+
+                    <div>
+                        <span class="gastos-slide-kicker">
+                            Comparativa
+                        </span>
+
+                        <h3>
+                            {{ nombre_mes_anterior }}
+                        </h3>
+                    </div>
+
+                    <strong class="gastos-slide-total">
+                        {{ total_mes_anterior|floatformat:2 }}
+                        {{ simbolo_moneda }}
+                    </strong>
+
+                </header>
+
+
+                {% if grafico_mes_anterior_labels %}
+
+                    <div class="gastos-chart-container gastos-chart-slider">
+                        <canvas id="gastos-chart-mes-anterior"></canvas>
+                    </div>
+
+                {% else %}
+
+                    <div class="gastos-chart-empty">
+                        <span>🌱</span>
+                        <p>No hubo movimientos el mes anterior.</p>
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </article>
+
+
+        <!-- AÑO -->
+
+        <article class="gastos-slide">
+
+            <div class="gastos-slide-card">
+
+                <header class="gastos-slide-header">
+
+                    <div>
+                        <span class="gastos-slide-kicker">
+                            Acumulado anual
+                        </span>
+
+                        <h3>
+                            Gastos de {{ anio_seleccionado }}
+                        </h3>
+                    </div>
+
+                    <strong class="gastos-slide-total">
+                        {{ total_gastos_anio|floatformat:2 }}
+                        {{ simbolo_moneda }}
+                    </strong>
+
+                </header>
+
+
+                {% if grafico_anio_labels %}
+
+                    <div class="gastos-chart-container gastos-chart-slider">
+                        <canvas id="gastos-chart-anio"></canvas>
+                    </div>
+
+                {% else %}
+
+                    <div class="gastos-chart-empty">
+                        <span>🌿</span>
+                        <p>No hay gastos registrados este año.</p>
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </article>
+
+    </div>
+
+
+    <footer class="gastos-slider-footer">
+
+        <div
+            class="gastos-slider-dots"
+            id="gastos-slider-dots"
+        ></div>
+
+        <span class="gastos-slider-hint">
+            Desliza para ver más
+            <i class="fa fa-arrow-right"></i>
+        </span>
+
+    </footer>
+
+</section>

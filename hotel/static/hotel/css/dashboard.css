@@ -206,3 +206,649 @@
         border-radius: 24px;
     }
 }
+/* =========================================================
+   DASHBOARD — REFINAMIENTO VISUAL
+========================================================= */
+
+.dashboard-section {
+    width: min(
+        calc(100% - 40px),
+        1440px
+    );
+
+    margin: 0 auto;
+    padding: 34px 0 70px;
+}
+
+
+/* =========================================================
+   PERIODO ACTUAL
+========================================================= */
+
+.dashboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    margin: 0 0 26px;
+}
+
+.dashboard-date {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    width: auto;
+    min-height: 48px;
+    margin: 0;
+    padding: 10px 18px 10px 15px;
+
+    overflow: hidden;
+
+    border:
+        1px solid rgba(75, 41, 56, 0.08);
+
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eadcdf,
+            #f7f1ed
+        );
+
+    box-shadow:
+        0 9px 24px rgba(75, 41, 56, 0.08);
+}
+
+.dashboard-date::before {
+    content: "\f073";
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 32px;
+
+    width: 32px;
+    height: 32px;
+
+    border-radius: 10px;
+
+    background: #74515d;
+    color: #ffffff;
+
+    font-family: FontAwesome;
+    font-size: 0.82rem;
+}
+
+.dashboard-date span {
+    margin: 0;
+
+    color: #85777c;
+
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.dashboard-date strong {
+    color: #5c3343;
+
+    font-family:
+        "Playfair Display",
+        Georgia,
+        serif;
+
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+
+/* =========================================================
+   CUADRÍCULA DE INDICADORES
+========================================================= */
+
+.dashboard-kpis {
+    display: grid;
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 18px;
+
+    margin-bottom: 30px;
+}
+
+
+/* =========================================================
+   TARJETA KPI
+========================================================= */
+
+.kpi-card {
+    position: relative;
+
+    display: grid;
+    grid-template-columns:
+        48px minmax(0, 1fr);
+
+    align-items: center;
+    gap: 14px;
+
+    min-width: 0;
+    min-height: 134px;
+    padding: 20px;
+
+    overflow: hidden;
+
+    border:
+        1px solid rgba(75, 41, 56, 0.08);
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #fffdf9,
+            #f7f1ee
+        );
+
+    box-shadow:
+        0 13px 32px rgba(55, 34, 43, 0.08);
+
+    transition:
+        transform 180ms ease,
+        box-shadow 180ms ease;
+}
+
+.kpi-card::after {
+    content: "";
+
+    position: absolute;
+    top: -35px;
+    right: -35px;
+
+    width: 90px;
+    height: 90px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(201, 167, 173, 0.12);
+
+    pointer-events: none;
+}
+
+.kpi-card:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 18px 38px rgba(55, 34, 43, 0.12);
+}
+
+.kpi-card > div:last-child {
+    position: relative;
+    z-index: 1;
+
+    min-width: 0;
+}
+
+
+/* =========================================================
+   ICONOS
+========================================================= */
+
+.kpi-icon {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 48px;
+    height: 48px;
+
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #93505b,
+            #703843
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 8px 18px rgba(112, 56, 67, 0.18);
+}
+
+.kpi-icon i {
+    color: inherit;
+
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.kpi-card.warning .kpi-icon {
+    background:
+        linear-gradient(
+            145deg,
+            #bd9160,
+            #9c7146
+        );
+}
+
+
+/* =========================================================
+   TEXTOS
+========================================================= */
+
+.kpi-card span {
+    display: block;
+
+    margin: 0 0 5px;
+
+    color: #877c80;
+
+    font-size: 0.7rem;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.kpi-card h2 {
+    margin: 0 0 5px;
+
+    color: #352a2f;
+
+    font-family:
+        "Playfair Display",
+        Georgia,
+        serif;
+
+    font-size: clamp(1.65rem, 2.5vw, 2.25rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.025em;
+}
+
+.kpi-card p {
+    margin: 0;
+
+    color: #8a8083;
+
+    font-size: 0.75rem;
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   VARIACIONES DE COLOR
+========================================================= */
+
+.kpi-card:nth-child(2) .kpi-icon,
+.kpi-card:nth-child(6) .kpi-icon {
+    background:
+        linear-gradient(
+            145deg,
+            #82aaa5,
+            #638e89
+        );
+}
+
+.kpi-card:nth-child(3) .kpi-icon {
+    background:
+        linear-gradient(
+            145deg,
+            #9aaa9f,
+            #75877c
+        );
+}
+
+.kpi-card:nth-child(4) {
+    background:
+        linear-gradient(
+            145deg,
+            #f3e7e7,
+            #fffaf7
+        );
+}
+
+.kpi-card:nth-child(4) .kpi-icon {
+    background:
+        linear-gradient(
+            145deg,
+            #76505f,
+            #50303d
+        );
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1050px) {
+
+    .dashboard-kpis {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
+@media (max-width: 650px) {
+
+    .dashboard-section {
+        width: calc(100% - 20px);
+        padding: 22px 0 52px;
+    }
+
+    .dashboard-header {
+        margin-bottom: 18px;
+    }
+
+    .dashboard-date {
+        min-height: 44px;
+        padding: 7px 13px 7px 8px;
+
+        border-radius: 14px;
+    }
+
+    .dashboard-date::before {
+        flex-basis: 30px;
+
+        width: 30px;
+        height: 30px;
+
+        border-radius: 9px;
+    }
+
+    .dashboard-date span {
+        font-size: 0.61rem;
+    }
+
+    .dashboard-date strong {
+        font-size: 0.93rem;
+    }
+
+    .dashboard-kpis {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 11px;
+
+        margin-bottom: 24px;
+    }
+
+    .kpi-card {
+        display: flex;
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+
+        min-height: 168px;
+        padding: 16px 14px;
+
+        border-radius: 19px;
+    }
+
+    .kpi-icon {
+        width: 42px;
+        height: 42px;
+
+        border-radius: 13px;
+    }
+
+    .kpi-card span {
+        font-size: 0.64rem;
+    }
+
+    .kpi-card h2 {
+        overflow-wrap: anywhere;
+
+        font-size: clamp(1.55rem, 7vw, 2rem);
+    }
+
+    .kpi-card p {
+        font-size: 0.69rem;
+    }
+}
+
+
+/* =========================================================
+   MÓVILES PEQUEÑOS
+========================================================= */
+
+@media (max-width: 380px) {
+
+    .dashboard-section {
+        width: calc(100% - 14px);
+    }
+
+    .dashboard-kpis {
+        gap: 8px;
+    }
+
+    .kpi-card {
+        min-height: 158px;
+        padding: 13px 11px;
+    }
+
+    .kpi-card h2 {
+        font-size: 1.45rem;
+    }
+}
+
+
+/* =========================================================
+   MOVIMIENTO REDUCIDO
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .kpi-card {
+        transition: none;
+    }
+}
+
+.dashboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.dashboard-add-income {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    min-height: 48px;
+    padding: 0 19px;
+
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #72a5a1,
+            #527f7b
+        );
+
+    color: #ffffff;
+
+    font-size: 0.78rem;
+    font-weight: 800;
+
+    box-shadow:
+        0 10px 23px rgba(82, 127, 123, 0.22);
+}
+
+.dashboard-add-income:hover {
+    color: #ffffff;
+
+    transform: translateY(-2px);
+}
+
+@media (max-width: 650px) {
+
+    .dashboard-add-income {
+        width: 48px;
+        height: 48px;
+        padding: 0;
+
+        border-radius: 15px;
+    }
+
+    .dashboard-add-income span {
+        display: none;
+    }
+}
+
+/* =========================================================
+   ACCIONES FINANCIERAS
+========================================================= */
+
+.dashboard-finance-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+
+    gap: 12px;
+}
+
+.dashboard-finance-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 48px;
+    padding: 12px 18px;
+    gap: 9px;
+
+    border: 1px solid transparent;
+    border-radius: 16px;
+
+    font-size: 0.88rem;
+    font-weight: 800;
+    line-height: 1;
+    text-decoration: none;
+
+    box-shadow:
+        0 10px 24px rgba(65, 42, 51, 0.14);
+
+    transition:
+        transform 160ms ease,
+        box-shadow 160ms ease,
+        background-color 160ms ease;
+}
+
+.dashboard-finance-action:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 14px 28px rgba(65, 42, 51, 0.2);
+}
+
+.dashboard-finance-action:focus-visible {
+    outline: 4px solid rgba(114, 165, 161, 0.3);
+    outline-offset: 3px;
+}
+
+.dashboard-finance-action i {
+    font-size: 0.95rem;
+}
+
+
+/* INGRESO */
+
+.dashboard-finance-action-income {
+    border-color: rgba(82, 127, 123, 0.18);
+
+    background:
+        linear-gradient(
+            145deg,
+            #79aaa5,
+            #5f918d
+        );
+
+    color: #ffffff;
+}
+
+.dashboard-finance-action-income:hover {
+    color: #ffffff;
+}
+
+
+/* GASTO */
+
+.dashboard-finance-action-expense {
+    border-color: rgba(75, 41, 56, 0.14);
+
+    background:
+        linear-gradient(
+            145deg,
+            #67394e,
+            #4b2938
+        );
+
+    color: #ffffff;
+}
+
+.dashboard-finance-action-expense:hover {
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
+@media (max-width: 650px) {
+    .dashboard-finance-actions {
+        display: grid;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        width: 100%;
+        gap: 9px;
+    }
+
+    .dashboard-finance-action {
+        width: 100%;
+        min-height: 50px;
+
+        padding: 11px 12px;
+
+        border-radius: 15px;
+
+        font-size: 0.78rem;
+    }
+}
+
+
+/* =========================================================
+   MÓVIL MUY ESTRECHO
+========================================================= */
+
+@media (max-width: 370px) {
+    .dashboard-finance-action {
+        min-height: 48px;
+        padding-inline: 10px;
+
+        font-size: 0.73rem;
+    }
+
+    .dashboard-finance-action i {
+        font-size: 0.86rem;
+    }
+}

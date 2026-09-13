@@ -1,0 +1,322 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block title %}
+    {{ planta.nombre_completo }} | By Colección
+{% endblock %}
+
+
+{% block extra-head %}
+
+<link
+    rel="icon"
+    href="data:;base64,iVBORw0KGgo="
+>
+
+<link
+    rel="stylesheet"
+    href="{% static 'hotel/css/planta_detail.css' %}"
+>
+
+{% endblock %}
+
+
+{% block content %}
+
+<header class="planta-hero">
+
+    {% if planta.foto %}
+
+        <img
+            src="{{ planta.foto.url }}"
+            alt="{{ planta.nombre_completo }}"
+        >
+
+    {% endif %}
+
+
+    <div>
+
+        <span>
+            RESIDENTE PERMANENTE
+        </span>
+
+        <h1>
+            {{ planta.nombre_completo }}
+        </h1>
+
+
+        {% if planta.habitacion %}
+
+            <p>
+                Vive en {{ planta.habitacion }}
+            </p>
+
+        {% elif planta.piso %}
+
+            <p>
+                Vive en {{ planta.piso }}
+            </p>
+
+        {% endif %}
+
+
+        {% if planta.ubicacion %}
+
+            <p>
+                📍 {{ planta.ubicacion }}
+            </p>
+
+        {% endif %}
+
+
+        {% if planta.descripcion %}
+
+            <div>
+                {{ planta.descripcion|linebreaks }}
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</header>
+
+
+<section class="planta-cuidados">
+
+    <span>
+        CÓMO CUIDARME
+    </span>
+
+    <h2>
+        Mis pequeñas exigencias
+    </h2>
+
+    {% if planta.cuidados %}
+
+        {{ planta.cuidados|linebreaks }}
+
+    {% else %}
+
+        <p>
+            Todavía no hemos escrito sus instrucciones de cuidado.
+        </p>
+
+    {% endif %}
+
+</section>
+
+<section class="planta-historia">
+
+    <span>
+        MI HISTORIA
+    </span>
+
+    <h2>
+        Desde que llegué a By Colección
+    </h2>
+
+
+    {% if residente_actual_publico %}
+
+        <article class="evento-planta-actual">
+
+            <div class="evento-planta-icono">
+                🌿
+            </div>
+
+            <div class="evento-planta-actual-contenido">
+
+                <span class="evento-planta-badge">
+                    CONVIVENCIA ACTUAL
+                </span>
+
+                <h3>
+                    Ahora vive con {{ residente_actual_publico }}
+                </h3>
+
+                {% if inicio_convivencia %}
+
+                    <p>
+                        Comparten habitación desde
+                        {{ inicio_convivencia|date:"F Y" }}.
+                    </p>
+
+                {% else %}
+
+                    <p>
+                        Actualmente están compartiendo esta habitación
+                        y creando juntas una nueva parte de su historia.
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        </article>
+
+
+    {% elif planta.habitacion %}
+
+        <article class="evento-planta-actual">
+
+            <div class="evento-planta-icono">
+                🌿
+            </div>
+
+            <div class="evento-planta-actual-contenido">
+
+                <span class="evento-planta-badge">
+                    CONVIVENCIA ACTUAL
+                </span>
+
+                <h3>
+                    Ya está compartiendo habitación
+                </h3>
+
+                <p>
+                    Actualmente vive con una nueva compañera
+                    y están creando juntas una nueva parte
+                    de su historia.
+                </p>
+
+            </div>
+
+        </article>
+
+    {% endif %}
+
+
+    <div class="planta-historia-eventos">
+
+        {% for evento in planta.eventos.all %}
+
+            <article class="evento-planta">
+
+                {% if evento.fecha %}
+
+                    <time datetime="{{ evento.fecha|date:'Y-m-d' }}">
+                        {{ evento.fecha|date:"d/m/Y" }}
+                    </time>
+
+                {% endif %}
+
+                <h3>
+                    {{ evento.titulo }}
+                </h3>
+
+                {% if evento.descripcion %}
+
+                    <div class="evento-planta-descripcion">
+                        {{ evento.descripcion|linebreaks }}
+                    </div>
+
+                {% endif %}
+
+            </article>
+
+        {% empty %}
+
+            {% if not planta.habitacion %}
+
+                <div class="planta-estado-vacio">
+
+                    <span aria-hidden="true">
+                        🌱
+                    </span>
+
+                    <p>
+                        Su historia en By Colección
+                        acaba de comenzar.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+<section class="planta-comentarios">
+
+    <span>
+        QUIENES VIVIERON CONMIGO
+    </span>
+
+    <h2>
+        Recuerdos
+    </h2>
+
+
+    <div class="planta-comentarios-lista">
+
+        {% for comentario in planta.comentarios.all %}
+
+            <article class="planta-comentario">
+
+                <blockquote>
+                    {{ comentario.mensaje|linebreaksbr }}
+                </blockquote>
+
+                <p>
+                    {{ comentario.nombre }}
+                </p>
+
+
+                {% if comentario.fecha_inicio_estancia or comentario.fecha_fin_estancia %}
+
+                    <small>
+
+                        {% if comentario.fecha_inicio_estancia %}
+                            {{ comentario.fecha_inicio_estancia|date:"Y" }}
+                        {% endif %}
+
+                        {% if comentario.fecha_fin_estancia %}
+                            —
+                            {{ comentario.fecha_fin_estancia|date:"Y" }}
+                        {% endif %}
+
+                    </small>
+
+                {% endif %}
+
+            </article>
+
+        {% empty %}
+
+            <div class="planta-recuerdos-creandose">
+
+                <div class="planta-recuerdos-icono">
+                    🌿
+                </div>
+
+                <div>
+
+                    <h3>
+                        Creando recuerdos ahora mismo
+                    </h3>
+
+                    <p>
+                        Esta convivencia todavía está escribiendo
+                        sus primeras páginas. Los recuerdos llegarán
+                        cuando termine esta parte de la historia.
+                    </p>
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+{% endblock %}

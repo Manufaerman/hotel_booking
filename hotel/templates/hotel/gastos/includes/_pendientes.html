@@ -1,0 +1,91 @@
+{% if gastos_pendientes %}
+
+    <section class="gastos-pending-section">
+
+        <header class="gastos-section-heading">
+
+            <div>
+                <span class="gastos-eyebrow">
+                    Requieren atención
+                </span>
+
+                <h2>
+                    Gastos pendientes
+                </h2>
+
+                <p>
+                    Movimientos automáticos que necesitan
+                    importe o documentación.
+                </p>
+            </div>
+
+            <span class="gastos-alert-count">
+                {{ numero_gastos_pendientes }}
+            </span>
+
+        </header>
+
+
+        <div class="gastos-pending-list">
+
+            {% for pendiente in gastos_pendientes %}
+
+                <article class="gastos-pending-item">
+
+                    <div>
+
+                        <h3>
+                            {{ pendiente.gasto_recurrente.nombre }}
+                        </h3>
+
+                        <p>
+                            {% if pendiente.gasto_recurrente.proyecto %}
+
+                                {{ pendiente.gasto_recurrente.proyecto.nombre }}
+
+                            {% elif pendiente.gasto_recurrente.propiedad %}
+
+                                {{ pendiente.gasto_recurrente.propiedad.nombre }}
+
+                                {% if pendiente.gasto_recurrente.habitacion %}
+                                    · {{ pendiente.gasto_recurrente.habitacion.nombre }}
+                                {% endif %}
+
+                            {% else %}
+
+                                Sociedad
+
+                            {% endif %}
+                        </p>
+
+                        <small>
+                            {{ pendiente.gasto_recurrente.get_frecuencia_display }}
+                            · {{ pendiente.periodo }}
+                        </small>
+
+                    </div>
+
+
+                    <span class="gastos-pending-date">
+
+                        {% if pendiente.fecha_programada < hoy %}
+                            Vencido ·
+                        {% elif pendiente.fecha_programada == hoy %}
+                            Hoy ·
+                        {% else %}
+                            Previsto ·
+                        {% endif %}
+
+                        {{ pendiente.fecha_programada|date:"d/m/Y" }}
+
+                    </span>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+{% endif %}

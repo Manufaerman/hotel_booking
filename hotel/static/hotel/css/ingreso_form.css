@@ -1,0 +1,355 @@
+/* =========================================================
+   REGISTRAR INGRESO
+========================================================= */
+
+.ingreso-page {
+    width: min(
+        calc(100% - 40px),
+        920px
+    );
+
+    margin: 0 auto;
+    padding: 38px 0 80px;
+}
+
+
+/* =========================================================
+   CABECERA
+========================================================= */
+
+.ingreso-header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+
+    margin-bottom: 24px;
+}
+
+.ingreso-header-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 58px;
+
+    width: 58px;
+    height: 58px;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #82aaa5,
+            #5f8d88
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 12px 26px rgba(95, 141, 136, 0.22);
+}
+
+.ingreso-header-icon i {
+    font-size: 1.1rem;
+}
+
+.ingreso-eyebrow {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #679a96;
+
+    font-size: 0.68rem;
+    font-weight: 850;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.ingreso-header h1 {
+    margin: 0 0 5px;
+
+    color: #51343e;
+
+    font-family:
+        "Playfair Display",
+        Georgia,
+        serif;
+
+    font-size: clamp(2.1rem, 5vw, 3.6rem);
+    font-weight: 600;
+    line-height: 1;
+}
+
+.ingreso-header p {
+    margin: 0;
+
+    color: #786d71;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   TARJETA
+========================================================= */
+
+.ingreso-card {
+    padding: clamp(22px, 5vw, 42px);
+
+    border:
+        1px solid rgba(75, 41, 56, 0.09);
+
+    border-radius: 27px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #fffdf9,
+            #f6efeb
+        );
+
+    box-shadow:
+        0 18px 45px rgba(55, 34, 43, 0.1);
+}
+
+
+/* =========================================================
+   FORMULARIO
+========================================================= */
+
+.ingreso-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 21px;
+}
+
+.ingreso-group {
+    display: grid;
+    min-width: 0;
+    gap: 8px;
+}
+
+.ingreso-full {
+    grid-column: 1 / -1;
+}
+
+.ingreso-group label {
+    color: #60404c;
+
+    font-size: 0.76rem;
+    font-weight: 800;
+}
+
+.ingreso-control {
+    display: block;
+
+    width: 100%;
+    min-height: 50px;
+    padding: 0 15px;
+
+    border:
+        1px solid rgba(75, 41, 56, 0.16);
+
+    border-radius: 14px;
+
+    background: #ffffff;
+    color: #352a2f;
+
+    outline: none;
+
+    transition:
+        border-color 150ms ease,
+        box-shadow 150ms ease;
+}
+
+.ingreso-control:focus {
+    border-color: #72a5a1;
+
+    box-shadow:
+        0 0 0 4px rgba(114, 165, 161, 0.18);
+}
+
+.ingreso-textarea {
+    min-height: 112px;
+    padding-top: 13px;
+    padding-bottom: 13px;
+
+    resize: vertical;
+}
+
+.ingreso-money-field {
+    position: relative;
+}
+
+.ingreso-money-field .ingreso-control {
+    padding-right: 48px;
+}
+
+.ingreso-money-field > span {
+    position: absolute;
+    top: 50%;
+    right: 16px;
+
+    color: #745f6d;
+
+    font-weight: 850;
+
+    transform: translateY(-50%);
+}
+
+.ingreso-error {
+    color: #a34851;
+
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.ingreso-form-errors {
+    margin-bottom: 20px;
+    padding: 14px 16px;
+
+    border:
+        1px solid rgba(163, 72, 81, 0.2);
+
+    border-radius: 13px;
+
+    background: #f7e6e7;
+    color: #873f47;
+}
+
+
+/* =========================================================
+   ACCIONES
+========================================================= */
+
+.ingreso-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+
+    margin-top: 30px;
+    padding-top: 24px;
+
+    border-top:
+        1px solid rgba(75, 41, 56, 0.1);
+}
+
+.ingreso-back,
+.ingreso-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    min-height: 48px;
+    padding: 0 22px;
+
+    border-radius: 14px;
+
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.ingreso-back {
+    border:
+        1px solid rgba(75, 41, 56, 0.14);
+
+    background: #f5f0e9;
+    color: #60404c;
+}
+
+.ingreso-submit {
+    border: 0;
+
+    background:
+        linear-gradient(
+            145deg,
+            #72a5a1,
+            #527f7b
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 10px 22px rgba(82, 127, 123, 0.22);
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
+@media (max-width: 650px) {
+
+    .ingreso-page {
+        width: calc(100% - 20px);
+        padding: 24px 0 50px;
+    }
+
+    .ingreso-header {
+        align-items: flex-start;
+        gap: 13px;
+    }
+
+    .ingreso-header-icon {
+        flex-basis: 48px;
+
+        width: 48px;
+        height: 48px;
+
+        border-radius: 15px;
+    }
+
+    .ingreso-header h1 {
+        font-size: 2rem;
+    }
+
+    .ingreso-header p {
+        font-size: 0.84rem;
+    }
+
+    .ingreso-card {
+        padding: 20px 14px;
+
+        border-radius: 21px;
+    }
+
+    .ingreso-grid {
+        grid-template-columns: 1fr;
+        gap: 17px;
+    }
+
+    .ingreso-full {
+        grid-column: auto;
+    }
+
+    .ingreso-control {
+        min-height: 52px;
+
+        font-size: 1rem;
+    }
+
+    .ingreso-actions {
+        display: grid;
+        grid-template-columns:
+            0.8fr
+            1.2fr;
+
+        gap: 9px;
+        margin-top: 24px;
+    }
+
+    .ingreso-back,
+    .ingreso-submit {
+        width: 100%;
+        min-height: 52px;
+        padding: 0 12px;
+    }
+}

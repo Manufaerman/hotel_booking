@@ -1,19 +1,26 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load static %}
 
+
 {% block extra-head %}
-<link rel="stylesheet" href="{% static 'hotel/css/habitaciones.css' %}">
+<link
+    rel="stylesheet"
+    href="{% static 'hotel/css/habitaciones.css' %}"
+>
 {% endblock %}
+
 
 {% block title %}
-By Colección {{ habitacion.nombre }} | Alquiler de habitaciones premium en Madrid
+    By Colección {{ habitacion.nombre }} | Alquiler de habitaciones premium en Madrid
 {% endblock %}
 
+
 {% block description %}
-Descubre la habitación {{ habitacion.nombre }} de la colección
-{{ habitacion.propiedad.nombre }}.
-Habitación luminosa con baño {{ habitacion.get_bathroom_display }}.
+    Descubre la habitación {{ habitacion.nombre }} de la colección
+    {{ habitacion.propiedad.nombre }}.
+    Habitación luminosa con baño {{ habitacion.get_bathroom_display }}.
 {% endblock %}
+
 
 {% block content %}
 
@@ -39,7 +46,8 @@ Habitación luminosa con baño {{ habitacion.get_bathroom_display }}.
 
             </div>
 
-            {% if habitacion.disponible %}
+
+            {% if habitacion_disponible %}
 
                 <div class="hero-price-card">
 
@@ -56,8 +64,13 @@ Habitación luminosa con baño {{ habitacion.get_bathroom_display }}.
                     </div>
 
                     <ul>
-                        <li>Gastos incluidos hasta 200 €</li>
-                        <li>Internet de alta velocidad</li>
+                        <li>
+                            Gastos incluidos hasta 200 €
+                        </li>
+
+                        <li>
+                            Internet de alta velocidad
+                        </li>
                     </ul>
 
                 </div>
@@ -70,6 +83,21 @@ Habitación luminosa con baño {{ habitacion.get_bathroom_display }}.
                         Alquilada
                     </span>
 
+                    {% if contrato_activo.fecha_fin %}
+
+                        <p class="room-rented-until">
+                            Actualmente ocupada hasta
+                            {{ contrato_activo.fecha_fin|date:"F Y" }}.
+                        </p>
+
+                    {% else %}
+
+                        <p class="room-rented-until">
+                            Actualmente en convivencia.
+                        </p>
+
+                    {% endif %}
+
                     <a href="{% url 'hotel:habitaciones_all' %}">
                         Ver otras habitaciones disponibles
                         <i class="fa-solid fa-arrow-right"></i>
@@ -80,6 +108,7 @@ Habitación luminosa con baño {{ habitacion.get_bathroom_display }}.
             {% endif %}
 
         </div>
+
 
         <nav class="flat-anchor-nav">
 
@@ -134,6 +163,7 @@ Habitación luminosa con baño {{ habitacion.get_bathroom_display }}.
         Lo que incluye esta habitación
     </h2>
 
+
     <div class="room-features-grid">
 
         <div class="room-feature-card">
@@ -143,47 +173,63 @@ Habitación luminosa con baño {{ habitacion.get_bathroom_display }}.
 
         <div class="room-feature-card">
             <i class="fas fa-bath"></i>
-            <span>{{ habitacion.get_bathroom_display }}</span>
+            <span>
+                {{ habitacion.get_bathroom_display }}
+            </span>
         </div>
 
         {% if habitacion.metros %}
+
             <div class="room-feature-card">
                 <i class="fas fa-ruler-combined"></i>
-                <span>{{ habitacion.metros }} m²</span>
+                <span>
+                    {{ habitacion.metros }} m²
+                </span>
             </div>
+
         {% endif %}
 
         {% if habitacion.armario %}
+
             <div class="room-feature-card">
                 <i class="fa-solid fa-shirt"></i>
                 <span>Armario</span>
             </div>
+
         {% endif %}
 
         {% if habitacion.aire_acondicionado %}
+
             <div class="room-feature-card">
                 <i class="fas fa-wind"></i>
                 <span>Aire acondicionado</span>
             </div>
+
         {% endif %}
 
         {% if habitacion.tv %}
+
             <div class="room-feature-card">
                 <i class="fas fa-tv"></i>
                 <span>TV</span>
             </div>
+
         {% endif %}
 
         {% if habitacion.propiedad.wifi %}
+
             <div class="room-feature-card">
                 <i class="fas fa-wifi"></i>
                 <span>Internet A.V.</span>
             </div>
+
         {% endif %}
 
         <div class="room-feature-card">
             <i class="fas fa-bed"></i>
-            <span>{{ habitacion.get_bed_display }}</span>
+            <span>
+                {{ habitacion.get_bed_display }}
+            </span>
         </div>
 
     </div>
@@ -202,6 +248,7 @@ Habitación luminosa con baño {{ habitacion.get_bathroom_display }}.
             </h2>
 
         </header>
+
 
         <div class="room-information-grid">
 
@@ -224,6 +271,7 @@ Habitación luminosa con baño {{ habitacion.get_bathroom_display }}.
 
             </div>
 
+
             <div class="room-information-item">
 
                 <i class="fa-solid fa-camera"></i>
@@ -243,6 +291,7 @@ Habitación luminosa con baño {{ habitacion.get_bathroom_display }}.
 
             </div>
 
+
             <div class="room-information-item">
 
                 <i class="fa-solid fa-chair"></i>
@@ -261,6 +310,7 @@ Habitación luminosa con baño {{ habitacion.get_bathroom_display }}.
                 </div>
 
             </div>
+
 
             <div class="room-information-item">
 
@@ -308,6 +358,7 @@ Habitación luminosa con baño {{ habitacion.get_bathroom_display }}.
 
         </header>
 
+
         <div class="room-living-grid">
 
             <article class="room-living-card">
@@ -328,6 +379,7 @@ Habitación luminosa con baño {{ habitacion.get_bathroom_display }}.
 
             </article>
 
+
             <article class="room-living-card">
 
                 <i class="fa-solid fa-door-closed"></i>
@@ -345,6 +397,7 @@ Habitación luminosa con baño {{ habitacion.get_bathroom_display }}.
                 </div>
 
             </article>
+
 
             <article class="room-living-card">
 
@@ -367,6 +420,7 @@ Habitación luminosa con baño {{ habitacion.get_bathroom_display }}.
 
             </article>
 
+
             <article class="room-living-card">
 
                 <i class="fa-solid fa-kitchen-set"></i>
@@ -387,6 +441,7 @@ Habitación luminosa con baño {{ habitacion.get_bathroom_display }}.
                 </div>
 
             </article>
+
 
             {% if habitacion.bathroom == "TWO" %}
 
@@ -435,6 +490,7 @@ Habitación luminosa con baño {{ habitacion.get_bathroom_display }}.
 
         </div>
 
+
         <div class="room-living-note">
 
             <i class="fa-solid fa-heart"></i>
@@ -450,6 +506,7 @@ Habitación luminosa con baño {{ habitacion.get_bathroom_display }}.
     </section>
 
 </section>
+
 
 <section
     class="conditions-section"
@@ -467,6 +524,7 @@ Habitación luminosa con baño {{ habitacion.get_bathroom_display }}.
         </h2>
 
     </header>
+
 
     <div class="conditions-grid">
 
@@ -502,7 +560,9 @@ Habitación luminosa con baño {{ habitacion.get_bathroom_display }}.
 
         <div class="condition-item">
             <i class="fas fa-user-check"></i>
-            <span>Ideal para estudiantes y profesionales</span>
+            <span>
+                Ideal para estudiantes y profesionales
+            </span>
         </div>
 
     </div>
@@ -544,6 +604,7 @@ Habitación luminosa con baño {{ habitacion.get_bathroom_display }}.
                     </ul>
 
                 </div>
+
 
                 <div class="room-image">
 

@@ -1,46 +1,29 @@
 /* =========================================================
    BY COLECCIÓN — GALERÍA DE HABITACIÓN
-   Safari / Firefox / Chrome
 ========================================================= */
 
 :root {
     --gallery-wine: #745f6d;
     --gallery-wine-dark: #4b2938;
     --gallery-wine-soft: #927783;
-
     --gallery-rose-muted: #c9a7ad;
-    --gallery-rose-muted-dark: #a77f89;
-
     --gallery-tiffany: #72a5a1;
     --gallery-tiffany-light: #dcebea;
-
     --gallery-yellow: #f3e5a4;
-    --gallery-yellow-soft: #fbf4cf;
-
     --gallery-cream: #f5f0e9;
     --gallery-paper: #fffdf9;
-
     --gallery-text: #352a2f;
     --gallery-text-soft: #756a6e;
     --gallery-border: rgba(75, 41, 56, 0.11);
-
-    --gallery-shadow:
-        0 18px 45px rgba(55, 34, 43, 0.12);
-
-    /*
-       CONTENEDOR GENERAL
-
-       Más adelante llevaremos estas mismas medidas
-       al base.html para que toda la web comparta eje.
-    */
-
+    --gallery-shadow: 0 18px 45px rgba(55, 34, 43, 0.12);
     --gallery-container: 1440px;
     --gallery-side: clamp(28px, 6vw, 96px);
+    --gallery-gap: 20px;
 }
 
 
 /* =========================================================
-   AJUSTES GENERALES
+   BASE
 ========================================================= */
 
 *,
@@ -58,14 +41,17 @@ body {
     width: 100%;
     margin: 0;
     overflow-x: hidden;
-
     background: var(--gallery-cream);
     color: var(--gallery-text);
 }
 
+body.gallery-lightbox-open {
+    overflow: hidden;
+}
+
 
 /* =========================================================
-   BARRA SECUNDARIA DE HABITACIÓN
+   BARRA STICKY
 ========================================================= */
 
 .gallery-room-bar {
@@ -76,209 +62,138 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     gap: 20px;
 
     width: 100%;
     min-height: 58px;
 
-    /*
-       IMPORTANTE:
-       mismo margen horizontal que la galería.
-    */
+    padding: 8px max(
+        var(--gallery-side),
+        calc((100vw - var(--gallery-container)) / 2)
+    );
 
-    padding:
-        8px
-        max(
-            var(--gallery-side),
-            calc((100vw - var(--gallery-container)) / 2)
-        );
-
-    border-bottom:
-        1px solid rgba(75, 41, 56, 0.12);
-
-    background:
-        rgba(201, 167, 173, 0.97);
-
-    box-shadow:
-        0 7px 20px rgba(75, 41, 56, 0.10);
+    border-bottom: 1px solid rgba(75, 41, 56, 0.12);
+    background: rgba(201, 167, 173, 0.97);
+    box-shadow: 0 7px 20px rgba(75, 41, 56, 0.10);
 
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
 }
 
-
-/* =========================================================
-   NOMBRE + PRECIO
-========================================================= */
-
 .gallery-room-main {
     display: flex;
     flex-shrink: 0;
     align-items: center;
-
     gap: 22px;
-
     min-width: 0;
 }
 
 .gallery-room-identity {
     display: grid;
-    grid-template-columns: auto auto;
-
+    grid-template-columns: auto minmax(0, auto);
     align-items: baseline;
-
     gap: 2px 10px;
-
     min-width: 0;
 }
 
 .gallery-room-identity > span {
     color: var(--gallery-wine-dark);
-
     font-size: 0.56rem;
     font-weight: 800;
-
     text-transform: uppercase;
     letter-spacing: 0.19em;
 }
 
 .gallery-room-identity > strong {
     min-width: 0;
-
     color: var(--gallery-wine-dark);
-
-    font-family:
-        "Playfair Display",
-        Georgia,
-        serif;
-
+    font-family: "Playfair Display", Georgia, serif;
     font-size: 1.35rem;
     font-weight: 500;
-
     line-height: 1;
 }
 
 .gallery-room-identity > small {
     grid-column: 2;
-
-    color:
-        rgba(75, 41, 56, 0.62);
-
+    color: rgba(75, 41, 56, 0.62);
     font-size: 0.62rem;
     letter-spacing: 0.035em;
 }
 
-
-/* =========================================================
-   PRECIO
-========================================================= */
-
 .gallery-room-price {
     min-width: 84px;
-
     padding-left: 20px;
-
-    border-left:
-        1px solid rgba(75, 41, 56, 0.16);
-
+    border-left: 1px solid rgba(75, 41, 56, 0.16);
     text-align: right;
 }
 
 .gallery-room-price strong {
     display: block;
-
     color: var(--gallery-wine-dark);
-
-    font-family:
-        "Playfair Display",
-        Georgia,
-        serif;
-
+    font-family: "Playfair Display", Georgia, serif;
     font-size: 1.2rem;
     font-weight: 600;
-
     line-height: 1;
-
     white-space: nowrap;
 }
 
 .gallery-room-price span {
-    color:
-        rgba(75, 41, 56, 0.58);
-
+    color: rgba(75, 41, 56, 0.58);
     font-size: 0.62rem;
 }
 
 
 /* =========================================================
-   NAVEGACIÓN DE HABITACIÓN
+   NAVEGACIÓN
 ========================================================= */
 
 .gallery-room-navigation {
     display: flex;
     flex: 1;
-
     align-items: center;
     justify-content: flex-end;
-
     gap: 6px;
-
     min-width: 0;
 }
 
 .gallery-nav-link {
     display: inline-flex;
     flex-shrink: 0;
-
     align-items: center;
     justify-content: center;
-
     gap: 7px;
 
     min-height: 36px;
-
-    padding:
-        0 11px;
+    padding: 0 11px;
 
     border-radius: 10px;
-
     color: var(--gallery-wine-dark);
 
     font-size: 0.70rem;
     font-weight: 700;
-
     text-decoration: none;
-
     white-space: nowrap;
 
     transition:
         background-color 0.22s ease,
-        color 0.22s ease;
+        color 0.22s ease,
+        transform 0.22s ease;
 }
 
 .gallery-nav-link i {
-    color: var(--gallery-wine-dark);
-
+    color: inherit;
     font-size: 0.68rem;
 }
 
 .gallery-nav-link:hover {
-    background:
-        rgba(255, 255, 255, 0.28);
-
-    color: var(--gallery-wine-dark);
+    background: rgba(255, 255, 255, 0.28);
 }
 
 .gallery-nav-link-primary {
     margin-left: 5px;
-
-    padding-right: 14px;
-    padding-left: 14px;
-
+    padding-inline: 14px;
     background: var(--gallery-wine-dark);
-    color: #ffffff;
-
+    color: #fff;
     font-weight: 800;
 }
 
@@ -288,116 +203,91 @@ body {
 
 .gallery-nav-link-primary:hover {
     background: var(--gallery-wine);
-    color: #ffffff;
+    color: #fff;
+}
+
+.gallery-nav-link:focus-visible,
+.gallery-closing a:focus-visible,
+.planta-info a:focus-visible {
+    outline: 3px solid rgba(114, 165, 161, 0.7);
+    outline-offset: 3px;
 }
 
 
 /* =========================================================
-   CONTENIDO GENERAL
-
-   El padding lateral se elimina aquí.
-   El propio masonry controla el ancho.
+   CONTENIDO
 ========================================================= */
 
 .gallery-page {
     width: 100%;
     max-width: 100%;
-
-    padding:
-        42px 0
-        80px;
-
+    padding: 42px 0 80px;
     overflow: hidden;
-
     background: var(--gallery-cream);
 }
 
 
 /* =========================================================
-   GALERÍA MASONRY
+   EJE COMÚN
+========================================================= */
 
-   MISMO EJE HORIZONTAL QUE LA BARRA ROSA
+.room-masonry-gallery,
+.habitacion-plantas,
+.gallery-closing {
+    width: calc(100% - (var(--gallery-side) * 2));
+    max-width: var(--gallery-container);
+    margin-right: auto;
+    margin-left: auto;
+}
+
+
+/* =========================================================
+   MASONRY
 ========================================================= */
 
 .room-masonry-gallery {
-    width:
-        calc(100% - (var(--gallery-side) * 2));
-
-    max-width:
-        var(--gallery-container);
-
-    margin:
-        0 auto;
-
-    -webkit-columns: 3;
-    -moz-columns: 3;
     columns: 3;
-
-    -webkit-column-gap: 20px;
-    -moz-column-gap: 20px;
-    column-gap: 20px;
+    column-gap: var(--gallery-gap);
 }
-
-
-/* =========================================================
-   ELEMENTO DE GALERÍA
-========================================================= */
 
 .gallery-media {
     position: relative;
-
     display: inline-block;
-
     width: 100%;
-
-    margin:
-        0 0 20px;
-
+    margin: 0 0 var(--gallery-gap);
     vertical-align: top;
 
-    -webkit-column-break-inside: avoid;
-    page-break-inside: avoid;
     break-inside: avoid;
-
     overflow: hidden;
 
-    border:
-        1px solid var(--gallery-border);
-
+    border: 1px solid var(--gallery-border);
     border-radius: 25px;
-
     background: #ddd4d0;
+    box-shadow: var(--gallery-shadow);
 
-    box-shadow:
-        var(--gallery-shadow);
+    cursor: zoom-in;
+    transform: translateZ(0);
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
 }
 
-
-/* =========================================================
-   IMÁGENES Y VÍDEOS
-========================================================= */
+.gallery-media:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 22px 52px rgba(55, 34, 43, 0.16);
+}
 
 .gallery-media img,
 .gallery-media video {
     display: block;
-
     width: 100%;
     height: auto;
-
     min-height: 310px;
     max-height: 680px;
-
     object-fit: cover;
     object-position: center;
-
-    -webkit-transform: none;
-    transform: none;
 }
-
-
-/* =========================================================
-   ALTURAS IMÁGENES ANTIGUAS
-========================================================= */
 
 .gallery-media-featured img {
     height: 510px;
@@ -411,46 +301,20 @@ body {
     height: 390px;
 }
 
-
-/* =========================================================
-   ALTURAS ALTERNADAS
-========================================================= */
-
-.gallery-media:nth-child(5n + 1) img,
-.gallery-media:nth-child(5n + 1) video {
-    height: 540px;
-}
-
-.gallery-media:nth-child(5n + 2) img,
-.gallery-media:nth-child(5n + 2) video {
-    height: 390px;
-}
-
-.gallery-media:nth-child(5n + 3) img,
-.gallery-media:nth-child(5n + 3) video {
-    height: 610px;
-}
-
-.gallery-media:nth-child(5n + 4) img,
-.gallery-media:nth-child(5n + 4) video {
-    height: 445px;
-}
-
-.gallery-media:nth-child(5n + 5) img,
-.gallery-media:nth-child(5n + 5) video {
-    height: 520px;
+.gallery-media-video video {
+    aspect-ratio: 4 / 5;
+    height: auto;
 }
 
 
 /* =========================================================
-   NÚMERO DE FOTO
+   ELEMENTOS SUPERPUESTOS
 ========================================================= */
 
 .gallery-media-number {
     position: absolute;
     top: 16px;
     left: 16px;
-
     z-index: 2;
 
     display: inline-flex;
@@ -459,38 +323,28 @@ body {
 
     min-width: 38px;
     height: 38px;
-
     padding: 0 10px;
 
-    border:
-        1px solid rgba(255, 255, 255, 0.42);
-
+    border: 1px solid rgba(255, 255, 255, 0.42);
     border-radius: 999px;
 
-    background:
-        rgba(75, 41, 56, 0.72);
-
-    color: #ffffff;
+    background: rgba(75, 41, 56, 0.72);
+    color: #fff;
 
     font-size: 0.67rem;
     font-weight: 800;
-
     letter-spacing: 0.09em;
+
+    pointer-events: none;
 
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
 }
 
-
-/* =========================================================
-   INDICADOR DE VÍDEO
-========================================================= */
-
 .gallery-video-indicator {
     position: absolute;
     top: 16px;
     right: 16px;
-
     z-index: 2;
 
     display: flex;
@@ -500,51 +354,37 @@ body {
     width: 42px;
     height: 42px;
 
-    border:
-        1px solid rgba(255, 255, 255, 0.45);
-
+    border: 1px solid rgba(255, 255, 255, 0.45);
     border-radius: 50%;
 
     background: var(--gallery-wine);
     color: var(--gallery-yellow);
 
     font-size: 0.72rem;
-
-    box-shadow:
-        0 8px 24px rgba(40, 22, 30, 0.25);
+    box-shadow: 0 8px 24px rgba(40, 22, 30, 0.25);
+    pointer-events: none;
 }
-
-
-/* =========================================================
-   PIE DE FOTO
-========================================================= */
 
 .gallery-media figcaption {
     position: absolute;
-
     right: 14px;
     bottom: 14px;
     left: 14px;
-
     z-index: 2;
 
-    padding:
-        12px 15px;
+    padding: 12px 15px;
 
-    border:
-        1px solid rgba(255, 255, 255, 0.2);
-
+    border: 1px solid rgba(255, 255, 255, 0.20);
     border-radius: 13px;
 
-    background:
-        rgba(75, 41, 56, 0.84);
-
-    color: #ffffff;
+    background: rgba(75, 41, 56, 0.84);
+    color: #fff;
 
     font-size: 0.78rem;
     font-weight: 600;
-
     line-height: 1.4;
+
+    pointer-events: none;
 
     -webkit-backdrop-filter: blur(9px);
     backdrop-filter: blur(9px);
@@ -552,49 +392,214 @@ body {
 
 
 /* =========================================================
-   CIERRE DE GALERÍA
+   RESIDENTES PERMANENTES
+========================================================= */
 
-   TAMBIÉN COMPARTE EL MISMO EJE
+.habitacion-plantas {
+    margin-top: 70px;
+    padding: clamp(30px, 5vw, 58px);
+
+    border: 1px solid rgba(75, 41, 56, 0.10);
+    border-radius: 30px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(220, 235, 234, 0.86),
+            rgba(255, 253, 249, 0.92)
+        );
+
+    box-shadow: 0 18px 45px rgba(55, 34, 43, 0.08);
+}
+
+.habitacion-plantas .section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 34px;
+}
+
+.habitacion-plantas .eyebrow {
+    display: block;
+    margin-bottom: 8px;
+
+    color: var(--gallery-tiffany);
+
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.20em;
+}
+
+.habitacion-plantas .section-header h2 {
+    margin: 0;
+
+    color: var(--gallery-wine-dark);
+
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 500;
+    line-height: 1.05;
+}
+
+.plantas-grupo + .plantas-grupo {
+    margin-top: 42px;
+    padding-top: 36px;
+    border-top: 1px solid rgba(75, 41, 56, 0.11);
+}
+
+.plantas-grupo > h3 {
+    margin: 0 0 8px;
+
+    color: var(--gallery-wine-dark);
+
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 1.35rem;
+    font-weight: 500;
+}
+
+.plantas-grupo > p {
+    margin: 0 0 22px;
+    color: var(--gallery-text-soft);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   TARJETA DE PLANTA
+========================================================= */
+
+.planta-card {
+    display: grid;
+    grid-template-columns:
+        minmax(190px, 0.75fr)
+        minmax(0, 1.25fr);
+
+    overflow: hidden;
+    margin-top: 18px;
+
+    border: 1px solid rgba(75, 41, 56, 0.11);
+    border-radius: 24px;
+
+    background: var(--gallery-paper);
+    box-shadow: 0 14px 34px rgba(55, 34, 43, 0.09);
+}
+
+.planta-card > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 290px;
+
+    object-fit: cover;
+    object-position: center;
+}
+
+.planta-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+
+    min-width: 0;
+    padding: clamp(24px, 4vw, 44px);
+}
+
+.planta-info > span {
+    display: inline-flex;
+    margin-bottom: 12px;
+    padding: 7px 11px;
+
+    border-radius: 999px;
+
+    background: var(--gallery-tiffany-light);
+    color: #416d69;
+
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+}
+
+.planta-info h3 {
+    margin: 0 0 12px;
+
+    color: var(--gallery-wine-dark);
+
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: clamp(1.55rem, 3vw, 2.35rem);
+    font-weight: 500;
+    line-height: 1.1;
+}
+
+.planta-info p {
+    margin: 3px 0;
+
+    color: var(--gallery-text-soft);
+    font-size: 0.9rem;
+    line-height: 1.55;
+}
+
+.planta-info a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 42px;
+    margin-top: 20px;
+    padding: 0 16px;
+
+    border-radius: 12px;
+
+    background: var(--gallery-wine-dark);
+    color: #fff;
+
+    font-size: 0.74rem;
+    font-weight: 800;
+    text-decoration: none;
+
+    transition:
+        background-color 0.22s ease,
+        transform 0.22s ease;
+}
+
+.planta-info a:hover {
+    background: var(--gallery-wine);
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   CIERRE
 ========================================================= */
 
 .gallery-closing {
     display: flex;
-
     align-items: flex-end;
     justify-content: space-between;
-
     gap: 50px;
 
-    width:
-        calc(100% - (var(--gallery-side) * 2));
+    margin-top: 54px;
+    padding: 38px 0 0;
 
-    max-width:
-        var(--gallery-container);
-
-    margin:
-        54px auto 0;
-
-    padding:
-        38px 0 0;
-
-    border-top:
-        1px solid rgba(75, 41, 56, 0.13);
+    border-top: 1px solid rgba(75, 41, 56, 0.13);
 }
 
 .gallery-closing-copy {
+    min-width: 0;
     max-width: 720px;
 }
 
 .gallery-closing-copy > span {
     display: block;
-
-    margin-bottom: 9px;
+    margin: 0 0 9px;
 
     color: var(--gallery-wine-soft);
 
     font-size: 0.68rem;
     font-weight: 800;
-
+    line-height: 1.4;
     text-transform: uppercase;
     letter-spacing: 0.19em;
 }
@@ -604,66 +609,43 @@ body {
 
     color: var(--gallery-wine-dark);
 
-    font-family:
-        "Playfair Display",
-        Georgia,
-        serif;
-
-    font-size:
-        clamp(1.8rem, 3vw, 3rem);
-
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: clamp(1.8rem, 3vw, 3rem);
     font-weight: 500;
-
     line-height: 1.1;
 }
 
 .gallery-closing-copy p {
     max-width: 620px;
-
-    margin:
-        13px 0 0;
+    margin: 13px 0 0;
 
     color: var(--gallery-text-soft);
-
     font-size: 0.96rem;
     line-height: 1.65;
 }
 
-
-/* =========================================================
-   BOTONES DEL CIERRE
-========================================================= */
-
 .gallery-closing-actions {
     display: flex;
     flex-shrink: 0;
-
     align-items: center;
-
     gap: 10px;
 }
 
 .gallery-closing-secondary,
 .gallery-closing-primary {
     display: inline-flex;
-
     align-items: center;
     justify-content: center;
-
     gap: 12px;
 
     min-height: 50px;
-
-    padding:
-        0 19px;
+    padding: 0 19px;
 
     border-radius: 14px;
 
     font-size: 0.8rem;
     font-weight: 800;
-
     text-decoration: none;
-
     white-space: nowrap;
 
     transition:
@@ -673,44 +655,116 @@ body {
 }
 
 .gallery-closing-secondary {
-    border:
-        1px solid rgba(75, 41, 56, 0.16);
-
-    background:
-        rgba(255, 255, 255, 0.46);
-
-    color:
-        var(--gallery-wine-dark);
+    border: 1px solid rgba(75, 41, 56, 0.16);
+    background: rgba(255, 255, 255, 0.46);
+    color: var(--gallery-wine-dark);
 }
 
 .gallery-closing-secondary:hover {
-    border-color:
-        rgba(75, 41, 56, 0.28);
-
-    background: #ffffff;
+    border-color: rgba(75, 41, 56, 0.28);
+    background: #fff;
 }
 
 .gallery-closing-primary {
-    border:
-        1px solid var(--gallery-wine-dark);
-
-    background:
-        var(--gallery-wine-dark);
-
-    color: #ffffff;
+    border: 1px solid var(--gallery-wine-dark);
+    background: var(--gallery-wine-dark);
+    color: #fff;
 }
 
 .gallery-closing-primary i {
-    color:
-        var(--gallery-yellow);
+    color: var(--gallery-yellow);
 }
 
 .gallery-closing-primary:hover {
-    border-color:
-        var(--gallery-wine);
+    border-color: var(--gallery-wine);
+    background: var(--gallery-wine);
+}
 
-    background:
-        var(--gallery-wine);
+
+/* =========================================================
+   VISOR DE FOTOGRAFÍAS
+========================================================= */
+
+.gallery-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: clamp(14px, 4vw, 48px);
+
+    background: rgba(24, 15, 19, 0.92);
+    cursor: zoom-out;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease;
+
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+}
+
+.gallery-lightbox.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.gallery-lightbox-media {
+    display: block;
+
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: calc(100dvh - 40px);
+
+    border-radius: 16px;
+
+    object-fit: contain;
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.45);
+
+    cursor: default;
+    transform: scale(0.96);
+
+    transition: transform 0.25s ease;
+}
+
+.gallery-lightbox.is-open .gallery-lightbox-media {
+    transform: scale(1);
+}
+
+.gallery-lightbox-close {
+    position: absolute;
+    top: max(14px, env(safe-area-inset-top));
+    right: max(14px, env(safe-area-inset-right));
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 44px;
+    height: 44px;
+    padding: 0;
+
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 50%;
+
+    background: rgba(75, 41, 56, 0.82);
+    color: #fff;
+
+    font: inherit;
+    font-size: 1.35rem;
+    line-height: 1;
+
+    cursor: pointer;
+
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
 }
 
 
@@ -719,10 +773,9 @@ body {
 ========================================================= */
 
 @media (max-width: 1120px) {
-
     :root {
-        --gallery-side:
-            clamp(24px, 4vw, 52px);
+        --gallery-side: clamp(22px, 4vw, 48px);
+        --gallery-gap: 16px;
     }
 
     .gallery-room-bar {
@@ -738,9 +791,7 @@ body {
     }
 
     .gallery-nav-link {
-        padding-right: 8px;
-        padding-left: 8px;
-
+        padding-inline: 8px;
         font-size: 0.66rem;
     }
 }
@@ -750,11 +801,8 @@ body {
    TABLET
 ========================================================= */
 
-@media (max-width: 1050px) {
-
+@media (max-width: 960px) {
     .room-masonry-gallery {
-        -webkit-columns: 2;
-        -moz-columns: 2;
         columns: 2;
     }
 
@@ -762,162 +810,122 @@ body {
         display: none;
     }
 
-    .gallery-closing {
-        align-items: center;
+    .gallery-room-bar {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 5px;
+        padding-block: 8px;
+    }
 
-        gap: 30px;
+    .gallery-room-main {
+        justify-content: space-between;
+    }
+
+    .gallery-room-navigation {
+        justify-content: flex-start;
+        overflow-x: auto;
+
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .gallery-room-navigation::-webkit-scrollbar {
+        display: none;
+    }
+
+    .planta-card {
+        grid-template-columns:
+            minmax(180px, 0.8fr)
+            minmax(0, 1.2fr);
+    }
+
+    .gallery-closing {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 28px;
     }
 }
 
 
 /* =========================================================
-   MÓVIL
+   MÓVIL — DOS COLUMNAS
 ========================================================= */
 
 @media (max-width: 700px) {
-
     :root {
         --gallery-side: 14px;
+        --gallery-gap: 10px;
     }
 
-
-    /* =====================================================
-       BARRA SECUNDARIA
-    ===================================================== */
+    /* Barra */
 
     .gallery-room-bar {
-        position: sticky;
-        top: 0;
-
-        z-index: 900;
-
         display: block;
-
-        width: 100%;
-
         min-height: 0;
-
         padding: 0;
-
         overflow: hidden;
-
-        background:
-            rgba(201, 167, 173, 0.98);
-
-        border-bottom:
-            1px solid rgba(75, 41, 56, 0.12);
-
-        box-shadow:
-            0 6px 18px rgba(75, 41, 56, 0.10);
-
-        -webkit-backdrop-filter: blur(10px);
-        backdrop-filter: blur(10px);
     }
 
-
-    /* =====================================================
-       PRIMERA FILA
-    ===================================================== */
-
     .gallery-room-main {
-        display: flex;
-
-        align-items: center;
         justify-content: space-between;
-
         gap: 10px;
 
         width: 100%;
-
-        padding:
-            8px
-            var(--gallery-side)
-            6px;
+        padding: 7px var(--gallery-side) 5px;
     }
 
     .gallery-room-identity {
         display: flex;
         flex: 1;
-
         flex-direction: column;
-
         align-items: flex-start;
-
         gap: 1px;
-
-        min-width: 0;
     }
 
     .gallery-room-identity > span {
-        font-size: 0.5rem;
-
-        letter-spacing: 0.17em;
+        font-size: 0.48rem;
+        letter-spacing: 0.16em;
     }
 
     .gallery-room-identity > strong {
         display: block;
 
         max-width: 100%;
-
         overflow: hidden;
 
-        font-size: 1.05rem;
-
+        font-size: 1rem;
         text-overflow: ellipsis;
         white-space: nowrap;
     }
 
-    .gallery-room-identity > small {
-        display: none;
-    }
-
     .gallery-room-price {
         flex-shrink: 0;
-
         min-width: auto;
-
         padding: 0;
-
         border: 0;
-
-        text-align: right;
     }
 
     .gallery-room-price strong {
-        font-size: 1rem;
+        font-size: 0.96rem;
     }
 
     .gallery-room-price span {
-        font-size: 0.58rem;
+        font-size: 0.56rem;
     }
 
-
-    /* =====================================================
-       SEGUNDA FILA: NAVEGACIÓN
-    ===================================================== */
-
     .gallery-room-navigation {
-        display: flex;
-
         justify-content: flex-start;
-
         gap: 4px;
 
         width: 100%;
-
-        padding:
-            5px
-            var(--gallery-side)
-            7px;
+        padding: 4px var(--gallery-side) 6px;
 
         overflow-x: auto;
         overflow-y: hidden;
 
-        border-top:
-            1px solid rgba(75, 41, 56, 0.08);
+        border-top: 1px solid rgba(75, 41, 56, 0.08);
 
         scrollbar-width: none;
-
         -webkit-overflow-scrolling: touch;
     }
 
@@ -926,263 +934,688 @@ body {
     }
 
     .gallery-nav-link {
-        min-height: 30px;
+        min-height: 29px;
+        padding: 0 9px;
 
-        padding:
-            0 9px;
-
-        border:
-            1px solid rgba(75, 41, 56, 0.10);
-
+        border: 1px solid rgba(75, 41, 56, 0.10);
         border-radius: 999px;
 
-        background:
-            rgba(255, 255, 255, 0.14);
-
-        color:
-            var(--gallery-wine-dark);
-
-        font-size: 0.62rem;
-    }
-
-    .gallery-nav-link i {
-        color:
-            var(--gallery-wine-dark);
-
-        font-size: 0.6rem;
+        background: rgba(255, 255, 255, 0.14);
+        font-size: 0.61rem;
     }
 
     .gallery-nav-link-primary {
         margin-left: 0;
-
-        border-color:
-            var(--gallery-wine-dark);
-
-        background:
-            var(--gallery-wine-dark);
-
-        color:
-            #ffffff;
+        border-color: var(--gallery-wine-dark);
+        background: var(--gallery-wine-dark);
+        color: #fff;
     }
 
-    .gallery-nav-link-primary i {
-        color:
-            var(--gallery-yellow);
-    }
-
-
-    /* =====================================================
-       CONTENIDO
-    ===================================================== */
+    /* Contenido */
 
     .gallery-page {
-        padding:
-            20px 0
-            48px;
+        padding: 20px 0 48px;
     }
 
+    /*
+       Galería, plantas y cierre comparten exactamente
+       los mismos 14 px a izquierda y derecha.
+    */
 
-    /* =====================================================
-       MASONRY MÓVIL
-    ===================================================== */
+    .room-masonry-gallery,
+    .habitacion-plantas,
+    .gallery-closing {
+        width: calc(100% - (var(--gallery-side) * 2));
+        max-width: none;
+
+        margin-right: auto;
+        margin-left: auto;
+
+        position: relative;
+        left: auto;
+        right: auto;
+        transform: none;
+    }
+
+    /* Masonry */
 
     .room-masonry-gallery {
-        width:
-            calc(100% - (var(--gallery-side) * 2));
-
-        -webkit-columns: 2;
-        -moz-columns: 2;
         columns: 2;
-
-        -webkit-column-gap: 10px;
-        -moz-column-gap: 10px;
-        column-gap: 10px;
+        column-gap: var(--gallery-gap);
     }
 
     .gallery-media {
-        margin:
-            0 0 10px;
+        margin-bottom: var(--gallery-gap);
 
         border-radius: 17px;
-
-        box-shadow:
-            0 10px 25px
-            rgba(55, 34, 43, 0.1);
-
-        -webkit-column-break-inside: avoid;
-        page-break-inside: avoid;
-        break-inside: avoid;
+        box-shadow: 0 10px 25px rgba(55, 34, 43, 0.10);
     }
 
-
-    /* =====================================================
-       ALTURAS MÓVIL
-    ===================================================== */
+    .gallery-media:hover {
+        transform: none;
+    }
 
     .gallery-media img,
-    .gallery-media video,
+    .gallery-media video {
+        min-height: 0;
+        max-height: none;
+    }
+
     .gallery-media-featured img,
     .gallery-media-portrait img,
-    .gallery-media-landscape img,
-    .gallery-media:nth-child(5n + 1) img,
-    .gallery-media:nth-child(5n + 1) video,
-    .gallery-media:nth-child(5n + 2) img,
-    .gallery-media:nth-child(5n + 2) video,
-    .gallery-media:nth-child(5n + 3) img,
-    .gallery-media:nth-child(5n + 3) video,
-    .gallery-media:nth-child(5n + 4) img,
-    .gallery-media:nth-child(5n + 4) video,
-    .gallery-media:nth-child(5n + 5) img,
-    .gallery-media:nth-child(5n + 5) video {
-
-        min-height: 220px;
-        max-height: none;
-
-        -webkit-transform: none;
-        transform: none;
+    .gallery-media-landscape img {
+        height: auto;
     }
 
     .gallery-media:nth-child(odd) img,
     .gallery-media:nth-child(odd) video {
-        height: 300px;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 4 / 5;
+        object-fit: cover;
     }
 
     .gallery-media:nth-child(even) img,
     .gallery-media:nth-child(even) video {
-        height: 230px;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 3 / 4;
+        object-fit: cover;
     }
 
-
-    /* =====================================================
-       OVERLAYS
-    ===================================================== */
-
     .gallery-media-number {
-        top: 10px;
-        left: 10px;
+        top: 9px;
+        left: 9px;
 
-        min-width: 31px;
-        height: 31px;
+        min-width: 29px;
+        height: 29px;
+        padding-inline: 8px;
 
-        font-size: 0.58rem;
+        font-size: 0.56rem;
     }
 
     .gallery-video-indicator {
-        top: 10px;
-        right: 10px;
+        top: 9px;
+        right: 9px;
 
-        width: 34px;
-        height: 34px;
+        width: 32px;
+        height: 32px;
     }
 
     .gallery-media figcaption {
-        right: 8px;
-        bottom: 8px;
-        left: 8px;
+        right: 7px;
+        bottom: 7px;
+        left: 7px;
 
-        padding:
-            9px 10px;
+        padding: 8px 9px;
 
-        border-radius: 10px;
-
-        font-size: 0.68rem;
+        border-radius: 9px;
+        font-size: 0.65rem;
     }
 
+    /* Plantas */
 
-    /* =====================================================
-       CIERRE MÓVIL
-    ===================================================== */
+    .habitacion-plantas {
+        margin-top: 42px;
+        padding: 25px 18px;
+        border-radius: 23px;
+    }
+
+    .habitacion-plantas .section-header {
+        margin-bottom: 24px;
+    }
+
+    .habitacion-plantas .section-header h2 {
+        font-size: 2rem;
+    }
+
+    .planta-card {
+        display: block;
+        border-radius: 19px;
+    }
+
+    .planta-card > img {
+        width: 100%;
+        height: auto;
+        min-height: 0;
+        max-height: 360px;
+
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+    }
+
+    .planta-info {
+        padding: 22px;
+    }
+
+    .planta-info h3 {
+        font-size: 1.65rem;
+    }
+
+    /* Cierre alineado con plantas */
 
     .gallery-closing {
         display: block;
 
-        width:
-            calc(100% - (var(--gallery-side) * 2));
+        margin-top: 36px;
+        padding: 28px 0 0;
 
-        margin-top: 34px;
+        border-top: 1px solid rgba(75, 41, 56, 0.13);
+    }
 
-        padding:
-            28px 0
-            0;
+    .gallery-closing-copy {
+        width: 100%;
+        max-width: none;
+
+        margin: 0;
+        padding: 0;
     }
 
     .gallery-closing-copy > span {
-        margin-bottom: 7px;
+        display: block;
+
+        width: 100%;
+        margin: 0 0 7px;
 
         font-size: 0.6rem;
+        line-height: 1.4;
+        letter-spacing: 0.17em;
     }
 
     .gallery-closing-copy h2 {
-        font-size: 1.8rem;
+        width: 100%;
+        margin: 0;
+
+        font-size: clamp(1.75rem, 8vw, 2.15rem);
+        line-height: 1.1;
+
+        overflow-wrap: anywhere;
     }
 
     .gallery-closing-copy p {
-        margin-top: 10px;
+        width: 100%;
+        max-width: none;
 
-        font-size: 0.88rem;
-        line-height: 1.55;
+        margin: 13px 0 0;
+
+        font-size: 0.9rem;
+        line-height: 1.6;
     }
 
     .gallery-closing-actions {
         display: grid;
-
-        grid-template-columns:
-            1fr 1fr;
-
-        gap: 8px;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
 
         width: 100%;
-
-        margin-top: 22px;
+        margin: 24px 0 0;
+        padding: 0;
     }
 
     .gallery-closing-secondary,
     .gallery-closing-primary {
         width: 100%;
-
         min-width: 0;
-        min-height: 48px;
+        margin: 0;
+        padding: 0 16px;
+    }
 
+    /* Visor */
+
+    .gallery-lightbox {
         padding:
-            0 12px;
+            max(12px, env(safe-area-inset-top))
+            12px
+            max(12px, env(safe-area-inset-bottom));
+    }
 
-        font-size: 0.72rem;
+    .gallery-lightbox-media {
+        max-height: calc(100dvh - 24px);
+        border-radius: 12px;
     }
 }
 
 
 /* =========================================================
-   MÓVILES MUY PEQUEÑOS
+   MÓVIL MUY ESTRECHO
 ========================================================= */
 
-@media (max-width: 390px) {
-
+@media (max-width: 380px) {
     :root {
         --gallery-side: 10px;
-    }
-
-    .gallery-room-identity > strong {
-        font-size: 1rem;
+        --gallery-gap: 8px;
     }
 
     .gallery-nav-link {
-        padding-right: 8px;
-        padding-left: 8px;
-    }
-
-    .room-masonry-gallery {
-        -webkit-column-gap: 8px;
-        -moz-column-gap: 8px;
-        column-gap: 8px;
+        padding-inline: 8px;
     }
 
     .gallery-media {
-        margin-bottom: 8px;
-
         border-radius: 14px;
     }
 
-    .gallery-closing-actions {
-        grid-template-columns: 1fr;
+    .gallery-media figcaption {
+        font-size: 0.6rem;
+    }
+
+    .habitacion-plantas {
+        padding-inline: 14px;
+    }
+
+    .gallery-closing-copy h2 {
+        font-size: 1.7rem;
+    }
+}
+
+
+/* =========================================================
+   ACCESIBILIDAD
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}
+
+/* =========================================================
+   PRESENTACIÓN VIVA DE LAS PLANTAS
+========================================================= */
+
+.plantas-presentacion {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 36px;
+
+    margin-bottom: 34px;
+}
+
+.plantas-presentacion > div:first-child {
+    max-width: 700px;
+}
+
+.plantas-presentacion .eyebrow {
+    display: block;
+    margin-bottom: 9px;
+
+    color: var(--gallery-tiffany);
+    font-size: 0.68rem;
+    font-weight: 800;
+
+    letter-spacing: 0.20em;
+}
+
+.plantas-presentacion h2 {
+    margin: 0;
+
+    color: var(--gallery-wine-dark);
+
+    font-family:
+        "Playfair Display",
+        Georgia,
+        serif;
+
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 500;
+    line-height: 1.05;
+}
+
+.plantas-presentacion > div:first-child > p {
+    max-width: 620px;
+    margin: 15px 0 0;
+
+    color: var(--gallery-text-soft);
+    font-size: 0.94rem;
+    line-height: 1.65;
+}
+
+
+/* Estado vivo */
+
+.plantas-estado-vivo {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 13px;
+
+    min-width: 230px;
+    padding: 14px 17px;
+
+    border: 1px solid rgba(82, 125, 121, 0.18);
+    border-radius: 18px;
+
+    background: rgba(255, 255, 255, 0.62);
+    box-shadow: 0 12px 28px rgba(55, 34, 43, 0.07);
+}
+
+.plantas-estado-vivo-activo {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(220, 235, 234, 0.96),
+            rgba(255, 253, 249, 0.90)
+        );
+}
+
+.plantas-estado-icono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 48px;
+    height: 48px;
+
+    border-radius: 50%;
+    background: var(--gallery-tiffany-light);
+
+    font-size: 1.35rem;
+}
+
+.plantas-estado-vivo > div {
+    min-width: 0;
+}
+
+.plantas-estado-vivo strong,
+.plantas-estado-vivo small {
+    display: block;
+}
+
+.plantas-estado-vivo strong {
+    margin-bottom: 3px;
+
+    color: var(--gallery-wine-dark);
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+
+.plantas-estado-vivo small {
+    color: var(--gallery-text-soft);
+    font-size: 0.69rem;
+    line-height: 1.35;
+}
+
+
+/* Texto de convivencia */
+
+.planta-info .planta-convivencia-copy {
+    max-width: 520px;
+    margin: 13px 0 0;
+
+    color: var(--gallery-text);
+    font-size: 0.88rem;
+    line-height: 1.6;
+}
+
+.planta-info .planta-especie {
+    color: var(--gallery-wine-soft);
+    font-style: italic;
+}
+
+.planta-info .planta-ubicacion {
+    margin-top: 12px;
+}
+
+
+/* Compartidas */
+
+.plantas-grupo-compartidas {
+    margin-top: 42px;
+    padding-top: 36px;
+    border-top: 1px solid rgba(75, 41, 56, 0.11);
+}
+
+
+/* Móvil */
+
+@media (max-width: 700px) {
+    .plantas-presentacion {
+        display: block;
+        margin-bottom: 25px;
+    }
+
+    .plantas-presentacion h2 {
+        font-size: 2rem;
+    }
+
+    .plantas-presentacion > div:first-child > p {
+        margin-top: 12px;
+        font-size: 0.88rem;
+    }
+
+    .plantas-estado-vivo {
+        width: 100%;
+        min-width: 0;
+        margin-top: 20px;
+        padding: 13px 15px;
+    }
+
+    .plantas-estado-icono {
+        width: 44px;
+        height: 44px;
+        font-size: 1.2rem;
+    }
+
+    .planta-info .planta-convivencia-copy {
+        font-size: 0.84rem;
+    }
+}
+/* =========================================================
+   GALERÍA — INTEGRACIÓN CON ROSA EMPOLVADO
+========================================================= */
+
+.gallery-room-bar {
+    border-top:
+        1px solid rgba(255, 255, 255, 0.32);
+
+    border-bottom:
+        1px solid rgba(75, 41, 56, 0.1);
+
+    background:
+        linear-gradient(
+            135deg,
+            #d8bdc3 0%,
+            #d1b2ba 52%,
+            #c7a6b0 100%
+        );
+
+    box-shadow:
+        0 9px 24px rgba(75, 41, 56, 0.09);
+}
+
+
+/* =========================================================
+   IDENTIDAD DE LA HABITACIÓN
+========================================================= */
+
+.gallery-room-identity > span {
+    color: rgba(75, 41, 56, 0.72);
+}
+
+.gallery-room-identity > strong {
+    color: #4b2938;
+}
+
+.gallery-room-identity > small {
+    color: rgba(75, 41, 56, 0.68);
+}
+
+.gallery-room-price strong {
+    color: #4b2938;
+}
+
+.gallery-room-price span {
+    color: rgba(75, 41, 56, 0.66);
+}
+
+
+/* =========================================================
+   FONDO DE LA GALERÍA
+========================================================= */
+
+.gallery-page {
+    background:
+        linear-gradient(
+            180deg,
+            #eee2e3 0%,
+            #f2e8e6 48%,
+            #f5ede8 100%
+        );
+}
+
+.room-masonry-gallery {
+    background: transparent;
+}
+
+
+/* =========================================================
+   TARJETAS Y FOTOGRAFÍAS
+========================================================= */
+
+.room-masonry-gallery figure,
+.room-masonry-gallery article,
+.gallery-item {
+    border:
+        1px solid rgba(255, 255, 255, 0.5);
+
+    background: #eadfde;
+
+    box-shadow:
+        0 12px 28px rgba(75, 41, 56, 0.1);
+}
+
+
+/* =========================================================
+   NAVEGACIÓN DE LA HABITACIÓN
+========================================================= */
+
+.gallery-room-navigation {
+    border-top:
+        1px solid rgba(75, 41, 56, 0.08);
+}
+
+.gallery-nav-link {
+    border:
+        1px solid rgba(75, 41, 56, 0.08);
+
+    background:
+        rgba(255, 250, 247, 0.34);
+
+    color: #51343e;
+}
+
+.gallery-nav-link:hover {
+    background:
+        rgba(255, 250, 247, 0.6);
+
+    color: #4b2938;
+}
+
+.gallery-nav-link-primary {
+    border-color: #4b2938;
+
+    background:
+        linear-gradient(
+            145deg,
+            #62384b,
+            #422333
+        );
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   MÓVIL — SEPARAR NAVEGACIÓN Y HABITACIÓN
+========================================================= */
+
+@media (max-width: 650px) {
+
+    /*
+       En móvil evitamos tener dos barras sticky.
+       La barra pública indica dónde estamos.
+       La barra de habitación forma parte del contenido.
+    */
+
+    .gallery-room-bar {
+        position: relative;
+        top: auto;
+        z-index: 20;
+
+        width: calc(100% - 20px);
+        margin: 12px 10px 0;
+        padding: 0;
+
+        overflow: hidden;
+
+        border:
+            1px solid rgba(255, 255, 255, 0.38);
+
+        border-radius: 17px 17px 0 0;
+
+        box-shadow:
+            0 12px 28px rgba(75, 41, 56, 0.12);
+    }
+
+    .gallery-room-main {
+        padding:
+            10px
+            12px
+            8px;
+    }
+
+    .gallery-room-navigation {
+        padding:
+            4px
+            7px
+            7px;
+    }
+
+    /*
+       La galería comienza como continuación de la tarjeta
+       de identidad de la habitación.
+    */
+
+    .gallery-page {
+        width: calc(100% - 20px);
+        margin: 0 10px 18px;
+        padding:
+            20px
+            3px
+            48px;
+
+        border-radius: 0 0 20px 20px;
+
+        box-shadow:
+            0 15px 32px rgba(75, 41, 56, 0.08);
+    }
+
+    .room-masonry-gallery {
+        margin-top: 0;
+    }
+}
+
+
+/* =========================================================
+   MÓVILES PEQUEÑOS
+========================================================= */
+
+@media (max-width: 380px) {
+
+    .gallery-room-bar,
+    .gallery-page {
+        width: calc(100% - 14px);
+        margin-right: 7px;
+        margin-left: 7px;
+    }
+
+    .gallery-room-main {
+        padding-right: 10px;
+        padding-left: 10px;
     }
 }

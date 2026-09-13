@@ -1,0 +1,384 @@
+/* =========================================================
+   BARRA DE UBICACIÓN — ESTRUCTURA GENERAL
+========================================================= */
+
+.dashboard-location {
+    position: relative !important;
+    z-index: 800 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 16px !important;
+
+    width: 100% !important;
+    min-height: 68px !important;
+    margin: 0 !important;
+    padding: 10px 16px !important;
+
+    box-sizing: border-box !important;
+
+    border: 0 !important;
+    border-bottom:
+        1px solid rgba(81, 52, 62, 0.1) !important;
+
+    border-radius: 0 !important;
+
+    background:
+        rgba(247, 244, 240, 0.98) !important;
+
+    color: #51343e !important;
+
+    box-shadow:
+        0 6px 18px rgba(55, 38, 45, 0.07) !important;
+}
+
+
+/* =========================================================
+   CONTENIDO
+========================================================= */
+
+.dashboard-location-copy {
+    display: grid !important;
+    flex: 1 1 auto !important;
+
+    min-width: 0 !important;
+    gap: 4px !important;
+}
+
+
+/* =========================================================
+   MIGAS DE PAN
+========================================================= */
+
+.dashboard-breadcrumb {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+
+    list-style: none !important;
+
+    font-size: 1rem !important;
+    line-height: 1.2 !important;
+}
+
+.dashboard-breadcrumb li {
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.dashboard-breadcrumb a,
+.dashboard-breadcrumb span,
+.dashboard-breadcrumb strong {
+    display: inline-block !important;
+    max-width: 100% !important;
+}
+
+.dashboard-breadcrumb a {
+    color: #927783 !important;
+
+    font-weight: 750 !important;
+    text-decoration: none !important;
+
+    transition:
+        color 150ms ease !important;
+}
+
+.dashboard-breadcrumb a:hover {
+    color: #51343e !important;
+}
+
+.dashboard-breadcrumb span {
+    color: #765f69 !important;
+    font-weight: 750 !important;
+}
+
+.dashboard-breadcrumb strong {
+    overflow: hidden !important;
+
+    color: #51343e !important;
+
+    font-weight: 900 !important;
+
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+}
+
+
+/* =========================================================
+   NOTA INFERIOR
+========================================================= */
+
+.dashboard-location-note {
+    overflow: hidden !important;
+
+    max-width: 100% !important;
+    margin: 0 !important;
+
+    color: #786d71 !important;
+
+    font-size: 0.7rem !important;
+    font-weight: 650 !important;
+    line-height: 1.3 !important;
+
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+}
+
+
+/* =========================================================
+   BOTÓN DE ACCIÓN
+========================================================= */
+
+.dashboard-location-action {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    flex: 0 0 46px !important;
+
+    width: 46px !important;
+    height: 46px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+
+    border: 0 !important;
+    border-radius: 15px !important;
+
+    background:
+        linear-gradient(
+            145deg,
+            #62384b,
+            #422333
+        ) !important;
+
+    color: #ffffff !important;
+
+    box-shadow:
+        0 9px 22px rgba(66, 35, 51, 0.24) !important;
+
+    cursor: pointer !important;
+    text-decoration: none !important;
+
+    transition:
+        transform 150ms ease,
+        box-shadow 150ms ease,
+        background 150ms ease !important;
+}
+
+.dashboard-location-action i {
+    color: #ffffff !important;
+
+    font-size: 1rem !important;
+    line-height: 1 !important;
+}
+
+.dashboard-location-action:hover {
+    transform: translateY(-2px);
+
+    color: #ffffff !important;
+
+    box-shadow:
+        0 13px 27px rgba(66, 35, 51, 0.3) !important;
+}
+
+.dashboard-location-action:active {
+    transform: translateY(0);
+}
+
+.dashboard-location-action:focus-visible {
+    outline:
+        4px solid rgba(114, 165, 161, 0.38) !important;
+
+    outline-offset: 3px !important;
+}
+
+
+/* =========================================================
+   VERSIÓN PÚBLICA — ROSA EMPOLVADO
+========================================================= */
+
+.dashboard-location.public-location {
+    border-top:
+        1px solid rgba(255, 255, 255, 0.3) !important;
+
+    border-bottom:
+        1px solid rgba(81, 52, 62, 0.09) !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f0e5e5 0%,
+            #eadedf 52%,
+            #e5d8dc 100%
+        ) !important;
+
+    color: #51343e !important;
+
+    box-shadow:
+        0 6px 18px rgba(75, 41, 56, 0.08) !important;
+}
+
+.dashboard-location.public-location
+.dashboard-breadcrumb a {
+    color: #927783 !important;
+}
+
+.dashboard-location.public-location
+.dashboard-breadcrumb a:hover {
+    color: #51343e !important;
+}
+
+.dashboard-location.public-location
+.dashboard-breadcrumb span {
+    color: #9a838c !important;
+}
+
+.dashboard-location.public-location
+.dashboard-breadcrumb strong {
+    color: #51343e !important;
+}
+
+.dashboard-location.public-location
+.dashboard-location-note {
+    color: #796a70 !important;
+}
+
+
+/* =========================================================
+   BOTÓN VOLVER — MALVA
+========================================================= */
+
+.dashboard-location.public-location
+.public-location-back {
+    border:
+        1px solid rgba(255, 255, 255, 0.3) !important;
+
+    background:
+        linear-gradient(
+            145deg,
+            #927783,
+            #745f6d
+        ) !important;
+
+    color: #fffdf9 !important;
+
+    box-shadow:
+        0 9px 22px rgba(75, 41, 56, 0.2) !important;
+}
+
+.dashboard-location.public-location
+.public-location-back:hover {
+    background:
+        linear-gradient(
+            145deg,
+            #846b77,
+            #654d5b
+        ) !important;
+
+    color: #ffffff !important;
+
+    box-shadow:
+        0 13px 27px rgba(75, 41, 56, 0.26) !important;
+}
+
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
+@media (max-width: 650px) {
+
+    .dashboard-location {
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 900 !important;
+
+        gap: 12px !important;
+
+        min-height: 64px !important;
+        padding: 8px 12px !important;
+    }
+
+    .dashboard-location-copy {
+        gap: 3px !important;
+    }
+
+    .dashboard-breadcrumb {
+        gap: 5px !important;
+
+        font-size: 0.94rem !important;
+    }
+
+    .dashboard-location-note {
+        font-size: 0.63rem !important;
+    }
+
+    .dashboard-location-action {
+        flex: 0 0 44px !important;
+
+        width: 44px !important;
+        height: 44px !important;
+
+        border-radius: 14px !important;
+    }
+
+    .dashboard-location.public-location {
+        padding:
+            8px
+            8px
+            8px
+            14px !important;
+    }
+}
+
+
+/* =========================================================
+   MÓVILES PEQUEÑOS
+========================================================= */
+
+@media (max-width: 380px) {
+
+    .dashboard-location {
+        gap: 9px !important;
+
+        min-height: 60px !important;
+        padding: 7px 9px !important;
+    }
+
+    .dashboard-breadcrumb {
+        font-size: 0.87rem !important;
+    }
+
+    .dashboard-location-note {
+        font-size: 0.59rem !important;
+    }
+
+    .dashboard-location-action {
+        flex: 0 0 42px !important;
+
+        width: 42px !important;
+        height: 42px !important;
+
+        border-radius: 13px !important;
+    }
+}
+
+
+/* =========================================================
+   MOVIMIENTO REDUCIDO
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .dashboard-breadcrumb a,
+    .dashboard-location-action {
+        transition: none !important;
+    }
+}

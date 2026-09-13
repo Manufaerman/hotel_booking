@@ -1,0 +1,377 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block title %}
+    {{ titulo }} | By Colección
+{% endblock %}
+
+{% block extra-head %}
+<link
+    rel="stylesheet"
+    href="{% static 'hotel/css/proyecto_form.css' %}"
+>
+{% endblock %}
+
+{% block content %}
+
+<main class="proyectos-page proyecto-form-page">
+
+    <header class="proyecto-form-header">
+
+        <a
+            href="{% url 'hotel:proyectos_dashboard' %}"
+            class="proyecto-form-back"
+        >
+            <i
+                class="fa fa-arrow-left"
+                aria-hidden="true"
+            ></i>
+
+            Volver a proyectos
+        </a>
+
+
+        <span class="proyectos-eyebrow">
+            Desarrollo e inversión
+        </span>
+
+        <h1>
+            {{ titulo }}
+        </h1>
+
+        <p>
+            {{ subtitulo }}
+        </p>
+
+    </header>
+
+
+    {% if messages %}
+
+        <div
+            class="proyectos-messages"
+            aria-live="polite"
+        >
+
+            {% for message in messages %}
+
+                <div
+                    class="
+                        proyectos-message
+                        {% if message.tags %}
+                            proyectos-message-{{ message.tags }}
+                        {% endif %}
+                    "
+                    role="status"
+                >
+                    <span
+                        class="proyectos-message-icon"
+                        aria-hidden="true"
+                    >
+                        {% if "success" in message.tags %}
+                            ✓
+                        {% elif "error" in message.tags %}
+                            !
+                        {% else %}
+                            i
+                        {% endif %}
+                    </span>
+
+                    <p>
+                        {{ message }}
+                    </p>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+
+    <section class="proyecto-form-card">
+
+        <form
+            method="post"
+            class="proyecto-form"
+            novalidate
+        >
+            {% csrf_token %}
+
+
+            {% if form.non_field_errors %}
+
+                <div class="proyecto-form-errors">
+
+                    {% for error in form.non_field_errors %}
+
+                        <p>
+                            {{ error }}
+                        </p>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- IDENTIDAD -->
+
+            <fieldset class="proyecto-form-section">
+
+                <legend>
+                    <span>1</span>
+                    Identidad del proyecto
+                </legend>
+
+                <div class="proyecto-form-grid">
+
+                    <div class="proyecto-form-group proyecto-form-full">
+
+                        <label for="{{ form.nombre.id_for_label }}">
+                            {{ form.nombre.label }}
+                        </label>
+
+                        {{ form.nombre }}
+
+                        {% for error in form.nombre.errors %}
+                            <span class="proyecto-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="proyecto-form-group">
+
+                        <label for="{{ form.pais.id_for_label }}">
+                            {{ form.pais.label }}
+                        </label>
+
+                        {{ form.pais }}
+
+                        {% for error in form.pais.errors %}
+                            <span class="proyecto-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="proyecto-form-group">
+
+                        <label for="{{ form.tipo.id_for_label }}">
+                            {{ form.tipo.label }}
+                        </label>
+
+                        {{ form.tipo }}
+
+                        {% for error in form.tipo.errors %}
+                            <span class="proyecto-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </fieldset>
+
+
+            <!-- UBICACIÓN -->
+
+            <fieldset class="proyecto-form-section">
+
+                <legend>
+                    <span>2</span>
+                    Ubicación
+                </legend>
+
+                <div class="proyecto-form-grid">
+
+                    <div class="proyecto-form-group">
+
+                        <label for="{{ form.provincia.id_for_label }}">
+                            {{ form.provincia.label }}
+                        </label>
+
+                        {{ form.provincia }}
+
+                        {% for error in form.provincia.errors %}
+                            <span class="proyecto-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="proyecto-form-group">
+
+                        <label for="{{ form.ciudad.id_for_label }}">
+                            {{ form.ciudad.label }}
+                        </label>
+
+                        {{ form.ciudad }}
+
+                        {% for error in form.ciudad.errors %}
+                            <span class="proyecto-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </fieldset>
+
+
+            <!-- ESTADO -->
+
+            <fieldset class="proyecto-form-section">
+
+                <legend>
+                    <span>3</span>
+                    Estado y seguimiento
+                </legend>
+
+                <div class="proyecto-form-grid">
+
+                    <div class="proyecto-form-group">
+
+                        <label for="{{ form.estado.id_for_label }}">
+                            {{ form.estado.label }}
+                        </label>
+
+                        {{ form.estado }}
+
+                        {% for error in form.estado.errors %}
+                            <span class="proyecto-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="proyecto-form-check">
+
+                        {{ form.activo }}
+
+                        <label for="{{ form.activo.id_for_label }}">
+                            <strong>
+                                {{ form.activo.label }}
+                            </strong>
+
+                            <small>
+                                Los proyectos inactivos se conservan,
+                                pero dejan de aparecer como proyectos
+                                en marcha.
+                            </small>
+                        </label>
+
+                        {% for error in form.activo.errors %}
+                            <span class="proyecto-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="proyecto-form-group proyecto-form-full">
+
+                        <label for="{{ form.descripcion.id_for_label }}">
+                            {{ form.descripcion.label }}
+                        </label>
+
+                        {{ form.descripcion }}
+
+                        {% for error in form.descripcion.errors %}
+                            <span class="proyecto-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </fieldset>
+
+
+            <div class="proyecto-form-actions">
+
+                <a
+                    href="{% url 'hotel:proyectos_dashboard' %}"
+                    class="proyecto-form-cancel"
+                >
+                    Cancelar
+                </a>
+
+                <button
+                    type="submit"
+                    class="proyecto-form-submit"
+                >
+                    <i
+                        class="fa fa-check"
+                        aria-hidden="true"
+                    ></i>
+
+                    {{ texto_boton }}
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+</main>
+
+<script>
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+        const estado = document.getElementById(
+            "id_estado"
+        );
+
+        const activo = document.getElementById(
+            "id_activo"
+        );
+
+        if (!estado || !activo) {
+            return;
+        }
+
+        estado.addEventListener(
+            "change",
+            function () {
+                if (
+                    estado.value === "finalizado"
+                    || estado.value === "pausado"
+                ) {
+                    activo.checked = false;
+                }
+
+                if (
+                    estado.value === "planificacion"
+                    || estado.value === "desarrollo"
+                    || estado.value === "anual"
+                ) {
+                    activo.checked = true;
+                }
+            }
+        );
+    }
+);
+</script>
+
+{% endblock %}

@@ -1,10 +1,14 @@
 {% extends "base_dashboard.html" %}
 {% load static %}
 
+{% block title %}
+    {{ titulo }} | By Colección
+{% endblock %}
+
 {% block extra-head %}
 <link
     rel="stylesheet"
-    href="{% static 'hotel/css/gastos.css' %}"
+    href="{% static 'hotel/css/gasto_form.css' %}"
 >
 {% endblock %}
 
@@ -36,8 +40,12 @@
         <form
             method="post"
             enctype="multipart/form-data"
+            class="gasto-form"
+            id="gasto-form"
+            novalidate
         >
             {% csrf_token %}
+
 
             {% if form.non_field_errors %}
 
@@ -48,63 +56,696 @@
             {% endif %}
 
 
-            <div class="gasto-form-grid">
+            <!-- =============================================
+                 01. DESTINO
+            ============================================== -->
 
-                {% for field in form %}
+            <section class="gasto-form-section">
 
-                    {% if field.name == "pagado" %}
+                <header class="gasto-form-section-header">
 
-                        <div class="gasto-form-check">
+                    <span>01</span>
 
-                            {{ field }}
+                    <div>
+                        <h2>
+                            Destino del gasto
+                        </h2>
 
-                            <label for="{{ field.id_for_label }}">
-                                {{ field.label }}
-                            </label>
+                        <p>
+                            Selecciona dónde corresponde.
+                        </p>
+                    </div>
 
-                            {% for error in field.errors %}
-                                <span class="gasto-field-error">
-                                    {{ error }}
+                </header>
+
+
+                <!-- PAÍS -->
+
+                <div class="gasto-form-group gasto-form-full">
+
+                    <span class="gasto-selector-title">
+                        País
+                    </span>
+
+                    <div class="gasto-country-options">
+
+                        {% for radio in form.pais %}
+
+                            <label
+                                class="
+                                    gasto-country-option
+                                    gasto-option-button
+                                "
+                            >
+                                {{ radio.tag }}
+
+                                <span>
+                                    {{ radio.choice_label|upper }}
                                 </span>
-                            {% endfor %}
-
-                        </div>
-
-                    {% else %}
-
-                        <div class="
-                            gasto-form-group
-                            {% if field.name == 'notas' or field.name == 'justificante' %}
-                                gasto-form-full
-                            {% endif %}
-                        ">
-
-                            <label for="{{ field.id_for_label }}">
-                                {{ field.label }}
                             </label>
 
-                            {{ field }}
+                        {% endfor %}
 
-                            {% if field.help_text %}
+                    </div>
+
+                    {% for error in form.pais.errors %}
+
+                        <span class="gasto-field-error">
+                            {{ error }}
+                        </span>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- ÁMBITO PARA ESPAÑA -->
+
+                <div
+                    class="
+                        gasto-choice-step
+                        gasto-form-full
+                    "
+                    id="paso-ambito"
+                    hidden
+                >
+
+                    <span class="gasto-selector-title">
+                        ¿A qué corresponde?
+                    </span>
+
+                    <div class="gasto-scope-options">
+
+                        <button
+                            type="button"
+                            class="
+                                gasto-option-button
+                                gasto-scope-button
+                            "
+                            data-scope="empresa"
+                        >
+                            <span>
+                                SOCIEDAD
+                            </span>
+                        </button>
+
+                        <button
+                            type="button"
+                            class="
+                                gasto-option-button
+                                gasto-scope-button
+                            "
+                            data-scope="propiedad"
+                        >
+                            <span>
+                                PROPIEDAD
+                            </span>
+                        </button>
+
+                    </div>
+
+
+                    <!-- Campo real que recibirá Django -->
+
+                    <div class="gasto-hidden-field">
+                        {{ form.ambito }}
+                    </div>
+
+                    {% for error in form.ambito.errors %}
+
+                        <span class="gasto-field-error">
+                            {{ error }}
+                        </span>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- PROPIEDAD -->
+
+                <div
+                    class="
+                        gasto-choice-step
+                        gasto-form-full
+                    "
+                    id="paso-propiedad"
+                    hidden
+                >
+
+                    <span class="gasto-selector-title">
+                        Propiedad
+                    </span>
+
+                    <div class="gasto-native-select">
+                        {{ form.propiedad }}
+                    </div>
+
+                    <div
+                        class="gasto-dynamic-options"
+                        id="opciones-propiedad"
+                    ></div>
+
+                    {% for error in form.propiedad.errors %}
+
+                        <span class="gasto-field-error">
+                            {{ error }}
+                        </span>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- HABITACIÓN OPCIONAL -->
+
+                <div
+                    class="
+                        gasto-choice-step
+                        gasto-form-full
+                    "
+                    id="paso-habitacion"
+                    hidden
+                >
+
+                    <span class="gasto-selector-title">
+                        Asignación
+                    </span>
+
+                    <div class="gasto-native-select">
+                        {{ form.habitacion }}
+                    </div>
+
+                    <div
+                        class="gasto-dynamic-options"
+                        id="opciones-habitacion"
+                    ></div>
+
+                    {% for error in form.habitacion.errors %}
+
+                        <span class="gasto-field-error">
+                            {{ error }}
+                        </span>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- PROYECTO PARA ARGENTINA -->
+
+                <div
+                    class="
+                        gasto-choice-step
+                        gasto-form-full
+                    "
+                    id="paso-proyecto"
+                    hidden
+                >
+
+                    <span class="gasto-selector-title">
+                        Proyecto
+                    </span>
+
+                    <div class="gasto-native-select">
+                        {{ form.proyecto }}
+                    </div>
+
+                    <div
+                        class="gasto-dynamic-options"
+                        id="opciones-proyecto"
+                    ></div>
+
+                    <div
+                        class="
+                            gasto-project-auto
+                            gasto-option-button
+                        "
+                        id="gasto-project-auto"
+                        hidden
+                    >
+                        <span id="gasto-project-auto-name"></span>
+                    </div>
+
+                    {% for error in form.proyecto.errors %}
+
+                        <span class="gasto-field-error">
+                            {{ error }}
+                        </span>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- RECURRENCIA -->
+
+                {% if form.es_recurrente %}
+
+                    <div class="gasto-form-check gasto-form-full">
+
+                        {{ form.es_recurrente }}
+
+                        <label for="{{ form.es_recurrente.id_for_label }}">
+
+                            <strong>
+                                Repetir este gasto automáticamente
+                            </strong>
+
+                            <small>
+                                Para hipotecas, internet, comunidad,
+                                gestoría y otros gastos fijos.
+                            </small>
+
+                        </label>
+
+                        {% for error in form.es_recurrente.errors %}
+
+                            <span class="gasto-field-error">
+                                {{ error }}
+                            </span>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div
+                        class="gasto-recurrencia-fields"
+                        id="gasto-recurrencia-fields"
+                        hidden
+                    >
+
+                        <div class="gasto-form-grid">
+
+                            <div class="gasto-form-group">
+
+                                <label for="{{ form.frecuencia.id_for_label }}">
+                                    {{ form.frecuencia.label }}
+                                </label>
+
+                                {{ form.frecuencia }}
+
+                                {% for error in form.frecuencia.errors %}
+
+                                    <span class="gasto-field-error">
+                                        {{ error }}
+                                    </span>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <div class="gasto-form-group">
+
+                                <label for="{{ form.dia_generacion.id_for_label }}">
+                                    {{ form.dia_generacion.label }}
+                                </label>
+
+                                {{ form.dia_generacion }}
+
+                                {% for error in form.dia_generacion.errors %}
+
+                                    <span class="gasto-field-error">
+                                        {{ error }}
+                                    </span>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <div
+                                class="gasto-form-group"
+                                id="grupo-mes-generacion"
+                                hidden
+                            >
+
+                                <label for="{{ form.mes_generacion.id_for_label }}">
+                                    {{ form.mes_generacion.label }}
+                                </label>
+
+                                {{ form.mes_generacion }}
+
+                                {% for error in form.mes_generacion.errors %}
+
+                                    <span class="gasto-field-error">
+                                        {{ error }}
+                                    </span>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <div class="gasto-form-group">
+
+                                <label for="{{ form.fecha_inicio.id_for_label }}">
+                                    {{ form.fecha_inicio.label }}
+                                </label>
+
+                                {{ form.fecha_inicio }}
+
+                                {% for error in form.fecha_inicio.errors %}
+
+                                    <span class="gasto-field-error">
+                                        {{ error }}
+                                    </span>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <div class="gasto-form-group">
+
+                                <label for="{{ form.fecha_fin.id_for_label }}">
+                                    {{ form.fecha_fin.label }}
+                                </label>
+
+                                {{ form.fecha_fin }}
+
                                 <small>
-                                    {{ field.help_text }}
+                                    Opcional.
                                 </small>
-                            {% endif %}
 
-                            {% for error in field.errors %}
-                                <span class="gasto-field-error">
-                                    {{ error }}
-                                </span>
-                            {% endfor %}
+                                {% for error in form.fecha_fin.errors %}
+
+                                    <span class="gasto-field-error">
+                                        {{ error }}
+                                    </span>
+
+                                {% endfor %}
+
+                            </div>
+
+
+                            <div class="gasto-form-check">
+
+                                {{ form.requiere_justificante }}
+
+                                <label for="{{ form.requiere_justificante.id_for_label }}">
+
+                                    <strong>
+                                        Recordarme subir la factura
+                                    </strong>
+
+                                    <small>
+                                        Aparecerá en documentación pendiente.
+                                    </small>
+
+                                </label>
+
+                                {% for error in form.requiere_justificante.errors %}
+
+                                    <span class="gasto-field-error">
+                                        {{ error }}
+                                    </span>
+
+                                {% endfor %}
+
+                            </div>
 
                         </div>
 
-                    {% endif %}
+                    </div>
 
-                {% endfor %}
+                {% endif %}
 
-            </div>
+            </section>
 
+
+            <!-- =============================================
+                 02. INFORMACIÓN
+            ============================================== -->
+
+            <section class="gasto-form-section">
+
+                <header class="gasto-form-section-header">
+
+                    <span>02</span>
+
+                    <div>
+                        <h2>
+                            Información del gasto
+                        </h2>
+
+                        <p>
+                            Introduce los datos económicos.
+                        </p>
+                    </div>
+
+                </header>
+
+
+                <div class="gasto-form-grid">
+
+                    <div class="gasto-form-group gasto-form-full">
+
+    <span class="gasto-selector-title">
+        Categoría
+    </span>
+
+    <div class="gasto-native-select">
+        {{ form.categoria }}
+    </div>
+
+    <div
+        class="gasto-category-options"
+        id="opciones-categoria"
+    ></div>
+
+    {% for error in form.categoria.errors %}
+
+        <span class="gasto-field-error">
+            {{ error }}
+        </span>
+
+    {% endfor %}
+
+</div>
+
+
+                    <div class="gasto-form-group gasto-form-full">
+
+    <span class="gasto-selector-title">
+        Proveedor
+    </span>
+
+    <div
+        class="gasto-provider-options"
+        id="opciones-proveedor"
+    ></div>
+
+    <div
+        class="gasto-provider-custom"
+        id="proveedor-personalizado"
+    >
+        <label for="{{ form.proveedor.id_for_label }}">
+            Nombre del proveedor
+        </label>
+
+        {{ form.proveedor }}
+
+        <small>
+            Puedes elegir un proveedor habitual o escribir otro.
+        </small>
+    </div>
+
+    {% for error in form.proveedor.errors %}
+
+        <span class="gasto-field-error">
+            {{ error }}
+        </span>
+
+    {% endfor %}
+
+</div>
+
+                    <div class="gasto-form-group gasto-form-full">
+
+                        <label for="{{ form.concepto.id_for_label }}">
+                            {{ form.concepto.label }}
+                        </label>
+
+                        {{ form.concepto }}
+
+                        {% for error in form.concepto.errors %}
+
+                            <span class="gasto-field-error">
+                                {{ error }}
+                            </span>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="gasto-form-group">
+
+                        <label for="{{ form.importe.id_for_label }}">
+                            {{ form.importe.label }}
+                        </label>
+
+                        {{ form.importe }}
+
+                        <small id="ayuda-importe">
+                            Importe real de este movimiento.
+                        </small>
+
+                        {% for error in form.importe.errors %}
+
+                            <span class="gasto-field-error">
+                                {{ error }}
+                            </span>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="gasto-form-group">
+
+                        <label for="{{ form.fecha.id_for_label }}">
+                            {{ form.fecha.label }}
+                        </label>
+
+                        {{ form.fecha }}
+
+                        {% for error in form.fecha.errors %}
+
+                            <span class="gasto-field-error">
+                                {{ error }}
+                            </span>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =============================================
+                 03. PAGO Y DOCUMENTACIÓN
+            ============================================== -->
+
+            <section class="gasto-form-section">
+
+                <header class="gasto-form-section-header">
+
+                    <span>03</span>
+
+                    <div>
+                        <h2>
+                            Pago y documentación
+                        </h2>
+
+                        <p>
+                            Indica su estado y adjunta la factura.
+                        </p>
+                    </div>
+
+                </header>
+
+
+                <div class="gasto-form-grid">
+
+                    <div class="gasto-form-check">
+
+                        {{ form.pagado }}
+
+                        <label for="{{ form.pagado.id_for_label }}">
+
+                            <strong>
+                                {{ form.pagado.label }}
+                            </strong>
+
+                            <small>
+                                Desmárcalo si continúa pendiente.
+                            </small>
+
+                        </label>
+
+                        {% for error in form.pagado.errors %}
+
+                            <span class="gasto-field-error">
+                                {{ error }}
+                            </span>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="gasto-form-group">
+
+                        <label for="{{ form.destino_gestoria.id_for_label }}">
+                            {{ form.destino_gestoria.label }}
+                        </label>
+
+                        {{ form.destino_gestoria }}
+
+                        {% for error in form.destino_gestoria.errors %}
+
+                            <span class="gasto-field-error">
+                                {{ error }}
+                            </span>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="gasto-form-group gasto-form-full">
+
+                        <label for="{{ form.justificante.id_for_label }}">
+                            {{ form.justificante.label }}
+                        </label>
+
+                        {{ form.justificante }}
+
+                        <small>
+                            PDF, JPG, PNG o WEBP. Máximo 10 MB.
+                        </small>
+
+                        {% for error in form.justificante.errors %}
+
+                            <span class="gasto-field-error">
+                                {{ error }}
+                            </span>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="gasto-form-group gasto-form-full">
+
+                        <label for="{{ form.notas.id_for_label }}">
+                            {{ form.notas.label }}
+                        </label>
+
+                        {{ form.notas }}
+
+                        {% for error in form.notas.errors %}
+
+                            <span class="gasto-field-error">
+                                {{ error }}
+                            </span>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ACCIONES -->
 
             <div class="gasto-form-actions">
 
@@ -119,6 +760,11 @@
                     type="submit"
                     class="gasto-form-submit"
                 >
+                    <i
+                        class="fa fa-check"
+                        aria-hidden="true"
+                    ></i>
+
                     {{ texto_boton }}
                 </button>
 
@@ -129,5 +775,1314 @@
     </section>
 
 </main>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const roomsUrl =
+        "{% url 'hotel:habitaciones_por_propiedad' %}";
+
+    const projectsUrl =
+        "{% url 'hotel:proyectos_por_pais' %}";
+
+    const providersUrl =
+        "{% url 'hotel:proveedores_por_pais' %}";
+    const categoryField =
+    document.getElementById(
+        "id_categoria"
+    );
+
+    const categoryOptions =
+        document.getElementById(
+            "opciones-categoria"
+        );
+
+    /* =====================================================
+       PAÍS
+    ===================================================== */
+
+    const countryInputs = Array.from(
+        document.querySelectorAll(
+            'input[name="pais"]'
+        )
+    );
+
+    const countryCards = Array.from(
+        document.querySelectorAll(
+            ".gasto-country-option"
+        )
+    );
+
+    /* =====================================================
+       CATEGORÍAS
+    ===================================================== */
+
+    function renderCategoryButtons() {
+        if (
+            !categoryField
+            || !categoryOptions
+        ) {
+            return;
+        }
+
+        categoryOptions.innerHTML = "";
+
+        Array.from(categoryField.options).forEach(
+            function (option) {
+                if (!option.value) {
+                    return;
+                }
+
+                const button =
+                    document.createElement("button");
+
+                button.type = "button";
+
+                button.className =
+                    "gasto-category-button";
+
+                button.dataset.category =
+                    option.value;
+
+                button.textContent =
+                    option.textContent;
+
+                button.classList.toggle(
+                    "is-selected",
+                    categoryField.value
+                        === option.value
+                );
+
+                button.addEventListener(
+                    "click",
+                    function () {
+                        categoryField.value =
+                            option.value;
+
+                        categoryOptions
+                            .querySelectorAll(
+                                ".gasto-category-button"
+                            )
+                            .forEach(function (item) {
+                                item.classList.toggle(
+                                    "is-selected",
+                                    item === button
+                                );
+                            });
+
+                        categoryField.dispatchEvent(
+                            new Event("change", {
+                                bubbles: true,
+                            })
+                        );
+                    }
+                );
+
+                categoryOptions.appendChild(button);
+            }
+        );
+    }
+    /* =====================================================
+       ÁMBITO
+    ===================================================== */
+
+    const scopeButtons = Array.from(
+        document.querySelectorAll(
+            ".gasto-scope-button"
+        )
+    );
+
+    const scopeInputs = Array.from(
+        document.querySelectorAll(
+            'input[name="ambito"]'
+        )
+    );
+
+    const scopeSelect =
+        document.querySelector(
+            'select[name="ambito"]'
+        );
+
+
+    /* =====================================================
+       PASOS
+    ===================================================== */
+
+    const scopeStep =
+        document.getElementById(
+            "paso-ambito"
+        );
+
+    const propertyStep =
+        document.getElementById(
+            "paso-propiedad"
+        );
+
+    const roomStep =
+        document.getElementById(
+            "paso-habitacion"
+        );
+
+    const projectStep =
+        document.getElementById(
+            "paso-proyecto"
+        );
+
+
+    /* =====================================================
+       CAMPOS REALES
+    ===================================================== */
+
+    const propertyField =
+        document.getElementById(
+            "id_propiedad"
+        );
+
+    const roomField =
+        document.getElementById(
+            "id_habitacion"
+        );
+
+    const projectField =
+        document.getElementById(
+            "id_proyecto"
+        );
+
+    const providerField =
+        document.getElementById(
+            "id_proveedor"
+        );
+
+
+    /* =====================================================
+       CONTENEDORES VISUALES
+    ===================================================== */
+
+    const propertyOptions =
+        document.getElementById(
+            "opciones-propiedad"
+        );
+
+    const roomOptions =
+        document.getElementById(
+            "opciones-habitacion"
+        );
+
+    const projectOptions =
+        document.getElementById(
+            "opciones-proyecto"
+        );
+
+    const providerOptions =
+        document.getElementById(
+            "opciones-proveedor"
+        );
+
+    const providerCustom =
+        document.getElementById(
+            "proveedor-personalizado"
+        );
+
+    const projectAuto =
+        document.getElementById(
+            "gasto-project-auto"
+        );
+
+    const projectAutoName =
+        document.getElementById(
+            "gasto-project-auto-name"
+        );
+
+
+    /* =====================================================
+       RECURRENCIA
+    ===================================================== */
+
+    const recurringCheckbox =
+        document.getElementById(
+            "id_es_recurrente"
+        );
+
+    const recurringFields =
+        document.getElementById(
+            "gasto-recurrencia-fields"
+        );
+
+    const frequencyField =
+        document.getElementById(
+            "id_frecuencia"
+        );
+
+    const monthGroup =
+        document.getElementById(
+            "grupo-mes-generacion"
+        );
+
+    const amountHelp =
+        document.getElementById(
+            "ayuda-importe"
+        );
+
+
+    /* =====================================================
+       VALORES INICIALES
+    ===================================================== */
+
+    const initialRoom =
+        roomField
+            ? roomField.value
+            : "";
+
+    const initialProject =
+        projectField
+            ? projectField.value
+            : "";
+
+    const initialProvider =
+        providerField
+            ? providerField.value.trim()
+            : "";
+
+
+    /* =====================================================
+       PAÍS SELECCIONADO
+    ===================================================== */
+
+    function getSelectedCountry() {
+        const selected = countryInputs.find(
+            function (input) {
+                return input.checked;
+            }
+        );
+
+        return selected
+            ? selected.value
+            : "";
+    }
+
+
+    function updateCountryCards() {
+        countryCards.forEach(function (card) {
+            const input = card.querySelector(
+                'input[name="pais"]'
+            );
+
+            card.classList.toggle(
+                "is-selected",
+                Boolean(input && input.checked)
+            );
+        });
+    }
+
+
+    /* =====================================================
+       ÁMBITO INTERNO
+    ===================================================== */
+
+    function getInternalScope() {
+        const selectedRadio =
+            scopeInputs.find(
+                function (input) {
+                    return input.checked;
+                }
+            );
+
+        if (selectedRadio) {
+            return selectedRadio.value;
+        }
+
+        return scopeSelect
+            ? scopeSelect.value
+            : "";
+    }
+
+
+    function setInternalScope(value) {
+        scopeInputs.forEach(function (input) {
+            input.checked = (
+                input.value === value
+            );
+        });
+
+        if (scopeSelect) {
+            scopeSelect.value = value;
+        }
+    }
+
+
+    function updateScopeButtons(value) {
+        scopeButtons.forEach(function (button) {
+            button.classList.toggle(
+                "is-selected",
+                button.dataset.scope === value
+            );
+        });
+    }
+
+
+    /* =====================================================
+       BOTONES DE SELECT
+    ===================================================== */
+
+    function renderSelectButtons(
+        select,
+        container,
+        emptyLabel = ""
+    ) {
+        if (!select || !container) {
+            return;
+        }
+
+        container.innerHTML = "";
+
+        Array.from(select.options).forEach(
+            function (option) {
+                if (!option.value && !emptyLabel) {
+                    return;
+                }
+
+                const button =
+                    document.createElement("button");
+
+                button.type = "button";
+
+                button.className =
+                    "gasto-dynamic-option";
+
+                button.dataset.value =
+                    option.value;
+
+                button.textContent =
+                    option.value
+                        ? option.textContent
+                        : emptyLabel;
+
+                button.classList.toggle(
+                    "is-selected",
+                    select.value === option.value
+                );
+
+                button.addEventListener(
+                    "click",
+                    function () {
+                        select.value =
+                            option.value;
+
+                        container
+                            .querySelectorAll(
+                                ".gasto-dynamic-option"
+                            )
+                            .forEach(function (item) {
+                                item.classList.toggle(
+                                    "is-selected",
+                                    item === button
+                                );
+                            });
+
+                        select.dispatchEvent(
+                            new Event("change", {
+                                bubbles: true,
+                            })
+                        );
+                    }
+                );
+
+                container.appendChild(button);
+            }
+        );
+    }
+
+
+    /* =====================================================
+       OCULTAR PROPIEDAD
+    ===================================================== */
+
+    function hideProperty() {
+        if (propertyStep) {
+            propertyStep.hidden = true;
+        }
+
+        if (roomStep) {
+            roomStep.hidden = true;
+        }
+
+        if (propertyField) {
+            propertyField.disabled = true;
+        }
+
+        if (roomField) {
+            roomField.disabled = true;
+        }
+    }
+
+
+    /* =====================================================
+       OCULTAR PROYECTO
+    ===================================================== */
+
+    function hideProject() {
+        if (projectStep) {
+            projectStep.hidden = true;
+        }
+
+        if (projectField) {
+            projectField.disabled = true;
+        }
+
+        if (projectOptions) {
+            projectOptions.hidden = false;
+            projectOptions.innerHTML = "";
+        }
+
+        if (projectAuto) {
+            projectAuto.hidden = true;
+
+            projectAuto.classList.remove(
+                "is-selected"
+            );
+        }
+
+        if (projectAutoName) {
+            projectAutoName.textContent = "";
+        }
+    }
+
+
+    /* =====================================================
+       HABITACIONES
+    ===================================================== */
+
+    async function loadRooms(
+        propertyId,
+        selectedRoom = ""
+    ) {
+        if (
+            !roomField
+            || !roomOptions
+        ) {
+            return;
+        }
+
+        roomField.innerHTML = (
+            '<option value="">'
+            + "Toda la propiedad"
+            + "</option>"
+        );
+
+        roomOptions.innerHTML = "";
+
+        if (!propertyId) {
+            roomField.disabled = true;
+
+            if (roomStep) {
+                roomStep.hidden = true;
+            }
+
+            return;
+        }
+
+        roomField.disabled = false;
+
+        if (roomStep) {
+            roomStep.hidden = false;
+        }
+
+        try {
+            const response = await fetch(
+                roomsUrl
+                + "?propiedad_id="
+                + encodeURIComponent(propertyId),
+                {
+                    headers: {
+                        "X-Requested-With":
+                            "XMLHttpRequest",
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(
+                    "No se pudieron cargar "
+                    + "las habitaciones."
+                );
+            }
+
+            const data =
+                await response.json();
+
+            const rooms =
+                Array.isArray(data)
+                    ? data
+                    : (data.habitaciones || []);
+
+            rooms.forEach(function (room) {
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.value =
+                    String(room.id);
+
+                option.textContent =
+                    room.nombre;
+
+                roomField.appendChild(option);
+            });
+
+            const roomExists =
+                rooms.some(function (room) {
+                    return (
+                        String(room.id)
+                        === String(selectedRoom)
+                    );
+                });
+
+            roomField.value =
+                roomExists
+                    ? String(selectedRoom)
+                    : "";
+
+            renderSelectButtons(
+                roomField,
+                roomOptions,
+                "TODA LA PROPIEDAD"
+            );
+
+        } catch (error) {
+            console.error(error);
+
+            roomOptions.innerHTML = "";
+        }
+    }
+
+
+    /* =====================================================
+       PROYECTOS
+    ===================================================== */
+
+    async function loadProjects(
+        country,
+        selectedProject = ""
+    ) {
+        if (
+            !projectField
+            || !projectOptions
+        ) {
+            return;
+        }
+
+        projectField.innerHTML = (
+            '<option value="">'
+            + "Selecciona un proyecto"
+            + "</option>"
+        );
+
+        projectOptions.innerHTML = "";
+        projectOptions.hidden = false;
+
+        if (projectAuto) {
+            projectAuto.hidden = true;
+
+            projectAuto.classList.remove(
+                "is-selected"
+            );
+        }
+
+        try {
+            const response = await fetch(
+                projectsUrl
+                + "?pais="
+                + encodeURIComponent(country),
+                {
+                    headers: {
+                        "X-Requested-With":
+                            "XMLHttpRequest",
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(
+                    "No se pudieron cargar "
+                    + "los proyectos."
+                );
+            }
+
+            const data =
+                await response.json();
+
+            const projects =
+                Array.isArray(data)
+                    ? data
+                    : (data.proyectos || []);
+
+            projects.forEach(function (project) {
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.value =
+                    String(project.id);
+
+                option.textContent =
+                    project.nombre;
+
+                projectField.appendChild(option);
+            });
+
+            const projectExists =
+                projects.some(function (project) {
+                    return (
+                        String(project.id)
+                        === String(selectedProject)
+                    );
+                });
+
+            if (projectExists) {
+                projectField.value =
+                    String(selectedProject);
+            }
+
+            /*
+               Un único proyecto:
+               se selecciona automáticamente.
+            */
+
+            if (projects.length === 1) {
+                const project = projects[0];
+
+                projectField.value =
+                    String(project.id);
+
+                projectOptions.hidden = true;
+
+                if (projectAuto) {
+                    projectAuto.hidden = false;
+
+                    projectAuto.classList.add(
+                        "is-selected"
+                    );
+                }
+
+                if (projectAutoName) {
+                    projectAutoName.textContent =
+                        project.nombre.toUpperCase();
+                }
+
+                return;
+            }
+
+            renderSelectButtons(
+                projectField,
+                projectOptions
+            );
+
+        } catch (error) {
+            console.error(error);
+
+            projectOptions.innerHTML = "";
+        }
+    }
+
+
+    /* =====================================================
+       PROVEEDORES
+    ===================================================== */
+
+    function normalizeProviderName(value) {
+        return String(value || "")
+            .trim()
+            .toLocaleLowerCase("es");
+    }
+
+
+    function updateProviderButtons() {
+        if (
+            !providerField
+            || !providerOptions
+        ) {
+            return;
+        }
+
+        const currentValue =
+            normalizeProviderName(
+                providerField.value
+            );
+
+        providerOptions
+            .querySelectorAll(
+                ".gasto-provider-button"
+            )
+            .forEach(function (button) {
+                const providerName =
+                    normalizeProviderName(
+                        button.dataset.provider
+                    );
+
+                button.classList.toggle(
+                    "is-selected",
+                    Boolean(
+                        currentValue
+                        && providerName
+                            === currentValue
+                    )
+                );
+            });
+    }
+
+
+    function showCustomProvider() {
+        if (providerCustom) {
+            providerCustom.hidden = false;
+        }
+
+        if (providerField) {
+            providerField.value = "";
+            providerField.focus();
+        }
+
+        updateProviderButtons();
+    }
+
+
+    function createProviderButton(provider) {
+        const button =
+            document.createElement("button");
+
+        button.type = "button";
+
+        button.className =
+            "gasto-provider-button";
+
+        button.dataset.provider =
+            provider.nombre;
+
+        button.textContent =
+            provider.nombre;
+
+        button.addEventListener(
+            "click",
+            function () {
+                if (!providerField) {
+                    return;
+                }
+
+                providerField.value =
+                    provider.nombre;
+
+                updateProviderButtons();
+            }
+        );
+
+        return button;
+    }
+
+
+    function createOtherProviderButton() {
+        const button =
+            document.createElement("button");
+
+        button.type = "button";
+
+        button.className = (
+            "gasto-provider-button "
+            + "gasto-provider-other"
+        );
+
+        button.textContent =
+            "OTRO PROVEEDOR";
+
+        button.addEventListener(
+            "click",
+            showCustomProvider
+        );
+
+        return button;
+    }
+
+
+    async function loadProviders(
+        country,
+        selectedProvider = ""
+    ) {
+        if (
+            !providerField
+            || !providerOptions
+        ) {
+            return;
+        }
+
+        providerOptions.innerHTML = "";
+
+        if (!country) {
+            return;
+        }
+
+        try {
+            const response = await fetch(
+                providersUrl
+                + "?pais="
+                + encodeURIComponent(country),
+                {
+                    headers: {
+                        "X-Requested-With":
+                            "XMLHttpRequest",
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(
+                    "No se pudieron cargar "
+                    + "los proveedores."
+                );
+            }
+
+            const data =
+                await response.json();
+
+            const providers =
+                Array.isArray(data)
+                    ? data
+                    : (data.proveedores || []);
+
+            providers.forEach(
+                function (provider) {
+                    providerOptions.appendChild(
+                        createProviderButton(
+                            provider
+                        )
+                    );
+                }
+            );
+
+            providerOptions.appendChild(
+                createOtherProviderButton()
+            );
+
+            if (selectedProvider) {
+                providerField.value =
+                    selectedProvider;
+            }
+
+            updateProviderButtons();
+
+        } catch (error) {
+            console.error(error);
+
+            providerOptions.appendChild(
+                createOtherProviderButton()
+            );
+        }
+    }
+
+
+    /* =====================================================
+       SOCIEDAD O PROPIEDAD
+    ===================================================== */
+
+    function selectSpanishScope(scope) {
+        setInternalScope(scope);
+        updateScopeButtons(scope);
+        hideProject();
+
+
+        /*
+           SOCIEDAD:
+           no necesita propiedad ni habitación.
+        */
+
+        if (scope === "empresa") {
+            hideProperty();
+
+            if (propertyField) {
+                propertyField.value = "";
+            }
+
+            if (roomField) {
+                roomField.value = "";
+            }
+
+            return;
+        }
+
+
+        /*
+           PROPIEDAD:
+           primero mostramos las propiedades.
+        */
+
+        if (scope === "propiedad") {
+            if (propertyStep) {
+                propertyStep.hidden = false;
+            }
+
+            if (propertyField) {
+                propertyField.disabled = false;
+            }
+
+            renderSelectButtons(
+                propertyField,
+                propertyOptions
+            );
+
+            /*
+               Si ya existe una propiedad,
+               cargamos su asignación:
+               toda la propiedad o habitación.
+            */
+
+            if (
+                propertyField
+                && propertyField.value
+            ) {
+                loadRooms(
+                    propertyField.value,
+                    initialRoom
+                );
+            } else {
+                if (roomStep) {
+                    roomStep.hidden = true;
+                }
+
+                if (roomField) {
+                    roomField.disabled = true;
+                }
+            }
+        }
+    }
+
+
+    /* =====================================================
+       FLUJO SEGÚN PAÍS
+    ===================================================== */
+
+    async function updateCountryFlow(
+        keepInitialValues = false
+    ) {
+        const country =
+            getSelectedCountry();
+
+        updateCountryCards();
+
+
+        /*
+           SIN PAÍS
+        */
+
+        if (!country) {
+            if (scopeStep) {
+                scopeStep.hidden = true;
+            }
+
+            hideProperty();
+            hideProject();
+
+            return;
+        }
+
+
+        /*
+           ARGENTINA:
+           solamente Proyecto → Fedora.
+        */
+
+        if (country === "AR") {
+            if (scopeStep) {
+                scopeStep.hidden = true;
+            }
+
+            updateScopeButtons("");
+            hideProperty();
+
+            if (propertyField) {
+                propertyField.value = "";
+            }
+
+            if (roomField) {
+                roomField.value = "";
+            }
+
+            setInternalScope("proyecto");
+
+            if (projectStep) {
+                projectStep.hidden = false;
+            }
+
+            if (projectField) {
+                projectField.disabled = false;
+            }
+
+            await loadProjects(
+                "AR",
+                keepInitialValues
+                    ? initialProject
+                    : ""
+            );
+
+            return;
+        }
+
+
+        /*
+           ESPAÑA:
+           Sociedad o Propiedad.
+        */
+
+        if (country === "ES") {
+            hideProject();
+
+            if (scopeStep) {
+                scopeStep.hidden = false;
+            }
+
+            const currentScope =
+                getInternalScope();
+
+            if (
+                currentScope === "empresa"
+                || currentScope === "propiedad"
+            ) {
+                selectSpanishScope(
+                    currentScope
+                );
+            } else {
+                setInternalScope("");
+                updateScopeButtons("");
+                hideProperty();
+            }
+        }
+    }
+
+
+    /* =====================================================
+       RECURRENCIA
+    ===================================================== */
+
+    function updateFrequency() {
+        if (
+            !frequencyField
+            || !monthGroup
+        ) {
+            return;
+        }
+
+        const active = Boolean(
+            recurringCheckbox
+            && recurringCheckbox.checked
+        );
+
+        const annual =
+            frequencyField.value === "anual";
+
+        monthGroup.hidden = !annual;
+
+        monthGroup
+            .querySelectorAll(
+                "input, select"
+            )
+            .forEach(function (field) {
+                field.disabled = (
+                    !active
+                    || !annual
+                );
+            });
+    }
+
+
+    function updateRecurring() {
+        if (
+            !recurringCheckbox
+            || !recurringFields
+        ) {
+            return;
+        }
+
+        const active =
+            recurringCheckbox.checked;
+
+        recurringFields.hidden =
+            !active;
+
+        recurringFields
+            .querySelectorAll(
+                "input, select, textarea"
+            )
+            .forEach(function (field) {
+                field.disabled = !active;
+            });
+
+        if (amountHelp) {
+            amountHelp.textContent = active
+                ? "Importe habitual de cada periodo."
+                : "Importe real de este movimiento.";
+        }
+
+        updateFrequency();
+    }
+
+
+    /* =====================================================
+       EVENTOS DE PAÍS
+    ===================================================== */
+
+    countryInputs.forEach(function (input) {
+        input.addEventListener(
+            "change",
+            function () {
+                /*
+                   Limpiamos el proveedor porque
+                   pertenece al país anterior.
+                */
+
+                if (providerField) {
+                    providerField.value = "";
+                }
+
+                loadProviders(
+                    input.value,
+                    ""
+                );
+
+
+                /*
+                   Limpiamos campos incompatibles
+                   al cambiar de país.
+                */
+
+                if (input.value === "AR") {
+                    if (propertyField) {
+                        propertyField.value = "";
+                    }
+
+                    if (roomField) {
+                        roomField.value = "";
+                    }
+                }
+
+                if (input.value === "ES") {
+                    if (projectField) {
+                        projectField.value = "";
+                    }
+
+                    setInternalScope("");
+                }
+
+                updateCountryFlow(false);
+            }
+        );
+    });
+
+
+    /* =====================================================
+       EVENTOS DE ÁMBITO
+    ===================================================== */
+
+    scopeButtons.forEach(function (button) {
+        button.addEventListener(
+            "click",
+            function () {
+                selectSpanishScope(
+                    button.dataset.scope
+                );
+            }
+        );
+    });
+
+
+    /* =====================================================
+       EVENTO DE PROPIEDAD
+    ===================================================== */
+
+    if (propertyField) {
+        propertyField.addEventListener(
+            "change",
+            function () {
+                const propertyId =
+                    propertyField.value;
+
+                if (!propertyId) {
+                    if (roomStep) {
+                        roomStep.hidden = true;
+                    }
+
+                    if (roomField) {
+                        roomField.value = "";
+                        roomField.disabled = true;
+                    }
+
+                    if (roomOptions) {
+                        roomOptions.innerHTML = "";
+                    }
+
+                    return;
+                }
+
+                /*
+                   Al elegir propiedad aparecen:
+                   Toda la propiedad y habitaciones.
+                */
+
+                loadRooms(propertyId);
+            }
+        );
+    }
+
+
+    /* =====================================================
+       EVENTO DE PROVEEDOR
+    ===================================================== */
+
+    if (providerField) {
+        providerField.addEventListener(
+            "input",
+            updateProviderButtons
+        );
+    }
+
+
+    /* =====================================================
+       EVENTOS DE RECURRENCIA
+    ===================================================== */
+
+    if (recurringCheckbox) {
+        recurringCheckbox.addEventListener(
+            "change",
+            updateRecurring
+        );
+    }
+
+    if (frequencyField) {
+        frequencyField.addEventListener(
+            "change",
+            updateFrequency
+        );
+    }
+
+
+    /* =====================================================
+       INICIALIZACIÓN
+    ===================================================== */
+
+    renderSelectButtons(
+        propertyField,
+        propertyOptions
+    );
+    renderCategoryButtons();
+
+    updateCountryCards();
+
+    updateCountryFlow(true);
+
+    loadProviders(
+        getSelectedCountry(),
+        initialProvider
+    );
+
+    updateRecurring();
+});
+</script>
 
 {% endblock %}

@@ -3,7 +3,7 @@ from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
 from django.urls import path
 from django.views.generic import TemplateView
-
+from .views import service_worker
 from hotel.sitemaps import StaticViewSitemap
 
 from .views import (
@@ -36,7 +36,10 @@ from .views import (
     CrearGastoView,
     EditarGastoView,
     CambiarEstadoGastoView,
-    EliminarGastoView,
+    EliminarGastoView, PlantaDetailView, habitaciones_por_propiedad, proyectos_por_pais, EditarGastoRecurrenteView,
+    EliminarGastoRecurrenteView, ProyectosDashboardView, CrearProyectoView, EditarProyectoView,
+    CambiarEstadoProyectoView, proveedores_por_pais, crear_ingreso_propiedad
+
 )
 
 
@@ -266,7 +269,94 @@ path(
     EliminarGastoView.as_view(),
     name="eliminar_gasto",
 ),
+
+path(
+    'residentes/<slug:slug>/',
+    PlantaDetailView.as_view(),
+    name='planta_detail'
+    ),
+
+path(
+    "dashboard/gastos/habitaciones/",
+    habitaciones_por_propiedad,
+    name="habitaciones_por_propiedad",
+),
+path(
+    "dashboard/gastos/habitaciones/",
+    habitaciones_por_propiedad,
+    name="habitaciones_por_propiedad",
+),
+
+path(
+    "dashboard/gastos/proyectos/",
+    proyectos_por_pais,
+    name="proyectos_por_pais",
+),
+
+path(
+    "dashboard/gastos/fijos/<int:pk>/editar/",
+    EditarGastoRecurrenteView.as_view(),
+    name="editar_gasto_recurrente",
+),
+
+path(
+    "dashboard/gastos/fijos/<int:pk>/eliminar/",
+    EliminarGastoRecurrenteView.as_view(),
+    name="eliminar_gasto_recurrente",
+),
+
+path(
+    "dashboard/proyectos/",
+    ProyectosDashboardView.as_view(),
+    name="proyectos_dashboard",
+),
+
+path(
+    "dashboard/proyectos/",
+    ProyectosDashboardView.as_view(),
+    name="proyectos_dashboard",
+),
+
+path(
+    "dashboard/proyectos/nuevo/",
+    CrearProyectoView.as_view(),
+    name="crear_proyecto",
+),
+
+path(
+    "dashboard/proyectos/<int:pk>/editar/",
+    EditarProyectoView.as_view(),
+    name="editar_proyecto",
+),
+
+path(
+    "dashboard/proyectos/<int:pk>/estado/",
+    CambiarEstadoProyectoView.as_view(),
+    name="cambiar_estado_proyecto",
+),
+
+path(
+    "dashboard/gastos/proveedores/",
+    proveedores_por_pais,
+    name="proveedores_por_pais",
+),
+
+path(
+    "dashboard/ingresos/nuevo/",
+    crear_ingreso_propiedad,
+    name="crear_ingreso_propiedad",
+),
+
+path(
+    "service-worker.js",
+    service_worker,
+    name="service_worker",
+),
+
+
+
 ]
+
 
 
 if settings.DEBUG:

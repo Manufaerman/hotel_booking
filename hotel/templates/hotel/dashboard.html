@@ -11,66 +11,163 @@
 
 <section class="dashboard-section">
 
-    <div class="dashboard-header">
-        <div>
-            <span class="dashboard-kicker">Panel de gestión</span>
-            <h1>Dashboard By Colección</h1>
-            <p>Resumen mensual de ocupación, ingresos, gastos y contratos.</p>
-        </div>
+ <div class="dashboard-header">
 
-        <div class="dashboard-date">
-            <span>Mes actual</span>
-            <strong>{{ mes_actual }}</strong>
-        </div>
+    <div class="dashboard-date">
+        <span>Mes actual</span>
+        <strong>{{ mes_actual }}</strong>
     </div>
+
+
+    <div class="dashboard-finance-actions">
+
+    <a
+        href="{% url 'hotel:crear_ingreso_propiedad' %}"
+        class="dashboard-finance-action dashboard-finance-action-income"
+        aria-label="Añadir ingreso"
+    >
+        <i class="fas fa-arrow-trend-up" aria-hidden="true"></i>
+
+        <span>
+            Añadir ingreso
+        </span>
+    </a>
+
+    <a
+        href="{% url 'hotel:crear_gasto' %}"
+        class="dashboard-finance-action dashboard-finance-action-expense"
+        aria-label="Añadir gasto"
+    >
+        <i class="fas fa-arrow-trend-down" aria-hidden="true"></i>
+
+        <span>
+            Añadir gasto
+        </span>
+    </a>
+
+</div>
+
+</div>
 
     <div class="dashboard-kpis">
 
-        <div class="kpi-card">
-            <div class="kpi-icon">
-                <i class="fa fa-eur"></i>
-            </div>
-            <div>
-                <span>Facturación mensual</span>
-                <h2>{{ beneficio_mes }} €</h2>
-                <p>Total generado este mes</p>
-            </div>
+    <div class="kpi-card">
+
+    <div class="kpi-icon">
+        <i class="fa fa-eur"></i>
+    </div>
+
+    <div>
+        <span>
+            Facturación mensual
+        </span>
+
+        <h2>
+            {{ facturacion_mensual|floatformat:2 }} €
+        </h2>
+
+        <p>
+    Contratos:
+    {{ facturacion_contratos|floatformat:2 }} €
+    · Temporales:
+    {{ ingresos_puntuales_mes|floatformat:2 }} €
+</p>
+    </div>
+
+</div>
+
+    <div class="kpi-card">
+
+    <div class="kpi-icon">
+        <i class="fa fa-credit-card"></i>
+    </div>
+
+    <div>
+        <span>
+            Gastado este mes
+        </span>
+
+        <h2>
+            {{ gastos_del_mes|floatformat:2 }} €
+        </h2>
+
+        <p>
+            {{ porcentaje_gastos }}% de los ingresos
+        </p>
+    </div>
+
+</div>
+
+
+    <div class="kpi-card">
+
+        <div class="kpi-icon">
+            <i class="fa fa-bed"></i>
         </div>
 
-        <div class="kpi-card">
-            <div class="kpi-icon">
-                <i class="fa fa-bed"></i>
-            </div>
-            <div>
-                <span>Ocupación actual</span>
-                <h2>{{ ocupadas }}/{{ habitaciones_totales }}</h2>
-                <p>{{ porcentaje_ocupacion }}% ocupadas</p>
-            </div>
-        </div>
+        <div>
+            <span>
+                Ocupación actual
+            </span>
 
-        <div class="kpi-card">
-            <div class="kpi-icon">
-                <i class="fa fa-line-chart"></i>
-            </div>
-            <div>
-                <span>Beneficio estimado</span>
-                <h2>{{ beneficio_mes }} €</h2>
-                <p>Ingresos menos gastos</p>
-            </div>
-        </div>
+            <h2>
+                {{ ocupadas }}/{{ habitaciones_totales }}
+            </h2>
 
-        <div class="kpi-card warning">
-            <div class="kpi-icon">
-                <i class="fa fa-calendar"></i>
-            </div>
-            <div>
-                <span>Vencen pronto</span>
-                <h2>{{ contratos_por_vencer }}</h2>
-                <p>Contratos próximos a finalizar</p>
-            </div>
+            <p>
+                {{ porcentaje_ocupacion }}% ocupadas
+            </p>
         </div>
 
     </div>
+
+
+    <div class="kpi-card">
+
+    <div class="kpi-icon">
+        <i class="fa fa-balance-scale"></i>
+    </div>
+
+    <div>
+        <span>
+            Resultado del mes
+        </span>
+
+        <h2>
+            {{ resultado_neto|floatformat:2 }} €
+        </h2>
+
+        <p>
+            Ingresos menos gastos
+        </p>
+    </div>
+
+</div>
+
+
+    <div class="kpi-card warning">
+
+        <div class="kpi-icon">
+            <i class="fa fa-calendar"></i>
+        </div>
+
+        <div>
+            <span>
+                Vencen pronto
+            </span>
+
+            <h2>
+                {{ contratos_por_vencer }}
+            </h2>
+
+            <p>
+                Contratos que terminan en 30 días
+            </p>
+        </div>
+
+    </div>
+
+</div>
 
     <div class="dashboard-grid">
 
@@ -95,24 +192,40 @@
         </div>
 
         <div class="chart-card">
-            <div class="chart-header">
-                <div>
-                    <h3>Habitaciones desocupadas</h3>
-                    <p>Días vacías por habitación.</p>
-                </div>
-            </div>
-            <canvas id="vacancyChart"></canvas>
+
+    <div class="chart-header">
+        <div>
+            <h3>
+                Ingresos frente a gastos
+            </h3>
+
+            <p>
+                Comparativa de los últimos seis meses.
+            </p>
         </div>
+    </div>
+
+    <canvas id="incomeExpensesChart"></canvas>
+
+</div>
 
         <div class="chart-card">
-            <div class="chart-header">
-                <div>
-                    <h3>Gastos por propiedad</h3>
-                    <p>Limpieza, suministros y reparaciones.</p>
-                </div>
-            </div>
-            <canvas id="expensesChart"></canvas>
+
+    <div class="chart-header">
+        <div>
+            <h3>
+                Gastos por categoría
+            </h3>
+
+            <p>
+                Distribución de los gastos de este mes.
+            </p>
         </div>
+    </div>
+
+    <canvas id="expensesChart"></canvas>
+
+</div>
 
     </div>
 
@@ -121,92 +234,482 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    fetch("{% url 'hotel:dashboard_chart_data' %}")
-        .then(response => response.json())
-        .then(data => {
+document.addEventListener("DOMContentLoaded", function () {
 
-            new Chart(document.getElementById("incomeByPropertyChart"), {
-                type: "bar",
-                data: {
-                    labels: data.labels,
-                    datasets: [{
-                        label: "Ingresos €",
-                        data: data.datos,
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false
+    const dataUrl = "{% url 'hotel:dashboard_chart_data' %}";
+
+    const colores = {
+        vino: "#745f6d",
+        vinoOscuro: "#4b2938",
+        rosa: "#c9a7ad",
+        verde: "#72a5a1",
+        verdeOscuro: "#527f7b",
+        amarillo: "#e0c36f",
+        crema: "#f5f0e9",
+        texto: "#51343e"
+    };
+
+    function obtenerCanvas(id) {
+        return document.getElementById(id);
+    }
+
+    function crearMensajeVacio(canvas, texto) {
+        if (!canvas) {
+            return;
+        }
+
+        canvas.style.display = "none";
+
+        const mensaje = document.createElement("div");
+
+        mensaje.className = "chart-empty-message";
+        mensaje.textContent = texto;
+
+        canvas.parentElement.appendChild(mensaje);
+    }
+
+    function contieneValores(valores) {
+        return Array.isArray(valores)
+            && valores.some(function (valor) {
+                return Number(valor) !== 0;
+            });
+    }
+
+    fetch(dataUrl)
+        .then(function (response) {
+            if (!response.ok) {
+                throw new Error(
+                    "No se pudieron cargar los gráficos."
+                );
+            }
+
+            return response.json();
+        })
+        .then(function (data) {
+
+            /* =============================================
+               INGRESOS POR PROPIEDAD
+            ============================================= */
+
+            const incomeCanvas = obtenerCanvas(
+                "incomeByPropertyChart"
+            );
+
+            if (
+                incomeCanvas
+                && contieneValores(
+                    data.ingresos_por_propiedad
+                )
+            ) {
+                new Chart(
+                    incomeCanvas,
+                    {
+                        type: "bar",
+
+                        data: {
+                            labels: data.labels,
+
+                            datasets: [
+                                {
+                                    label: "Ingresos mensuales",
+                                    data:
+                                        data.ingresos_por_propiedad,
+                                    backgroundColor:
+                                        colores.verde,
+                                    borderColor:
+                                        colores.verdeOscuro,
+                                    borderWidth: 1,
+                                    borderRadius: 8
+                                }
+                            ]
+                        },
+
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+
+                            plugins: {
+                                legend: {
+                                    display: false
+                                },
+
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (context) {
+                                            return (
+                                                context.parsed.y
+                                                .toLocaleString(
+                                                    "es-ES",
+                                                    {
+                                                        style:
+                                                            "currency",
+                                                        currency:
+                                                            "EUR"
+                                                    }
+                                                )
+                                            );
+                                        }
+                                    }
+                                }
+                            },
+
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+
+                                    ticks: {
+                                        callback: function (
+                                            value
+                                        ) {
+                                            return value
+                                                .toLocaleString(
+                                                    "es-ES"
+                                                ) + " €";
+                                        }
+                                    }
+                                },
+
+                                x: {
+                                    grid: {
+                                        display: false
+                                    }
+                                }
+                            }
                         }
                     }
-                }
-            });
+                );
+            } else {
+                crearMensajeVacio(
+                    incomeCanvas,
+                    "Todavía no hay ingresos para mostrar."
+                );
+            }
 
-            new Chart(document.getElementById("monthlyIncomeChart"), {
-                type: "line",
-                data: {
-                    labels: data.labels_meses,
-                    datasets: [{
-                        label: "Facturación €",
-                        data: data.facturacion_mensual,
-                        tension: 0.35,
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true
-                }
-            });
 
-            new Chart(document.getElementById("vacancyChart"), {
-                type: "bar",
-                data: {
-                    labels: data.habitaciones,
-                    datasets: [{
-                        label: "Días vacía",
-                        data: data.dias_vacia,
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    indexAxis: "y",
-                    plugins: {
-                        legend: {
-                            display: false
+            /* =============================================
+               EVOLUCIÓN MENSUAL DE INGRESOS
+            ============================================= */
+
+            const monthlyCanvas = obtenerCanvas(
+                "monthlyIncomeChart"
+            );
+
+            if (
+                monthlyCanvas
+                && contieneValores(
+                    data.facturacion_mensual
+                )
+            ) {
+                new Chart(
+                    monthlyCanvas,
+                    {
+                        type: "line",
+
+                        data: {
+                            labels: data.labels_meses,
+
+                            datasets: [
+                                {
+                                    label: "Ingresos",
+                                    data:
+                                        data.facturacion_mensual,
+                                    borderColor:
+                                        colores.vino,
+                                    backgroundColor:
+                                        "rgba(116, 95, 109, 0.14)",
+                                    pointBackgroundColor:
+                                        colores.vino,
+                                    pointBorderColor:
+                                        "#ffffff",
+                                    pointBorderWidth: 2,
+                                    pointRadius: 4,
+                                    fill: true,
+                                    tension: 0.35,
+                                    borderWidth: 3
+                                }
+                            ]
+                        },
+
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            },
+
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+
+                                    ticks: {
+                                        callback: function (
+                                            value
+                                        ) {
+                                            return value
+                                                .toLocaleString(
+                                                    "es-ES"
+                                                ) + " €";
+                                        }
+                                    }
+                                },
+
+                                x: {
+                                    grid: {
+                                        display: false
+                                    }
+                                }
+                            }
                         }
                     }
-                }
-            });
+                );
+            } else {
+                crearMensajeVacio(
+                    monthlyCanvas,
+                    "Todavía no hay evolución mensual."
+                );
+            }
 
-            new Chart(document.getElementById("expensesChart"), {
-                type: "doughnut",
-                data: {
-                    labels: data.labels,
-                    datasets: [{
-                        label: "Gastos €",
-                        data: data.gastos_por_propiedad,
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true
-                }
-            });
 
+            /* =============================================
+               INGRESOS FRENTE A GASTOS
+            ============================================= */
+
+            const comparisonCanvas = obtenerCanvas(
+                "incomeExpensesChart"
+            );
+
+            if (
+                comparisonCanvas
+                && (
+                    contieneValores(
+                        data.facturacion_mensual
+                    )
+                    || contieneValores(
+                        data.gastos_mensuales
+                    )
+                )
+            ) {
+                new Chart(
+                    comparisonCanvas,
+                    {
+                        type: "bar",
+
+                        data: {
+                            labels: data.labels_meses,
+
+                            datasets: [
+                                {
+                                    label: "Ingresos",
+                                    data:
+                                        data.facturacion_mensual,
+                                    backgroundColor:
+                                        colores.verde,
+                                    borderRadius: 7
+                                },
+                                {
+                                    label: "Gastos",
+                                    data:
+                                        data.gastos_mensuales,
+                                    backgroundColor:
+                                        colores.rosa,
+                                    borderRadius: 7
+                                }
+                            ]
+                        },
+
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+
+                            interaction: {
+                                mode: "index",
+                                intersect: false
+                            },
+
+                            plugins: {
+                                legend: {
+                                    position: "bottom",
+
+                                    labels: {
+                                        usePointStyle: true,
+                                        boxWidth: 10,
+                                        padding: 18
+                                    }
+                                },
+
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (context) {
+                                            return (
+                                                context.dataset.label
+                                                + ": "
+                                                + context.parsed.y
+                                                    .toLocaleString(
+                                                        "es-ES",
+                                                        {
+                                                            style:
+                                                                "currency",
+                                                            currency:
+                                                                "EUR"
+                                                        }
+                                                    )
+                                            );
+                                        }
+                                    }
+                                }
+                            },
+
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+
+                                    ticks: {
+                                        callback: function (
+                                            value
+                                        ) {
+                                            return value
+                                                .toLocaleString(
+                                                    "es-ES"
+                                                ) + " €";
+                                        }
+                                    }
+                                },
+
+                                x: {
+                                    grid: {
+                                        display: false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                );
+            } else {
+                crearMensajeVacio(
+                    comparisonCanvas,
+                    "Todavía no hay ingresos ni gastos."
+                );
+            }
+
+
+            /* =============================================
+               GASTOS POR CATEGORÍA
+            ============================================= */
+
+            const expensesCanvas = obtenerCanvas(
+                "expensesChart"
+            );
+
+            if (
+                expensesCanvas
+                && contieneValores(
+                    data.categorias_valores
+                )
+            ) {
+                new Chart(
+                    expensesCanvas,
+                    {
+                        type: "doughnut",
+
+                        data: {
+                            labels:
+                                data.categorias_labels,
+
+                            datasets: [
+                                {
+                                    data:
+                                        data.categorias_valores,
+
+                                    backgroundColor: [
+                                        colores.vino,
+                                        colores.verde,
+                                        colores.rosa,
+                                        colores.amarillo,
+                                        "#9b8996",
+                                        "#89aaa6",
+                                        "#b7977e",
+                                        "#d8c7b5"
+                                    ],
+
+                                    borderColor:
+                                        colores.crema,
+
+                                    borderWidth: 3,
+                                    hoverOffset: 7
+                                }
+                            ]
+                        },
+
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            cutout: "62%",
+
+                            plugins: {
+                                legend: {
+                                    position: "bottom",
+
+                                    labels: {
+                                        usePointStyle: true,
+                                        boxWidth: 10,
+                                        padding: 15
+                                    }
+                                },
+
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (context) {
+                                            const valor =
+                                                Number(
+                                                    context.raw
+                                                );
+
+                                            return (
+                                                context.label
+                                                + ": "
+                                                + valor.toLocaleString(
+                                                    "es-ES",
+                                                    {
+                                                        style:
+                                                            "currency",
+                                                        currency:
+                                                            "EUR"
+                                                    }
+                                                )
+                                            );
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                );
+            } else {
+                crearMensajeVacio(
+                    expensesCanvas,
+                    "Todavía no hay gastos registrados este mes."
+                );
+            }
+        })
+        .catch(function (error) {
+            console.error(error);
+
+            document
+                .querySelectorAll(
+                    ".chart-card canvas"
+                )
+                .forEach(function (canvas) {
+                    crearMensajeVacio(
+                        canvas,
+                        "No se pudieron cargar los datos."
+                    );
+                });
         });
+});
 </script>
-
-
-<!-- this is for Jquery-->
-<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-<!-- this is for CHARTS JS-->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script src="{% static 'hotel/js/dashboard.js' %}"></script>
 
 {% endblock %}
 

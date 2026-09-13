@@ -837,3 +837,153 @@ textarea {
         top: 64px;
     }
 }
+/* =========================================================
+   BARRA DE UBICACIÓN PÚBLICA
+========================================================= */
+
+.public-location {
+    position: relative;
+    z-index: 80;
+
+    margin: 0;
+}
+
+.public-location-back {
+    cursor: pointer;
+    border: 0;
+}
+
+@media (max-width: 650px) {
+    .public-location {
+        position: sticky;
+        top: var(--public-header-height, 64px);
+        z-index: 900;
+
+        margin: 0;
+    }
+}
+/* =========================================================
+   SEPARADOR EDITORIAL GLOBAL
+========================================================= */
+
+.editorial-divider {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: clamp(72px, 9vw, 118px);
+    margin: 0;
+
+    background:
+        var(
+            --divider-background,
+            #f5f0e9
+        );
+}
+
+.editorial-divider::before {
+    content: "";
+
+    display: block;
+
+    width: min(
+        calc(100% - 56px),
+        1280px
+    );
+
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(75, 41, 56, 0.16) 12%,
+            rgba(75, 41, 56, 0.16) 88%,
+            transparent 100%
+        );
+}
+
+
+/* Variante sobre fondo crema */
+
+.editorial-divider--cream {
+    --divider-background: #f5f0e9;
+}
+
+
+/* Variante rosa suave */
+
+.editorial-divider--pink {
+    --divider-background: #eee2e3;
+}
+
+
+/* Variante sage empolvado */
+
+.editorial-divider--sage {
+    --divider-background: #a7b2a9;
+}
+
+.editorial-divider--sage::before {
+    background:
+        linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(75, 41, 56, 0.2) 12%,
+            rgba(75, 41, 56, 0.2) 88%,
+            transparent 100%
+        );
+}
+
+
+/* Variante vino */
+
+.editorial-divider--wine {
+    --divider-background: #806774;
+}
+
+.editorial-divider--wine::before {
+    background:
+        linear-gradient(
+            90deg,
+            transparent 0%,
+            rgba(255, 248, 241, 0.2) 12%,
+            rgba(255, 248, 241, 0.2) 88%,
+            transparent 100%
+        );
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .editorial-divider {
+        height: 82px;
+    }
+
+    .editorial-divider::before {
+        width: calc(100% - 40px);
+    }
+}
+
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
+@media (max-width: 650px) {
+
+    .editorial-divider {
+        height: 62px;
+    }
+
+    .editorial-divider::before {
+        width: calc(100% - 32px);
+    }
+}

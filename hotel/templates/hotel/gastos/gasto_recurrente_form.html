@@ -1,0 +1,620 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block title %}
+    {{ titulo }} | By Colección
+{% endblock %}
+
+
+{% block extra-head %}
+<link
+    rel="stylesheet"
+    href="{% static 'hotel/css/gastos.css' %}"
+>
+{% endblock %}
+
+
+{% block content %}
+
+<main class="gasto-form-page">
+
+    <header class="gasto-form-header">
+
+        <div>
+
+            <span class="gastos-eyebrow">
+                Automatización
+            </span>
+
+            <h1>
+                {{ titulo }}
+            </h1>
+
+            {% if subtitulo %}
+                <p>
+                    {{ subtitulo }}
+                </p>
+            {% endif %}
+
+        </div>
+
+
+        <a
+            href="{% url 'hotel:gastos_dashboard' %}"
+            class="gastos-clear-button"
+        >
+            <i class="fa fa-arrow-left"></i>
+            Volver a gastos
+        </a>
+
+    </header>
+
+
+    <section class="gasto-form-card">
+
+        <div class="gasto-form-introduction">
+
+            <div class="gasto-form-icon">
+                <i class="fa fa-repeat"></i>
+            </div>
+
+            <div>
+
+                <h2>
+                    Configura el gasto fijo
+                </h2>
+
+                <p>
+                    El sistema generará automáticamente los movimientos
+                    cuando llegue la fecha indicada. Los gastos anteriores
+                    conservarán siempre su importe original.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <form
+            method="post"
+            class="gasto-form"
+            novalidate
+        >
+
+            {% csrf_token %}
+
+
+            {% if form.non_field_errors %}
+
+                <div class="gasto-form-errors">
+
+                    {% for error in form.non_field_errors %}
+                        <p>
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+            <div class="gasto-form-section">
+
+                <header>
+                    <span>01</span>
+                    <div>
+                        <h2>Identificación</h2>
+                        <p>
+                            Define qué gasto debe repetirse.
+                        </p>
+                    </div>
+                </header>
+
+
+                <div class="gasto-form-grid">
+
+                    <div class="gasto-form-field gasto-form-field-wide">
+
+                        <label for="{{ form.nombre.id_for_label }}">
+                            {{ form.nombre.label }}
+                        </label>
+
+                        {{ form.nombre }}
+
+                        {% if form.nombre.help_text %}
+                            <small>
+                                {{ form.nombre.help_text }}
+                            </small>
+                        {% endif %}
+
+                        {% for error in form.nombre.errors %}
+                            <span class="gasto-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="gasto-form-field">
+
+                        <label for="{{ form.proveedor.id_for_label }}">
+                            {{ form.proveedor.label }}
+                        </label>
+
+                        {{ form.proveedor }}
+
+                        {% for error in form.proveedor.errors %}
+                            <span class="gasto-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="gasto-form-field">
+
+                        <label for="{{ form.categoria.id_for_label }}">
+                            {{ form.categoria.label }}
+                        </label>
+
+                        {{ form.categoria }}
+
+                        {% for error in form.categoria.errors %}
+                            <span class="gasto-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="gasto-form-field">
+
+                        <label for="{{ form.tipo.id_for_label }}">
+                            {{ form.tipo.label }}
+                        </label>
+
+                        {{ form.tipo }}
+
+                        {% for error in form.tipo.errors %}
+                            <span class="gasto-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="gasto-form-field">
+
+                        <label for="{{ form.importe.id_for_label }}">
+                            {{ form.importe.label }}
+                        </label>
+
+                        <div class="gasto-amount-input">
+                            {{ form.importe }}
+                            <span>€</span>
+                        </div>
+
+                        {% for error in form.importe.errors %}
+                            <span class="gasto-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="gasto-form-field gasto-form-field-wide">
+
+                        <label for="{{ form.concepto.id_for_label }}">
+                            {{ form.concepto.label }}
+                        </label>
+
+                        {{ form.concepto }}
+
+                        {% if form.concepto.help_text %}
+                            <small>
+                                {{ form.concepto.help_text }}
+                            </small>
+                        {% endif %}
+
+                        {% for error in form.concepto.errors %}
+                            <span class="gasto-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="gasto-form-section">
+
+                <header>
+                    <span>02</span>
+                    <div>
+                        <h2>Frecuencia</h2>
+                        <p>
+                            Decide cuándo debe aparecer el movimiento.
+                        </p>
+                    </div>
+                </header>
+
+
+                <div class="gasto-form-grid">
+
+                    <div class="gasto-form-field">
+
+                        <label for="{{ form.frecuencia.id_for_label }}">
+                            {{ form.frecuencia.label }}
+                        </label>
+
+                        {{ form.frecuencia }}
+
+                        {% for error in form.frecuencia.errors %}
+                            <span class="gasto-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="gasto-form-field">
+
+                        <label for="{{ form.dia_generacion.id_for_label }}">
+                            {{ form.dia_generacion.label }}
+                        </label>
+
+                        {{ form.dia_generacion }}
+
+                        {% if form.dia_generacion.help_text %}
+                            <small>
+                                {{ form.dia_generacion.help_text }}
+                            </small>
+                        {% endif %}
+
+                        {% for error in form.dia_generacion.errors %}
+                            <span class="gasto-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div
+                        class="gasto-form-field"
+                        id="campo-mes-generacion"
+                    >
+
+                        <label for="{{ form.mes_generacion.id_for_label }}">
+                            {{ form.mes_generacion.label }}
+                        </label>
+
+                        {{ form.mes_generacion }}
+
+                        {% if form.mes_generacion.help_text %}
+                            <small>
+                                {{ form.mes_generacion.help_text }}
+                            </small>
+                        {% endif %}
+
+                        {% for error in form.mes_generacion.errors %}
+                            <span class="gasto-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="gasto-form-field">
+
+                        <label for="{{ form.fecha_inicio.id_for_label }}">
+                            {{ form.fecha_inicio.label }}
+                        </label>
+
+                        {{ form.fecha_inicio }}
+
+                        {% if form.fecha_inicio.help_text %}
+                            <small>
+                                {{ form.fecha_inicio.help_text }}
+                            </small>
+                        {% endif %}
+
+                        {% for error in form.fecha_inicio.errors %}
+                            <span class="gasto-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="gasto-form-field">
+
+                        <label for="{{ form.fecha_fin.id_for_label }}">
+                            {{ form.fecha_fin.label }}
+                        </label>
+
+                        {{ form.fecha_fin }}
+
+                        {% if form.fecha_fin.help_text %}
+                            <small>
+                                {{ form.fecha_fin.help_text }}
+                            </small>
+                        {% endif %}
+
+                        {% for error in form.fecha_fin.errors %}
+                            <span class="gasto-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="gasto-form-section">
+
+                <header>
+                    <span>03</span>
+                    <div>
+                        <h2>Destino</h2>
+                        <p>
+                            Indica a qué parte de By Colección corresponde.
+                        </p>
+                    </div>
+                </header>
+
+
+                <div class="gasto-form-grid">
+
+                    <div class="gasto-form-field">
+
+                        <label for="{{ form.ambito.id_for_label }}">
+                            {{ form.ambito.label }}
+                        </label>
+
+                        {{ form.ambito }}
+
+                        {% for error in form.ambito.errors %}
+                            <span class="gasto-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div
+                        class="gasto-form-field"
+                        id="campo-propiedad"
+                    >
+
+                        <label for="{{ form.propiedad.id_for_label }}">
+                            {{ form.propiedad.label }}
+                        </label>
+
+                        {{ form.propiedad }}
+
+                        {% for error in form.propiedad.errors %}
+                            <span class="gasto-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div
+                        class="gasto-form-field"
+                        id="campo-habitacion"
+                    >
+
+                        <label for="{{ form.habitacion.id_for_label }}">
+                            {{ form.habitacion.label }}
+                        </label>
+
+                        {{ form.habitacion }}
+
+                        {% for error in form.habitacion.errors %}
+                            <span class="gasto-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="gasto-form-section">
+
+                <header>
+                    <span>04</span>
+                    <div>
+                        <h2>Configuración</h2>
+                        <p>
+                            Define cómo se crearán los movimientos.
+                        </p>
+                    </div>
+                </header>
+
+
+                <div class="gasto-form-options">
+
+                    <label class="gasto-checkbox">
+
+                        {{ form.pagado_por_defecto }}
+
+                        <span>
+                            <strong>
+                                {{ form.pagado_por_defecto.label }}
+                            </strong>
+
+                            <small>
+                                Los movimientos se crearán inicialmente
+                                como pagados.
+                            </small>
+                        </span>
+
+                    </label>
+
+
+                    <label class="gasto-checkbox">
+
+                        {{ form.activo }}
+
+                        <span>
+                            <strong>
+                                {{ form.activo.label }}
+                            </strong>
+
+                            <small>
+                                Mientras esté activo continuará generando
+                                nuevos gastos.
+                            </small>
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <div class="gasto-form-field gasto-form-field-wide">
+
+                    <label for="{{ form.notas.id_for_label }}">
+                        {{ form.notas.label }}
+                    </label>
+
+                    {{ form.notas }}
+
+                    {% for error in form.notas.errors %}
+                        <span class="gasto-field-error">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+
+            <datalist id="proveedores-habituales">
+                <option value="Gestoría">
+                <option value="IKEA">
+                <option value="Leroy Merlin">
+                <option value="OBRAMAT">
+                <option value="Iberdrola">
+                <option value="Canal de Isabel II">
+                <option value="Amazon">
+            </datalist>
+
+
+            <footer class="gasto-form-actions">
+
+                <a
+                    href="{% url 'hotel:gastos_dashboard' %}"
+                    class="gastos-clear-button"
+                >
+                    Cancelar
+                </a>
+
+                <button
+                    type="submit"
+                    class="gastos-create-button"
+                >
+                    <i class="fa fa-check"></i>
+                    {{ texto_boton }}
+                </button>
+
+            </footer>
+
+        </form>
+
+    </section>
+
+</main>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const frecuencia = document.getElementById(
+        "{{ form.frecuencia.id_for_label }}"
+    );
+
+    const ambito = document.getElementById(
+        "{{ form.ambito.id_for_label }}"
+    );
+
+    const campoMes = document.getElementById(
+        "campo-mes-generacion"
+    );
+
+    const campoPropiedad = document.getElementById(
+        "campo-propiedad"
+    );
+
+    const campoHabitacion = document.getElementById(
+        "campo-habitacion"
+    );
+
+    function actualizarFrecuencia() {
+        if (!frecuencia || !campoMes) {
+            return;
+        }
+
+        campoMes.hidden = frecuencia.value !== "anual";
+    }
+
+    function actualizarAmbito() {
+        if (!ambito) {
+            return;
+        }
+
+        const esEmpresa = ambito.value === "empresa";
+        const esHabitacion = ambito.value === "habitacion";
+
+        if (campoPropiedad) {
+            campoPropiedad.hidden = esEmpresa;
+        }
+
+        if (campoHabitacion) {
+            campoHabitacion.hidden = !esHabitacion;
+        }
+    }
+
+    if (frecuencia) {
+        frecuencia.addEventListener(
+            "change",
+            actualizarFrecuencia
+        );
+    }
+
+    if (ambito) {
+        ambito.addEventListener(
+            "change",
+            actualizarAmbito
+        );
+    }
+
+    actualizarFrecuencia();
+    actualizarAmbito();
+});
+</script>
+
+{% endblock %}
