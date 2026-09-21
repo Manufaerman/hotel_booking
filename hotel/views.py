@@ -4892,6 +4892,11 @@ class CrearGastoView(
         )
 
         if not form.is_valid():
+            print("\n===== ERROR AL CREAR GASTO =====")
+            print(form.errors.as_json())
+            print("Datos recibidos:", request.POST)
+            print("Archivos recibidos:", request.FILES)
+            print("================================\n")
             messages.error(
                 request,
                 "Revisa los campos señalados.",
@@ -4947,22 +4952,29 @@ class CrearGastoView(
 
         with transaction.atomic():
             if es_recurrente:
-                recurrente = (
-                    self.crear_recurrencia(
-                        datos=datos,
-                        gasto=gasto,
-                    )
+                recurrente = self.crear_recurrencia(
+                    datos=datos,
+                    gasto=gasto,
                 )
 
-                gasto.gasto_recurrente = (
-                    recurrente
+                fecha_periodo = (
+                        datos.get("fecha")
+                        or datos.get("fecha_inicio")
+                        or timezone.localdate()
                 )
 
+                gasto.gasto_recurrente = recurrente
+                gasto.periodo_recurrente = (
+                    fecha_periodo.replace(day=1)
+                )
                 gasto.tipo = "recurrente"
+                gasto.generado_automaticamente = False
 
             else:
                 gasto.gasto_recurrente = None
+                gasto.periodo_recurrente = None
                 gasto.tipo = "extraordinario"
+                gasto.generado_automaticamente = False
 
             gasto.save()
             form.save_m2m()

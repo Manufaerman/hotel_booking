@@ -526,6 +526,30 @@
 
 </div>
 
+                    <div
+    class="gasto-form-group gasto-form-full"
+    id="tipo-suministro-group"
+    hidden
+>
+    <label for="{{ form.tipo_suministro.id_for_label }}">
+        {{ form.tipo_suministro.label }}
+    </label>
+
+    {{ form.tipo_suministro }}
+
+    {% if form.tipo_suministro.help_text %}
+        <small>
+            {{ form.tipo_suministro.help_text }}
+        </small>
+    {% endif %}
+
+    {% for error in form.tipo_suministro.errors %}
+        <span class="gasto-field-error">
+            {{ error }}
+        </span>
+    {% endfor %}
+</div>
+
 
                     <div class="gasto-form-group gasto-form-full">
 
@@ -785,6 +809,17 @@ document.addEventListener("DOMContentLoaded", function () {
     const projectsUrl =
         "{% url 'hotel:proyectos_por_pais' %}";
 
+    const categoriaSelect = document.getElementById(
+    "id_categoria"
+);
+
+const tipoSuministroGroup = document.getElementById(
+    "tipo-suministro-group"
+);
+
+const tipoSuministroSelect = document.getElementById(
+    "id_tipo_suministro"
+);
     const providersUrl =
         "{% url 'hotel:proveedores_por_pais' %}";
     const categoryField =
@@ -816,7 +851,25 @@ document.addEventListener("DOMContentLoaded", function () {
     /* =====================================================
        CATEGORÍAS
     ===================================================== */
+    function actualizarTipoSuministro() {
+    if (
+        !categoriaSelect ||
+        !tipoSuministroGroup ||
+        !tipoSuministroSelect
+    ) {
+        return;
+    }
 
+    const esSuministro =
+        categoriaSelect.value === "suministros";
+
+    tipoSuministroGroup.hidden = !esSuministro;
+    tipoSuministroSelect.required = esSuministro;
+
+    if (!esSuministro) {
+        tipoSuministroSelect.value = "";
+    }
+}
     function renderCategoryButtons() {
         if (
             !categoryField
@@ -2065,7 +2118,12 @@ document.addEventListener("DOMContentLoaded", function () {
     /* =====================================================
        INICIALIZACIÓN
     ===================================================== */
+    categoriaSelect?.addEventListener(
+    "change",
+    actualizarTipoSuministro
+);
 
+actualizarTipoSuministro();
     renderSelectButtons(
         propertyField,
         propertyOptions

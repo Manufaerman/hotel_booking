@@ -472,7 +472,6 @@ class GastoForm(forms.ModelForm):
                             "image/jpeg,image/png,"
                             "image/webp"
                         ),
-                        "capture": "environment",
                     },
                 )
             ),
