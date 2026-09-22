@@ -4979,6 +4979,7 @@ class CrearGastoView(
             gasto.save()
             form.save_m2m()
 
+
         if es_recurrente:
             mensaje = (
                 f'El gasto fijo "{gasto.titulo}" '
