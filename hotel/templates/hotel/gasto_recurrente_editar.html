@@ -1,0 +1,834 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block title %}
+    Editar gasto fijo | By Colección
+{% endblock %}
+
+{% block extra-head %}
+<link
+    rel="stylesheet"
+    href="{% static 'hotel/css/gasto_form.css' %}"
+>
+{% endblock %}
+
+{% block content %}
+
+<main class="gastos-page gasto-form-page">
+
+    <header class="gastos-header">
+
+        <div>
+            <span class="gastos-eyebrow">
+                Gastos fijos
+            </span>
+
+            <h1>
+                Editar gasto recurrente
+            </h1>
+
+            <p>
+                Modifica la configuración de los próximos movimientos.
+            </p>
+        </div>
+
+    </header>
+
+
+    <section class="gasto-form-card">
+
+        <form
+            method="post"
+            class="gasto-form"
+            id="gasto-recurrente-form"
+            novalidate
+        >
+            {% csrf_token %}
+
+
+            {% if form.non_field_errors %}
+
+                <div class="gasto-form-errors">
+
+                    {% for error in form.non_field_errors %}
+                        <p>
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+            <div class="gasto-form-info">
+
+                <i
+                    class="fas fa-info-circle"
+                    aria-hidden="true"
+                ></i>
+
+                <div>
+                    <strong>
+                        Este cambio afecta a los próximos movimientos
+                    </strong>
+
+                    <p>
+                        Las facturas y los movimientos ya registrados
+                        conservarán sus datos actuales.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <!-- =============================================
+                 01. IDENTIFICACIÓN
+            ============================================== -->
+
+            <section class="gasto-form-section">
+
+                <header class="gasto-form-section-header">
+
+                    <span>01</span>
+
+                    <div>
+                        <h2>
+                            Información del gasto fijo
+                        </h2>
+
+                        <p>
+                            Define el concepto, categoría e importe habitual.
+                        </p>
+                    </div>
+
+                </header>
+
+
+                <div class="gasto-form-grid">
+
+                    {% if form.nombre %}
+
+                        <div class="gasto-form-group gasto-form-full">
+
+                            <label for="{{ form.nombre.id_for_label }}">
+                                {{ form.nombre.label }}
+                            </label>
+
+                            {{ form.nombre }}
+
+                            {% for error in form.nombre.errors %}
+                                <span class="gasto-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if form.categoria %}
+
+                        <div class="gasto-form-group">
+
+                            <label for="{{ form.categoria.id_for_label }}">
+                                {{ form.categoria.label }}
+                            </label>
+
+                            {{ form.categoria }}
+
+                            {% for error in form.categoria.errors %}
+                                <span class="gasto-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if form.tipo_suministro %}
+
+                        <div
+                            class="gasto-form-group"
+                            id="tipo-suministro-group"
+                            hidden
+                        >
+
+                            <label for="{{ form.tipo_suministro.id_for_label }}">
+                                {{ form.tipo_suministro.label }}
+                            </label>
+
+                            {{ form.tipo_suministro }}
+
+                            {% for error in form.tipo_suministro.errors %}
+                                <span class="gasto-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if form.proveedor %}
+
+                        <div class="gasto-form-group">
+
+                            <label for="{{ form.proveedor.id_for_label }}">
+                                {{ form.proveedor.label }}
+                            </label>
+
+                            {{ form.proveedor }}
+
+                            {% for error in form.proveedor.errors %}
+                                <span class="gasto-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if form.concepto %}
+
+                        <div class="gasto-form-group">
+
+                            <label for="{{ form.concepto.id_for_label }}">
+                                {{ form.concepto.label }}
+                            </label>
+
+                            {{ form.concepto }}
+
+                            {% for error in form.concepto.errors %}
+                                <span class="gasto-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if form.importe %}
+
+                        <div class="gasto-form-group">
+
+                            <label for="{{ form.importe.id_for_label }}">
+                                {{ form.importe.label }}
+                            </label>
+
+                            {{ form.importe }}
+
+                            <small>
+                                Importe habitual de cada movimiento.
+                            </small>
+
+                            {% for error in form.importe.errors %}
+                                <span class="gasto-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </section>
+
+
+            <!-- =============================================
+                 02. DESTINO
+            ============================================== -->
+
+            <section class="gasto-form-section">
+
+                <header class="gasto-form-section-header">
+
+                    <span>02</span>
+
+                    <div>
+                        <h2>
+                            Destino
+                        </h2>
+
+                        <p>
+                            Indica dónde debe contabilizarse.
+                        </p>
+                    </div>
+
+                </header>
+
+
+                <div class="gasto-form-grid">
+
+                    {% if form.pais %}
+
+                        <div class="gasto-form-group">
+
+                            <label for="{{ form.pais.id_for_label }}">
+                                {{ form.pais.label }}
+                            </label>
+
+                            {{ form.pais }}
+
+                            {% for error in form.pais.errors %}
+                                <span class="gasto-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if form.ambito %}
+
+                        <div class="gasto-form-group">
+
+                            <label for="{{ form.ambito.id_for_label }}">
+                                {{ form.ambito.label }}
+                            </label>
+
+                            {{ form.ambito }}
+
+                            {% for error in form.ambito.errors %}
+                                <span class="gasto-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if form.propiedad %}
+
+                        <div
+                            class="gasto-form-group"
+                            id="grupo-propiedad"
+                        >
+
+                            <label for="{{ form.propiedad.id_for_label }}">
+                                {{ form.propiedad.label }}
+                            </label>
+
+                            {{ form.propiedad }}
+
+                            {% for error in form.propiedad.errors %}
+                                <span class="gasto-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if form.habitacion %}
+
+                        <div
+                            class="gasto-form-group"
+                            id="grupo-habitacion"
+                        >
+
+                            <label for="{{ form.habitacion.id_for_label }}">
+                                {{ form.habitacion.label }}
+                            </label>
+
+                            {{ form.habitacion }}
+
+                            <small>
+                                Déjala vacía si corresponde a toda la propiedad.
+                            </small>
+
+                            {% for error in form.habitacion.errors %}
+                                <span class="gasto-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if form.proyecto %}
+
+                        <div
+                            class="gasto-form-group"
+                            id="grupo-proyecto"
+                        >
+
+                            <label for="{{ form.proyecto.id_for_label }}">
+                                {{ form.proyecto.label }}
+                            </label>
+
+                            {{ form.proyecto }}
+
+                            {% for error in form.proyecto.errors %}
+                                <span class="gasto-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </section>
+
+
+            <!-- =============================================
+                 03. RECURRENCIA
+            ============================================== -->
+
+            <section class="gasto-form-section">
+
+                <header class="gasto-form-section-header">
+
+                    <span>03</span>
+
+                    <div>
+                        <h2>
+                            Recurrencia
+                        </h2>
+
+                        <p>
+                            Configura los próximos movimientos.
+                        </p>
+                    </div>
+
+                </header>
+
+
+                <div class="gasto-form-grid">
+
+                    {% if form.frecuencia %}
+
+                        <div class="gasto-form-group">
+
+                            <label for="{{ form.frecuencia.id_for_label }}">
+                                {{ form.frecuencia.label }}
+                            </label>
+
+                            {{ form.frecuencia }}
+
+                            {% for error in form.frecuencia.errors %}
+                                <span class="gasto-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if form.fecha_inicio %}
+
+                        <div class="gasto-form-group">
+
+                            <label for="{{ form.fecha_inicio.id_for_label }}">
+                                Fecha del primer cargo
+                            </label>
+
+                            {{ form.fecha_inicio }}
+
+                            <small>
+                                También determina automáticamente el día
+                                de generación.
+                            </small>
+
+                            {% for error in form.fecha_inicio.errors %}
+                                <span class="gasto-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if form.fecha_fin %}
+
+                        <div class="gasto-form-group">
+
+                            <label for="{{ form.fecha_fin.id_for_label }}">
+                                {{ form.fecha_fin.label }}
+                            </label>
+
+                            {{ form.fecha_fin }}
+
+                            <small>
+                                Opcional. Déjala vacía para continuar
+                                indefinidamente.
+                            </small>
+
+                            {% for error in form.fecha_fin.errors %}
+                                <span class="gasto-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if form.pagado_por_defecto %}
+
+                        <div class="gasto-form-check">
+
+                            {{ form.pagado_por_defecto }}
+
+                            <label for="{{ form.pagado_por_defecto.id_for_label }}">
+
+                                <strong>
+                                    {{ form.pagado_por_defecto.label }}
+                                </strong>
+
+                                <small>
+                                    Los próximos movimientos se marcarán
+                                    inicialmente como pagados.
+                                </small>
+
+                            </label>
+
+                            {% for error in form.pagado_por_defecto.errors %}
+                                <span class="gasto-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if form.requiere_justificante %}
+
+                        <div class="gasto-form-check">
+
+                            {{ form.requiere_justificante }}
+
+                            <label for="{{ form.requiere_justificante.id_for_label }}">
+
+                                <strong>
+                                    Recordarme subir la factura
+                                </strong>
+
+                                <small>
+                                    Cada movimiento aparecerá como pendiente
+                                    hasta que adjuntes su factura.
+                                </small>
+
+                            </label>
+
+                            {% for error in form.requiere_justificante.errors %}
+                                <span class="gasto-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if form.destino_gestoria %}
+
+                        <div class="gasto-form-group">
+
+                            <label for="{{ form.destino_gestoria.id_for_label }}">
+                                {{ form.destino_gestoria.label }}
+                            </label>
+
+                            {{ form.destino_gestoria }}
+
+                            {% for error in form.destino_gestoria.errors %}
+                                <span class="gasto-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if form.activo %}
+
+                        <div class="gasto-form-check">
+
+                            {{ form.activo }}
+
+                            <label for="{{ form.activo.id_for_label }}">
+
+                                <strong>
+                                    {{ form.activo.label }}
+                                </strong>
+
+                                <small>
+                                    Desmárcalo para detener la generación
+                                    de nuevos movimientos.
+                                </small>
+
+                            </label>
+
+                            {% for error in form.activo.errors %}
+                                <span class="gasto-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </section>
+
+
+            <!-- =============================================
+                 04. NOTAS
+            ============================================== -->
+
+            {% if form.notas %}
+
+                <section class="gasto-form-section">
+
+                    <header class="gasto-form-section-header">
+
+                        <span>04</span>
+
+                        <div>
+                            <h2>
+                                Notas
+                            </h2>
+
+                            <p>
+                                Información interna adicional.
+                            </p>
+                        </div>
+
+                    </header>
+
+
+                    <div class="gasto-form-grid">
+
+                        <div class="gasto-form-group gasto-form-full">
+
+                            <label for="{{ form.notas.id_for_label }}">
+                                {{ form.notas.label }}
+                            </label>
+
+                            {{ form.notas }}
+
+                            {% for error in form.notas.errors %}
+                                <span class="gasto-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            {% endif %}
+
+
+            <div class="gasto-form-actions">
+
+                <a
+                    href="{% url 'hotel:gastos_dashboard' %}#recurrentes"
+                    class="gasto-form-back"
+                >
+                    Cancelar
+                </a>
+
+                <button
+                    type="submit"
+                    class="gasto-form-submit"
+                >
+                    <i
+                        class="fas fa-check"
+                        aria-hidden="true"
+                    ></i>
+
+                    Guardar cambios
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+</main>
+
+
+<script>
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+        const categoryField =
+            document.getElementById(
+                "id_categoria"
+            );
+
+        const supplyGroup =
+            document.getElementById(
+                "tipo-suministro-group"
+            );
+
+        const supplyField =
+            document.getElementById(
+                "id_tipo_suministro"
+            );
+
+        const scopeField =
+            document.getElementById(
+                "id_ambito"
+            );
+
+        const propertyGroup =
+            document.getElementById(
+                "grupo-propiedad"
+            );
+
+        const propertyField =
+            document.getElementById(
+                "id_propiedad"
+            );
+
+        const roomGroup =
+            document.getElementById(
+                "grupo-habitacion"
+            );
+
+        const roomField =
+            document.getElementById(
+                "id_habitacion"
+            );
+
+        const projectGroup =
+            document.getElementById(
+                "grupo-proyecto"
+            );
+
+        const projectField =
+            document.getElementById(
+                "id_proyecto"
+            );
+
+
+        function updateSupply() {
+            if (
+                !categoryField
+                || !supplyGroup
+                || !supplyField
+            ) {
+                return;
+            }
+
+            const isSupply = (
+                categoryField.value ===
+                "suministros"
+            );
+
+            supplyGroup.hidden = !isSupply;
+            supplyField.required = isSupply;
+
+            if (!isSupply) {
+                supplyField.value = "";
+            }
+        }
+
+
+        function updateDestination() {
+            if (!scopeField) {
+                return;
+            }
+
+            const scope = scopeField.value;
+
+            if (propertyGroup) {
+                propertyGroup.hidden = (
+                    scope !== "propiedad"
+                );
+            }
+
+            if (roomGroup) {
+                roomGroup.hidden = (
+                    scope !== "propiedad"
+                );
+            }
+
+            if (projectGroup) {
+                projectGroup.hidden = (
+                    scope !== "proyecto"
+                );
+            }
+
+            if (
+                propertyField
+                && scope !== "propiedad"
+            ) {
+                propertyField.value = "";
+            }
+
+            if (
+                roomField
+                && scope !== "propiedad"
+            ) {
+                roomField.value = "";
+            }
+
+            if (
+                projectField
+                && scope !== "proyecto"
+            ) {
+                projectField.value = "";
+            }
+        }
+
+
+        if (categoryField) {
+            categoryField.addEventListener(
+                "change",
+                updateSupply
+            );
+        }
+
+        if (scopeField) {
+            scopeField.addEventListener(
+                "change",
+                updateDestination
+            );
+        }
+
+        updateSupply();
+        updateDestination();
+    }
+);
+</script>
+
+{% endblock %}

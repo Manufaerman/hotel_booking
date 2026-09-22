@@ -69,6 +69,9 @@ def generar_gastos_de_recurrente(
     if not recurrente.activo:
         return []
 
+    if recurrente.fecha_inicio > hasta:
+        return []
+
     fecha_limite = hasta
 
     if (
@@ -85,47 +88,83 @@ def generar_gastos_de_recurrente(
         recurrente.frecuencia
     )
 
+    if intervalo <= 0:
+        raise ValueError(
+            "La frecuencia debe producir "
+            "un intervalo superior a cero."
+        )
+
     fecha_programada = primera_fecha
     creados = []
 
     while fecha_programada <= fecha_limite:
-        periodo = fecha_programada.replace(day=1)
+        periodo = fecha_programada.replace(
+            day=1
+        )
 
-        gasto, creado = Gasto.objects.get_or_create(
-            gasto_recurrente=recurrente,
-            periodo_recurrente=periodo,
-            defaults={
-                "propiedad": recurrente.propiedad,
-                "habitacion": recurrente.habitacion,
-                "ambito": recurrente.ambito,
-                "tipo": recurrente.tipo,
-                "concepto": (
-                    recurrente.concepto
-                    or recurrente.nombre
-                ),
-                "categoria": recurrente.categoria,
-                "importe": recurrente.importe,
-                "fecha": fecha_programada,
-                "pagado": (
-                    recurrente.pagado_por_defecto
-                ),
-                "proveedor": recurrente.proveedor,
-                "notas": recurrente.notas,
-                "generado_automaticamente": True,
-            },
+        moneda = (
+            "EUR"
+            if recurrente.pais == "ES"
+            else "ARS"
+        )
+
+        gasto, creado = (
+            Gasto.objects.get_or_create(
+                gasto_recurrente=recurrente,
+                periodo_recurrente=periodo,
+                defaults={
+                    "pais": recurrente.pais,
+                    "moneda": moneda,
+                    "ambito": recurrente.ambito,
+                    "propiedad": recurrente.propiedad,
+                    "habitacion": recurrente.habitacion,
+                    "proyecto": recurrente.proyecto,
+                    "tipo": "recurrente",
+                    "concepto": (
+                        recurrente.concepto
+                        or recurrente.nombre
+                    ),
+                    "categoria": (
+                        recurrente.categoria
+                    ),
+                    "tipo_suministro": (
+                        recurrente.tipo_suministro
+                    ),
+                    "importe": recurrente.importe,
+                    "fecha": fecha_programada,
+                    "pagado": (
+                        recurrente.pagado_por_defecto
+                    ),
+                    "proveedor": (
+                        recurrente.proveedor
+                    ),
+                    "requiere_justificante": (
+                        recurrente
+                        .requiere_justificante
+                    ),
+                    "destino_gestoria": (
+                        recurrente
+                        .destino_gestoria
+                    ),
+                    "notas": recurrente.notas,
+                    "generado_automaticamente": True,
+                },
+            )
         )
 
         if creado:
             creados.append(gasto)
 
-        fecha_programada = (
+        siguiente_fecha = (
             fecha_programada
-            + relativedelta(months=intervalo)
+            + relativedelta(
+                months=intervalo,
+            )
         )
 
         fecha_programada = fecha_segura(
-            fecha_programada.year,
-            fecha_programada.month,
+            siguiente_fecha.year,
+            siguiente_fecha.month,
             recurrente.dia_generacion,
         )
 

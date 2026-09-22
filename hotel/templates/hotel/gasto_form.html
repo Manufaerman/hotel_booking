@@ -335,7 +335,6 @@
                         id="gasto-recurrencia-fields"
                         hidden
                     >
-
                         <div class="gasto-form-grid">
 
                             <div class="gasto-form-group">
@@ -346,73 +345,14 @@
 
                                 {{ form.frecuencia }}
 
+                                <small>
+                                    Indica cada cuánto debe generarse un movimiento.
+                                </small>
+
                                 {% for error in form.frecuencia.errors %}
-
                                     <span class="gasto-field-error">
                                         {{ error }}
                                     </span>
-
-                                {% endfor %}
-
-                            </div>
-
-
-                            <div class="gasto-form-group">
-
-                                <label for="{{ form.dia_generacion.id_for_label }}">
-                                    {{ form.dia_generacion.label }}
-                                </label>
-
-                                {{ form.dia_generacion }}
-
-                                {% for error in form.dia_generacion.errors %}
-
-                                    <span class="gasto-field-error">
-                                        {{ error }}
-                                    </span>
-
-                                {% endfor %}
-
-                            </div>
-
-
-                            <div
-                                class="gasto-form-group"
-                                id="grupo-mes-generacion"
-                                hidden
-                            >
-
-                                <label for="{{ form.mes_generacion.id_for_label }}">
-                                    {{ form.mes_generacion.label }}
-                                </label>
-
-                                {{ form.mes_generacion }}
-
-                                {% for error in form.mes_generacion.errors %}
-
-                                    <span class="gasto-field-error">
-                                        {{ error }}
-                                    </span>
-
-                                {% endfor %}
-
-                            </div>
-
-
-                            <div class="gasto-form-group">
-
-                                <label for="{{ form.fecha_inicio.id_for_label }}">
-                                    {{ form.fecha_inicio.label }}
-                                </label>
-
-                                {{ form.fecha_inicio }}
-
-                                {% for error in form.fecha_inicio.errors %}
-
-                                    <span class="gasto-field-error">
-                                        {{ error }}
-                                    </span>
-
                                 {% endfor %}
 
                             </div>
@@ -426,22 +366,22 @@
 
                                 {{ form.fecha_fin }}
 
-                                <small>
-                                    Opcional.
-                                </small>
+                                {% if form.fecha_fin.help_text %}
+                                    <small>
+                                        {{ form.fecha_fin.help_text }}
+                                    </small>
+                                {% endif %}
 
                                 {% for error in form.fecha_fin.errors %}
-
                                     <span class="gasto-field-error">
                                         {{ error }}
                                     </span>
-
                                 {% endfor %}
 
                             </div>
 
 
-                            <div class="gasto-form-check">
+                            <div class="gasto-form-check gasto-form-full">
 
                                 {{ form.requiere_justificante }}
 
@@ -452,23 +392,21 @@
                                     </strong>
 
                                     <small>
-                                        Aparecerá en documentación pendiente.
+                                        Cada movimiento aparecerá en documentación
+                                        pendiente hasta que añadas su factura.
                                     </small>
 
                                 </label>
 
                                 {% for error in form.requiere_justificante.errors %}
-
                                     <span class="gasto-field-error">
                                         {{ error }}
                                     </span>
-
                                 {% endfor %}
 
                             </div>
 
                         </div>
-
                     </div>
 
                 {% endif %}
@@ -501,30 +439,55 @@
 
                 <div class="gasto-form-grid">
 
-                    <div class="gasto-form-group gasto-form-full">
 
-    <span class="gasto-selector-title">
-        Categoría
-    </span>
+                <div
+    class="gasto-form-group gasto-form-full"
+    id="grupo-justificante"
+>
+    <label for="{{ form.justificante.id_for_label }}">
+        {{ form.justificante.label }}
+        <span class="gasto-optional-label">
+            Opcional
+        </span>
+    </label>
 
-    <div class="gasto-native-select">
-        {{ form.categoria }}
-    </div>
+    {{ form.justificante }}
 
-    <div
-        class="gasto-category-options"
-        id="opciones-categoria"
-    ></div>
+    <small>
+        Puedes añadirla ahora o posteriormente.
+        PDF, JPG, PNG o WEBP. Máximo 10 MB.
+    </small>
 
-    {% for error in form.categoria.errors %}
-
+    {% for error in form.justificante.errors %}
         <span class="gasto-field-error">
             {{ error }}
         </span>
-
     {% endfor %}
-
 </div>
+
+
+<div
+    class="gasto-form-info gasto-form-full"
+    id="aviso-factura-recurrente"
+    hidden
+>
+    <i
+        class="fas fa-file-invoice"
+        aria-hidden="true"
+    ></i>
+
+    <div>
+        <strong>
+            La factura se añadirá después
+        </strong>
+
+        <p>
+            Cuando se genere cada movimiento podrás subir
+            su factura desde la sección «Sin factura».
+        </p>
+    </div>
+</div>
+
 
                     <div
     class="gasto-form-group gasto-form-full"
@@ -1062,19 +1025,29 @@ const tipoSuministroSelect = document.getElementById(
         );
 
     const frequencyField =
-        document.getElementById(
-            "id_frecuencia"
-        );
+    document.getElementById(
+        "id_frecuencia"
+    );
 
-    const monthGroup =
-        document.getElementById(
-            "grupo-mes-generacion"
-        );
+const amountHelp =
+    document.getElementById(
+        "ayuda-importe"
+    );
 
-    const amountHelp =
-        document.getElementById(
-            "ayuda-importe"
-        );
+const invoiceGroup =
+    document.getElementById(
+        "grupo-justificante"
+    );
+
+const recurringInvoiceNotice =
+    document.getElementById(
+        "aviso-factura-recurrente"
+    );
+
+const invoiceField =
+    document.getElementById(
+        "id_justificante"
+    );
 
 
     /* =====================================================
@@ -1914,67 +1887,55 @@ const tipoSuministroSelect = document.getElementById(
        RECURRENCIA
     ===================================================== */
 
-    function updateFrequency() {
-        if (
-            !frequencyField
-            || !monthGroup
-        ) {
-            return;
-        }
-
-        const active = Boolean(
-            recurringCheckbox
-            && recurringCheckbox.checked
-        );
-
-        const annual =
-            frequencyField.value === "anual";
-
-        monthGroup.hidden = !annual;
-
-        monthGroup
-            .querySelectorAll(
-                "input, select"
-            )
-            .forEach(function (field) {
-                field.disabled = (
-                    !active
-                    || !annual
-                );
-            });
-    }
-
 
     function updateRecurring() {
-        if (
-            !recurringCheckbox
-            || !recurringFields
-        ) {
-            return;
-        }
-
-        const active =
-            recurringCheckbox.checked;
-
-        recurringFields.hidden =
-            !active;
-
-        recurringFields
-            .querySelectorAll(
-                "input, select, textarea"
-            )
-            .forEach(function (field) {
-                field.disabled = !active;
-            });
-
-        if (amountHelp) {
-            amountHelp.textContent = active
-                ? "Importe habitual de cada periodo."
-                : "Importe real de este movimiento.";
-        }
-
-        updateFrequency();
+    if (
+        !recurringCheckbox
+        || !recurringFields
+    ) {
+        return;
     }
+
+    const active =
+        recurringCheckbox.checked;
+
+    recurringFields.hidden = !active;
+
+    recurringFields
+        .querySelectorAll(
+            "input, select, textarea"
+        )
+        .forEach(function (field) {
+            field.disabled = !active;
+        });
+
+    /*
+       La factura pertenece al movimiento mensual,
+       no a la configuración del gasto recurrente.
+    */
+
+    if (invoiceGroup) {
+        invoiceGroup.hidden = active;
+    }
+
+    if (recurringInvoiceNotice) {
+        recurringInvoiceNotice.hidden = !active;
+    }
+
+    if (invoiceField) {
+        invoiceField.disabled = active;
+
+        if (active) {
+            invoiceField.value = "";
+        }
+    }
+
+    if (amountHelp) {
+        amountHelp.textContent = active
+            ? "Importe habitual de cada movimiento."
+            : "Importe real de este gasto.";
+    }
+}
 
 
     /* =====================================================
@@ -2104,13 +2065,6 @@ const tipoSuministroSelect = document.getElementById(
         recurringCheckbox.addEventListener(
             "change",
             updateRecurring
-        );
-    }
-
-    if (frequencyField) {
-        frequencyField.addEventListener(
-            "change",
-            updateFrequency
         );
     }
 

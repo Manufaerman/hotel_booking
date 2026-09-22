@@ -30,8 +30,6 @@ class EditarGastoRecurrenteForm(
             "proveedor",
             "concepto",
             "frecuencia",
-            "dia_generacion",
-            "mes_generacion",
             "fecha_inicio",
             "fecha_fin",
             "pagado_por_defecto",
@@ -195,21 +193,6 @@ class GastoForm(forms.ModelForm):
         ("anual", "Anual"),
     ]
 
-    MESES = [
-        (1, "Enero"),
-        (2, "Febrero"),
-        (3, "Marzo"),
-        (4, "Abril"),
-        (5, "Mayo"),
-        (6, "Junio"),
-        (7, "Julio"),
-        (8, "Agosto"),
-        (9, "Septiembre"),
-        (10, "Octubre"),
-        (11, "Noviembre"),
-        (12, "Diciembre"),
-    ]
-
     es_recurrente = forms.BooleanField(
         required=False,
         label="Repetir este gasto automáticamente",
@@ -232,56 +215,13 @@ class GastoForm(forms.ModelForm):
         ),
     )
 
-    dia_generacion = forms.IntegerField(
-        required=False,
-        min_value=1,
-        max_value=31,
-        initial=1,
-        label="Día previsto",
-        help_text=(
-            "Día del mes en el que debe generarse."
-        ),
-        widget=forms.NumberInput(
-            attrs={
-                "class": "gastos-control",
-                "min": "1",
-                "max": "31",
-                "inputmode": "numeric",
-            },
-        ),
-    )
-
-    mes_generacion = forms.TypedChoiceField(
-        required=False,
-        choices=MESES,
-        coerce=int,
-        empty_value=None,
-        label="Mes de generación",
-        widget=forms.Select(
-            attrs={
-                "class": "gastos-control",
-            },
-        ),
-    )
-
-    fecha_inicio = forms.DateField(
-        required=False,
-        label="Fecha de inicio",
-        input_formats=[
-            "%Y-%m-%d",
-        ],
-        widget=forms.DateInput(
-            format="%Y-%m-%d",
-            attrs={
-                "class": "gastos-control",
-                "type": "date",
-            },
-        ),
-    )
-
     fecha_fin = forms.DateField(
         required=False,
-        label="Fecha de finalización",
+        label="Finalizar recurrencia",
+        help_text=(
+            "Déjalo vacío si el gasto debe continuar "
+            "sin una fecha final."
+        ),
         input_formats=[
             "%Y-%m-%d",
         ],
@@ -298,6 +238,10 @@ class GastoForm(forms.ModelForm):
         required=False,
         initial=True,
         label="Recordarme subir la factura",
+        help_text=(
+            "La factura podrá añadirse después "
+            "desde los movimientos pendientes."
+        ),
         widget=forms.CheckboxInput(
             attrs={
                 "class": "gastos-checkbox",
@@ -306,7 +250,6 @@ class GastoForm(forms.ModelForm):
     )
 
     class Meta:
-
         model = Gasto
 
         fields = [
@@ -343,10 +286,8 @@ class GastoForm(forms.ModelForm):
             "proveedor": "Proveedor",
             "concepto": "Concepto",
             "importe": "Importe",
-            "fecha": "Fecha",
-            "cotizacion_usd": (
-                "Dólar blue venta"
-            ),
+            "fecha": "Fecha del cargo",
+            "cotizacion_usd": "Dólar blue venta",
             "pagado": "El gasto ya está pagado",
             "destino_gestoria": (
                 "¿Debe enviarse a la gestoría?"
@@ -462,18 +403,15 @@ class GastoForm(forms.ModelForm):
                     "class": "gastos-control",
                 },
             ),
-            "justificante": (
-                forms.ClearableFileInput(
-                    attrs={
-                        "class": "gastos-file",
-                        "accept": (
-                            ".pdf,.jpg,.jpeg,.png,"
-                            ".webp,application/pdf,"
-                            "image/jpeg,image/png,"
-                            "image/webp"
-                        ),
-                    },
-                )
+            "justificante": forms.ClearableFileInput(
+                attrs={
+                    "class": "gastos-file",
+                    "accept": (
+                        ".pdf,.jpg,.jpeg,.png,.webp,"
+                        "application/pdf,"
+                        "image/jpeg,image/png,image/webp"
+                    ),
+                },
             ),
             "notas": forms.Textarea(
                 attrs={
@@ -504,6 +442,19 @@ class GastoForm(forms.ModelForm):
             **kwargs,
         )
 
+        # La factura nunca es obligatoria al crear
+        # el gasto o la configuración recurrente.
+        self.fields[
+            "justificante"
+        ].required = False
+
+        self.fields[
+            "justificante"
+        ].help_text = (
+            "Opcional. También puedes añadirla después "
+            "desde los movimientos pendientes."
+        )
+
         self.fields["ambito"].choices = [
             ("empresa", "Sociedad"),
             ("propiedad", "Propiedad"),
@@ -523,12 +474,15 @@ class GastoForm(forms.ModelForm):
             "unidad_consumo",
             "concepto",
             "cotizacion_usd",
+            "justificante",
+            "notas",
         ]
 
         for nombre in campos_opcionales:
             self.fields[nombre].required = False
 
         self.fields["importe"].required = True
+        self.fields["fecha"].required = True
 
         self.fields["propiedad"].empty_label = (
             "Selecciona una propiedad"
@@ -576,21 +530,9 @@ class GastoForm(forms.ModelForm):
             not self.is_bound
             and not self.instance.pk
         ):
-            hoy = timezone.localdate()
-
-            self.fields["fecha"].initial = hoy
-
-            self.fields[
-                "fecha_inicio"
-            ].initial = hoy
-
-            self.fields[
-                "dia_generacion"
-            ].initial = hoy.day
-
-            self.fields[
-                "mes_generacion"
-            ].initial = hoy.month
+            self.fields["fecha"].initial = (
+                timezone.localdate()
+            )
 
         if (
             self.instance
@@ -690,8 +632,13 @@ class GastoForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super().clean()
 
-        pais = cleaned_data.get("pais")
-        ambito = cleaned_data.get("ambito")
+        pais = cleaned_data.get(
+            "pais"
+        )
+
+        ambito = cleaned_data.get(
+            "ambito"
+        )
 
         propiedad = cleaned_data.get(
             "propiedad"
@@ -742,22 +689,9 @@ class GastoForm(forms.ModelForm):
             "frecuencia"
         )
 
-        dia_generacion = cleaned_data.get(
-            "dia_generacion"
-        )
-
-        mes_generacion = cleaned_data.get(
-            "mes_generacion"
-        )
-
-        fecha_inicio = cleaned_data.get(
-            "fecha_inicio"
-        )
-
         fecha_fin = cleaned_data.get(
             "fecha_fin"
         )
-
 
         # =================================================
         # PAÍS, MONEDA Y DESTINO
@@ -813,7 +747,6 @@ class GastoForm(forms.ModelForm):
                         "superior a cero."
                     ),
                 )
-
 
         # =================================================
         # DESTINO
@@ -889,7 +822,6 @@ class GastoForm(forms.ModelForm):
                 ),
             )
 
-
         # =================================================
         # SUMINISTROS
         # =================================================
@@ -954,7 +886,6 @@ class GastoForm(forms.ModelForm):
             self.instance.consumo = None
             self.instance.unidad_consumo = ""
 
-
         # =================================================
         # IMPORTE
         # =================================================
@@ -974,7 +905,6 @@ class GastoForm(forms.ModelForm):
                 ),
             )
 
-
         # =================================================
         # RECURRENCIA
         # =================================================
@@ -986,50 +916,34 @@ class GastoForm(forms.ModelForm):
                     "Selecciona la frecuencia.",
                 )
 
-            if dia_generacion is None:
+            # La fecha del cargo es también la fecha
+            # inicial de la recurrencia.
+            if not fecha:
                 self.add_error(
-                    "dia_generacion",
+                    "fecha",
                     (
-                        "Indica el día previsto "
-                        "de generación."
+                        "Indica la fecha del "
+                        "primer cargo."
                     ),
                 )
 
-            if not fecha_inicio:
-                fecha_inicio = (
-                    fecha
-                    or timezone.localdate()
-                )
-
-                cleaned_data[
-                    "fecha_inicio"
-                ] = fecha_inicio
-
             if (
-                fecha_inicio
+                fecha
                 and fecha_fin
-                and fecha_fin < fecha_inicio
+                and fecha_fin < fecha
             ):
                 self.add_error(
                     "fecha_fin",
                     (
-                        "La fecha de finalización "
-                        "no puede ser anterior "
-                        "a la fecha de inicio."
+                        "La fecha de finalización no "
+                        "puede ser anterior a la fecha "
+                        "del primer cargo."
                     ),
                 )
 
-            if (
-                frecuencia == "anual"
-                and not mes_generacion
-            ):
-                self.add_error(
-                    "mes_generacion",
-                    (
-                        "Selecciona el mes del "
-                        "gasto anual."
-                    ),
-                )
+        else:
+            cleaned_data["frecuencia"] = ""
+            cleaned_data["fecha_fin"] = None
 
         return cleaned_data
 
@@ -1081,7 +995,7 @@ class GastoForm(forms.ModelForm):
                 )
             )
 
-        return archivo
+        return archivoestos
 
 class CompletarGastoPendienteForm(forms.Form):
 

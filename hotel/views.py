@@ -4868,9 +4868,6 @@ class CrearGastoView(
             initial={
                 "pagado": True,
                 "fecha": hoy,
-                "fecha_inicio": hoy,
-                "dia_generacion": hoy.day,
-                "mes_generacion": hoy.month,
                 "requiere_justificante": True,
             },
         )
@@ -4892,11 +4889,6 @@ class CrearGastoView(
         )
 
         if not form.is_valid():
-            print("\n===== ERROR AL CREAR GASTO =====")
-            print(form.errors.as_json())
-            print("Datos recibidos:", request.POST)
-            print("Archivos recibidos:", request.FILES)
-            print("================================\n")
             messages.error(
                 request,
                 "Revisa los campos señalados.",
@@ -4957,16 +4949,12 @@ class CrearGastoView(
                     gasto=gasto,
                 )
 
-                fecha_periodo = (
-                        datos.get("fecha")
-                        or datos.get("fecha_inicio")
-                        or timezone.localdate()
+                gasto.gasto_recurrente = recurrente
+
+                gasto.periodo_recurrente = (
+                    gasto.fecha.replace(day=1)
                 )
 
-                gasto.gasto_recurrente = recurrente
-                gasto.periodo_recurrente = (
-                    fecha_periodo.replace(day=1)
-                )
                 gasto.tipo = "recurrente"
                 gasto.generado_automaticamente = False
 
@@ -4979,13 +4967,12 @@ class CrearGastoView(
             gasto.save()
             form.save_m2m()
 
-
         if es_recurrente:
             mensaje = (
                 f'El gasto fijo "{gasto.titulo}" '
                 "se ha registrado correctamente. "
-                "Los próximos movimientos se "
-                "generarán automáticamente."
+                "El justificante podrá añadirse "
+                "al movimiento correspondiente."
             )
 
         else:
@@ -5034,68 +5021,65 @@ class CrearGastoView(
             or "Gasto fijo"
         )
 
+        # La fecha del primer cargo también es la fecha
+        # inicial de la recurrencia.
         fecha_inicio = (
-            datos.get("fecha_inicio")
-            or datos.get("fecha")
+            gasto.fecha
             or timezone.localdate()
         )
 
-        recurrente = (
-            GastoRecurrente.objects.create(
-                nombre=nombre,
-                pais=datos.get("pais"),
-                ambito=datos.get("ambito"),
-                propiedad=datos.get(
-                    "propiedad"
-                ),
-                habitacion=datos.get(
-                    "habitacion"
-                ),
-                proyecto=datos.get(
-                    "proyecto"
-                ),
-                categoria=datos.get(
-                    "categoria"
-                ),
-                tipo_suministro=datos.get(
-                    "tipo_suministro",
-                    "",
-                ),
-                tipo="recurrente",
-                importe=datos.get("importe"),
-                proveedor=proveedor,
-                concepto=concepto,
-                frecuencia=datos.get(
-                    "frecuencia"
-                ),
-                dia_generacion=datos.get(
-                    "dia_generacion"
-                ),
-                mes_generacion=datos.get(
-                    "mes_generacion"
-                ),
-                fecha_inicio=fecha_inicio,
-                fecha_fin=datos.get(
-                    "fecha_fin"
-                ),
-                pagado_por_defecto=datos.get(
-                    "pagado",
-                    True,
-                ),
-                requiere_justificante=datos.get(
-                    "requiere_justificante",
-                    True,
-                ),
-                destino_gestoria=datos.get(
-                    "destino_gestoria"
-                ),
-                notas=datos.get(
-                    "notas",
-                    "",
-                ),
-                activo=True,
-            )
+        recurrente = GastoRecurrente(
+            nombre=nombre,
+            pais=datos.get("pais"),
+            ambito=datos.get("ambito"),
+            propiedad=datos.get(
+                "propiedad"
+            ),
+            habitacion=datos.get(
+                "habitacion"
+            ),
+            proyecto=datos.get(
+                "proyecto"
+            ),
+            categoria=datos.get(
+                "categoria"
+            ),
+            tipo_suministro=datos.get(
+                "tipo_suministro",
+                "",
+            ),
+            tipo="recurrente",
+            importe=datos.get("importe"),
+            proveedor=proveedor,
+            concepto=concepto,
+            frecuencia=datos.get(
+                "frecuencia"
+            ),
+            fecha_inicio=fecha_inicio,
+            fecha_fin=datos.get(
+                "fecha_fin"
+            ),
+            pagado_por_defecto=datos.get(
+                "pagado",
+                True,
+            ),
+            requiere_justificante=datos.get(
+                "requiere_justificante",
+                True,
+            ),
+            destino_gestoria=(
+                datos.get("destino_gestoria")
+                or "gestoria"
+            ),
+            notas=datos.get(
+                "notas",
+                "",
+            ),
+            activo=True,
         )
+
+        recurrente.full_clean()
+        recurrente.save()
 
         return recurrente
 
@@ -5555,7 +5539,23 @@ class EditarGastoRecurrenteView(
             return redirect(
                 "hotel:gastos_dashboard"
             )
+        if not form.is_valid():
+            print("\n===== ERROR AL EDITAR RECURRENCIA =====")
+            print(form.errors.as_json())
+            print("Errores generales:", form.non_field_errors())
+            print("Datos recibidos:", request.POST)
+            print("=======================================\n")
 
+            messages.error(
+                request,
+                "Revisa los campos señalados.",
+            )
+
+            return self.render_form(
+                request=request,
+                form=form,
+                recurrente=recurrente,
+            )
         messages.error(
             request,
             "Revisa los campos señalados.",

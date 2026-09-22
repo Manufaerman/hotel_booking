@@ -1242,15 +1242,14 @@ class GastoRecurrente(models.Model):
         errores = {}
 
         if (
-            self.importe is not None
-            and self.importe <= 0
+                self.importe is not None
+                and self.importe <= 0
         ):
             errores["importe"] = (
                 "El importe habitual debe ser superior a cero."
             )
 
         if self.ambito == "empresa":
-
             if self.propiedad_id:
                 errores["propiedad"] = (
                     "Un gasto general no debe tener propiedad."
@@ -1267,7 +1266,6 @@ class GastoRecurrente(models.Model):
                 )
 
         elif self.ambito == "propiedad":
-
             if not self.propiedad_id:
                 errores["propiedad"] = (
                     "Selecciona una propiedad."
@@ -1279,17 +1277,16 @@ class GastoRecurrente(models.Model):
                 )
 
             if (
-                self.habitacion_id
-                and self.propiedad_id
-                and self.habitacion.propiedad_id
-                != self.propiedad_id
+                    self.habitacion_id
+                    and self.propiedad_id
+                    and self.habitacion.propiedad_id
+                    != self.propiedad_id
             ):
                 errores["habitacion"] = (
                     "La habitación no pertenece a la propiedad."
                 )
 
         elif self.ambito == "proyecto":
-
             if not self.proyecto_id:
                 errores["proyecto"] = (
                     "Selecciona un proyecto."
@@ -1306,8 +1303,8 @@ class GastoRecurrente(models.Model):
                 )
 
             if (
-                self.proyecto_id
-                and self.proyecto.pais != self.pais
+                    self.proyecto_id
+                    and self.proyecto.pais != self.pais
             ):
                 errores["proyecto"] = (
                     "El proyecto no pertenece al país seleccionado."
@@ -1318,39 +1315,18 @@ class GastoRecurrente(models.Model):
                 "Selecciona el ámbito del gasto recurrente."
             )
 
-        if (
-            self.categoria != "suministros"
-            and self.tipo_suministro
-        ):
-            errores["tipo_suministro"] = (
-                "El tipo de suministro solamente se utiliza "
-                "para la categoría Suministros."
-            )
-
-        if not 1 <= self.dia_generacion <= 31:
-            errores["dia_generacion"] = (
-                "El día de generación debe estar entre 1 y 31."
-            )
+        if self.categoria == "suministros":
+            if not self.tipo_suministro:
+                errores["tipo_suministro"] = (
+                    "Selecciona el tipo de suministro."
+                )
+        else:
+            self.tipo_suministro = ""
 
         if (
-            self.frecuencia == "anual"
-            and not self.mes_generacion
-        ):
-            errores["mes_generacion"] = (
-                "Selecciona el mes del gasto anual."
-            )
-
-        if (
-            self.mes_generacion is not None
-            and not 1 <= self.mes_generacion <= 12
-        ):
-            errores["mes_generacion"] = (
-                "El mes debe estar entre 1 y 12."
-            )
-
-        if (
-            self.fecha_fin
-            and self.fecha_fin < self.fecha_inicio
+                self.fecha_fin
+                and self.fecha_inicio
+                and self.fecha_fin < self.fecha_inicio
         ):
             errores["fecha_fin"] = (
                 "La fecha final no puede ser anterior "
@@ -1359,6 +1335,23 @@ class GastoRecurrente(models.Model):
 
         if errores:
             raise ValidationError(errores)
+
+    def save(self, *args, **kwargs):
+        if not self.fecha_inicio:
+            self.fecha_inicio = timezone.localdate()
+
+        # La fecha inicial determina automáticamente cuándo se genera.
+        self.dia_generacion = self.fecha_inicio.day
+
+        if self.frecuencia == "anual":
+            self.mes_generacion = self.fecha_inicio.month
+        else:
+            self.mes_generacion = None
+
+        if self.categoria != "suministros":
+            self.tipo_suministro = ""
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return (
