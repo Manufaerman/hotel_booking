@@ -4889,6 +4889,12 @@ class CrearGastoView(
         )
 
         if not form.is_valid():
+            print("\n===== ERROR AL CREAR GASTO =====")
+            print(form.errors.as_json())
+            print("Errores generales:", form.non_field_errors())
+            print("Datos recibidos:", request.POST)
+            print("Archivos recibidos:", request.FILES)
+            print("================================\n")
             messages.error(
                 request,
                 "Revisa los campos señalados.",
