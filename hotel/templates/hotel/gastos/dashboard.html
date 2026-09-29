@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block extra-head %}
+
 <link
     rel="stylesheet"
     href="{% static 'hotel/css/gastos_dashboard.css' %}"
@@ -20,7 +21,9 @@
     src="{% static 'hotel/js/gastos_dashboard.js' %}"
     defer
 ></script>
+
 {% endblock %}
+
 
 {% block content %}
 
@@ -43,7 +46,9 @@
     {% include "hotel/gastos/includes/_movimientos.html" %}
 
     {% if es_espana %}
+
         {% include "hotel/gastos/includes/_gestoria.html" %}
+
     {% endif %}
 
     {% include "hotel/gastos/includes/_recurrentes.html" %}
@@ -51,25 +56,74 @@
 </main>
 
 
+{# =========================================================
+   GRÁFICO ANTERIOR: PREVISIÓN POR CATEGORÍAS
+   Se conserva por compatibilidad con el JavaScript actual.
+========================================================= #}
+
 {{ grafico_esperado_labels|json_script:"grafico-esperado-labels" }}
+
 {{ grafico_esperado_valores|json_script:"grafico-esperado-valores" }}
+
 {{ grafico_esperado_reales|json_script:"grafico-esperado-reales" }}
+
 {{ grafico_esperado_colores|json_script:"grafico-esperado-colores" }}
 
+
+{# =========================================================
+   GRÁFICO DEL MES ACTUAL
+========================================================= #}
+
 {{ grafico_mes_labels|json_script:"grafico-mes-labels" }}
+
 {{ grafico_mes_valores|json_script:"grafico-mes-valores" }}
+
 {{ grafico_mes_colores|json_script:"grafico-mes-colores" }}
 
+
+{# =========================================================
+   GRÁFICO DEL MES ANTERIOR
+========================================================= #}
+
 {{ grafico_mes_anterior_labels|json_script:"grafico-mes-anterior-labels" }}
+
 {{ grafico_mes_anterior_valores|json_script:"grafico-mes-anterior-valores" }}
+
 {{ grafico_mes_anterior_colores|json_script:"grafico-mes-anterior-colores" }}
 
+
+{# =========================================================
+   GRÁFICO ANUAL POR CATEGORÍAS
+========================================================= #}
+
 {{ grafico_anio_labels|json_script:"grafico-anio-labels" }}
+
 {{ grafico_anio_valores|json_script:"grafico-anio-valores" }}
+
 {{ grafico_anio_colores|json_script:"grafico-anio-colores" }}
 
+
+{# =========================================================
+   NUEVO GRÁFICO DE 12 MESES
+========================================================= #}
+
+{{ grafico_12_meses_labels|json_script:"grafico-12-meses-labels" }}
+
+{{ grafico_12_meses_esperados|json_script:"grafico-12-meses-esperados" }}
+
+{{ grafico_12_meses_esporadicos|json_script:"grafico-12-meses-esporadicos" }}
+
+{{ grafico_12_meses_prorrateados|json_script:"grafico-12-meses-prorrateados" }}
+
+
+{# =========================================================
+   COMPARATIVA
+========================================================= #}
+
 {{ comparativa_labels|json_script:"comparativa-labels" }}
+
 {{ comparativa_valores|json_script:"comparativa-valores" }}
+
 {{ comparativa_colores|json_script:"comparativa-colores" }}
 
 {% endblock %}

@@ -337,11 +337,176 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    /* =====================================================
-       CREAR LOS CUATRO GRÁFICOS
-    ===================================================== */
+   /* =====================================================
+   CREAR LOS GRÁFICOS
+===================================================== */
 
-    createExpectedChart();
+createAnnualPlanChart();
+
+createExpectedChart();
+
+    function createAnnualPlanChart() {
+    if (typeof Chart === "undefined") {
+        console.warn(
+            "Chart.js no está disponible."
+        );
+
+        return;
+    }
+
+    const canvas =
+        document.getElementById(
+            "gastos-chart-12-meses"
+        );
+
+    if (!canvas) {
+        return;
+    }
+
+    const labels = readJson(
+        "grafico-12-meses-labels"
+    );
+
+    const expectedValues = readJson(
+        "grafico-12-meses-esperados"
+    );
+
+    const sporadicValues = readJson(
+        "grafico-12-meses-esporadicos"
+    );
+
+    const proratedValues = readJson(
+        "grafico-12-meses-prorrateados"
+    );
+
+    if (!labels.length) {
+        return;
+    }
+
+    new Chart(
+        canvas,
+        {
+            type: "line",
+
+            data: {
+                labels: labels,
+
+                datasets: [
+                    {
+                        label: "Gastos esperados",
+
+                        data: expectedValues,
+
+                        borderColor: "#745f6d",
+                        backgroundColor:
+                            "rgba(116, 95, 109, 0.10)",
+
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+
+                        tension: 0.35,
+                        fill: false,
+                    },
+
+                    {
+                        label: "Gastos esporádicos",
+
+                        data: sporadicValues,
+
+                        borderColor: "#c9a7ad",
+                        backgroundColor:
+                            "rgba(201, 167, 173, 0.10)",
+
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+
+                        tension: 0.35,
+                        fill: false,
+                    },
+
+                    {
+                        label: "Coste recurrente prorrateado",
+
+                        data: proratedValues,
+
+                        borderColor: "#72a5a1",
+                        backgroundColor:
+                            "rgba(114, 165, 161, 0.10)",
+
+                        borderWidth: 3,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+
+                        tension: 0.35,
+                        fill: false,
+                    },
+                ],
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+
+                interaction: {
+                    mode: "index",
+                    intersect: false,
+                },
+
+                scales: {
+                    y: {
+                        beginAtZero: true,
+
+                        ticks: {
+                            color: softTextColor,
+
+                            callback: function (value) {
+                                return formatCurrency(
+                                    value
+                                );
+                            },
+                        },
+
+                        grid: {
+                            color: gridColor,
+                        },
+                    },
+
+                    x: {
+                        ticks: {
+                            color: textColor,
+                        },
+
+                        grid: {
+                            display: false,
+                        },
+                    },
+                },
+
+                plugins: {
+                    legend: {
+                        display: false,
+                    },
+
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return (
+                                    context.dataset.label
+                                    + ": "
+                                    + formatCurrency(
+                                        context.raw
+                                    )
+                                );
+                            },
+                        },
+                    },
+                },
+            },
+        }
+    );
+}
 
 
     createDoughnutChart({

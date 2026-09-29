@@ -5,38 +5,37 @@
 
     <header class="gastos-analytics-header gastos-insights-header">
 
-    <h2>
-        Centro de análisis
-    </h2>
+        <h2>
+            Centro de análisis
+        </h2>
 
+        <div class="gastos-slider-controls">
 
-    <div class="gastos-slider-controls">
+            <button
+                type="button"
+                id="gastos-slider-prev"
+                aria-label="Gráfico anterior"
+            >
+                <i
+                    class="fa fa-arrow-left"
+                    aria-hidden="true"
+                ></i>
+            </button>
 
-        <button
-            type="button"
-            id="gastos-slider-prev"
-            aria-label="Gráfico anterior"
-        >
-            <i
-                class="fa fa-arrow-left"
-                aria-hidden="true"
-            ></i>
-        </button>
+            <button
+                type="button"
+                id="gastos-slider-next"
+                aria-label="Gráfico siguiente"
+            >
+                <i
+                    class="fa fa-arrow-right"
+                    aria-hidden="true"
+                ></i>
+            </button>
 
-        <button
-            type="button"
-            id="gastos-slider-next"
-            aria-label="Gráfico siguiente"
-        >
-            <i
-                class="fa fa-arrow-right"
-                aria-hidden="true"
-            ></i>
-        </button>
+        </div>
 
-    </div>
-
-</header>
+    </header>
 
 
     <div
@@ -44,7 +43,7 @@
         id="gastos-slider"
     >
 
-        <!-- PREVISIÓN -->
+        <!-- PLAN ANUAL -->
 
         <article class="gastos-slide">
 
@@ -54,69 +53,73 @@
 
                     <div>
                         <span class="gastos-slide-kicker">
-                            Previsión
+                            Plan anual
                         </span>
 
                         <h3>
-                            Gastos esperados en
-                            {{ nombre_mes_actual }}
+                            Evolución prevista de
+                            {{ anio_seleccionado }}
                         </h3>
-                    </div>
 
-                    <strong class="gastos-slide-total">
-                        {{ total_esperado_mes|floatformat:2 }}
-                        {{ simbolo_moneda }}
-                    </strong>
+                        <p class="gastos-slide-description">
+                            Compara los gastos recurrentes,
+                            los esporádicos y el coste mensual
+                            prorrateado.
+                        </p>
+                    </div>
 
                 </header>
 
 
-                <div class="gastos-slide-metrics">
+                <div class="gastos-slide-legend">
 
-                    <div>
-                        <span>Gastado</span>
+                    <span>
+                        <i
+                            class="
+                                legend-dot
+                                legend-dot-expected
+                            "
+                        ></i>
 
-                        <strong>
-                            {{ total_mes_actual|floatformat:2 }}
-                            {{ simbolo_moneda }}
-                        </strong>
-                    </div>
+                        Gastos esperados
+                    </span>
 
-                    <div>
-                        <span>Pendiente</span>
+                    <span>
+                        <i
+                            class="
+                                legend-dot
+                                legend-dot-extra
+                            "
+                        ></i>
 
-                        <strong>
-                            {{ pendiente_previsto_mes|floatformat:2 }}
-                            {{ simbolo_moneda }}
-                        </strong>
-                    </div>
+                        Gastos esporádicos
+                    </span>
 
-                    <div>
-                        <span>Fijo mensual</span>
+                    <span>
+                        <i
+                            class="
+                                legend-dot
+                                legend-dot-average
+                            "
+                        ></i>
 
-                        <strong>
-                            {{ total_fijo_mensual|floatformat:2 }}
-                            {{ simbolo_moneda }}
-                        </strong>
-                    </div>
+                        Coste recurrente prorrateado
+                    </span>
 
                 </div>
 
 
-                {% if grafico_esperado_labels %}
-
-                    <div class="gastos-chart-container gastos-chart-slider">
-                        <canvas id="gastos-chart-esperado"></canvas>
-                    </div>
-
-                {% else %}
-
-                    <div class="gastos-chart-empty">
-                        <span>🌱</span>
-                        <p>Todavía no hay una previsión disponible.</p>
-                    </div>
-
-                {% endif %}
+                <div
+                    class="
+                        gastos-chart-container
+                        gastos-chart-slider
+                        gastos-chart-anual
+                    "
+                >
+                    <canvas
+                        id="gastos-chart-12-meses"
+                    ></canvas>
+                </div>
 
             </div>
 
@@ -151,15 +154,25 @@
 
                 {% if grafico_mes_labels %}
 
-                    <div class="gastos-chart-container gastos-chart-slider">
-                        <canvas id="gastos-chart-mes"></canvas>
+                    <div
+                        class="
+                            gastos-chart-container
+                            gastos-chart-slider
+                        "
+                    >
+                        <canvas
+                            id="gastos-chart-mes"
+                        ></canvas>
                     </div>
 
                 {% else %}
 
                     <div class="gastos-chart-empty">
                         <span>🌿</span>
-                        <p>No hay movimientos este mes.</p>
+
+                        <p>
+                            No hay movimientos este mes.
+                        </p>
                     </div>
 
                 {% endif %}
@@ -197,15 +210,25 @@
 
                 {% if grafico_mes_anterior_labels %}
 
-                    <div class="gastos-chart-container gastos-chart-slider">
-                        <canvas id="gastos-chart-mes-anterior"></canvas>
+                    <div
+                        class="
+                            gastos-chart-container
+                            gastos-chart-slider
+                        "
+                    >
+                        <canvas
+                            id="gastos-chart-mes-anterior"
+                        ></canvas>
                     </div>
 
                 {% else %}
 
                     <div class="gastos-chart-empty">
                         <span>🌱</span>
-                        <p>No hubo movimientos el mes anterior.</p>
+
+                        <p>
+                            No hubo movimientos el mes anterior.
+                        </p>
                     </div>
 
                 {% endif %}
@@ -215,7 +238,7 @@
         </article>
 
 
-        <!-- AÑO -->
+        <!-- ACUMULADO ANUAL -->
 
         <article class="gastos-slide">
 
@@ -243,15 +266,25 @@
 
                 {% if grafico_anio_labels %}
 
-                    <div class="gastos-chart-container gastos-chart-slider">
-                        <canvas id="gastos-chart-anio"></canvas>
+                    <div
+                        class="
+                            gastos-chart-container
+                            gastos-chart-slider
+                        "
+                    >
+                        <canvas
+                            id="gastos-chart-anio"
+                        ></canvas>
                     </div>
 
                 {% else %}
 
                     <div class="gastos-chart-empty">
                         <span>🌿</span>
-                        <p>No hay gastos registrados este año.</p>
+
+                        <p>
+                            No hay gastos registrados este año.
+                        </p>
                     </div>
 
                 {% endif %}
@@ -272,9 +305,13 @@
 
         <span class="gastos-slider-hint">
             Desliza para ver más
-            <i class="fa fa-arrow-right"></i>
+
+            <i
+                class="fa fa-arrow-right"
+                aria-hidden="true"
+            ></i>
         </span>
 
     </footer>
 
-</section>
+</section>x

@@ -3416,6 +3416,20 @@ class GastosDashboardView(
             )
         )
 
+        # =====================================================
+        # GRÁFICO ANUAL DE GASTOS
+        # =====================================================
+
+        grafico_12_meses = (
+            self.calcular_grafico_12_meses(
+                year=hoy.year,
+                gastos=gastos_base,
+                recurrentes=gastos_recurrentes_activos,
+                campo_importe=campo_importe,
+                pais=pais_actual,
+            )
+        )
+
         gastos_recurrentes_inactivos = (
             gastos_recurrentes.filter(
                 activo=False
@@ -3814,7 +3828,23 @@ class GastosDashboardView(
 
         context = {
             "hoy": hoy,
+            # Gráfico anual de previsión y gasto
 
+            "grafico_12_meses_labels": (
+                grafico_12_meses["labels"]
+            ),
+
+            "grafico_12_meses_esperados": (
+                grafico_12_meses["esperados"]
+            ),
+
+            "grafico_12_meses_esporadicos": (
+                grafico_12_meses["esporadicos"]
+            ),
+
+            "grafico_12_meses_prorrateados": (
+                grafico_12_meses["prorrateados"]
+            ),
             # Espacio financiero
             "pais_actual": pais_actual,
             "es_espana": es_espana,
@@ -4339,6 +4369,193 @@ class GastosDashboardView(
             "pendiente_previsto":
                 pendiente_previsto,
         }
+
+    def calcular_grafico_12_meses(
+            self,
+            year,
+            gastos,
+            recurrentes,
+            campo_importe,
+            pais,
+    ):
+        labels = [
+            "Ene",
+            "Feb",
+            "Mar",
+            "Abr",
+            "May",
+            "Jun",
+            "Jul",
+            "Ago",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dic",
+        ]
+
+        esperados = [
+            Decimal("0.00")
+            for _ in range(12)
+        ]
+
+        esporadicos = [
+            Decimal("0.00")
+            for _ in range(12)
+        ]
+
+        prorrateados = [
+            Decimal("0.00")
+            for _ in range(12)
+        ]
+
+        # ---------------------------------------------
+        # GASTOS ESPORÁDICOS
+        # ---------------------------------------------
+
+        condicion_recurrente = (
+                Q(
+                    gasto_recurrente__isnull=False
+                )
+                | Q(
+            generado_automaticamente=True
+        )
+                | Q(
+            tipo="recurrente"
+        )
+        )
+
+        gastos_esporadicos = (
+            gastos
+            .filter(
+                fecha__year=year,
+            )
+            .exclude(
+                condicion_recurrente
+            )
+            .values(
+                "fecha__month"
+            )
+            .annotate(
+                total=Sum(
+                    campo_importe
+                )
+            )
+        )
+
+        for fila in gastos_esporadicos:
+            mes = fila["fecha__month"]
+
+            if not mes:
+                continue
+
+            esporadicos[mes - 1] += (
+                    fila["total"]
+                    or Decimal("0.00")
+            )
+
+        # ---------------------------------------------
+        # GASTOS RECURRENTES
+        # ---------------------------------------------
+
+        for recurrente in recurrentes:
+
+            if not recurrente.fecha_inicio:
+                continue
+
+            importe = (
+                self.obtener_importe_estimado_recurrente(
+                    recurrente=recurrente,
+                    inicio_mes=date(year, 1, 1),
+                    fin_mes=date(year, 12, 31),
+                    pais=pais,
+                )
+            )
+
+            if importe is None:
+                continue
+
+            importe = Decimal(importe)
+
+            divisor = (
+                self.DIVISORES_FRECUENCIA.get(
+                    recurrente.frecuencia,
+                    Decimal("1"),
+                )
+            )
+
+            importe_prorrateado = (
+                    importe / divisor
+            )
+
+            for numero_mes in range(1, 13):
+
+                primer_dia_mes = date(
+                    year,
+                    numero_mes,
+                    1,
+                )
+
+                ultimo_dia_mes = date(
+                    year,
+                    numero_mes,
+                    calendar.monthrange(
+                        year,
+                        numero_mes,
+                    )[1],
+                )
+
+                # La recurrencia todavía no había comenzado.
+                if (
+                        recurrente.fecha_inicio
+                        > ultimo_dia_mes
+                ):
+                    continue
+
+                # La recurrencia ya había terminado.
+                if (
+                        recurrente.fecha_fin
+                        and recurrente.fecha_fin
+                        < primer_dia_mes
+                ):
+                    continue
+
+                # -----------------------------------------
+                # Línea de coste mensual prorrateado
+                # -----------------------------------------
+
+                prorrateados[
+                    numero_mes - 1
+                    ] += importe_prorrateado
+
+                # -----------------------------------------
+                # Línea de gastos esperados reales
+                # -----------------------------------------
+
+                if self.recurrente_corresponde_al_mes(
+                        recurrente,
+                        year,
+                        numero_mes,
+                ):
+                    esperados[
+                        numero_mes - 1
+                        ] += importe
+
+        return {
+            "labels": labels,
+            "esperados": [
+                float(valor.quantize(Decimal("0.01")))
+                for valor in esperados
+            ],
+            "esporadicos": [
+                float(valor.quantize(Decimal("0.01")))
+                for valor in esporadicos
+            ],
+            "prorrateados": [
+                float(valor.quantize(Decimal("0.01")))
+                for valor in prorrateados
+            ],
+        }
+
 
     def obtener_importe_estimado_recurrente(
         self,

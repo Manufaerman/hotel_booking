@@ -566,7 +566,7 @@ class Gasto(models.Model):
         ("impuestos", "Impuestos y tasas"),
         ("reparaciones", "Reparaciones y mantenimiento"),
         ("mejoras", "Mejoras e inversión"),
-        ("gestion", "Gestión y servicios profesionales"),
+        ("gestion", "Gestión y direccion ejecutiva"),
         ("gestion_remota", "Gestión remota"),
         ("hipotecas_seguros", "Hipotecas y seguros"),
         ("otros", "Otros"),
