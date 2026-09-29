@@ -1,124 +1,31 @@
+<button
+    type="button"
+    class="dashboard-chart-period is-active"
+    data-periodo="6"
+>
+    6 meses
+</button>
 
-var endpoint = '/api/chart/data/'
-var defaultData = [];
-var labels = [];
-var rowData = []
+<button
+    type="button"
+    class="dashboard-chart-period"
+    data-periodo="12"
+>
+    1 año
+</button>
 
-$.ajax({
-	method:"GET",
-	url: endpoint,
-	success: function(data){
-		defaultData = data.uno
-		labels = data.labels
-		rowData = data.dos
-		setChart();
+<button
+    type="button"
+    class="dashboard-chart-period"
+    data-periodo="24"
+>
+    2 años
+</button>
 
-		},
-		error: function(error_data){
-			console.log('error')
-			console.log(error_data)
-		}
-})
-
-function setChart(){
-	const ctx = document.getElementById('myChart');
-	const ctx2 = document.getElementById('myChart2');
-	const ctx3 = document.getElementById('myChart3');
-	const ctx4 = document.getElementById('myChart4');
-    console.log(rowData);
-
-
-	  	new Chart(ctx, {
-			type: 'bar',
-			data: {
-		  		labels: labels,
-		  	datasets: [{
-				label: '2023 total',
-				data: defaultData,
-				borderWidth: 1
-		  }]
-
-		},
-		options: {
-		  scales: {
-			y: {
-			  beginAtZero: true
-			}
-		  }
-		}
-	  });
-
-	new Chart(ctx2, {
-			type: 'line',
-			data: {
-		  		labels: labels,
-		  	datasets: [{
-				label: '2023 total',
-				data: defaultData,
-				borderWidth: 1
-		  }]
-
-		},
-		options: {
-		  scales: {
-			y: {
-			  beginAtZero: true
-			}
-		  }
-		}
-	  });
-
-		new Chart(ctx3, {
-			type: 'line',
-			data: {
-		  		labels: labels,
-		  	datasets: [
-		{
-      label: 'Dataset 1',
-      data: defaultData,
-      yAxisID: 'y',
-    },
-    {
-      label: 'Dataset 2',
-      data: rowData,
-      yAxisID: 'y1',
-    }
-]
-
-		},
-		options: {
-		  scales: {
-			y: {
-			  beginAtZero: true
-			}
-		  }
-		}
-	  });
-
-new Chart(ctx4, {
-			type: 'bar',
-			data: {
-		  		labels: labels,
-		  	datasets: [
-		{
-      label: 'Dataset 1',
-      data: defaultData,
-      yAxisID: 'y',
-    },
-    {
-      label: 'Dataset 2',
-      data: rowData,
-      yAxisID: 'y1',
-    }
-]
-
-		},
-		options: {
-		  scales: {
-			y: {
-			  beginAtZero: true
-			}
-		  }
-		}
-	  });
-}
+<button
+    type="button"
+    class="dashboard-chart-period"
+    data-periodo="48"
+>
+    4 años
+</button>

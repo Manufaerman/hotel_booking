@@ -168,6 +168,69 @@
     </div>
 
 </div>
+    <section class="dashboard-chart-card dashboard-chart-card-wide">
+
+    <header class="dashboard-chart-header">
+
+        <div>
+            <span class="dashboard-chart-eyebrow">
+                EVOLUCIÓN FINANCIERA
+            </span>
+
+            <h2>
+                Ingresos frente a gastos
+            </h2>
+
+            <p>
+                Comparativa histórica de los movimientos de la plataforma.
+            </p>
+        </div>
+
+        <div
+            class="dashboard-chart-periods"
+            role="group"
+            aria-label="Periodo del gráfico"
+        >
+            <button
+                type="button"
+                class="dashboard-chart-period is-active"
+                data-periodo="6"
+            >
+                6 meses
+            </button>
+
+            <button
+                type="button"
+                class="dashboard-chart-period"
+                data-periodo="12"
+            >
+                1 año
+            </button>
+
+            <button
+                type="button"
+                class="dashboard-chart-period"
+                data-periodo="24"
+            >
+                2 años
+            </button>
+
+            <button
+                type="button"
+                class="dashboard-chart-period"
+                data-periodo="48"
+            >
+                4 años
+            </button>
+        </div>
+
+    </header>
+
+   <div class="dashboard-chart-large">
+    <canvas id="incomeExpensesChart"></canvas>
+</div>
+
+</section>
 
     <div class="dashboard-grid">
 
@@ -196,24 +259,6 @@
     <div class="chart-header">
         <div>
             <h3>
-                Ingresos frente a gastos
-            </h3>
-
-            <p>
-                Comparativa de los últimos seis meses.
-            </p>
-        </div>
-    </div>
-
-    <canvas id="incomeExpensesChart"></canvas>
-
-</div>
-
-        <div class="chart-card">
-
-    <div class="chart-header">
-        <div>
-            <h3>
                 Gastos por categoría
             </h3>
 
@@ -231,12 +276,13 @@
 
 </section>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7"></script>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
-    const dataUrl = "{% url 'hotel:dashboard_chart_data' %}";
+    const dataUrl =
+        "{% url 'hotel:dashboard_chart_data' %}";
 
     const colores = {
         vino: "#745f6d",
@@ -245,15 +291,37 @@ document.addEventListener("DOMContentLoaded", function () {
         verde: "#72a5a1",
         verdeOscuro: "#527f7b",
         amarillo: "#e0c36f",
-        crema: "#f5f0e9",
-        texto: "#51343e"
+        crema: "#f5f0e9"
     };
+
+    let historicoFinanciero = {};
+    let graficoIngresosGastos = null;
 
     function obtenerCanvas(id) {
         return document.getElementById(id);
     }
 
-    function crearMensajeVacio(canvas, texto) {
+    function hayValores(valores) {
+        return (
+            Array.isArray(valores)
+            && valores.some(function (valor) {
+                return Number(valor) !== 0;
+            })
+        );
+    }
+
+    function euros(valor) {
+        return Number(valor || 0).toLocaleString(
+            "es-ES",
+            {
+                style: "currency",
+                currency: "EUR",
+                maximumFractionDigits: 0
+            }
+        );
+    }
+
+    function mostrarVacio(canvas, texto) {
         if (!canvas) {
             return;
         }
@@ -262,447 +330,497 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const mensaje = document.createElement("div");
 
-        mensaje.className = "chart-empty-message";
+        mensaje.className =
+            "chart-empty-message";
+
         mensaje.textContent = texto;
 
-        canvas.parentElement.appendChild(mensaje);
+        canvas.parentElement.appendChild(
+            mensaje
+        );
     }
 
-    function contieneValores(valores) {
-        return Array.isArray(valores)
-            && valores.some(function (valor) {
-                return Number(valor) !== 0;
+    function crearIngresosPorPropiedad(data) {
+        const canvas = obtenerCanvas(
+            "incomeByPropertyChart"
+        );
+
+        if (!canvas) {
+            return;
+        }
+
+        if (
+            !hayValores(
+                data.ingresos_por_propiedad
+            )
+        ) {
+            mostrarVacio(
+                canvas,
+                "Todavía no hay ingresos para mostrar."
+            );
+
+            return;
+        }
+
+        new Chart(
+            canvas,
+            {
+                type: "bar",
+
+                data: {
+                    labels: data.labels,
+
+                    datasets: [
+                        {
+                            label: "Ingresos mensuales",
+
+                            data:
+                                data.ingresos_por_propiedad,
+
+                            backgroundColor:
+                                colores.verde,
+
+                            borderColor:
+                                colores.verdeOscuro,
+
+                            borderWidth: 1,
+                            borderRadius: 8
+                        }
+                    ]
+                },
+
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return euros(
+                                        context.parsed.y
+                                    );
+                                }
+                            }
+                        }
+                    },
+
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+
+                            ticks: {
+                                callback: function (value) {
+                                    return euros(value);
+                                }
+                            }
+                        },
+
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            }
+        );
+    }
+
+    function crearEvolucionMensual(data) {
+        const canvas = obtenerCanvas(
+            "monthlyIncomeChart"
+        );
+
+        if (!canvas) {
+            return;
+        }
+
+        if (
+            !hayValores(
+                data.facturacion_mensual
+            )
+        ) {
+            mostrarVacio(
+                canvas,
+                "Todavía no hay evolución mensual."
+            );
+
+            return;
+        }
+
+        new Chart(
+            canvas,
+            {
+                type: "line",
+
+                data: {
+                    labels: data.labels_meses,
+
+                    datasets: [
+                        {
+                            label: "Ingresos",
+
+                            data:
+                                data.facturacion_mensual,
+
+                            borderColor:
+                                colores.vino,
+
+                            backgroundColor:
+                                "rgba(116, 95, 109, 0.14)",
+
+                            pointBackgroundColor:
+                                colores.vino,
+
+                            pointBorderColor:
+                                "#ffffff",
+
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            borderWidth: 3,
+
+                            tension: 0.35,
+                            fill: true
+                        }
+                    ]
+                },
+
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+
+                            ticks: {
+                                callback: function (value) {
+                                    return euros(value);
+                                }
+                            }
+                        },
+
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            }
+        );
+    }
+
+    function crearComparativa(periodo) {
+        const canvas = obtenerCanvas(
+            "incomeExpensesChart"
+        );
+
+        if (!canvas) {
+            return;
+        }
+
+        const datos =
+            historicoFinanciero[periodo];
+
+        if (!datos) {
+            return;
+        }
+
+        if (graficoIngresosGastos) {
+            graficoIngresosGastos.destroy();
+        }
+
+        graficoIngresosGastos = new Chart(
+            canvas,
+            {
+                type: "line",
+
+                data: {
+                    labels: datos.labels,
+
+                    datasets: [
+                        {
+                            label: "Ingresos",
+
+                            data: datos.ingresos,
+
+                            borderColor:
+                                colores.vino,
+
+                            backgroundColor:
+                                "rgba(116, 95, 109, 0.14)",
+
+                            pointBackgroundColor:
+                                colores.vino,
+
+                            pointBorderColor:
+                                "#ffffff",
+
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            borderWidth: 3,
+
+                            tension: 0.35,
+                            fill: true
+                        },
+
+                        {
+                            label: "Gastos",
+
+                            data: datos.gastos,
+
+                            borderColor:
+                                colores.verde,
+
+                            backgroundColor:
+                                "rgba(114, 165, 161, 0.16)",
+
+                            pointBackgroundColor:
+                                colores.verde,
+
+                            pointBorderColor:
+                                "#ffffff",
+
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            borderWidth: 3,
+
+                            tension: 0.35,
+                            fill: true
+                        }
+                    ]
+                },
+
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+
+                    interaction: {
+                        mode: "index",
+                        intersect: false
+                    },
+
+                    plugins: {
+                        legend: {
+                            position: "bottom",
+
+                            labels: {
+                                usePointStyle: true,
+                                boxWidth: 10,
+                                padding: 18
+                            }
+                        },
+
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return (
+                                        context.dataset.label
+                                        + ": "
+                                        + euros(context.raw)
+                                    );
+                                }
+                            }
+                        }
+                    },
+
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+
+                            ticks: {
+                                callback: function (value) {
+                                    return euros(value);
+                                }
+                            }
+                        },
+
+                        x: {
+                            grid: {
+                                display: false
+                            },
+
+                            ticks: {
+                                autoSkip: true,
+                                maxTicksLimit: 12
+                            }
+                        }
+                    }
+                }
+            }
+        );
+    }
+
+    function crearGastosPorCategoria(data) {
+        const canvas = obtenerCanvas(
+            "expensesChart"
+        );
+
+        if (!canvas) {
+            return;
+        }
+
+        if (
+            !hayValores(
+                data.categorias_valores
+            )
+        ) {
+            mostrarVacio(
+                canvas,
+                "Todavía no hay gastos registrados."
+            );
+
+            return;
+        }
+
+        new Chart(
+            canvas,
+            {
+                type: "doughnut",
+
+                data: {
+                    labels:
+                        data.categorias_labels,
+
+                    datasets: [
+                        {
+                            data:
+                                data.categorias_valores,
+
+                            backgroundColor: [
+                                colores.vino,
+                                colores.verde,
+                                colores.rosa,
+                                colores.amarillo,
+                                "#9b8996",
+                                "#89aaa6",
+                                "#b7977e",
+                                "#d8c7b5"
+                            ],
+
+                            borderColor:
+                                colores.crema,
+
+                            borderWidth: 3,
+                            hoverOffset: 7
+                        }
+                    ]
+                },
+
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: "62%",
+
+                    plugins: {
+                        legend: {
+                            position: "bottom",
+
+                            labels: {
+                                usePointStyle: true,
+                                boxWidth: 10,
+                                padding: 15
+                            }
+                        },
+
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return (
+                                        context.label
+                                        + ": "
+                                        + euros(context.raw)
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        );
+    }
+
+    function activarPeriodos() {
+        document
+            .querySelectorAll(
+                ".dashboard-chart-period"
+            )
+            .forEach(function (boton) {
+
+                boton.addEventListener(
+                    "click",
+                    function () {
+
+                        document
+                            .querySelectorAll(
+                                ".dashboard-chart-period"
+                            )
+                            .forEach(function (otro) {
+                                otro.classList.remove(
+                                    "is-active"
+                                );
+                            });
+
+                        boton.classList.add(
+                            "is-active"
+                        );
+
+                        crearComparativa(
+                            boton.dataset.periodo
+                        );
+                    }
+                );
             });
     }
 
     fetch(dataUrl)
-        .then(function (response) {
-            if (!response.ok) {
+        .then(function (respuesta) {
+
+            if (!respuesta.ok) {
                 throw new Error(
                     "No se pudieron cargar los gráficos."
                 );
             }
 
-            return response.json();
+            return respuesta.json();
         })
         .then(function (data) {
 
-            /* =============================================
-               INGRESOS POR PROPIEDAD
-            ============================================= */
+            historicoFinanciero =
+                data.historico_financiero || {};
 
-            const incomeCanvas = obtenerCanvas(
-                "incomeByPropertyChart"
-            );
+            crearIngresosPorPropiedad(data);
 
-            if (
-                incomeCanvas
-                && contieneValores(
-                    data.ingresos_por_propiedad
-                )
-            ) {
-                new Chart(
-                    incomeCanvas,
-                    {
-                        type: "bar",
+            crearEvolucionMensual(data);
 
-                        data: {
-                            labels: data.labels,
+            crearComparativa("6");
 
-                            datasets: [
-                                {
-                                    label: "Ingresos mensuales",
-                                    data:
-                                        data.ingresos_por_propiedad,
-                                    backgroundColor:
-                                        colores.verde,
-                                    borderColor:
-                                        colores.verdeOscuro,
-                                    borderWidth: 1,
-                                    borderRadius: 8
-                                }
-                            ]
-                        },
+            crearGastosPorCategoria(data);
 
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-
-                            plugins: {
-                                legend: {
-                                    display: false
-                                },
-
-                                tooltip: {
-                                    callbacks: {
-                                        label: function (context) {
-                                            return (
-                                                context.parsed.y
-                                                .toLocaleString(
-                                                    "es-ES",
-                                                    {
-                                                        style:
-                                                            "currency",
-                                                        currency:
-                                                            "EUR"
-                                                    }
-                                                )
-                                            );
-                                        }
-                                    }
-                                }
-                            },
-
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-
-                                    ticks: {
-                                        callback: function (
-                                            value
-                                        ) {
-                                            return value
-                                                .toLocaleString(
-                                                    "es-ES"
-                                                ) + " €";
-                                        }
-                                    }
-                                },
-
-                                x: {
-                                    grid: {
-                                        display: false
-                                    }
-                                }
-                            }
-                        }
-                    }
-                );
-            } else {
-                crearMensajeVacio(
-                    incomeCanvas,
-                    "Todavía no hay ingresos para mostrar."
-                );
-            }
-
-
-            /* =============================================
-               EVOLUCIÓN MENSUAL DE INGRESOS
-            ============================================= */
-
-            const monthlyCanvas = obtenerCanvas(
-                "monthlyIncomeChart"
-            );
-
-            if (
-                monthlyCanvas
-                && contieneValores(
-                    data.facturacion_mensual
-                )
-            ) {
-                new Chart(
-                    monthlyCanvas,
-                    {
-                        type: "line",
-
-                        data: {
-                            labels: data.labels_meses,
-
-                            datasets: [
-                                {
-                                    label: "Ingresos",
-                                    data:
-                                        data.facturacion_mensual,
-                                    borderColor:
-                                        colores.vino,
-                                    backgroundColor:
-                                        "rgba(116, 95, 109, 0.14)",
-                                    pointBackgroundColor:
-                                        colores.vino,
-                                    pointBorderColor:
-                                        "#ffffff",
-                                    pointBorderWidth: 2,
-                                    pointRadius: 4,
-                                    fill: true,
-                                    tension: 0.35,
-                                    borderWidth: 3
-                                }
-                            ]
-                        },
-
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-
-                            plugins: {
-                                legend: {
-                                    display: false
-                                }
-                            },
-
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-
-                                    ticks: {
-                                        callback: function (
-                                            value
-                                        ) {
-                                            return value
-                                                .toLocaleString(
-                                                    "es-ES"
-                                                ) + " €";
-                                        }
-                                    }
-                                },
-
-                                x: {
-                                    grid: {
-                                        display: false
-                                    }
-                                }
-                            }
-                        }
-                    }
-                );
-            } else {
-                crearMensajeVacio(
-                    monthlyCanvas,
-                    "Todavía no hay evolución mensual."
-                );
-            }
-
-
-            /* =============================================
-               INGRESOS FRENTE A GASTOS
-            ============================================= */
-
-            const comparisonCanvas = obtenerCanvas(
-                "incomeExpensesChart"
-            );
-
-            if (
-                comparisonCanvas
-                && (
-                    contieneValores(
-                        data.facturacion_mensual
-                    )
-                    || contieneValores(
-                        data.gastos_mensuales
-                    )
-                )
-            ) {
-                new Chart(
-                    comparisonCanvas,
-                    {
-                        type: "bar",
-
-                        data: {
-                            labels: data.labels_meses,
-
-                            datasets: [
-                                {
-                                    label: "Ingresos",
-                                    data:
-                                        data.facturacion_mensual,
-                                    backgroundColor:
-                                        colores.verde,
-                                    borderRadius: 7
-                                },
-                                {
-                                    label: "Gastos",
-                                    data:
-                                        data.gastos_mensuales,
-                                    backgroundColor:
-                                        colores.rosa,
-                                    borderRadius: 7
-                                }
-                            ]
-                        },
-
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-
-                            interaction: {
-                                mode: "index",
-                                intersect: false
-                            },
-
-                            plugins: {
-                                legend: {
-                                    position: "bottom",
-
-                                    labels: {
-                                        usePointStyle: true,
-                                        boxWidth: 10,
-                                        padding: 18
-                                    }
-                                },
-
-                                tooltip: {
-                                    callbacks: {
-                                        label: function (context) {
-                                            return (
-                                                context.dataset.label
-                                                + ": "
-                                                + context.parsed.y
-                                                    .toLocaleString(
-                                                        "es-ES",
-                                                        {
-                                                            style:
-                                                                "currency",
-                                                            currency:
-                                                                "EUR"
-                                                        }
-                                                    )
-                                            );
-                                        }
-                                    }
-                                }
-                            },
-
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-
-                                    ticks: {
-                                        callback: function (
-                                            value
-                                        ) {
-                                            return value
-                                                .toLocaleString(
-                                                    "es-ES"
-                                                ) + " €";
-                                        }
-                                    }
-                                },
-
-                                x: {
-                                    grid: {
-                                        display: false
-                                    }
-                                }
-                            }
-                        }
-                    }
-                );
-            } else {
-                crearMensajeVacio(
-                    comparisonCanvas,
-                    "Todavía no hay ingresos ni gastos."
-                );
-            }
-
-
-            /* =============================================
-               GASTOS POR CATEGORÍA
-            ============================================= */
-
-            const expensesCanvas = obtenerCanvas(
-                "expensesChart"
-            );
-
-            if (
-                expensesCanvas
-                && contieneValores(
-                    data.categorias_valores
-                )
-            ) {
-                new Chart(
-                    expensesCanvas,
-                    {
-                        type: "doughnut",
-
-                        data: {
-                            labels:
-                                data.categorias_labels,
-
-                            datasets: [
-                                {
-                                    data:
-                                        data.categorias_valores,
-
-                                    backgroundColor: [
-                                        colores.vino,
-                                        colores.verde,
-                                        colores.rosa,
-                                        colores.amarillo,
-                                        "#9b8996",
-                                        "#89aaa6",
-                                        "#b7977e",
-                                        "#d8c7b5"
-                                    ],
-
-                                    borderColor:
-                                        colores.crema,
-
-                                    borderWidth: 3,
-                                    hoverOffset: 7
-                                }
-                            ]
-                        },
-
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            cutout: "62%",
-
-                            plugins: {
-                                legend: {
-                                    position: "bottom",
-
-                                    labels: {
-                                        usePointStyle: true,
-                                        boxWidth: 10,
-                                        padding: 15
-                                    }
-                                },
-
-                                tooltip: {
-                                    callbacks: {
-                                        label: function (context) {
-                                            const valor =
-                                                Number(
-                                                    context.raw
-                                                );
-
-                                            return (
-                                                context.label
-                                                + ": "
-                                                + valor.toLocaleString(
-                                                    "es-ES",
-                                                    {
-                                                        style:
-                                                            "currency",
-                                                        currency:
-                                                            "EUR"
-                                                    }
-                                                )
-                                            );
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                );
-            } else {
-                crearMensajeVacio(
-                    expensesCanvas,
-                    "Todavía no hay gastos registrados este mes."
-                );
-            }
+            activarPeriodos();
         })
         .catch(function (error) {
+
             console.error(error);
 
             document
-                .querySelectorAll(
-                    ".chart-card canvas"
-                )
+                .querySelectorAll("canvas")
                 .forEach(function (canvas) {
-                    crearMensajeVacio(
+                    mostrarVacio(
                         canvas,
                         "No se pudieron cargar los datos."
                     );
@@ -710,7 +828,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 });
 </script>
-
 {% endblock %}
 
 {% block jquery %}

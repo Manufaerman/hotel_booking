@@ -56,10 +56,6 @@
 </main>
 
 
-{# =========================================================
-   GRÁFICO ANTERIOR: PREVISIÓN POR CATEGORÍAS
-   Se conserva por compatibilidad con el JavaScript actual.
-========================================================= #}
 
 {{ grafico_esperado_labels|json_script:"grafico-esperado-labels" }}
 
@@ -70,9 +66,7 @@
 {{ grafico_esperado_colores|json_script:"grafico-esperado-colores" }}
 
 
-{# =========================================================
-   GRÁFICO DEL MES ACTUAL
-========================================================= #}
+
 
 {{ grafico_mes_labels|json_script:"grafico-mes-labels" }}
 
@@ -81,9 +75,7 @@
 {{ grafico_mes_colores|json_script:"grafico-mes-colores" }}
 
 
-{# =========================================================
-   GRÁFICO DEL MES ANTERIOR
-========================================================= #}
+
 
 {{ grafico_mes_anterior_labels|json_script:"grafico-mes-anterior-labels" }}
 
@@ -92,9 +84,7 @@
 {{ grafico_mes_anterior_colores|json_script:"grafico-mes-anterior-colores" }}
 
 
-{# =========================================================
-   GRÁFICO ANUAL POR CATEGORÍAS
-========================================================= #}
+
 
 {{ grafico_anio_labels|json_script:"grafico-anio-labels" }}
 
@@ -103,9 +93,7 @@
 {{ grafico_anio_colores|json_script:"grafico-anio-colores" }}
 
 
-{# =========================================================
-   NUEVO GRÁFICO DE 12 MESES
-========================================================= #}
+
 
 {{ grafico_12_meses_labels|json_script:"grafico-12-meses-labels" }}
 
@@ -116,9 +104,7 @@
 {{ grafico_12_meses_prorrateados|json_script:"grafico-12-meses-prorrateados" }}
 
 
-{# =========================================================
-   COMPARATIVA
-========================================================= #}
+
 
 {{ comparativa_labels|json_script:"comparativa-labels" }}
 

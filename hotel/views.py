@@ -703,34 +703,27 @@ def chart_data(request):
         - timedelta(days=1)
     )
 
-    propiedades = (
-        Flat.objects
-        .all()
-        .order_by("nombre")
-    )
+    meses_cortos = [
+        "Ene", "Feb", "Mar", "Abr", "May", "Jun",
+        "Jul", "Ago", "Sep", "Oct", "Nov", "Dic",
+    ]
 
-    # =====================================================
-    # INGRESOS ACTUALES POR PROPIEDAD
-    # =====================================================
+    propiedades = Flat.objects.all().order_by("nombre")
 
     labels_propiedades = []
     ingresos_por_propiedad = []
     gastos_por_propiedad = []
 
-    gastos_actuales = (
-        Gasto.objects
-        .filter(
-            fecha__gte=inicio_mes_actual,
-            fecha__lte=final_mes_actual,
-            anulado=False,
-            pais="ES",
-        )
+    gastos_actuales = Gasto.objects.filter(
+        fecha__gte=inicio_mes_actual,
+        fecha__lte=final_mes_actual,
+        anulado=False,
+        pais="ES",
     )
 
     for propiedad in propiedades:
-        labels_propiedades.append(
-            propiedad.nombre
-        )
+
+        labels_propiedades.append(propiedad.nombre)
 
         ingresos = (
             ContratoAlquiler.objects
@@ -744,23 +737,19 @@ def chart_data(request):
             .get("total")
             or 0
         )
-        ingresos_temporales = (
-                IngresoPropiedad.objects
-                .filter(
-                    propiedad=propiedad,
-                    fecha__gte=inicio_mes_actual,
-                    fecha__lte=final_mes_actual,
-                )
-                .aggregate(
-                    total=Sum("importe"),
-                )
-                .get("total")
-                or 0
-        )
 
-        ingresos_totales_propiedad = (
-                ingresos
-                + ingresos_temporales
+        ingresos_temporales = (
+            IngresoPropiedad.objects
+            .filter(
+                propiedad=propiedad,
+                fecha__gte=inicio_mes_actual,
+                fecha__lte=final_mes_actual,
+            )
+            .aggregate(
+                total=Sum("importe"),
+            )
+            .get("total")
+            or 0
         )
 
         gastos = (
@@ -774,88 +763,69 @@ def chart_data(request):
         )
 
         ingresos_por_propiedad.append(
-            float(
-                ingresos_totales_propiedad
-            )
+            float(ingresos + ingresos_temporales)
         )
 
         gastos_por_propiedad.append(
             float(gastos)
         )
 
-    # =====================================================
-    # INGRESOS Y GASTOS DE LOS ÚLTIMOS SEIS MESES
-    # =====================================================
+    def calcular_historico(cantidad_meses):
 
-    meses_cortos = [
-        "Ene",
-        "Feb",
-        "Mar",
-        "Abr",
-        "May",
-        "Jun",
-        "Jul",
-        "Ago",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dic",
-    ]
+        labels = []
+        ingresos = []
+        gastos = []
 
-    labels_meses = []
-    facturacion_mensual = []
-    gastos_mensuales = []
-    resultado_mensual = []
-
-    for desplazamiento in range(5, -1, -1):
-        inicio_mes = (
-            inicio_mes_actual
-            - relativedelta(
-                months=desplazamiento,
+        for desplazamiento in range(
+            cantidad_meses - 1,
+            -1,
+            -1,
+        ):
+            inicio_mes = (
+                inicio_mes_actual
+                - relativedelta(
+                    months=desplazamiento,
+                )
             )
-        )
 
-        final_mes = (
-            inicio_mes
-            + relativedelta(months=1)
-            - timedelta(days=1)
-        )
+            final_mes = (
+                inicio_mes
+                + relativedelta(months=1)
+                - timedelta(days=1)
+            )
 
-        # Contratos que estuvieron vigentes durante ese mes.
-        es_mes_actual = (
+            es_mes_actual = (
                 inicio_mes.year == hoy.year
                 and inicio_mes.month == hoy.month
-        )
-
-        if es_mes_actual:
-            # Para el mes actual, el estado activo es la fuente
-            # utilizada también por el KPI del dashboard.
-            contratos_del_mes = (
-                ContratoAlquiler.objects
-                .filter(activo=True)
-            )
-        else:
-            # Para meses históricos usamos las fechas del contrato.
-            contratos_del_mes = (
-                ContratoAlquiler.objects
-                .filter(
-                    fecha_inicio__lte=final_mes,
-                )
-                .filter(
-                    Q(fecha_fin__isnull=True)
-                    | Q(fecha_fin__gte=inicio_mes)
-                )
             )
 
-        ingresos_mes = (
-                contratos_del_mes
+            if es_mes_actual:
+                contratos = (
+                    ContratoAlquiler.objects
+                    .filter(activo=True)
+                )
+            else:
+                contratos = (
+                    ContratoAlquiler.objects
+                    .filter(
+                        fecha_inicio__lte=final_mes,
+                    )
+                    .filter(
+                        Q(fecha_fin__isnull=True)
+                        | Q(fecha_fin__gte=inicio_mes)
+                    )
+                )
+
+            ingresos_contratos = (
+                contratos
                 .aggregate(
                     total=Sum("precio_mensual"),
                 )
                 .get("total")
                 or 0
-        )
-        ingresos_temporales_mes = (
+            )
+
+            ingresos_temporales = (
                 IngresoPropiedad.objects
                 .filter(
                     fecha__gte=inicio_mes,
@@ -866,49 +836,75 @@ def chart_data(request):
                 )
                 .get("total")
                 or 0
-        )
-
-        ingresos_mes = (
-                ingresos_mes
-                + ingresos_temporales_mes
-        )
-
-        gastos_mes = (
-            Gasto.objects
-            .filter(
-                fecha__gte=inicio_mes,
-                fecha__lte=final_mes,
-                anulado=False,
-                pais="ES",
             )
-            .aggregate(
-                total=Sum("importe"),
+
+            gastos_mes = (
+                Gasto.objects
+                .filter(
+                    fecha__gte=inicio_mes,
+                    fecha__lte=final_mes,
+                    anulado=False,
+                    pais="ES",
+                )
+                .aggregate(
+                    total=Sum("importe"),
+                )
+                .get("total")
+                or 0
             )
-            .get("total")
-            or 0
-        )
 
-        labels_meses.append(
-            meses_cortos[inicio_mes.month - 1]
-        )
-
-        facturacion_mensual.append(
-            float(ingresos_mes)
-        )
-
-        gastos_mensuales.append(
-            float(gastos_mes)
-        )
-
-        resultado_mensual.append(
-            float(
-                ingresos_mes - gastos_mes
+            labels.append(
+                f"{meses_cortos[inicio_mes.month - 1]} "
+                f"{inicio_mes.year}"
             )
-        )
 
-    # =====================================================
-    # GASTOS DEL MES POR CATEGORÍA
-    # =====================================================
+            ingresos.append(
+                float(
+                    ingresos_contratos
+                    + ingresos_temporales
+                )
+            )
+
+            gastos.append(
+                float(gastos_mes)
+            )
+
+        return {
+            "labels": labels,
+            "ingresos": ingresos,
+            "gastos": gastos,
+        }
+
+    historico_financiero = {
+        "6": calcular_historico(6),
+        "12": calcular_historico(12),
+        "24": calcular_historico(24),
+        "48": calcular_historico(48),
+    }
+
+    historico_seis_meses = (
+        historico_financiero["6"]
+    )
+
+    labels_meses = (
+        historico_seis_meses["labels"]
+    )
+
+    facturacion_mensual = (
+        historico_seis_meses["ingresos"]
+    )
+
+    gastos_mensuales = (
+        historico_seis_meses["gastos"]
+    )
+
+    resultado_mensual = [
+        ingresos - gastos
+        for ingresos, gastos in zip(
+            facturacion_mensual,
+            gastos_mensuales,
+        )
+    ]
 
     gastos_agrupados = (
         gastos_actuales
@@ -927,6 +923,7 @@ def chart_data(request):
     categorias_valores = []
 
     for grupo in gastos_agrupados:
+
         categoria = grupo["categoria"]
 
         categorias_labels.append(
@@ -940,14 +937,8 @@ def chart_data(request):
         )
 
         categorias_valores.append(
-            float(
-                grupo["total"] or 0
-            )
+            float(grupo["total"] or 0)
         )
-
-    # =====================================================
-    # RESUMEN DEL MES ACTUAL
-    # =====================================================
 
     ingresos_mes_actual = sum(
         ingresos_por_propiedad
@@ -980,38 +971,42 @@ def chart_data(request):
         else 0
     )
 
-    # =====================================================
-    # RESPUESTA
-    # =====================================================
-
     return JsonResponse(
         {
             "labels": labels_propiedades,
 
-            # Compatibilidad con el gráfico existente.
             "datos": ingresos_por_propiedad,
 
             "ingresos_por_propiedad": (
                 ingresos_por_propiedad
             ),
+
             "gastos_por_propiedad": (
                 gastos_por_propiedad
             ),
 
             "labels_meses": labels_meses,
+
             "facturacion_mensual": (
                 facturacion_mensual
             ),
+
             "gastos_mensuales": (
                 gastos_mensuales
             ),
+
             "resultado_mensual": (
                 resultado_mensual
+            ),
+
+            "historico_financiero": (
+                historico_financiero
             ),
 
             "categorias_labels": (
                 categorias_labels
             ),
+
             "categorias_valores": (
                 categorias_valores
             ),
@@ -1019,10 +1014,15 @@ def chart_data(request):
             "ingresos_mes_actual": (
                 ingresos_mes_actual
             ),
-            "gastos_mes": gastos_mes_actual,
+
+            "gastos_mes": (
+                gastos_mes_actual
+            ),
+
             "resultado_mes_actual": (
                 resultado_mes_actual
             ),
+
             "porcentaje_gastos": (
                 porcentaje_gastos
             ),
