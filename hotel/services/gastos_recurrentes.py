@@ -116,9 +116,15 @@ def generar_gastos_de_recurrente(
                     "pais": recurrente.pais,
                     "moneda": moneda,
                     "ambito": recurrente.ambito,
-                    "propiedad": recurrente.propiedad,
-                    "habitacion": recurrente.habitacion,
-                    "proyecto": recurrente.proyecto,
+                    "propiedad": (
+                        recurrente.propiedad
+                    ),
+                    "habitacion": (
+                        recurrente.habitacion
+                    ),
+                    "proyecto": (
+                        recurrente.proyecto
+                    ),
                     "tipo": "recurrente",
                     "concepto": (
                         recurrente.concepto
@@ -130,23 +136,24 @@ def generar_gastos_de_recurrente(
                     "tipo_suministro": (
                         recurrente.tipo_suministro
                     ),
-                    "importe": recurrente.importe,
+                    "importe": (
+                        recurrente.importe
+                    ),
                     "fecha": fecha_programada,
                     "pagado": (
-                        recurrente.pagado_por_defecto
+                        recurrente
+                        .pagado_por_defecto
                     ),
                     "proveedor": (
                         recurrente.proveedor
-                    ),
-                    "requiere_justificante": (
-                        recurrente
-                        .requiere_justificante
                     ),
                     "destino_gestoria": (
                         recurrente
                         .destino_gestoria
                     ),
-                    "notas": recurrente.notas,
+                    "notas": (
+                        recurrente.notas
+                    ),
                     "generado_automaticamente": True,
                 },
             )
