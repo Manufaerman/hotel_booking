@@ -948,3 +948,295 @@ createExpectedChart();
         }
     }
 });
+
+/* =====================================================
+   FILTROS Y POSICIÓN
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        if ("scrollRestoration" in history) {
+            history.scrollRestoration = "manual";
+        }
+
+
+
+
+
+        const formulario = document.querySelector(
+            ".gastos-movimientos-filters"
+        );
+
+        if (!formulario) {
+            return;
+        }
+
+        const periodo =
+            document.getElementById(
+                "periodo-seleccionado"
+            );
+
+        const periodoManual =
+            document.getElementById(
+                "periodo-manual"
+            );
+
+        const categoria =
+            document.getElementById(
+                "categoria-seleccionada"
+            );
+
+        const suministro =
+            document.getElementById(
+                "suministro-seleccionado"
+            );
+
+        const propiedad =
+            document.getElementById(
+                "propiedad-seleccionada"
+            );
+
+        const cascada =
+            document.querySelector(
+                ".gastos-suministros-cascade"
+            );
+
+        const campoVista =
+            formulario.querySelector(
+                'input[name="vista_listado"]'
+            );
+
+        function enviarFiltros() {
+
+            sessionStorage.setItem(
+                "gastos-scroll-position",
+                String(window.scrollY)
+            );
+
+            formulario.submit();
+        }
+
+
+        document
+            .querySelectorAll(
+                ".periodo-choice"
+            )
+            .forEach(function (boton) {
+
+                boton.addEventListener(
+                    "click",
+                    function () {
+
+                        periodo.value =
+                            boton.dataset.periodo;
+
+                        if (periodoManual) {
+                            periodoManual.value =
+                                boton.dataset.periodo;
+                        }
+
+                        enviarFiltros();
+                    }
+                );
+            });
+
+        const abrirPeriodo =
+            document.getElementById(
+                "abrir-periodo"
+            );
+
+        if (abrirPeriodo && periodoManual) {
+            abrirPeriodo.addEventListener(
+                "click",
+                function () {
+                    periodoManual.hidden = false;
+                    periodoManual.focus();
+                }
+            );
+        }
+
+        if (periodoManual) {
+            periodoManual.addEventListener(
+                "change",
+                function () {
+                    periodo.value =
+                        periodoManual.value;
+
+                    enviarFiltros();
+                }
+            );
+        }
+
+        document
+            .querySelectorAll(
+                ".propiedad-choice"
+            )
+            .forEach(function (boton) {
+
+                boton.addEventListener(
+                    "click",
+                    function () {
+
+                        propiedad.value =
+                            boton.dataset.propiedad;
+
+                        enviarFiltros();
+                    }
+                );
+            });
+
+        document
+            .querySelectorAll(
+                ".categoria-choice"
+            )
+            .forEach(function (boton) {
+
+                boton.addEventListener(
+                    "click",
+                    function () {
+
+                        const valor =
+                            boton.dataset.categoria;
+
+                        categoria.value = valor;
+
+                        if (suministro) {
+                            suministro.value = "";
+                        }
+
+                        if (
+                            valor === "suministros"
+                            && cascada
+                        ) {
+                            cascada.hidden = false;
+                            return;
+                        }
+
+                        enviarFiltros();
+                    }
+                );
+            });
+
+        document
+            .querySelectorAll(
+                ".suministro-choice"
+            )
+            .forEach(function (boton) {
+
+                boton.addEventListener(
+                    "click",
+                    function () {
+
+                        suministro.value =
+                            boton.dataset.suministro;
+
+                        enviarFiltros();
+                    }
+                );
+            });
+
+        document
+            .querySelectorAll(
+                ".vista-choice"
+            )
+            .forEach(function (boton) {
+
+                boton.addEventListener(
+                    "click",
+                    function () {
+
+                        if (campoVista) {
+                            campoVista.value =
+                                boton.dataset.vista;
+                        }
+
+                        enviarFiltros();
+                    }
+                );
+            });
+    }
+);
+
+/* =====================================================
+   RESTAURAR POSICIÓN REAL DE LA PÁGINA
+===================================================== */
+
+(function () {
+
+    const claveScroll =
+        "gastos-scroll-position";
+
+    if ("scrollRestoration" in history) {
+        history.scrollRestoration = "manual";
+    }
+
+    function guardarScroll() {
+        sessionStorage.setItem(
+            claveScroll,
+            String(window.scrollY)
+        );
+    }
+
+    function restaurarScroll() {
+        const posicion =
+            sessionStorage.getItem(claveScroll);
+
+        if (posicion === null) {
+            return;
+        }
+
+        const valor =
+            parseInt(posicion, 10);
+
+        if (Number.isNaN(valor)) {
+            return;
+        }
+
+        sessionStorage.removeItem(
+            claveScroll
+        );
+
+        document.documentElement.style
+            .scrollBehavior = "auto";
+
+        document.body.style
+            .scrollBehavior = "auto";
+
+        let intentos = 0;
+
+        function aplicar() {
+            window.scrollTo(
+                0,
+                valor
+            );
+
+            intentos += 1;
+
+            if (intentos < 8) {
+                window.requestAnimationFrame(
+                    aplicar
+                );
+            }
+        }
+
+        aplicar();
+    }
+
+    window.addEventListener(
+        "beforeunload",
+        guardarScroll
+    );
+
+    window.addEventListener(
+        "pageshow",
+        function () {
+            window.setTimeout(
+                restaurarScroll,
+                80
+            );
+        }
+    );
+
+})();

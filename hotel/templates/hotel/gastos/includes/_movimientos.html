@@ -45,28 +45,28 @@
     >
 
         <a
-            href="?pais={{ pais_actual }}{% if proyecto_actual %}&proyecto={{ proyecto_actual.pk }}{% endif %}&vista_listado=ultimos#movimientos"
+            href="?pais={{ pais_actual }}{% if proyecto_actual %}&proyecto={{ proyecto_actual.pk }}{% endif %}&vista_listado=ultimos"
             class="gastos-view-tab {% if vista_listado == 'ultimos' %}is-active{% endif %}"
         >
             Últimos 10
         </a>
 
         <a
-            href="?pais={{ pais_actual }}{% if proyecto_actual %}&proyecto={{ proyecto_actual.pk }}{% endif %}&vista_listado=fijos#movimientos"
+            href="?pais={{ pais_actual }}{% if proyecto_actual %}&proyecto={{ proyecto_actual.pk }}{% endif %}&vista_listado=fijos"
             class="gastos-view-tab {% if vista_listado == 'fijos' %}is-active{% endif %}"
         >
             Fijos
         </a>
 
         <a
-            href="?pais={{ pais_actual }}{% if proyecto_actual %}&proyecto={{ proyecto_actual.pk }}{% endif %}&vista_listado=puntuales#movimientos"
+            href="?pais={{ pais_actual }}{% if proyecto_actual %}&proyecto={{ proyecto_actual.pk }}{% endif %}&vista_listado=puntuales"
             class="gastos-view-tab {% if vista_listado == 'puntuales' %}is-active{% endif %}"
         >
             Esporádicos
         </a>
 
         <a
-            href="?pais={{ pais_actual }}{% if proyecto_actual %}&proyecto={{ proyecto_actual.pk }}{% endif %}&vista_listado=sin_factura#movimientos"
+            href="?pais={{ pais_actual }}{% if proyecto_actual %}&proyecto={{ proyecto_actual.pk }}{% endif %}&vista_listado=sin_factura"
             class="gastos-view-tab {% if vista_listado == 'sin_factura' %}is-active{% endif %}"
         >
             Sin factura
@@ -82,218 +82,302 @@
 
 
     <form
-        method="get"
-        action="{% url 'hotel:gastos_dashboard' %}#movimientos"
-        class="gastos-filters gastos-movimientos-filters"
+    method="get"
+    action="{% url 'hotel:gastos_dashboard' %}"
+    class="gastos-movimientos-filters"
+>
+
+    <input
+        type="hidden"
+        name="pais"
+        value="{{ pais_actual }}"
     >
+
+    <input
+        type="hidden"
+        name="vista_listado"
+        value="{{ vista_listado }}"
+    >
+
+    {% if proyecto_actual %}
         <input
             type="hidden"
-            name="pais"
-            value="{{ pais_actual }}"
+            name="proyecto"
+            value="{{ proyecto_actual.pk }}"
+        >
+    {% endif %}
+
+    <input
+        type="hidden"
+        name="mes"
+        id="periodo-seleccionado"
+        value="{% if periodo_explicito %}{{ mes_seleccionado }}{% endif %}"
+    >
+
+    <input
+        type="hidden"
+        name="categoria"
+        id="categoria-seleccionada"
+        value="{{ categoria_seleccionada }}"
+    >
+
+    <input
+        type="hidden"
+        name="tipo_suministro"
+        id="suministro-seleccionado"
+        value="{{ tipo_suministro_seleccionado }}"
+    >
+
+    <div class="gastos-filter-heading">
+        <span>Filtrar movimientos</span>
+    </div>
+
+    <div class="gastos-filter-group">
+
+        <span class="gastos-filter-label">
+            Periodo
+        </span>
+
+        <div class="gastos-filter-buttons">
+
+            <button
+                type="button"
+                class="gastos-choice-button periodo-choice"
+                data-periodo=""
+            >
+                Todos
+            </button>
+
+            <button
+                type="button"
+                class="gastos-choice-button periodo-choice"
+                data-periodo="{{ hoy|date:'Y-m' }}"
+            >
+                Este mes
+            </button>
+
+            <button
+                type="button"
+                class="gastos-choice-button periodo-choice"
+                data-periodo="{{ anio_mes_anterior }}-{{ mes_anterior|stringformat:'02d' }}"
+            >
+                Mes anterior
+            </button>
+
+            <button
+                type="button"
+                class="gastos-choice-button"
+                id="abrir-periodo"
+            >
+                Elegir periodo
+            </button>
+
+        </div>
+
+        <input
+            type="month"
+            id="periodo-manual"
+            class="gastos-periodo-manual"
+            value="{{ mes_seleccionado }}"
         >
 
-        {% if proyecto_actual %}
+    </div>
+
+    {% if es_espana %}
+
+        <div class="gastos-filter-group">
+
+            <span class="gastos-filter-label">
+                Propiedad
+            </span>
+
+            <div class="gastos-filter-buttons">
+
+                <button
+                    type="button"
+                    class="gastos-choice-button propiedad-choice {% if not propiedad_seleccionada %}is-active{% endif %}"
+                    data-propiedad=""
+                >
+                    Todas
+                </button>
+
+                <button
+                    type="button"
+                    class="gastos-choice-button propiedad-choice {% if propiedad_seleccionada == 'empresa' %}is-active{% endif %}"
+                    data-propiedad="empresa"
+                >
+                    Sociedad
+                </button>
+
+                {% for propiedad in propiedades %}
+
+                    <button
+                        type="button"
+                        class="gastos-choice-button propiedad-choice {% if propiedad_seleccionada == propiedad.pk|stringformat:'s' %}is-active{% endif %}"
+                        data-propiedad="{{ propiedad.pk }}"
+                    >
+                        {{ propiedad.nombre }}
+                    </button>
+
+                {% endfor %}
+
+            </div>
+
             <input
                 type="hidden"
-                name="proyecto"
-                value="{{ proyecto_actual.pk }}"
-            >
-        {% endif %}
-
-        <input
-            type="hidden"
-            name="vista_listado"
-            value="{{ vista_listado }}"
-        >
-
-
-        <div class="gastos-filter-field">
-
-            <label for="filtro-mes">
-                Periodo
-            </label>
-
-            <input
-                id="filtro-mes"
-                type="month"
-                name="mes"
-                value="{% if periodo_explicito %}{{ mes_seleccionado }}{% endif %}"
+                name="propiedad"
+                id="propiedad-seleccionada"
+                value="{{ propiedad_seleccionada }}"
             >
 
         </div>
 
+    {% endif %}
 
-        {% if es_espana %}
+    <div class="gastos-filter-group">
 
-            <div class="gastos-filter-field">
+        <span class="gastos-filter-label">
+            Categoría
+        </span>
 
-                <label for="filtro-propiedad">
-                    Propiedad
-                </label>
+        <div class="gastos-filter-buttons">
 
-                <select
-                    id="filtro-propiedad"
-                    name="propiedad"
+            <button
+                type="button"
+                class="gastos-choice-button categoria-choice {% if not categoria_seleccionada %}is-active{% endif %}"
+                data-categoria=""
+            >
+                Todas
+            </button>
+
+            {% for valor, etiqueta in categorias %}
+
+                <button
+                    type="button"
+                    class="gastos-choice-button categoria-choice categoria-{{ valor }} {% if categoria_seleccionada == valor %}is-active{% endif %}"
+                    data-categoria="{{ valor }}"
                 >
-                    <option value="">
-                        Todas
-                    </option>
+                    {{ etiqueta }}
+                </button>
 
-                    <option
-                        value="empresa"
-                        {% if propiedad_seleccionada == "empresa" %}
-                            selected
-                        {% endif %}
-                    >
-                        Sociedad
-                    </option>
+            {% endfor %}
 
-                    {% for propiedad in propiedades %}
+        </div>
 
-                        <option
-                            value="{{ propiedad.pk }}"
-                            {% if propiedad_seleccionada == propiedad.pk %}
-                                selected
-                            {% endif %}
-                        >
-                            {{ propiedad.nombre }}
-                        </option>
+    </div>
 
-                    {% endfor %}
-                </select>
-
-            </div>
-
+    <div
+        class="gastos-filter-group gastos-suministros-cascade"
+        {% if categoria_seleccionada != "suministros" %}
+            hidden
         {% endif %}
+    >
+
+        <span class="gastos-filter-label">
+            Tipo de suministro
+        </span>
+
+        <div class="gastos-filter-buttons">
+
+            <button
+                type="button"
+                class="gastos-choice-button suministro-choice"
+                data-suministro=""
+            >
+                Todos
+            </button>
+
+            <button
+                type="button"
+                class="gastos-choice-button suministro-choice"
+                data-suministro="internet"
+            >
+                Internet
+            </button>
+
+            <button
+                type="button"
+                class="gastos-choice-button suministro-choice"
+                data-suministro="luz"
+            >
+                Luz
+            </button>
+
+            <button
+                type="button"
+                class="gastos-choice-button suministro-choice"
+                data-suministro="gas"
+            >
+                Gas
+            </button>
+
+            <button
+                type="button"
+                class="gastos-choice-button suministro-choice"
+                data-suministro="agua"
+            >
+                Agua
+            </button>
+
+            <button
+                type="button"
+                class="gastos-choice-button suministro-choice"
+                data-suministro="telefono"
+            >
+                Teléfono
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="gastos-filter-group">
+
+        <span class="gastos-filter-label">
+            Estado
+        </span>
+
+        <div class="gastos-filter-buttons">
+
+            <button
+                type="button"
+                class="gastos-choice-button vista-choice"
+                data-vista="ultimos"
+            >
+                Últimos 10
+            </button>
+
+            <button
+                type="button"
+                class="gastos-choice-button vista-choice"
+                data-vista="fijos"
+            >
+                Fijos
+            </button>
+
+            <button
+                type="button"
+                class="gastos-choice-button vista-choice"
+                data-vista="puntuales"
+            >
+                Esporádicos
+            </button>
+
+            <button
+                type="button"
+                class="gastos-choice-button vista-choice"
+                data-vista="sin_factura"
+            >
+                Sin factura
+            </button>
+
+        </div>
+
+    </div>
 
 
-        <details class="gastos-more-filters">
 
-            <summary>
-                <i class="fa fa-sliders"></i>
-                Más filtros
-            </summary>
-
-            <div class="gastos-more-filters-content">
-
-                <div class="gastos-filter-field">
-
-                    <label for="filtro-categoria">
-                        Categoría
-                    </label>
-
-                    <select
-                        id="filtro-categoria"
-                        name="categoria"
-                    >
-                        <option value="">
-                            Todas
-                        </option>
-
-                        {% for valor, etiqueta in categorias %}
-
-                            <option
-                                value="{{ valor }}"
-                                {% if categoria_seleccionada == valor %}
-                                    selected
-                                {% endif %}
-                            >
-                                {{ etiqueta }}
-                            </option>
-
-                        {% endfor %}
-                    </select>
-
-                </div>
-
-
-                <div class="gastos-filter-field">
-
-                    <label for="filtro-tipo">
-                        Tipo
-                    </label>
-
-                    <select
-                        id="filtro-tipo"
-                        name="tipo"
-                    >
-                        <option value="">
-                            Todos
-                        </option>
-
-                        {% for valor, etiqueta in tipos %}
-
-                            <option
-                                value="{{ valor }}"
-                                {% if tipo_seleccionado == valor %}
-                                    selected
-                                {% endif %}
-                            >
-                                {{ etiqueta }}
-                            </option>
-
-                        {% endfor %}
-                    </select>
-
-                </div>
-
-
-                <div class="gastos-filter-field">
-
-                    <label for="filtro-estado">
-                        Pago
-                    </label>
-
-                    <select
-                        id="filtro-estado"
-                        name="estado"
-                    >
-                        <option value="">
-                            Todos
-                        </option>
-
-                        <option
-                            value="pagado"
-                            {% if estado_seleccionado == "pagado" %}
-                                selected
-                            {% endif %}
-                        >
-                            Pagados
-                        </option>
-
-                        <option
-                            value="pendiente"
-                            {% if estado_seleccionado == "pendiente" %}
-                                selected
-                            {% endif %}
-                        >
-                            Pendientes
-                        </option>
-                    </select>
-
-                </div>
-
-            </div>
-
-        </details>
-
-
-        <button
-            type="submit"
-            class="gastos-filter-button"
-        >
-            <i class="fa fa-filter"></i>
-            Filtrar
-        </button>
-
-        <a
-            href="{% url 'hotel:gastos_dashboard' %}?pais={{ pais_actual }}{% if proyecto_actual %}&proyecto={{ proyecto_actual.pk }}{% endif %}#movimientos"
-            class="gastos-clear-button"
-        >
-            Limpiar
-        </a>
-
-    </form>
+</form>
 
 
     {% if movimientos_recientes %}
@@ -501,7 +585,7 @@
                                         <input
                                             type="hidden"
                                             name="next"
-                                            value="{{ request.get_full_path }}#movimientos"
+                                            value="{{ request.get_full_path }}#"
                                         >
 
                                         <button
@@ -529,7 +613,7 @@
                                         <input
                                             type="hidden"
                                             name="next"
-                                            value="{{ request.get_full_path }}#movimientos"
+                                            value="{{ request.get_full_path }}"
                                         >
 
                                         <button

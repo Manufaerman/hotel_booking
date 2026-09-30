@@ -29,3 +29,7 @@
 >
     4 años
 </button>
+
+const gastos = modo === "prorrateado"
+    ? datos.gastos_prorrateados
+    : datos.gastos;

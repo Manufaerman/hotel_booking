@@ -195,6 +195,7 @@
                 type="button"
                 class="dashboard-chart-period is-active"
                 data-periodo="6"
+                data-modo="real"
             >
                 6 meses
             </button>
@@ -203,6 +204,7 @@
                 type="button"
                 class="dashboard-chart-period"
                 data-periodo="12"
+                data-modo="real"
             >
                 1 año
             </button>
@@ -211,6 +213,7 @@
                 type="button"
                 class="dashboard-chart-period"
                 data-periodo="24"
+                data-modo="real"
             >
                 2 años
             </button>
@@ -219,8 +222,18 @@
                 type="button"
                 class="dashboard-chart-period"
                 data-periodo="48"
+                data-modo="real"
             >
                 4 años
+            </button>
+
+            <button
+                type="button"
+                class="dashboard-chart-period"
+                data-periodo="6"
+                data-modo="prorrateado"
+            >
+                Prorrateados
             </button>
         </div>
 
@@ -522,7 +535,10 @@ document.addEventListener("DOMContentLoaded", function () {
         );
     }
 
-    function crearComparativa(periodo) {
+    function crearComparativa(
+            periodo = "6",
+            modo = "real"
+        ) {
         const canvas = obtenerCanvas(
             "incomeExpensesChart"
         );
@@ -537,6 +553,15 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!datos) {
             return;
         }
+
+        const gastos = modo === "prorrateado"
+            ? datos.gastos_prorrateados
+            : datos.gastos;
+
+        const nombreGastos = modo === "prorrateado"
+            ? "Gastos prorrateados"
+            : "Gastos reales";
+
 
         if (graficoIngresosGastos) {
             graficoIngresosGastos.destroy();
@@ -578,9 +603,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         },
 
                         {
-                            label: "Gastos",
+                            label: nombreGastos,
 
-                            data: datos.gastos,
+                            data: gastos,
 
                             borderColor:
                                 colores.verde,
@@ -780,7 +805,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         );
 
                         crearComparativa(
-                            boton.dataset.periodo
+                            boton.dataset.periodo,
+                            boton.dataset.modo || "real"
                         );
                     }
                 );
@@ -807,7 +833,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             crearEvolucionMensual(data);
 
-            crearComparativa("6");
+            crearComparativa("6", "real");
 
             crearGastosPorCategoria(data);
 

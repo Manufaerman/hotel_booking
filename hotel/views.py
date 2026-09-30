@@ -775,36 +775,43 @@ def chart_data(request):
         labels = []
         ingresos = []
         gastos = []
+        gastos_prorrateados = []
 
         for desplazamiento in range(
-            cantidad_meses - 1,
-            -1,
-            -1,
+                cantidad_meses - 1,
+                -1,
+                -1,
         ):
+
             inicio_mes = (
-                inicio_mes_actual
-                - relativedelta(
-                    months=desplazamiento,
-                )
+                    inicio_mes_actual
+                    - relativedelta(
+                months=desplazamiento,
+            )
             )
 
             final_mes = (
-                inicio_mes
-                + relativedelta(months=1)
-                - timedelta(days=1)
+                    inicio_mes
+                    + relativedelta(months=1)
+                    - timedelta(days=1)
             )
 
             es_mes_actual = (
-                inicio_mes.year == hoy.year
-                and inicio_mes.month == hoy.month
+                    inicio_mes.year == hoy.year
+                    and inicio_mes.month == hoy.month
             )
 
             if es_mes_actual:
+
                 contratos = (
                     ContratoAlquiler.objects
-                    .filter(activo=True)
+                    .filter(
+                        activo=True,
+                    )
                 )
+
             else:
+
                 contratos = (
                     ContratoAlquiler.objects
                     .filter(
@@ -817,41 +824,94 @@ def chart_data(request):
                 )
 
             ingresos_contratos = (
-                contratos
-                .aggregate(
-                    total=Sum("precio_mensual"),
-                )
-                .get("total")
-                or 0
+                    contratos
+                    .aggregate(
+                        total=Sum("precio_mensual"),
+                    )
+                    .get("total")
+                    or 0
             )
 
             ingresos_temporales = (
-                IngresoPropiedad.objects
-                .filter(
-                    fecha__gte=inicio_mes,
-                    fecha__lte=final_mes,
-                )
-                .aggregate(
-                    total=Sum("importe"),
-                )
-                .get("total")
-                or 0
+                    IngresoPropiedad.objects
+                    .filter(
+                        fecha__gte=inicio_mes,
+                        fecha__lte=final_mes,
+                    )
+                    .aggregate(
+                        total=Sum("importe"),
+                    )
+                    .get("total")
+                    or 0
             )
 
             gastos_mes = (
-                Gasto.objects
+                    Gasto.objects
+                    .filter(
+                        fecha__gte=inicio_mes,
+                        fecha__lte=final_mes,
+                        anulado=False,
+                        pais="ES",
+                    )
+                    .aggregate(
+                        total=Sum("importe"),
+                    )
+                    .get("total")
+                    or 0
+            )
+
+            gastos_prorrateados_mes = Decimal(
+                "0.00"
+            )
+
+            recurrentes = (
+                GastoRecurrente.objects
                 .filter(
-                    fecha__gte=inicio_mes,
-                    fecha__lte=final_mes,
-                    anulado=False,
+                    activo=True,
                     pais="ES",
                 )
-                .aggregate(
-                    total=Sum("importe"),
-                )
-                .get("total")
-                or 0
             )
+
+            for recurrente in recurrentes:
+
+                if recurrente.frecuencia == "mensual":
+                    continue
+
+                if (
+                        recurrente.fecha_inicio
+                        and recurrente.fecha_inicio > final_mes
+                ):
+                    continue
+
+                if (
+                        recurrente.fecha_fin
+                        and recurrente.fecha_fin < inicio_mes
+                ):
+                    continue
+
+                divisor = {
+                    "bimensual": Decimal("2"),
+                    "bimestral": Decimal("2"),
+                    "trimestral": Decimal("3"),
+                    "semestral": Decimal("6"),
+                    "anual": Decimal("12"),
+                }.get(
+                    recurrente.frecuencia,
+                    Decimal("1"),
+                )
+
+                importe_anual = (
+                        recurrente.importe
+                        * (
+                                Decimal("12")
+                                / divisor
+                        )
+                )
+
+                gastos_prorrateados_mes += (
+                        importe_anual
+                        / Decimal("12")
+                )
 
             labels.append(
                 f"{meses_cortos[inicio_mes.month - 1]} "
@@ -869,10 +929,17 @@ def chart_data(request):
                 float(gastos_mes)
             )
 
+            gastos_prorrateados.append(
+                float(gastos_prorrateados_mes)
+            )
+
         return {
             "labels": labels,
             "ingresos": ingresos,
             "gastos": gastos,
+            "gastos_prorrateados": (
+                gastos_prorrateados
+            ),
         }
 
     historico_financiero = {
@@ -3500,28 +3567,9 @@ class GastosDashboardView(
 
         # =====================================================
         # MOVIMIENTOS
-        # Por defecto: últimos diez de cualquier mes.
-        # Si el usuario envía mes: solo ese mes.
         # =====================================================
 
         movimientos_base = gastos_base
-
-        if periodo_explicito:
-            movimientos_base = (
-                movimientos_base.filter(
-                    fecha__year=year,
-                    fecha__month=month,
-                )
-            )
-
-        movimientos_base, _ = (
-            self.filtrar_eleccion(
-                queryset=movimientos_base,
-                campo="categoria",
-                valor=categoria_seleccionada,
-                opciones=Gasto.CATEGORIAS,
-            )
-        )
 
         vistas_validas = {
             "ultimos",
@@ -3534,38 +3582,63 @@ class GastosDashboardView(
             vista_listado = "ultimos"
 
         condicion_gasto_fijo = (
-            Q(
-                gasto_recurrente__isnull=False
-            )
-            | Q(
-                generado_automaticamente=True
-            )
-            | Q(
-                tipo="recurrente"
-            )
+                Q(
+                    gasto_recurrente__isnull=False
+                )
+                | Q(
+            generado_automaticamente=True
+        )
+                | Q(
+            tipo="recurrente"
+        )
         )
 
-        movimientos_recientes = (
-            movimientos_base
+        # -----------------------------------------------------
+        # FILTRO DE CATEGORÍA
+        # -----------------------------------------------------
+
+        movimientos_base, categoria_seleccionada = (
+            self.filtrar_eleccion(
+                queryset=movimientos_base,
+                campo="categoria",
+                valor=categoria_seleccionada,
+                opciones=Gasto.CATEGORIAS,
+            )
         )
+        tipo_suministro_seleccionado = request.GET.get(
+            "tipo_suministro",
+            "",
+        )
+        if tipo_suministro_seleccionado:
+            movimientos_base = movimientos_base.filter(
+                tipo_suministro=tipo_suministro_seleccionado
+            )
+        # -----------------------------------------------------
+        # FILTRO POR VISTA
+        # -----------------------------------------------------
 
         if vista_listado == "fijos":
-            movimientos_recientes = (
-                movimientos_recientes.filter(
+
+            movimientos_base = (
+                movimientos_base.filter(
                     condicion_gasto_fijo
                 )
             )
+
 
         elif vista_listado == "puntuales":
-            movimientos_recientes = (
-                movimientos_recientes.exclude(
+
+            movimientos_base = (
+                movimientos_base.exclude(
                     condicion_gasto_fijo
                 )
             )
 
+
         elif vista_listado == "sin_factura":
-            movimientos_recientes = (
-                movimientos_recientes
+
+            movimientos_base = (
+                movimientos_base
                 .filter(
                     destino_gestoria="gestoria",
                 )
@@ -3577,8 +3650,59 @@ class GastosDashboardView(
                 )
             )
 
+        # -----------------------------------------------------
+        # FILTRO TEMPORAL
+        # -----------------------------------------------------
+
+        if periodo_explicito:
+
+            if vista_listado == "sin_factura":
+
+                # Si se selecciona julio, se muestra
+                # todo el trimestre julio-agosto-septiembre.
+
+                trimestre = (
+                                    (month - 1) // 3
+                            ) + 1
+
+                primer_mes_trimestre = (
+                                               (trimestre - 1) * 3
+                                       ) + 1
+
+                meses_trimestre_movimientos = [
+                    primer_mes_trimestre,
+                    primer_mes_trimestre + 1,
+                    primer_mes_trimestre + 2,
+                ]
+
+                movimientos_base = (
+                    movimientos_base.filter(
+                        fecha__year=year,
+                        fecha__month__in=(
+                            meses_trimestre_movimientos
+                        ),
+                    )
+                )
+
+            else:
+
+                # Para cualquier otra vista,
+                # el periodo muestra todos los gastos
+                # del mes elegido.
+
+                movimientos_base = (
+                    movimientos_base.filter(
+                        fecha__year=year,
+                        fecha__month=month,
+                    )
+                )
+
+        # -----------------------------------------------------
+        # ORDEN
+        # -----------------------------------------------------
+
         movimientos_recientes = (
-            movimientos_recientes
+            movimientos_base
             .select_related(
                 "propiedad",
                 "habitacion",
@@ -3595,9 +3719,17 @@ class GastosDashboardView(
             movimientos_recientes.count()
         )
 
-        movimientos_recientes = (
-            movimientos_recientes[:10]
-        )
+        # -----------------------------------------------------
+        # LÍMITE SOLO PARA LA VISTA INICIAL
+        # -----------------------------------------------------
+
+        if (
+                vista_listado == "ultimos"
+                and not periodo_explicito
+        ):
+            movimientos_recientes = (
+                movimientos_recientes[:10]
+            )
 
         # =====================================================
         # PENDIENTES RECURRENTES
@@ -3844,6 +3976,9 @@ class GastosDashboardView(
 
             "grafico_12_meses_prorrateados": (
                 grafico_12_meses["prorrateados"]
+            ),
+            "tipo_suministro_seleccionado": (
+                tipo_suministro_seleccionado
             ),
             # Espacio financiero
             "pais_actual": pais_actual,
@@ -5982,7 +6117,7 @@ class SubirJustificanteGastoView(
             siguiente = (
                 reverse("hotel:gastos_dashboard")
                 + "?vista_listado=sin_factura"
-                + "#movimientos"
+
             )
 
         if not archivo:
