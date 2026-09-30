@@ -19,14 +19,16 @@ def fecha_segura(anio, mes, dia):
 
 
 def frecuencia_en_meses(frecuencia):
-    frecuencias = {
+    equivalencias = {
         "mensual": 1,
+        "bimensual": 2,
+        "bimestral": 2,
         "trimestral": 3,
         "semestral": 6,
         "anual": 12,
     }
 
-    return frecuencias[frecuencia]
+    return equivalencias[frecuencia]
 
 
 def generar_gastos_recurrentes(hasta=None):
@@ -98,6 +100,7 @@ def generar_gastos_de_recurrente(
     creados = []
 
     while fecha_programada <= fecha_limite:
+
         periodo = fecha_programada.replace(
             day=1
         )
@@ -116,44 +119,28 @@ def generar_gastos_de_recurrente(
                     "pais": recurrente.pais,
                     "moneda": moneda,
                     "ambito": recurrente.ambito,
-                    "propiedad": (
-                        recurrente.propiedad
-                    ),
-                    "habitacion": (
-                        recurrente.habitacion
-                    ),
-                    "proyecto": (
-                        recurrente.proyecto
-                    ),
+                    "propiedad": recurrente.propiedad,
+                    "habitacion": recurrente.habitacion,
+                    "proyecto": recurrente.proyecto,
                     "tipo": "recurrente",
                     "concepto": (
                         recurrente.concepto
                         or recurrente.nombre
                     ),
-                    "categoria": (
-                        recurrente.categoria
-                    ),
+                    "categoria": recurrente.categoria,
                     "tipo_suministro": (
                         recurrente.tipo_suministro
                     ),
-                    "importe": (
-                        recurrente.importe
-                    ),
+                    "importe": recurrente.importe,
                     "fecha": fecha_programada,
                     "pagado": (
-                        recurrente
-                        .pagado_por_defecto
+                        recurrente.pagado_por_defecto
                     ),
-                    "proveedor": (
-                        recurrente.proveedor
-                    ),
+                    "proveedor": recurrente.proveedor,
                     "destino_gestoria": (
-                        recurrente
-                        .destino_gestoria
+                        recurrente.destino_gestoria
                     ),
-                    "notas": (
-                        recurrente.notas
-                    ),
+                    "notas": recurrente.notas,
                     "generado_automaticamente": True,
                 },
             )
@@ -162,10 +149,11 @@ def generar_gastos_de_recurrente(
         if creado:
             creados.append(gasto)
 
+        # Importante: avanzar hacia adelante.
         siguiente_fecha = (
             fecha_programada
             + relativedelta(
-                months=intervalo,
+                months=intervalo
             )
         )
 
