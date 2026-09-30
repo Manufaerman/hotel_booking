@@ -874,9 +874,6 @@ def chart_data(request):
 
             for recurrente in recurrentes:
 
-                if recurrente.frecuencia == "mensual":
-                    continue
-
                 if (
                         recurrente.fecha_inicio
                         and recurrente.fecha_inicio > final_mes
@@ -890,6 +887,7 @@ def chart_data(request):
                     continue
 
                 divisor = {
+                    "mensual": Decimal("1"),
                     "bimensual": Decimal("2"),
                     "bimestral": Decimal("2"),
                     "trimestral": Decimal("3"),
@@ -900,17 +898,8 @@ def chart_data(request):
                     Decimal("1"),
                 )
 
-                importe_anual = (
-                        recurrente.importe
-                        * (
-                                Decimal("12")
-                                / divisor
-                        )
-                )
-
                 gastos_prorrateados_mes += (
-                        importe_anual
-                        / Decimal("12")
+                        recurrente.importe / divisor
                 )
 
             labels.append(
