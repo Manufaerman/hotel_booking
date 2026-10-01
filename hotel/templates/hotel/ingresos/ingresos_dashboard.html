@@ -8,8 +8,11 @@
 {% block extra-head %}
 <link
     rel="stylesheet"
-    href="{% static 'hotel/css/ingresos_dashboard.css' %}"
->
+    href="{% static 'hotel/css/ingresos_dashboard.css' %}">
+<script
+    src="{% static 'hotel/js/ingresos_dashboard.js' %}"
+    defer
+></script>
 {% endblock %}
 
 {% block content %}
@@ -57,18 +60,27 @@
         </small>
     </article>
 
-
-    <article class="ingreso-kpi">
+    <button
+        type="button"
+        class="ingreso-kpi ingreso-kpi-clickable"
+        data-toggle-recurrentes
+        aria-expanded="false"
+        aria-controls="detalle-gastos-recurrentes"
+    >
         <span>Gastos normales</span>
 
         <strong>
-            {{ gastos_operativos|floatformat:2 }} €
+            {{ gastos_normales_previstos|floatformat:2 }} €
         </strong>
 
         <small>
-            Propiedades, habitaciones y empresa
+            Recurrentes prorrateados y gastos puntuales
         </small>
-    </article>
+
+        <span class="ingreso-kpi-hint">
+            Ver detalle →
+        </span>
+    </button>
 
 
     <article class="ingreso-kpi ingreso-kpi-loan">
@@ -95,6 +107,173 @@
             Ingresos menos todas las salidas
         </small>
     </article>
+
+</section>
+
+    <section
+    id="detalle-gastos-recurrentes"
+    class="ingresos-section ingresos-detail-section"
+    hidden
+>
+    <header class="ingresos-section-header">
+
+        <div>
+            <span class="ingresos-eyebrow">
+                DETALLE DE GASTOS
+            </span>
+
+            <h2>
+                Gastos del mes
+            </h2>
+        </div>
+
+    </header>
+
+
+    <nav class="ingresos-detail-tabs">
+
+        <button
+            type="button"
+            class="ingresos-detail-tab is-active"
+            data-gastos-tab="no-mensuales"
+        >
+            No mensuales
+        </button>
+
+        <button
+            type="button"
+            class="ingresos-detail-tab"
+            data-gastos-tab="mensuales"
+        >
+            Mensuales
+        </button>
+
+        <button
+            type="button"
+            class="ingresos-detail-tab"
+            data-gastos-tab="puntuales"
+        >
+            Puntuales
+        </button>
+
+    </nav>
+
+
+    <div
+        class="gastos-tab-panel is-active"
+        data-gastos-panel="no-mensuales"
+    >
+
+        {% for item in gastos_recurrentes_no_mensuales %}
+
+            <article class="ingreso-room-row">
+
+                <div>
+                    <strong>
+                        {{ item.recurrente.nombre }}
+                    </strong>
+
+                    <small>
+                        {{ item.recurrente.get_frecuencia_display }}
+                    </small>
+                </div>
+
+                <div>
+                    <strong>
+                        {{ item.importe_prorrateado|floatformat:2 }} €
+                    </strong>
+
+                    <small>
+                        Cargo real:
+                        {{ item.importe_real|floatformat:2 }} €
+                    </small>
+                </div>
+
+            </article>
+
+        {% empty %}
+
+            <p class="ingresos-empty">
+                No hay gastos recurrentes no mensuales.
+            </p>
+
+        {% endfor %}
+
+    </div>
+
+
+    <div
+        class="gastos-tab-panel"
+        data-gastos-panel="mensuales"
+        hidden
+    >
+
+        {% for item in gastos_recurrentes_mensuales %}
+
+            <article class="ingreso-room-row">
+
+                <div>
+                    <strong>
+                        {{ item.recurrente.nombre }}
+                    </strong>
+
+                    <small>
+                        {{ item.recurrente.proveedor }}
+                    </small>
+                </div>
+
+                <strong>
+                    {{ item.importe_real|floatformat:2 }} €
+                </strong>
+
+            </article>
+
+        {% empty %}
+
+            <p class="ingresos-empty">
+                No hay gastos mensuales configurados.
+            </p>
+
+        {% endfor %}
+
+    </div>
+
+
+    <div
+        class="gastos-tab-panel"
+        data-gastos-panel="puntuales"
+        hidden
+    >
+
+        {% for gasto in gastos_puntuales_mes %}
+
+            <article class="ingreso-room-row">
+
+                <div>
+                    <strong>
+                        {{ gasto.concepto|default:gasto.proveedor }}
+                    </strong>
+
+                    <small>
+                        {{ gasto.fecha|date:"d/m/Y" }}
+                    </small>
+                </div>
+
+                <strong>
+                    {{ gasto.importe|floatformat:2 }} €
+                </strong>
+
+            </article>
+
+        {% empty %}
+
+            <p class="ingresos-empty">
+                No hay gastos puntuales este mes.
+            </p>
+
+        {% endfor %}
+
+    </div>
 
 </section>
 

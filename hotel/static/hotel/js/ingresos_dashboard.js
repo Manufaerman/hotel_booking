@@ -32,3 +32,65 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const button = document.querySelector(
+        "[data-toggle-recurrentes]"
+    );
+
+    const detail = document.querySelector(
+        "#detalle-gastos-recurrentes"
+    );
+
+    if (!button || !detail) {
+        return;
+    }
+
+    button.addEventListener("click", () => {
+        const abierto = button.getAttribute(
+            "aria-expanded"
+        ) === "true";
+
+        button.setAttribute(
+            "aria-expanded",
+            String(!abierto)
+        );
+
+        detail.hidden = abierto;
+
+        if (!abierto) {
+            window.setTimeout(() => {
+                detail.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                });
+            }, 80);
+        }
+    });
+});
+
+document.querySelectorAll(
+    "[data-gastos-tab]"
+).forEach((button) => {
+    button.addEventListener("click", () => {
+
+        const tab = button.dataset.gastosTab;
+
+        document.querySelectorAll(
+            "[data-gastos-tab]"
+        ).forEach((item) => {
+            item.classList.toggle(
+                "is-active",
+                item === button
+            );
+        });
+
+        document.querySelectorAll(
+            "[data-gastos-panel]"
+        ).forEach((panel) => {
+            panel.hidden = (
+                panel.dataset.gastosPanel !== tab
+            );
+        });
+    });
+});

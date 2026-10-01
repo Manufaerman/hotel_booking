@@ -4582,24 +4582,29 @@ class GastosDashboardView(
         # GASTOS RECURRENTES
         # ---------------------------------------------
 
+        inicio_ano = date(year, 1, 1)
+        fin_ano = date(year, 12, 31)
+
         for recurrente in recurrentes:
 
             if not recurrente.fecha_inicio:
                 continue
 
-            importe = (
+            importe_estimado = (
                 self.obtener_importe_estimado_recurrente(
                     recurrente=recurrente,
-                    inicio_mes=date(year, 1, 1),
-                    fin_mes=date(year, 12, 31),
+                    inicio_mes=inicio_ano,
+                    fin_mes=fin_ano,
                     pais=pais,
                 )
             )
 
-            if importe is None:
+            if importe_estimado is None:
                 continue
 
-            importe = Decimal(importe)
+            importe_estimado = Decimal(
+                str(importe_estimado)
+            )
 
             divisor = (
                 self.DIVISORES_FRECUENCIA.get(
@@ -4608,8 +4613,19 @@ class GastosDashboardView(
                 )
             )
 
+            divisor = Decimal(str(divisor))
+
+            if divisor <= 0:
+                divisor = Decimal("1")
+
+            # Coste mensual equivalente:
+            # mensual: importe / 1
+            # bimestral: importe / 2
+            # trimestral: importe / 3
+            # semestral: importe / 6
+            # anual: importe / 12
             importe_prorrateado = (
-                    importe / divisor
+                    importe_estimado / divisor
             )
 
             for numero_mes in range(1, 13):
@@ -4629,42 +4645,37 @@ class GastosDashboardView(
                     )[1],
                 )
 
-                # La recurrencia todavía no había comenzado.
-                if (
-                        recurrente.fecha_inicio
-                        > ultimo_dia_mes
-                ):
+                # El gasto todavía no había comenzado.
+                if recurrente.fecha_inicio > ultimo_dia_mes:
                     continue
 
-                # La recurrencia ya había terminado.
+                # El gasto ya había terminado.
                 if (
                         recurrente.fecha_fin
-                        and recurrente.fecha_fin
-                        < primer_dia_mes
+                        and recurrente.fecha_fin < primer_dia_mes
                 ):
                     continue
 
                 # -----------------------------------------
-                # Línea de coste mensual prorrateado
+                # Coste mensual prorrateado
                 # -----------------------------------------
 
-                prorrateados[
-                    numero_mes - 1
-                    ] += importe_prorrateado
+                prorrateados[numero_mes - 1] += (
+                    importe_prorrateado
+                )
 
                 # -----------------------------------------
-                # Línea de gastos esperados reales
+                # Cargo real previsto para ese mes
                 # -----------------------------------------
 
                 if self.recurrente_corresponde_al_mes(
-                        recurrente,
-                        year,
-                        numero_mes,
+                        recurrente=recurrente,
+                        year=year,
+                        numero_mes=numero_mes,
                 ):
-                    esperados[
-                        numero_mes - 1
-                        ] += importe
-
+                    esperados[numero_mes - 1] += (
+                        importe_estimado
+                    )
         return {
             "labels": labels,
             "esperados": [
@@ -6747,6 +6758,13 @@ class IngresosDashboardView(
     def get(self, request):
 
         hoy = timezone.localdate()
+
+        generar_gastos_recurrentes(
+            hasta=hoy,
+        )
+
+        inicio_mes = hoy.replace(day=1)
+
         inicio_mes = hoy.replace(day=1)
 
         propiedades = (
@@ -6786,6 +6804,124 @@ class IngresosDashboardView(
                 "habitacion",
                 "proyecto",
             )
+        )
+
+        gastos_recurrentes = (
+            GastoRecurrente.objects
+            .filter(
+                activo=True,
+                fecha_inicio__lte=hoy,
+            )
+            .select_related(
+                "propiedad",
+                "habitacion",
+                "proyecto",
+            )
+        )
+
+        intervalos_recurrentes = {
+            "mensual": 1,
+            "bimestral": 2,
+            "trimestral": 3,
+            "semestral": 6,
+            "anual": 12,
+        }
+
+        gastos_recurrentes_prorrateados = []
+        gastos_recurrentes_reales_mes = []
+
+        total_recurrentes_prorrateados = Decimal("0.00")
+        total_recurrentes_reales_mes = Decimal("0.00")
+
+        for recurrente in gastos_recurrentes:
+
+            if (
+                    recurrente.fecha_fin
+                    and recurrente.fecha_fin < inicio_mes
+            ):
+                continue
+
+            intervalo = intervalos_recurrentes.get(
+                recurrente.frecuencia,
+                1,
+            )
+
+            importe = (
+                    recurrente.importe
+                    or Decimal("0.00")
+            )
+
+            importe_prorrateado = (
+                    importe / Decimal(intervalo)
+            )
+
+            total_recurrentes_prorrateados += (
+                importe_prorrateado
+            )
+
+            gastos_recurrentes_prorrateados.append(
+                {
+                    "recurrente": recurrente,
+                    "importe_real": importe,
+                    "importe_prorrateado": (
+                        importe_prorrateado
+                    ),
+                    "intervalo": intervalo,
+                }
+            )
+
+            diferencia_meses = (
+                    (hoy.year - recurrente.fecha_inicio.year)
+                    * 12
+                    + hoy.month
+                    - recurrente.fecha_inicio.month
+            )
+
+            corresponde_este_mes = (
+                    diferencia_meses >= 0
+                    and diferencia_meses % intervalo == 0
+            )
+
+            if corresponde_este_mes:
+                total_recurrentes_reales_mes += (
+                    importe
+                )
+
+                gastos_recurrentes_reales_mes.append(
+                    {
+                        "recurrente": recurrente,
+                        "importe": importe,
+                    }
+                )
+        gastos_recurrentes_no_mensuales = [
+            item
+            for item in gastos_recurrentes_prorrateados
+            if item["recurrente"].frecuencia != "mensual"
+        ]
+
+        gastos_recurrentes_mensuales = [
+            item
+            for item in gastos_recurrentes_prorrateados
+            if item["recurrente"].frecuencia == "mensual"
+        ]
+
+        gastos_puntuales_mes = (
+            gastos_periodo
+            .filter(
+                gasto_recurrente__isnull=True,
+            )
+        )
+
+        total_gastos_puntuales = (
+                gastos_puntuales_mes.aggregate(
+                    total=Sum("importe"),
+                ).get("total")
+                or Decimal("0.00")
+        )
+
+        gastos_normales_previstos = (
+                total_recurrentes_prorrateados
+                + total_gastos_puntuales
         )
 
         pagos_hipoteca_mes = (
@@ -7059,6 +7195,41 @@ class IngresosDashboardView(
                     ingresos_temporales
                 ),
 
+                "gastos_normales_previstos": (
+                    gastos_normales_previstos
+                ),
+
+                "gastos_recurrentes_prorrateados": (
+                    gastos_recurrentes_prorrateados
+                ),
+
+                "gastos_recurrentes_reales_mes": (
+                    gastos_recurrentes_reales_mes
+                ),
+
+                "gastos_puntuales_mes": (
+                    gastos_puntuales_mes
+                ),
+                "gastos_recurrentes_no_mensuales": (
+                    gastos_recurrentes_no_mensuales
+                ),
+
+                "gastos_recurrentes_mensuales": (
+                    gastos_recurrentes_mensuales
+                ),
+
+                "total_recurrentes_prorrateados": (
+                    total_recurrentes_prorrateados
+                ),
+
+                "total_recurrentes_reales_mes": (
+                    total_recurrentes_reales_mes
+                ),
+
+                "total_gastos_puntuales": (
+                    total_gastos_puntuales
+                ),
+
                 "rendimiento_propiedades": (
                     rendimiento_propiedades
                 ),
@@ -7120,6 +7291,8 @@ class IngresosDashboardView(
                 ),
             },
         )
+
+
 
 class HipotecasDashboardView(
     LoginRequiredMixin,
