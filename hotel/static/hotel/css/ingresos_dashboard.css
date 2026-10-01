@@ -356,3 +356,205 @@
     font-size: 1.5rem;
     font-weight: 500;
 }
+
+/* =========================================================
+   TARJETA DE GASTOS
+========================================================= */
+
+.ingreso-kpi-clickable {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    border: 1px solid var(--ingreso-border);
+    text-align: left;
+    cursor: pointer;
+}
+
+.ingreso-kpi-detail-trigger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    margin-top: 20px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--ingreso-wine);
+    color: #fff;
+    font-family: inherit;
+    font-size: .78rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition:
+        background .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+.ingreso-kpi-detail-trigger:hover {
+    background: #452335;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(91, 48, 68, .2);
+}
+
+.ingreso-kpi-detail-trigger:focus-visible {
+    outline: 3px solid rgba(143, 169, 160, .55);
+    outline-offset: 3px;
+}
+
+
+/* =========================================================
+   DETALLE DE GASTOS
+========================================================= */
+
+.ingresos-detail-section {
+    scroll-margin-top: 24px;
+    animation: detailAppear .3s ease both;
+}
+
+@keyframes detailAppear {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.ingresos-detail-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-bottom: 22px;
+}
+
+.ingresos-detail-tab {
+    min-height: 40px;
+    padding: 0 17px;
+    border: 1px solid rgba(91, 48, 68, .17);
+    border-radius: 999px;
+    background: #fffaf6;
+    color: var(--ingreso-wine);
+    font-family: inherit;
+    font-size: .78rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition:
+        background .2s ease,
+        color .2s ease,
+        border-color .2s ease,
+        transform .2s ease;
+}
+
+.ingresos-detail-tab:hover {
+    border-color: var(--ingreso-wine-soft);
+    transform: translateY(-1px);
+}
+
+.ingresos-detail-tab.is-active {
+    border-color: var(--ingreso-wine);
+    background: var(--ingreso-wine);
+    color: #fff;
+    box-shadow: 0 8px 18px rgba(91, 48, 68, .16);
+}
+
+.gastos-tab-panel[hidden] {
+    display: none;
+}
+
+.gastos-tab-panel {
+    display: grid;
+    gap: 10px;
+}
+
+
+/* =========================================================
+   FILAS DE GASTOS
+========================================================= */
+
+.gastos-tab-panel .ingreso-room-row {
+    min-height: 72px;
+    padding: 15px 18px;
+    border: 1px solid rgba(91, 48, 68, .12);
+    border-radius: 17px;
+    background: #fbf8f4;
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        transform .2s ease;
+}
+
+.gastos-tab-panel .ingreso-room-row:hover {
+    border-color: rgba(91, 48, 68, .24);
+    background: #fffdf9;
+    transform: translateX(3px);
+}
+
+.gastos-tab-panel .ingreso-room-row > div {
+    min-width: 0;
+}
+
+.gastos-tab-panel .ingreso-room-row > div:last-child {
+    text-align: right;
+}
+
+.gastos-tab-panel .ingreso-room-row strong {
+    display: block;
+    color: var(--ingreso-wine);
+    font-size: .95rem;
+    font-weight: 800;
+}
+
+.gastos-tab-panel .ingreso-room-row small {
+    display: block;
+    margin-top: 5px;
+    color: var(--ingreso-muted);
+    font-size: .75rem;
+    line-height: 1.35;
+}
+
+.gastos-tab-panel .ingresos-empty {
+    margin: 0;
+    padding: 24px;
+}
+
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .ingreso-kpi-detail-trigger {
+        width: 100%;
+        min-height: 43px;
+        margin-top: 18px;
+    }
+
+    .ingresos-detail-tabs {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 7px;
+    }
+
+    .ingresos-detail-tab {
+        width: 100%;
+        padding: 0 6px;
+        font-size: .7rem;
+    }
+
+    .gastos-tab-panel .ingreso-room-row {
+        align-items: flex-start;
+        padding: 14px;
+    }
+
+    .gastos-tab-panel .ingreso-room-row > div:last-child {
+        flex: 0 0 auto;
+    }
+}

@@ -1,16 +1,27 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const dashboard = document.querySelector(".ingresos-dashboard");
+
+    const dashboard = document.querySelector(
+        ".ingresos-dashboard"
+    );
 
     if (!dashboard) {
         return;
     }
 
+
+    // ---------------------------------------------
+    // Animación de entrada
+    // ---------------------------------------------
+
     const cards = dashboard.querySelectorAll(
-        ".ingreso-kpi, .ingreso-property-card, " +
-        ".ingreso-room-row, .ingreso-temporal-row"
+        ".ingreso-kpi, " +
+        ".ingreso-property-card, " +
+        ".ingreso-room-row, " +
+        ".ingreso-temporal-row"
     );
 
     cards.forEach((card, index) => {
+
         card.style.opacity = "0";
         card.style.transform = "translateY(10px)";
         card.style.transition =
@@ -22,6 +33,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 70 * index);
     });
 
+
+    // ---------------------------------------------
+    // Botón añadir ingreso
+    // ---------------------------------------------
+
     const addButton = dashboard.querySelector(
         ".ingresos-add-button"
     );
@@ -31,66 +47,150 @@ document.addEventListener("DOMContentLoaded", () => {
             addButton.classList.add("is-loading");
         });
     }
-});
 
-document.addEventListener("DOMContentLoaded", () => {
-    const button = document.querySelector(
-        "[data-toggle-recurrentes]"
-    );
 
-    const detail = document.querySelector(
-        "#detalle-gastos-recurrentes"
-    );
+    // ---------------------------------------------
+    // Tarjeta de gastos normales
+    // ---------------------------------------------
 
-    if (!button || !detail) {
-        return;
-    }
+   const gastosCard = dashboard.querySelector(
+    "[data-gastos-toggle]"
+);
 
-    button.addEventListener("click", () => {
-        const abierto = button.getAttribute(
-            "aria-expanded"
-        ) === "true";
+const gastosDetalle = dashboard.querySelector(
+    "#detalle-gastos-recurrentes"
+);
 
-        button.setAttribute(
-            "aria-expanded",
-            String(!abierto)
-        );
+const detalleButton = dashboard.querySelector(
+    "[data-open-gastos-detail]"
+);
 
-        detail.hidden = abierto;
+const gastosImporte = dashboard.querySelector(
+    "[data-gastos-importe]"
+);
 
-        if (!abierto) {
-            window.setTimeout(() => {
-                detail.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start",
-                });
-            }, 80);
+const gastosDescripcion = dashboard.querySelector(
+    "[data-gastos-descripcion]"
+);
+
+const flujoImporte = dashboard.querySelector(
+    "[data-flujo-importe]"
+);
+
+const flujoDescripcion = dashboard.querySelector(
+    "[data-flujo-descripcion]"
+);
+
+if (gastosCard) {
+
+    gastosCard.addEventListener("click", (event) => {
+
+        if (
+            event.target.closest(
+                "[data-open-gastos-detail]"
+            )
+        ) {
+            return;
+        }
+
+        const estadoActual =
+            gastosCard.dataset.estado;
+
+        const mostrarReal =
+            estadoActual === "previsto";
+
+        gastosCard.dataset.estado =
+            mostrarReal ? "real" : "previsto";
+
+        if (mostrarReal) {
+
+            gastosImporte.textContent =
+                `${gastosCard.dataset.gastosReales} €`;
+
+            gastosDescripcion.textContent =
+                "Gastos reales del mes";
+
+            if (flujoImporte) {
+                flujoImporte.textContent =
+                    `${gastosCard.dataset.flujoReal} €`;
+            }
+
+            if (flujoDescripcion) {
+                flujoDescripcion.textContent =
+                    "Ingresos menos gastos reales y préstamos";
+            }
+
+        } else {
+
+            gastosImporte.textContent =
+                `${gastosCard.dataset.gastosPrevistos} €`;
+
+            gastosDescripcion.textContent =
+                "Recurrentes prorrateados y gastos puntuales";
+
+            if (flujoImporte) {
+                flujoImporte.textContent =
+                    `${gastosCard.dataset.flujoPrevisto} €`;
+            }
+
+            if (flujoDescripcion) {
+                flujoDescripcion.textContent =
+                    "Ingresos menos gastos previstos y préstamos";
+            }
         }
     });
-});
+}
 
-document.querySelectorAll(
-    "[data-gastos-tab]"
-).forEach((button) => {
-    button.addEventListener("click", () => {
 
-        const tab = button.dataset.gastosTab;
+if (detalleButton && gastosDetalle) {
 
-        document.querySelectorAll(
-            "[data-gastos-tab]"
-        ).forEach((item) => {
-            item.classList.toggle(
-                "is-active",
-                item === button
-            );
-        });
+    detalleButton.addEventListener("click", (event) => {
 
-        document.querySelectorAll(
-            "[data-gastos-panel]"
-        ).forEach((panel) => {
-            panel.hidden = (
-                panel.dataset.gastosPanel !== tab
-            );
+        event.stopPropagation();
+
+        gastosDetalle.hidden = false;
+
+        gastosDetalle.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
         });
     });
+}
+
+
+    // ---------------------------------------------
+    // Pestañas del detalle
+    // ---------------------------------------------
+
+    const tabs = dashboard.querySelectorAll(
+        "[data-gastos-tab]"
+    );
+
+    const panels = dashboard.querySelectorAll(
+        "[data-gastos-panel]"
+    );
+
+    tabs.forEach((button) => {
+
+        button.addEventListener("click", () => {
+
+            const tabSeleccionada =
+                button.dataset.gastosTab;
+
+            tabs.forEach((item) => {
+                item.classList.toggle(
+                    "is-active",
+                    item === button
+                );
+            });
+
+            panels.forEach((panel) => {
+                panel.hidden = (
+                    panel.dataset.gastosPanel
+                    !== tabSeleccionada
+                );
+            });
+        });
+    });
+
 });

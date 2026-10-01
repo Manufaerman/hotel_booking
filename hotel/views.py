@@ -6755,6 +6755,46 @@ class IngresosDashboardView(
         "hotel/ingresos/ingresos_dashboard.html"
     )
 
+    intervalos_recurrentes = {
+        "mensual": 1,
+        "bimestral": 2,
+        "trimestral": 3,
+        "semestral": 6,
+        "anual": 12,
+    }
+
+    def contar_cargos_del_ano(
+        self,
+        recurrente,
+        year,
+        intervalo,
+    ):
+        inicio_ano = date(year, 1, 1)
+        fin_ano = date(year, 12, 31)
+
+        fecha_cargo = recurrente.fecha_inicio
+
+        while fecha_cargo < inicio_ano:
+            fecha_cargo += relativedelta(
+                months=intervalo,
+            )
+
+        cargos = 0
+
+        while fecha_cargo <= fin_ano:
+
+            if (
+                not recurrente.fecha_fin
+                or fecha_cargo <= recurrente.fecha_fin
+            ):
+                cargos += 1
+
+            fecha_cargo += relativedelta(
+                months=intervalo,
+            )
+
+        return cargos
+
     def get(self, request):
 
         hoy = timezone.localdate()
@@ -6762,8 +6802,6 @@ class IngresosDashboardView(
         generar_gastos_recurrentes(
             hasta=hoy,
         )
-
-        inicio_mes = hoy.replace(day=1)
 
         inicio_mes = hoy.replace(day=1)
 
@@ -6789,7 +6827,10 @@ class IngresosDashboardView(
                 fecha__month=hoy.month,
             )
             .select_related("propiedad")
-            .order_by("-fecha", "-fecha_creacion")
+            .order_by(
+                "-fecha",
+                "-fecha_creacion",
+            )
         )
 
         gastos_periodo = (
@@ -6806,7 +6847,7 @@ class IngresosDashboardView(
             )
         )
 
-        gastos_recurrentes = (
+        recurrentes = (
             GastoRecurrente.objects
             .filter(
                 activo=True,
@@ -6819,45 +6860,69 @@ class IngresosDashboardView(
             )
         )
 
-        intervalos_recurrentes = {
-            "mensual": 1,
-            "bimestral": 2,
-            "trimestral": 3,
-            "semestral": 6,
-            "anual": 12,
-        }
-
         gastos_recurrentes_prorrateados = []
         gastos_recurrentes_reales_mes = []
 
-        total_recurrentes_prorrateados = Decimal("0.00")
+        total_recurrentes_mensuales = Decimal("0.00")
+        total_no_mensuales_prorrateados = Decimal("0.00")
         total_recurrentes_reales_mes = Decimal("0.00")
 
-        for recurrente in gastos_recurrentes:
+        for recurrente in recurrentes:
 
             if (
-                    recurrente.fecha_fin
-                    and recurrente.fecha_fin < inicio_mes
+                recurrente.fecha_fin
+                and recurrente.fecha_fin < inicio_mes
             ):
                 continue
 
-            intervalo = intervalos_recurrentes.get(
-                recurrente.frecuencia,
-                1,
+            intervalo = (
+                self.intervalos_recurrentes.get(
+                    recurrente.frecuencia,
+                    1,
+                )
             )
 
             importe = (
-                    recurrente.importe
-                    or Decimal("0.00")
+                recurrente.importe
+                or Decimal("0.00")
             )
 
-            importe_prorrateado = (
-                    importe / Decimal(intervalo)
-            )
+            if recurrente.frecuencia == "mensual":
 
-            total_recurrentes_prorrateados += (
-                importe_prorrateado
-            )
+                total_recurrentes_mensuales += (
+                    importe
+                )
+
+                cargos_ano = 12
+
+                importe_prorrateado = importe
+
+            else:
+
+                cargos_ano = (
+                    self.contar_cargos_del_ano(
+                        recurrente=recurrente,
+                        year=hoy.year,
+                        intervalo=intervalo,
+                    )
+                )
+
+                if cargos_ano == 0:
+                    continue
+
+                total_anual_estimado = (
+                    importe
+                    * Decimal(cargos_ano)
+                )
+
+                importe_prorrateado = (
+                    total_anual_estimado
+                    / Decimal("12")
+                )
+
+                total_no_mensuales_prorrateados += (
+                    importe_prorrateado
+                )
 
             gastos_recurrentes_prorrateados.append(
                 {
@@ -6866,23 +6931,28 @@ class IngresosDashboardView(
                     "importe_prorrateado": (
                         importe_prorrateado
                     ),
+                    "cargos_ano": cargos_ano,
                     "intervalo": intervalo,
                 }
             )
 
             diferencia_meses = (
-                    (hoy.year - recurrente.fecha_inicio.year)
-                    * 12
-                    + hoy.month
-                    - recurrente.fecha_inicio.month
+                (
+                    hoy.year
+                    - recurrente.fecha_inicio.year
+                )
+                * 12
+                + hoy.month
+                - recurrente.fecha_inicio.month
             )
 
             corresponde_este_mes = (
-                    diferencia_meses >= 0
-                    and diferencia_meses % intervalo == 0
+                diferencia_meses >= 0
+                and diferencia_meses % intervalo == 0
             )
 
             if corresponde_este_mes:
+
                 total_recurrentes_reales_mes += (
                     importe
                 )
@@ -6893,6 +6963,7 @@ class IngresosDashboardView(
                         "importe": importe,
                     }
                 )
+
         gastos_recurrentes_no_mensuales = [
             item
             for item in gastos_recurrentes_prorrateados
@@ -6913,15 +6984,21 @@ class IngresosDashboardView(
         )
 
         total_gastos_puntuales = (
-                gastos_puntuales_mes.aggregate(
-                    total=Sum("importe"),
-                ).get("total")
-                or Decimal("0.00")
+            gastos_puntuales_mes.aggregate(
+                total=Sum("importe"),
+            ).get("total")
+            or Decimal("0.00")
         )
 
         gastos_normales_previstos = (
-                total_recurrentes_prorrateados
-                + total_gastos_puntuales
+            total_gastos_puntuales
+            + total_recurrentes_mensuales
+            + total_no_mensuales_prorrateados
+        )
+
+        gastos_normales_reales_mes = (
+            total_gastos_puntuales
+            + total_recurrentes_reales_mes
         )
 
         pagos_hipoteca_mes = (
@@ -6936,10 +7013,6 @@ class IngresosDashboardView(
             )
             .order_by("-fecha")
         )
-
-        # -------------------------------------------------
-        # INGRESOS POR PROPIEDAD
-        # -------------------------------------------------
 
         ingresos_por_propiedad = defaultdict(
             lambda: Decimal("0.00")
@@ -6973,10 +7046,6 @@ class IngresosDashboardView(
                     ingreso.importe
                     or Decimal("0.00")
                 )
-
-        # -------------------------------------------------
-        # GASTOS OPERATIVOS
-        # -------------------------------------------------
 
         gastos_por_propiedad = defaultdict(
             lambda: Decimal("0.00")
@@ -7019,10 +7088,6 @@ class IngresosDashboardView(
             + gastos_empresa
         )
 
-        # -------------------------------------------------
-        # HIPOTECAS
-        # -------------------------------------------------
-
         cuotas_hipotecarias_mes = (
             pagos_hipoteca_mes.aggregate(
                 total=Sum("importe_cuota"),
@@ -7053,38 +7118,28 @@ class IngresosDashboardView(
             or Decimal("0.00")
         )
 
-        # -------------------------------------------------
-        # TOTALES FINANCIEROS
-        # -------------------------------------------------
-
         ingresos_totales = sum(
             ingresos_por_propiedad.values(),
             Decimal("0.00"),
         )
 
-        # Resultado contable:
-        # no considera el capital amortizado como gasto.
+        flujo_caja_previsto = (
+            ingresos_totales
+            - gastos_normales_previstos
+            - cuotas_hipotecarias_mes
+        )
+
+        flujo_caja_real = (
+            ingresos_totales
+            - gastos_normales_reales_mes
+            - cuotas_hipotecarias_mes
+        )
+
         beneficio_contable = (
             ingresos_totales
             - gastos_operativos
             - intereses_hipotecarios_mes
         )
-
-        # Flujo de caja:
-        # descuenta la cuota hipotecaria completa.
-        flujo_caja = (
-            ingresos_totales
-            - gastos_operativos
-            - cuotas_hipotecarias_mes
-        )
-
-        # Se mantiene este nombre para no romper
-        # el template actual.
-        beneficio_operativo = beneficio_contable
-
-        # -------------------------------------------------
-        # INGRESOS POR HABITACIÓN
-        # -------------------------------------------------
 
         ingresos_por_habitacion = []
 
@@ -7111,10 +7166,6 @@ class IngresosDashboardView(
             reverse=True,
         )
 
-        # -------------------------------------------------
-        # GASTOS POR HABITACIÓN
-        # -------------------------------------------------
-
         gastos_habitaciones = []
 
         habitaciones = (
@@ -7133,7 +7184,7 @@ class IngresosDashboardView(
                 Decimal("0.00"),
             )
 
-            if importe == 0:
+            if importe <= Decimal("0.00"):
                 continue
 
             gastos_habitaciones.append(
@@ -7149,26 +7200,18 @@ class IngresosDashboardView(
             reverse=True,
         )
 
-        # -------------------------------------------------
-        # RENDIMIENTO POR PROPIEDAD
-        # -------------------------------------------------
-
         rendimiento_propiedades = []
 
         for propiedad in propiedades:
 
-            ingresos = (
-                ingresos_por_propiedad.get(
-                    propiedad.pk,
-                    Decimal("0.00"),
-                )
+            ingresos = ingresos_por_propiedad.get(
+                propiedad.pk,
+                Decimal("0.00"),
             )
 
-            gastos = (
-                gastos_por_propiedad.get(
-                    propiedad.pk,
-                    Decimal("0.00"),
-                )
+            gastos = gastos_por_propiedad.get(
+                propiedad.pk,
+                Decimal("0.00"),
             )
 
             rendimiento_propiedades.append(
@@ -7176,10 +7219,7 @@ class IngresosDashboardView(
                     "propiedad": propiedad,
                     "ingresos": ingresos,
                     "gastos": gastos,
-                    "resultado": (
-                        ingresos
-                        - gastos
-                    ),
+                    "resultado": ingresos - gastos,
                 }
             )
 
@@ -7195,12 +7235,32 @@ class IngresosDashboardView(
                     ingresos_temporales
                 ),
 
+                "ingresos_totales": (
+                    ingresos_totales
+                ),
+
+                "gastos_operativos": (
+                    gastos_operativos
+                ),
+
                 "gastos_normales_previstos": (
                     gastos_normales_previstos
                 ),
 
+                "gastos_normales_reales_mes": (
+                    gastos_normales_reales_mes
+                ),
+
                 "gastos_recurrentes_prorrateados": (
                     gastos_recurrentes_prorrateados
+                ),
+
+                "gastos_recurrentes_no_mensuales": (
+                    gastos_recurrentes_no_mensuales
+                ),
+
+                "gastos_recurrentes_mensuales": (
+                    gastos_recurrentes_mensuales
                 ),
 
                 "gastos_recurrentes_reales_mes": (
@@ -7210,16 +7270,13 @@ class IngresosDashboardView(
                 "gastos_puntuales_mes": (
                     gastos_puntuales_mes
                 ),
-                "gastos_recurrentes_no_mensuales": (
-                    gastos_recurrentes_no_mensuales
+
+                "total_recurrentes_mensuales": (
+                    total_recurrentes_mensuales
                 ),
 
-                "gastos_recurrentes_mensuales": (
-                    gastos_recurrentes_mensuales
-                ),
-
-                "total_recurrentes_prorrateados": (
-                    total_recurrentes_prorrateados
+                "total_no_mensuales_prorrateados": (
+                    total_no_mensuales_prorrateados
                 ),
 
                 "total_recurrentes_reales_mes": (
@@ -7246,14 +7303,6 @@ class IngresosDashboardView(
                     gastos_empresa
                 ),
 
-                "gastos_operativos": (
-                    gastos_operativos
-                ),
-
-                "ingresos_totales": (
-                    ingresos_totales
-                ),
-
                 "gastos_totales": (
                     gastos_operativos
                 ),
@@ -7274,16 +7323,24 @@ class IngresosDashboardView(
                     deuda_total
                 ),
 
-                "beneficio_operativo": (
-                    beneficio_operativo
-                ),
-
                 "beneficio_contable": (
                     beneficio_contable
                 ),
 
+                "beneficio_operativo": (
+                    beneficio_contable
+                ),
+
+                "flujo_caja_previsto": (
+                    flujo_caja_previsto
+                ),
+
+                "flujo_caja_real": (
+                    flujo_caja_real
+                ),
+
                 "flujo_caja": (
-                    flujo_caja
+                    flujo_caja_real
                 ),
 
                 "pagos_hipoteca_mes": (

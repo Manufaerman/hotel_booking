@@ -49,7 +49,9 @@
     <section class="ingresos-kpis">
 
     <article class="ingreso-kpi ingreso-kpi-main">
-        <span>Ingresos totales</span>
+        <span>
+            Ingresos totales
+        </span>
 
         <strong>
             {{ ingresos_totales|floatformat:2 }} €
@@ -60,31 +62,45 @@
         </small>
     </article>
 
+
+    <article
+    class="ingreso-kpi ingreso-kpi-clickable"
+    data-gastos-toggle
+    data-gastos-previstos="{{ gastos_normales_previstos|floatformat:2 }}"
+    data-gastos-reales="{{ gastos_normales_reales_mes|floatformat:2 }}"
+    data-flujo-previsto="{{ flujo_caja_previsto|floatformat:2 }}"
+    data-flujo-real="{{ flujo_caja_real|floatformat:2 }}"
+    data-estado="previsto"
+>
+
+    <span>
+        Gastos normales
+    </span>
+
+    <strong data-gastos-importe>
+        {{ gastos_normales_previstos|floatformat:2 }} €
+    </strong>
+
+    <small data-gastos-descripcion>
+        Recurrentes prorrateados y gastos puntuales
+    </small>
+
     <button
         type="button"
-        class="ingreso-kpi ingreso-kpi-clickable"
-        data-toggle-recurrentes
-        aria-expanded="false"
-        aria-controls="detalle-gastos-recurrentes"
+        class="ingreso-kpi-detail-trigger"
+        data-open-gastos-detail
     >
-        <span>Gastos normales</span>
-
-        <strong>
-            {{ gastos_normales_previstos|floatformat:2 }} €
-        </strong>
-
-        <small>
-            Recurrentes prorrateados y gastos puntuales
-        </small>
-
-        <span class="ingreso-kpi-hint">
-            Ver detalle →
-        </span>
+        Ver detalle →
     </button>
+
+</article>
 
 
     <article class="ingreso-kpi ingreso-kpi-loan">
-        <span>Préstamos</span>
+
+        <span>
+            Préstamos
+        </span>
 
         <strong>
             {{ cuotas_hipotecarias_mes|floatformat:2 }} €
@@ -93,19 +109,24 @@
         <small>
             Cuotas hipotecarias del mes
         </small>
+
     </article>
 
 
     <article class="ingreso-kpi ingreso-kpi-positive">
-        <span>Flujo de caja</span>
 
-        <strong>
-            {{ flujo_caja|floatformat:2 }} €
+        <span>
+            Flujo de caja
+        </span>
+
+        <strong data-flujo-importe>
+            {{ flujo_caja_previsto|floatformat:2 }} €
         </strong>
 
-        <small>
-            Ingresos menos todas las salidas
+        <small data-flujo-descripcion>
+            Ingresos menos gastos previstos y préstamos
         </small>
+
     </article>
 
 </section>
