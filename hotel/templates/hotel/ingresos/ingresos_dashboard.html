@@ -1,0 +1,393 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block title %}
+    Ingresos | By Colección
+{% endblock %}
+
+{% block extra-head %}
+<link
+    rel="stylesheet"
+    href="{% static 'hotel/css/ingresos_dashboard.css' %}"
+>
+{% endblock %}
+
+{% block content %}
+
+<main class="ingresos-dashboard">
+
+    <header class="ingresos-dashboard-header">
+
+        <div>
+            <span class="ingresos-eyebrow">
+                CONTROL FINANCIERO
+            </span>
+
+            <h1>
+                Ingresos y rentabilidad
+            </h1>
+
+            <p>
+                {{ hoy|date:"F Y"|capfirst }}
+            </p>
+        </div>
+
+        <a
+            href="{% url 'hotel:crear_ingreso_propiedad' %}"
+            class="ingresos-add-button"
+        >
+            <span>+</span>
+            Añadir ingreso
+        </a>
+
+    </header>
+
+
+    <section class="ingresos-kpis">
+
+    <article class="ingreso-kpi ingreso-kpi-main">
+        <span>Ingresos totales</span>
+
+        <strong>
+            {{ ingresos_totales|floatformat:2 }} €
+        </strong>
+
+        <small>
+            Contratos e ingresos temporales
+        </small>
+    </article>
+
+
+    <article class="ingreso-kpi">
+        <span>Gastos normales</span>
+
+        <strong>
+            {{ gastos_operativos|floatformat:2 }} €
+        </strong>
+
+        <small>
+            Propiedades, habitaciones y empresa
+        </small>
+    </article>
+
+
+    <article class="ingreso-kpi ingreso-kpi-loan">
+        <span>Préstamos</span>
+
+        <strong>
+            {{ cuotas_hipotecarias_mes|floatformat:2 }} €
+        </strong>
+
+        <small>
+            Cuotas hipotecarias del mes
+        </small>
+    </article>
+
+
+    <article class="ingreso-kpi ingreso-kpi-positive">
+        <span>Flujo de caja</span>
+
+        <strong>
+            {{ flujo_caja|floatformat:2 }} €
+        </strong>
+
+        <small>
+            Ingresos menos todas las salidas
+        </small>
+    </article>
+
+</section>
+
+
+    <section class="ingresos-section">
+
+        <header class="ingresos-section-header">
+
+            <div>
+                <span class="ingresos-eyebrow">
+                    PROPIEDADES
+                </span>
+
+                <h2>
+                    Rendimiento por propiedad
+                </h2>
+            </div>
+
+        </header>
+
+
+        <div class="ingresos-property-grid">
+
+            {% for item in rendimiento_propiedades %}
+
+                <article class="ingreso-property-card">
+
+                    <div class="ingreso-property-card-header">
+
+                        <div>
+                            <h3>
+                                {{ item.propiedad.nombre }}
+                            </h3>
+
+                            {% if item.propiedad.ciudad %}
+                                <span>
+                                    {{ item.propiedad.ciudad }}
+                                </span>
+                            {% endif %}
+                        </div>
+
+                    </div>
+
+
+                    <div class="ingreso-property-values">
+
+                        <div>
+                            <small>
+                                Ingresos
+                            </small>
+
+                            <strong>
+                                {{ item.ingresos|floatformat:2 }} €
+                            </strong>
+                        </div>
+
+
+                        <div>
+                            <small>
+                                Gastos
+                            </small>
+
+                            <strong>
+                                {{ item.gastos|floatformat:2 }} €
+                            </strong>
+                        </div>
+
+
+                        <div>
+                            <small>
+                                Resultado
+                            </small>
+
+                            <strong>
+                                {{ item.resultado|floatformat:2 }} €
+                            </strong>
+                        </div>
+
+                    </div>
+
+                </article>
+
+            {% empty %}
+
+                <p class="ingresos-empty">
+                    Todavía no hay propiedades registradas.
+                </p>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+    <section class="ingresos-section">
+
+    <header class="ingresos-section-header">
+        <div>
+            <span class="ingresos-eyebrow">
+                GASTOS DE HABITACIONES
+            </span>
+
+            <h2>
+                Gastos asignados a habitaciones
+            </h2>
+        </div>
+    </header>
+
+    {% if gastos_habitaciones %}
+
+        <div class="ingresos-room-list">
+
+            {% for item in gastos_habitaciones %}
+
+                <article class="ingreso-room-row">
+
+                    <div>
+                        <strong>
+                            {{ item.habitacion.nombre }}
+                        </strong>
+
+                        <small>
+                            {{ item.propiedad.nombre }}
+                        </small>
+                    </div>
+
+                    <strong>
+                        {{ item.importe|floatformat:2 }} €
+                    </strong>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <p class="ingresos-empty">
+            No hay gastos asignados directamente a habitaciones este mes.
+        </p>
+
+    {% endif %}
+
+</section>
+
+
+<section class="ingresos-section">
+
+    <header class="ingresos-section-header">
+        <div>
+            <span class="ingresos-eyebrow">
+                GASTOS GENERALES
+            </span>
+
+            <h2>
+                Gastos de sociedad y empresa
+            </h2>
+        </div>
+    </header>
+
+    <article class="ingreso-kpi ingreso-kpi-company">
+
+        <span>
+            Gastos sin propiedad asignada
+        </span>
+
+        <strong>
+            {{ gastos_empresa|floatformat:2 }} €
+        </strong>
+
+        <small>
+            Sociedad, dirección ejecutiva y otros gastos generales
+        </small>
+
+    </article>
+
+</section>
+
+
+    <section class="ingresos-section">
+
+        <header class="ingresos-section-header">
+
+            <div>
+                <span class="ingresos-eyebrow">
+                    HABITACIONES
+                </span>
+
+                <h2>
+                    Habitaciones con mayor ingreso
+                </h2>
+            </div>
+
+        </header>
+
+
+        {% if ingresos_por_habitacion %}
+
+            <div class="ingresos-room-list">
+
+                {% for item in ingresos_por_habitacion %}
+
+                    <article class="ingreso-room-row">
+
+                        <div>
+                            <strong>
+                                {{ item.habitacion.nombre }}
+                            </strong>
+
+                            <small>
+                                {{ item.propiedad.nombre }}
+                            </small>
+                        </div>
+
+                        <strong>
+                            {{ item.importe|floatformat:2 }} €
+                        </strong>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <p class="ingresos-empty">
+                No hay contratos activos actualmente.
+            </p>
+
+        {% endif %}
+
+    </section>
+
+
+    <section class="ingresos-section">
+
+        <header class="ingresos-section-header">
+
+            <div>
+                <span class="ingresos-eyebrow">
+                    INGRESOS TEMPORALES
+                </span>
+
+                <h2>
+                    Últimos cobros registrados
+                </h2>
+            </div>
+
+        </header>
+
+
+        {% if ingresos_temporales %}
+
+            <div class="ingresos-temporary-list">
+
+                {% for ingreso in ingresos_temporales %}
+
+                    <article class="ingreso-temporal-row">
+
+                        <div>
+                            <strong>
+                                {{ ingreso.propiedad.nombre }}
+                            </strong>
+
+                            <small>
+                                {{ ingreso.fecha|date:"d/m/Y" }}
+                                ·
+                                {{ ingreso.concepto|default:"Ingreso temporal" }}
+                            </small>
+                        </div>
+
+                        <strong>
+                            {{ ingreso.importe|floatformat:2 }} €
+                        </strong>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <p class="ingresos-empty">
+                No hay ingresos temporales este mes.
+            </p>
+
+        {% endif %}
+
+    </section>
+
+</main>
+
+{% endblock %}

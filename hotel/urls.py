@@ -3,7 +3,8 @@ from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
 from django.urls import path
 from django.views.generic import TemplateView
-from .views import service_worker
+from .views import service_worker, IngresosDashboardView, CrearPagoHipotecaView, CrearHipotecaView, \
+    HipotecasDashboardView
 from hotel.sitemaps import StaticViewSitemap
 
 from .views import (
@@ -352,7 +353,28 @@ path(
     service_worker,
     name="service_worker",
 ),
+path(
+    "dashboard/ingresos/",
+    IngresosDashboardView.as_view(),
+    name="ingresos_dashboard",
+),
+path(
+    "dashboard/hipotecas/",
+    HipotecasDashboardView.as_view(),
+    name="hipotecas_dashboard",
+),
 
+path(
+    "dashboard/hipotecas/nueva/",
+    CrearHipotecaView.as_view(),
+    name="crear_hipoteca",
+),
+
+path(
+    "dashboard/hipotecas/pago/nuevo/",
+    CrearPagoHipotecaView.as_view(),
+    name="crear_pago_hipoteca",
+),
 
 
 ]

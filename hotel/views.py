@@ -1,4 +1,5 @@
 import calendar
+from collections import defaultdict
 from datetime import  date
 from decimal import Decimal, ROUND_HALF_UP
 from urllib.parse import quote
@@ -21,15 +22,15 @@ from django.db.models import Q, Sum
 from django.utils import timezone
 from .services.cotizaciones import aplicar_conversion_gasto, CotizacionNoDisponible
 from .forms import (
-    AvalContratoForm,
+    AvalContratoForm, HipotecaForm, PagoHipotecaForm,
     ContratoAlquilerForm,
     CrearProcesoFormalizacionForm,
     InquilinoForm, GastoForm, CompletarGastoPendienteForm, EditarGastoRecurrenteForm, ProyectoForm, IngresoPropiedadForm
 )
 
 from .models import (
-    AvalContrato,
-    ContratoAlquiler,
+    AvalContrato, Hipoteca,
+    ContratoAlquiler, PagoHipoteca,
     Flat,
     Gasto,
     Habitacion,
@@ -6734,3 +6735,559 @@ def crear_ingreso_propiedad(request):
             "texto_boton": "Guardar ingreso",
         },
     )
+
+class IngresosDashboardView(
+    LoginRequiredMixin,
+    View,
+):
+    template_name = (
+        "hotel/ingresos/ingresos_dashboard.html"
+    )
+
+    def get(self, request):
+
+        hoy = timezone.localdate()
+        inicio_mes = hoy.replace(day=1)
+
+        propiedades = (
+            Flat.objects
+            .all()
+            .order_by("nombre")
+        )
+
+        contratos_activos = (
+            ContratoAlquiler.objects
+            .filter(activo=True)
+            .select_related(
+                "habitacion",
+                "habitacion__propiedad",
+            )
+        )
+
+        ingresos_temporales = (
+            IngresoPropiedad.objects
+            .filter(
+                fecha__year=hoy.year,
+                fecha__month=hoy.month,
+            )
+            .select_related("propiedad")
+            .order_by("-fecha", "-fecha_creacion")
+        )
+
+        gastos_periodo = (
+            Gasto.objects
+            .filter(
+                fecha__year=hoy.year,
+                fecha__month=hoy.month,
+                anulado=False,
+            )
+            .select_related(
+                "propiedad",
+                "habitacion",
+                "proyecto",
+            )
+        )
+
+        pagos_hipoteca_mes = (
+            PagoHipoteca.objects
+            .filter(
+                fecha__year=hoy.year,
+                fecha__month=hoy.month,
+            )
+            .select_related(
+                "hipoteca",
+                "hipoteca__propiedad",
+            )
+            .order_by("-fecha")
+        )
+
+        # -------------------------------------------------
+        # INGRESOS POR PROPIEDAD
+        # -------------------------------------------------
+
+        ingresos_por_propiedad = defaultdict(
+            lambda: Decimal("0.00")
+        )
+
+        for contrato in contratos_activos:
+
+            habitacion = contrato.habitacion
+
+            if not habitacion:
+                continue
+
+            propiedad = habitacion.propiedad
+
+            if not propiedad:
+                continue
+
+            ingresos_por_propiedad[
+                propiedad.pk
+            ] += (
+                contrato.precio_mensual
+                or Decimal("0.00")
+            )
+
+        for ingreso in ingresos_temporales:
+
+            if ingreso.propiedad_id:
+                ingresos_por_propiedad[
+                    ingreso.propiedad_id
+                ] += (
+                    ingreso.importe
+                    or Decimal("0.00")
+                )
+
+        # -------------------------------------------------
+        # GASTOS OPERATIVOS
+        # -------------------------------------------------
+
+        gastos_por_propiedad = defaultdict(
+            lambda: Decimal("0.00")
+        )
+
+        gastos_por_habitacion = defaultdict(
+            lambda: Decimal("0.00")
+        )
+
+        gastos_empresa = Decimal("0.00")
+
+        for gasto in gastos_periodo:
+
+            importe = (
+                gasto.importe
+                or Decimal("0.00")
+            )
+
+            if gasto.propiedad_id:
+                gastos_por_propiedad[
+                    gasto.propiedad_id
+                ] += importe
+
+            if gasto.habitacion_id:
+                gastos_por_habitacion[
+                    gasto.habitacion_id
+                ] += importe
+
+            if (
+                not gasto.propiedad_id
+                and not gasto.habitacion_id
+            ):
+                gastos_empresa += importe
+
+        gastos_operativos = (
+            sum(
+                gastos_por_propiedad.values(),
+                Decimal("0.00"),
+            )
+            + gastos_empresa
+        )
+
+        # -------------------------------------------------
+        # HIPOTECAS
+        # -------------------------------------------------
+
+        cuotas_hipotecarias_mes = (
+            pagos_hipoteca_mes.aggregate(
+                total=Sum("importe_cuota"),
+            ).get("total")
+            or Decimal("0.00")
+        )
+
+        intereses_hipotecarios_mes = (
+            pagos_hipoteca_mes.aggregate(
+                total=Sum("intereses"),
+            ).get("total")
+            or Decimal("0.00")
+        )
+
+        capital_amortizado_mes = (
+            pagos_hipoteca_mes.aggregate(
+                total=Sum("capital_amortizado"),
+            ).get("total")
+            or Decimal("0.00")
+        )
+
+        deuda_total = (
+            Hipoteca.objects
+            .filter(activa=True)
+            .aggregate(
+                total=Sum("deuda_pendiente"),
+            ).get("total")
+            or Decimal("0.00")
+        )
+
+        # -------------------------------------------------
+        # TOTALES FINANCIEROS
+        # -------------------------------------------------
+
+        ingresos_totales = sum(
+            ingresos_por_propiedad.values(),
+            Decimal("0.00"),
+        )
+
+        # Resultado contable:
+        # no considera el capital amortizado como gasto.
+        beneficio_contable = (
+            ingresos_totales
+            - gastos_operativos
+            - intereses_hipotecarios_mes
+        )
+
+        # Flujo de caja:
+        # descuenta la cuota hipotecaria completa.
+        flujo_caja = (
+            ingresos_totales
+            - gastos_operativos
+            - cuotas_hipotecarias_mes
+        )
+
+        # Se mantiene este nombre para no romper
+        # el template actual.
+        beneficio_operativo = beneficio_contable
+
+        # -------------------------------------------------
+        # INGRESOS POR HABITACIÓN
+        # -------------------------------------------------
+
+        ingresos_por_habitacion = []
+
+        for contrato in contratos_activos:
+
+            habitacion = contrato.habitacion
+
+            if not habitacion:
+                continue
+
+            ingresos_por_habitacion.append(
+                {
+                    "habitacion": habitacion,
+                    "propiedad": habitacion.propiedad,
+                    "importe": (
+                        contrato.precio_mensual
+                        or Decimal("0.00")
+                    ),
+                }
+            )
+
+        ingresos_por_habitacion.sort(
+            key=lambda item: item["importe"],
+            reverse=True,
+        )
+
+        # -------------------------------------------------
+        # GASTOS POR HABITACIÓN
+        # -------------------------------------------------
+
+        gastos_habitaciones = []
+
+        habitaciones = (
+            Habitacion.objects
+            .select_related("propiedad")
+            .order_by(
+                "propiedad__nombre",
+                "nombre",
+            )
+        )
+
+        for habitacion in habitaciones:
+
+            importe = gastos_por_habitacion.get(
+                habitacion.pk,
+                Decimal("0.00"),
+            )
+
+            if importe == 0:
+                continue
+
+            gastos_habitaciones.append(
+                {
+                    "habitacion": habitacion,
+                    "propiedad": habitacion.propiedad,
+                    "importe": importe,
+                }
+            )
+
+        gastos_habitaciones.sort(
+            key=lambda item: item["importe"],
+            reverse=True,
+        )
+
+        # -------------------------------------------------
+        # RENDIMIENTO POR PROPIEDAD
+        # -------------------------------------------------
+
+        rendimiento_propiedades = []
+
+        for propiedad in propiedades:
+
+            ingresos = (
+                ingresos_por_propiedad.get(
+                    propiedad.pk,
+                    Decimal("0.00"),
+                )
+            )
+
+            gastos = (
+                gastos_por_propiedad.get(
+                    propiedad.pk,
+                    Decimal("0.00"),
+                )
+            )
+
+            rendimiento_propiedades.append(
+                {
+                    "propiedad": propiedad,
+                    "ingresos": ingresos,
+                    "gastos": gastos,
+                    "resultado": (
+                        ingresos
+                        - gastos
+                    ),
+                }
+            )
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "hoy": hoy,
+                "inicio_mes": inicio_mes,
+                "propiedades": propiedades,
+
+                "ingresos_temporales": (
+                    ingresos_temporales
+                ),
+
+                "rendimiento_propiedades": (
+                    rendimiento_propiedades
+                ),
+
+                "ingresos_por_habitacion": (
+                    ingresos_por_habitacion
+                ),
+
+                "gastos_habitaciones": (
+                    gastos_habitaciones
+                ),
+
+                "gastos_empresa": (
+                    gastos_empresa
+                ),
+
+                "gastos_operativos": (
+                    gastos_operativos
+                ),
+
+                "ingresos_totales": (
+                    ingresos_totales
+                ),
+
+                "gastos_totales": (
+                    gastos_operativos
+                ),
+
+                "cuotas_hipotecarias_mes": (
+                    cuotas_hipotecarias_mes
+                ),
+
+                "intereses_hipotecarios_mes": (
+                    intereses_hipotecarios_mes
+                ),
+
+                "capital_amortizado_mes": (
+                    capital_amortizado_mes
+                ),
+
+                "deuda_total": (
+                    deuda_total
+                ),
+
+                "beneficio_operativo": (
+                    beneficio_operativo
+                ),
+
+                "beneficio_contable": (
+                    beneficio_contable
+                ),
+
+                "flujo_caja": (
+                    flujo_caja
+                ),
+
+                "pagos_hipoteca_mes": (
+                    pagos_hipoteca_mes
+                ),
+            },
+        )
+
+class HipotecasDashboardView(
+    LoginRequiredMixin,
+    View,
+):
+    template_name = (
+        "hotel/hipotecas/dashboard.html"
+    )
+
+    def get(self, request):
+
+        hoy = timezone.localdate()
+
+        hipotecas = (
+            Hipoteca.objects
+            .filter(activa=True)
+            .select_related("propiedad")
+            .prefetch_related("pagos")
+        )
+
+        pagos_mes = (
+            PagoHipoteca.objects
+            .filter(
+                fecha__year=hoy.year,
+                fecha__month=hoy.month,
+            )
+            .select_related(
+                "hipoteca",
+                "hipoteca__propiedad",
+            )
+        )
+
+        deuda_total = (
+            hipotecas.aggregate(
+                total=Sum("deuda_pendiente"),
+            ).get("total")
+            or Decimal("0.00")
+        )
+
+        cuotas_mes = (
+            pagos_mes.aggregate(
+                total=Sum("importe_cuota"),
+            ).get("total")
+            or Decimal("0.00")
+        )
+
+        intereses_mes = (
+            pagos_mes.aggregate(
+                total=Sum("intereses"),
+            ).get("total")
+            or Decimal("0.00")
+        )
+
+        capital_amortizado_mes = (
+            pagos_mes.aggregate(
+                total=Sum("capital_amortizado"),
+            ).get("total")
+            or Decimal("0.00")
+        )
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "hoy": hoy,
+                "hipotecas": hipotecas,
+                "pagos_mes": pagos_mes,
+                "deuda_total": deuda_total,
+                "cuotas_mes": cuotas_mes,
+                "intereses_mes": intereses_mes,
+                "capital_amortizado_mes": (
+                    capital_amortizado_mes
+                ),
+            },
+        )
+
+class CrearHipotecaView(
+    LoginRequiredMixin,
+    View,
+):
+    template_name = (
+        "hotel/hipotecas/hipoteca_form.html"
+    )
+
+    def get(self, request):
+        form = HipotecaForm()
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "form": form,
+                "titulo": "Nueva hipoteca",
+                "texto_boton": "Guardar hipoteca",
+            },
+        )
+
+    def post(self, request):
+        form = HipotecaForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+
+            messages.success(
+                request,
+                "La hipoteca se ha registrado correctamente.",
+            )
+
+            return redirect(
+                "hotel:hipotecas_dashboard"
+            )
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "form": form,
+                "titulo": "Nueva hipoteca",
+                "texto_boton": "Guardar hipoteca",
+            },
+        )
+
+
+class CrearPagoHipotecaView(
+    LoginRequiredMixin,
+    View,
+):
+    template_name = (
+        "hotel/hipotecas/pago_form.html"
+    )
+
+    def get(self, request):
+        form = PagoHipotecaForm()
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "form": form,
+                "titulo": "Registrar pago hipotecario",
+                "texto_boton": "Guardar pago",
+            },
+        )
+
+    def post(self, request):
+        form = PagoHipotecaForm(
+            request.POST,
+            request.FILES,
+        )
+
+        if form.is_valid():
+            form.save()
+
+            messages.success(
+                request,
+                "El pago hipotecario se ha registrado correctamente.",
+            )
+
+            return redirect(
+                "hotel:hipotecas_dashboard"
+            )
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "form": form,
+                "titulo": "Registrar pago hipotecario",
+                "texto_boton": "Guardar pago",
+            },
+        )

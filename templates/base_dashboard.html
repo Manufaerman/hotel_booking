@@ -313,6 +313,55 @@
                 ></i>
             </a>
 
+            <!-- Ingresos -->
+
+            <a
+                href="{% url 'hotel:ingresos_dashboard' %}"
+                class="
+                    sidebar-link
+
+                    {% if request.resolver_match.url_name == 'ingresos_dashboard' %}
+                        active
+                    {% elif request.resolver_match.url_name == 'crear_ingreso_propiedad' %}
+                        active
+                    {% endif %}
+                "
+                aria-label="Gestión de ingresos"
+                title="Gestión de ingresos"
+                data-label="Ingresos"
+            >
+                <i
+                    class="fa fa-line-chart"
+                    aria-hidden="true"
+                ></i>
+            </a>
+
+
+            <!-- Hipotecas -->
+
+            <a
+                href="{% url 'hotel:hipotecas_dashboard' %}"
+                class="
+                    sidebar-link
+
+                    {% if request.resolver_match.url_name == 'hipotecas_dashboard' %}
+                        active
+                    {% elif request.resolver_match.url_name == 'crear_hipoteca' %}
+                        active
+                    {% elif request.resolver_match.url_name == 'crear_pago_hipoteca' %}
+                        active
+                    {% endif %}
+                "
+                aria-label="Gestión de hipotecas"
+                title="Gestión de hipotecas"
+                data-label="Hipotecas"
+            >
+                <i
+                    class="fa fa-university"
+                    aria-hidden="true"
+                ></i>
+            </a>
+
             <!-- Visitas -->
 
             <a

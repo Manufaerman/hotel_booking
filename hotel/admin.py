@@ -1,12 +1,73 @@
-from django.contrib import admin
-from .models import Flat, Habitacion, Inquilino, ContratoAlquiler, Gasto, Inventario, Iteminventario
 
-from .models import Habitacion, MultimediaHabitacion
+from .models import Flat, Inquilino, ContratoAlquiler, Gasto, Inventario, Iteminventario, Hipoteca, PagoHipoteca
+from .models import Habitacion, MultimediaHabitacion, Planta, EventoPlanta, ComentarioPlanta
+from .models import Proveedor, IngresoPropiedad
 from django.contrib import admin
-from .models import Planta, EventoPlanta, ComentarioPlanta
-from .models import Proveedor
-from .models import IngresoPropiedad
+class PagoHipotecaInline(admin.TabularInline):
+    model = PagoHipoteca
+    extra = 0
+    ordering = ["-fecha"]
 
+    fields = [
+        "fecha",
+        "importe_cuota",
+        "intereses",
+        "capital_amortizado",
+        "otros_gastos",
+        "justificante",
+        "notas",
+    ]
+
+
+@admin.register(Hipoteca)
+class HipotecaAdmin(admin.ModelAdmin):
+
+    list_display = [
+        "propiedad",
+        "entidad",
+        "capital_inicial",
+        "deuda_pendiente",
+        "cuota_mensual",
+        "activa",
+    ]
+
+    list_filter = [
+        "activa",
+        "entidad",
+        "propiedad",
+    ]
+
+    search_fields = [
+        "entidad",
+        "referencia",
+        "propiedad__nombre",
+    ]
+
+    inlines = [
+        PagoHipotecaInline,
+    ]
+
+
+@admin.register(PagoHipoteca)
+class PagoHipotecaAdmin(admin.ModelAdmin):
+
+    list_display = [
+        "hipoteca",
+        "fecha",
+        "importe_cuota",
+        "intereses",
+        "capital_amortizado",
+    ]
+
+    list_filter = [
+        "fecha",
+        "hipoteca",
+    ]
+
+    search_fields = [
+        "hipoteca__entidad",
+        "hipoteca__propiedad__nombre",
+    ]
 
 @admin.register(IngresoPropiedad)
 class IngresoPropiedadAdmin(admin.ModelAdmin):

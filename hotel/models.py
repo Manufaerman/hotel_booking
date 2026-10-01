@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from datetime import date
 from django.utils.timezone import now
 import uuid
+from decimal import Decimal
 from datetime import timedelta
 import re
 from django.utils import timezone
@@ -2204,4 +2205,291 @@ class IngresoPropiedad(models.Model):
             f"{self.propiedad} · "
             f"{concepto} · "
             f"{self.importe} €"
+        )
+
+class Hipoteca(models.Model):
+
+    propiedad = models.ForeignKey(
+        Flat,
+        on_delete=models.CASCADE,
+        related_name="hipotecas",
+        verbose_name="Propiedad",
+    )
+
+    entidad = models.CharField(
+        max_length=150,
+        verbose_name="Entidad bancaria",
+    )
+
+    referencia = models.CharField(
+        max_length=150,
+        blank=True,
+        verbose_name="Referencia",
+    )
+
+    capital_inicial = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        verbose_name="Capital inicial",
+    )
+
+    deuda_pendiente = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        verbose_name="Deuda pendiente",
+    )
+
+    cuota_mensual = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name="Cuota mensual",
+    )
+
+    tipo_interes = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        verbose_name="Tipo de interés (%)",
+    )
+
+    plazo_meses = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        verbose_name="Plazo en meses",
+    )
+
+    fecha_inicio = models.DateField(
+        verbose_name="Fecha de inicio",
+    )
+
+    fecha_fin = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name="Fecha de finalización",
+    )
+
+    activa = models.BooleanField(
+        default=True,
+        verbose_name="Activa",
+    )
+
+    notas = models.TextField(
+        blank=True,
+    )
+
+    fecha_creacion = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    class Meta:
+        ordering = [
+            "propiedad__nombre",
+            "entidad",
+        ]
+
+        verbose_name = "Hipoteca"
+        verbose_name_plural = "Hipotecas"
+
+    def clean(self):
+        super().clean()
+
+        errores = {}
+
+        if (
+            self.capital_inicial is not None
+            and self.capital_inicial <= 0
+        ):
+            errores["capital_inicial"] = (
+                "El capital inicial debe ser superior a cero."
+            )
+
+        if (
+            self.deuda_pendiente is not None
+            and self.deuda_pendiente < 0
+        ):
+            errores["deuda_pendiente"] = (
+                "La deuda pendiente no puede ser negativa."
+            )
+
+        if (
+            self.capital_inicial is not None
+            and self.deuda_pendiente is not None
+            and self.deuda_pendiente > self.capital_inicial
+        ):
+            errores["deuda_pendiente"] = (
+                "La deuda pendiente no puede superar "
+                "el capital inicial."
+            )
+
+        if (
+            self.cuota_mensual is not None
+            and self.cuota_mensual <= 0
+        ):
+            errores["cuota_mensual"] = (
+                "La cuota mensual debe ser superior a cero."
+            )
+
+        if (
+            self.tipo_interes is not None
+            and (
+                self.tipo_interes < 0
+                or self.tipo_interes > 100
+            )
+        ):
+            errores["tipo_interes"] = (
+                "Introduce un tipo de interés válido."
+            )
+
+        if (
+            self.fecha_fin
+            and self.fecha_inicio
+            and self.fecha_fin < self.fecha_inicio
+        ):
+            errores["fecha_fin"] = (
+                "La fecha final no puede ser anterior "
+                "a la fecha de inicio."
+            )
+
+        if errores:
+            raise ValidationError(errores)
+
+    def __str__(self):
+        return (
+            f"{self.propiedad} · "
+            f"{self.entidad} · "
+            f"{self.deuda_pendiente:.2f} € pendientes"
+        )
+
+
+class PagoHipoteca(models.Model):
+
+    hipoteca = models.ForeignKey(
+        Hipoteca,
+        on_delete=models.CASCADE,
+        related_name="pagos",
+        verbose_name="Hipoteca",
+    )
+
+    fecha = models.DateField(
+        default=timezone.localdate,
+    )
+
+    importe_cuota = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name="Importe total de la cuota",
+    )
+
+    intereses = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=Decimal("0.00"),
+        verbose_name="Intereses",
+    )
+
+    capital_amortizado = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=Decimal("0.00"),
+        verbose_name="Capital amortizado",
+    )
+
+    otros_gastos = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=Decimal("0.00"),
+        verbose_name="Otros gastos",
+    )
+
+    justificante = models.FileField(
+        upload_to="hipotecas/justificantes/%Y/%m/",
+        null=True,
+        blank=True,
+    )
+
+    notas = models.TextField(
+        blank=True,
+    )
+
+    fecha_creacion = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    class Meta:
+        ordering = [
+            "-fecha",
+            "-fecha_creacion",
+        ]
+
+        verbose_name = "Pago de hipoteca"
+        verbose_name_plural = "Pagos de hipoteca"
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=[
+                    "hipoteca",
+                    "fecha",
+                ],
+                name="pago_hipoteca_unico_por_fecha",
+            ),
+        ]
+
+    def clean(self):
+        super().clean()
+
+        errores = {}
+
+        valores = [
+            self.importe_cuota,
+            self.intereses,
+            self.capital_amortizado,
+            self.otros_gastos,
+        ]
+
+        if any(
+            valor is not None and valor < 0
+            for valor in valores
+        ):
+            errores["importe_cuota"] = (
+                "Los importes no pueden ser negativos."
+            )
+
+        if (
+            self.importe_cuota is not None
+            and self.importe_cuota <= 0
+        ):
+            errores["importe_cuota"] = (
+                "La cuota debe ser superior a cero."
+            )
+
+        total_desglose = (
+            (self.intereses or Decimal("0.00"))
+            + (
+                self.capital_amortizado
+                or Decimal("0.00")
+            )
+            + (
+                self.otros_gastos
+                or Decimal("0.00")
+            )
+        )
+
+        if (
+            self.importe_cuota is not None
+            and total_desglose > self.importe_cuota
+        ):
+            errores["importe_cuota"] = (
+                "El desglose no puede superar "
+                "el importe total de la cuota."
+            )
+
+        if errores:
+            raise ValidationError(errores)
+
+    def __str__(self):
+        return (
+            f"{self.hipoteca} · "
+            f"{self.fecha:%d/%m/%Y} · "
+            f"{self.importe_cuota:.2f} €"
         )

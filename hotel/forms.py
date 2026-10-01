@@ -1,6 +1,7 @@
 import re
 from django.contrib.auth.models import User
-from hotel.models import Inquilino, ContratoAlquiler, Flat, Habitacion, AvalContrato, Proyecto,IngresoPropiedad
+from hotel.models import Inquilino, ContratoAlquiler, Flat, Habitacion, AvalContrato, Proyecto, IngresoPropiedad, \
+    Hipoteca, PagoHipoteca
 from user_profile.models import UserProfile
 from .models import ProcesoFormalizacion
 from decimal import Decimal
@@ -1673,3 +1674,240 @@ class IngresoPropiedadForm(forms.ModelForm):
             )
 
         return importe
+
+class HipotecaForm(forms.ModelForm):
+
+    class Meta:
+        model = Hipoteca
+
+        fields = [
+            "propiedad",
+            "entidad",
+            "referencia",
+            "capital_inicial",
+            "deuda_pendiente",
+            "cuota_mensual",
+            "tipo_interes",
+            "plazo_meses",
+            "fecha_inicio",
+            "fecha_fin",
+            "activa",
+            "notas",
+        ]
+
+        labels = {
+            "propiedad": "Propiedad",
+            "entidad": "Entidad bancaria",
+            "referencia": "Referencia",
+            "capital_inicial": "Capital inicial",
+            "deuda_pendiente": "Deuda pendiente",
+            "cuota_mensual": "Cuota mensual",
+            "tipo_interes": "Tipo de interés (%)",
+            "plazo_meses": "Plazo en meses",
+            "fecha_inicio": "Fecha de inicio",
+            "fecha_fin": "Fecha de finalización",
+            "activa": "Hipoteca activa",
+            "notas": "Notas",
+        }
+
+        widgets = {
+            "propiedad": forms.Select(
+                attrs={
+                    "class": "finanzas-control",
+                },
+            ),
+            "entidad": forms.TextInput(
+                attrs={
+                    "class": "finanzas-control",
+                    "placeholder": "Ej. Banco Santander",
+                },
+            ),
+            "referencia": forms.TextInput(
+                attrs={
+                    "class": "finanzas-control",
+                    "placeholder": "Número de préstamo",
+                },
+            ),
+            "capital_inicial": forms.NumberInput(
+                attrs={
+                    "class": "finanzas-control",
+                    "step": "0.01",
+                    "min": "0.01",
+                },
+            ),
+            "deuda_pendiente": forms.NumberInput(
+                attrs={
+                    "class": "finanzas-control",
+                    "step": "0.01",
+                    "min": "0",
+                },
+            ),
+            "cuota_mensual": forms.NumberInput(
+                attrs={
+                    "class": "finanzas-control",
+                    "step": "0.01",
+                    "min": "0.01",
+                },
+            ),
+            "tipo_interes": forms.NumberInput(
+                attrs={
+                    "class": "finanzas-control",
+                    "step": "0.01",
+                    "min": "0",
+                },
+            ),
+            "plazo_meses": forms.NumberInput(
+                attrs={
+                    "class": "finanzas-control",
+                    "min": "1",
+                },
+            ),
+            "fecha_inicio": forms.DateInput(
+                format="%Y-%m-%d",
+                attrs={
+                    "class": "finanzas-control",
+                    "type": "date",
+                },
+            ),
+            "fecha_fin": forms.DateInput(
+                format="%Y-%m-%d",
+                attrs={
+                    "class": "finanzas-control",
+                    "type": "date",
+                },
+            ),
+            "activa": forms.CheckboxInput(
+                attrs={
+                    "class": "finanzas-checkbox",
+                },
+            ),
+            "notas": forms.Textarea(
+                attrs={
+                    "class": "finanzas-control",
+                    "rows": 4,
+                    "placeholder": "Información adicional",
+                },
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["propiedad"].queryset = (
+            Flat.objects
+            .all()
+            .order_by("nombre")
+        )
+
+        self.fields["fecha_inicio"].input_formats = [
+            "%Y-%m-%d",
+        ]
+
+        self.fields["fecha_fin"].input_formats = [
+            "%Y-%m-%d",
+        ]
+
+class PagoHipotecaForm(forms.ModelForm):
+
+    class Meta:
+        model = PagoHipoteca
+
+        fields = [
+            "hipoteca",
+            "fecha",
+            "importe_cuota",
+            "intereses",
+            "capital_amortizado",
+            "otros_gastos",
+            "justificante",
+            "notas",
+        ]
+
+        labels = {
+            "hipoteca": "Hipoteca",
+            "fecha": "Fecha del pago",
+            "importe_cuota": "Importe total de la cuota",
+            "intereses": "Intereses",
+            "capital_amortizado": "Capital amortizado",
+            "otros_gastos": "Otros gastos",
+            "justificante": "Recibo o justificante",
+            "notas": "Notas",
+        }
+
+        widgets = {
+            "hipoteca": forms.Select(
+                attrs={
+                    "class": "finanzas-control",
+                },
+            ),
+            "fecha": forms.DateInput(
+                format="%Y-%m-%d",
+                attrs={
+                    "class": "finanzas-control",
+                    "type": "date",
+                },
+            ),
+            "importe_cuota": forms.NumberInput(
+                attrs={
+                    "class": "finanzas-control",
+                    "step": "0.01",
+                    "min": "0.01",
+                },
+            ),
+            "intereses": forms.NumberInput(
+                attrs={
+                    "class": "finanzas-control",
+                    "step": "0.01",
+                    "min": "0",
+                },
+            ),
+            "capital_amortizado": forms.NumberInput(
+                attrs={
+                    "class": "finanzas-control",
+                    "step": "0.01",
+                    "min": "0",
+                },
+            ),
+            "otros_gastos": forms.NumberInput(
+                attrs={
+                    "class": "finanzas-control",
+                    "step": "0.01",
+                    "min": "0",
+                },
+            ),
+            "justificante": forms.ClearableFileInput(
+                attrs={
+                    "class": "finanzas-file",
+                    "accept": ".pdf,.jpg,.jpeg,.png,.webp",
+                },
+            ),
+            "notas": forms.Textarea(
+                attrs={
+                    "class": "finanzas-control",
+                    "rows": 4,
+                    "placeholder": "Notas del pago",
+                },
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["hipoteca"].queryset = (
+            Hipoteca.objects
+            .filter(activa=True)
+            .select_related("propiedad")
+            .order_by(
+                "propiedad__nombre",
+                "entidad",
+            )
+        )
+
+        self.fields["fecha"].input_formats = [
+            "%Y-%m-%d",
+        ]
+
+        if not self.is_bound and not self.instance.pk:
+            self.fields["fecha"].initial = (
+                timezone.localdate()
+            )
