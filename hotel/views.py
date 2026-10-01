@@ -4734,76 +4734,59 @@ class GastosDashboardView(
         )
 
     def recurrente_corresponde_al_mes(
-        self,
-        recurrente,
-        year,
-        month,
+            self,
+            recurrente,
+            year,
+            mes=None,
+            numero_mes=None,
     ):
-        fecha_inicio = recurrente.fecha_inicio
+        if mes is None:
+            mes = numero_mes
 
-        if not fecha_inicio:
+        if mes is None:
             return False
 
-        ultimo_dia = calendar.monthrange(
-            year,
-            month,
-        )[1]
+        if not recurrente.fecha_inicio:
+            return False
 
-        dia_generacion = min(
-            recurrente.dia_generacion or 1,
-            ultimo_dia,
+        intervalos = {
+            "mensual": 1,
+            "bimestral": 2,
+            "trimestral": 3,
+            "semestral": 6,
+            "anual": 12,
+        }
+
+        intervalo = intervalos.get(
+            recurrente.frecuencia,
+            1,
         )
 
-        fecha_programada = date(
-            year,
-            month,
-            dia_generacion,
+        inicio = recurrente.fecha_inicio
+
+        diferencia_meses = (
+                (year - inicio.year) * 12
+                + mes
+                - inicio.month
         )
 
-        if fecha_programada < fecha_inicio:
+        if diferencia_meses < 0:
             return False
 
         if (
-            recurrente.fecha_fin
-            and fecha_programada
-            > recurrente.fecha_fin
+                recurrente.fecha_fin
+                and (
+                year > recurrente.fecha_fin.year
+                or (
+                        year == recurrente.fecha_fin.year
+                        and mes > recurrente.fecha_fin.month
+                )
+        )
         ):
             return False
 
-        frecuencia = recurrente.frecuencia
-
-        if frecuencia == "anual":
-            mes_generacion = (
-                recurrente.mes_generacion
-                or fecha_inicio.month
-            )
-
-            return (
-                month == mes_generacion
-            )
-
-        intervalo = (
-            self.MESES_FRECUENCIA.get(
-                frecuencia
-            )
-        )
-
-        if intervalo is None:
-            return False
-
-        meses_transcurridos = (
-            (year - fecha_inicio.year) * 12
-            + month
-            - fecha_inicio.month
-        )
-
         return (
-            meses_transcurridos >= 0
-            and (
-                meses_transcurridos
-                % intervalo
-                == 0
-            )
+                diferencia_meses % intervalo == 0
         )
 
     # =========================================================
