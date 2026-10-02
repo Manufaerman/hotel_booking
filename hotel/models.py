@@ -2196,8 +2196,6 @@ class IngresoPropiedad(models.Model):
             f"{self.importe} €"
         )
 
-
-
 class Sociedad(models.Model):
 
     nombre = models.CharField(
