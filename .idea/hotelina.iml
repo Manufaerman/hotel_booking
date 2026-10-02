@@ -6,8 +6,9 @@
       <sourceFolder url="file://$MODULE_DIR$/hotel" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/venv_arm/lib/python3.11/site-packages" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
+      <excludeFolder url="file://$MODULE_DIR$/venv_arm" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.11 (PycharmProjects)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="~/Documents/pythonProjects/hotelina/venv_arm" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PackageRequirementsSettings">

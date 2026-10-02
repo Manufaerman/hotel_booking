@@ -1,0 +1,62 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block extra-head %}
+<link rel="stylesheet" href="{% static 'hotel/css/hipotecas/prestamo_confirm_delete.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="finance-form-page">
+
+    <div class="form-container">
+
+        <span class="eyebrow">
+            Financiación
+        </span>
+
+        <h1>
+            Eliminar préstamo
+        </h1>
+
+        <p>
+            Vas a eliminar:
+        </p>
+
+        <h2>
+            {{ object }}
+        </h2>
+
+        <p>
+            También se eliminarán los pagos asociados.
+        </p>
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <div class="form-actions">
+
+                <a
+                    href="{% url 'hotel:hipotecas_dashboard' %}"
+                    class="btn-secondary"
+                >
+                    Cancelar
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn-danger"
+                >
+                    Eliminar préstamo
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

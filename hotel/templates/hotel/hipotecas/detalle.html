@@ -1,0 +1,377 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block extra-head %}
+<link rel="stylesheet" href="{% static 'hotel/css/hipotecas/detalle.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="loan-detail">
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+
+    <div class="detail-header">
+
+        <div>
+            <span class="eyebrow">
+                {{ prestamo.get_tipo_display }}
+            </span>
+
+            <h1>
+                {{ prestamo.entidad }}
+            </h1>
+
+            {% if prestamo.propiedad %}
+            <p>
+                {{ prestamo.propiedad }}
+            </p>
+            {% endif %}
+        </div>
+
+        <div class="detail-actions">
+
+            <a
+                href="{% url 'hotel:crear_pago_hipoteca' prestamo.pk %}"
+                class="btn-primary"
+            >
+                Registrar pago
+            </a>
+
+            <a
+                href="{% url 'hotel:editar_prestamo' prestamo.pk %}"
+                class="btn-secondary"
+            >
+                Editar préstamo
+            </a>
+
+            <a
+                href="{% url 'hotel:eliminar_prestamo' prestamo.pk %}"
+                class="btn-danger"
+            >
+                Eliminar
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         RESUMEN GENERAL
+    ========================== -->
+
+    <div class="summary-grid">
+
+        <div class="summary-card">
+            <span>Capital inicial</span>
+            <strong>
+                {{ prestamo.capital_inicial|floatformat:2 }} €
+            </strong>
+        </div>
+
+        <div class="summary-card">
+            <span>Deuda pendiente</span>
+            <strong>
+                {{ prestamo.deuda_pendiente|floatformat:2 }} €
+            </strong>
+        </div>
+
+        <div class="summary-card">
+            <span>Capital amortizado</span>
+            <strong>
+                {{ capital_amortizado_total|floatformat:2 }} €
+            </strong>
+        </div>
+
+        <div class="summary-card">
+            <span>Amortizado</span>
+            <strong>
+                {{ porcentaje_amortizado|floatformat:1 }} %
+            </strong>
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         AÑO ACTUAL
+    ========================== -->
+
+    <section class="detail-section">
+
+        <div class="section-header">
+            <span class="eyebrow">
+                Año {{ hoy.year }}
+            </span>
+
+            <h2>
+                Evolución anual
+            </h2>
+        </div>
+
+        <div class="summary-grid">
+
+            <div class="summary-card">
+                <span>Pagado {{ hoy.year }}</span>
+                <strong>
+                    {{ pagado_ano|floatformat:2 }} €
+                </strong>
+            </div>
+
+            <div class="summary-card">
+                <span>Intereses {{ hoy.year }}</span>
+                <strong>
+                    {{ intereses_ano|floatformat:2 }} €
+                </strong>
+            </div>
+
+            <div class="summary-card">
+                <span>Capital amortizado {{ hoy.year }}</span>
+                <strong>
+                    {{ capital_ano|floatformat:2 }} €
+                </strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         DATOS DEL PRÉSTAMO
+    ========================== -->
+
+    <section class="detail-section">
+
+        <div class="section-header">
+            <span class="eyebrow">
+                Condiciones
+            </span>
+
+            <h2>
+                Datos del préstamo
+            </h2>
+        </div>
+
+        <div class="summary-grid">
+
+            <div class="summary-card">
+                <span>Cuota mensual</span>
+                <strong>
+                    {{ prestamo.cuota_mensual|floatformat:2 }} €
+                </strong>
+            </div>
+
+            <div class="summary-card">
+                <span>Tipo vigente</span>
+                <strong>
+                    {% if prestamo.tipo_interes %}
+                        {{ prestamo.tipo_interes|floatformat:3 }} %
+                    {% else %}
+                        —
+                    {% endif %}
+                </strong>
+            </div>
+
+            <div class="summary-card">
+                <span>Tipo de tasa</span>
+                <strong>
+                    {{ prestamo.get_tipo_tasa_display }}
+                </strong>
+            </div>
+
+            <div class="summary-card">
+                <span>Diferencial</span>
+                <strong>
+                    {% if prestamo.diferencial is not None %}
+                        {{ prestamo.diferencial|floatformat:3 }} %
+                    {% else %}
+                        —
+                    {% endif %}
+                </strong>
+            </div>
+
+            <div class="summary-card">
+                <span>Próxima revisión</span>
+                <strong>
+                    {% if prestamo.fecha_proxima_revision %}
+                        {{ prestamo.fecha_proxima_revision|date:"d/m/Y" }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </strong>
+            </div>
+
+            <div class="summary-card">
+                <span>Finaliza</span>
+                <strong>
+                    {% if prestamo.fecha_fin %}
+                        {{ prestamo.fecha_fin|date:"d/m/Y" }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         HISTÓRICO
+    ========================== -->
+
+    <section class="detail-section">
+
+        <div class="section-header">
+            <span class="eyebrow">
+                Histórico
+            </span>
+
+            <h2>
+                Resumen acumulado
+            </h2>
+        </div>
+
+        <div class="summary-grid">
+
+            <div class="summary-card">
+                <span>Total pagado</span>
+                <strong>
+                    {{ total_pagado|floatformat:2 }} €
+                </strong>
+            </div>
+
+            <div class="summary-card">
+                <span>Intereses pagados</span>
+                <strong>
+                    {{ total_intereses|floatformat:2 }} €
+                </strong>
+            </div>
+
+            <div class="summary-card">
+                <span>Capital amortizado</span>
+                <strong>
+                    {{ total_capital|floatformat:2 }} €
+                </strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         PAGOS
+    ========================== -->
+
+    <section class="detail-section">
+
+        <div class="section-header">
+            <span class="eyebrow">
+                Movimientos
+            </span>
+
+            <h2>
+                Pagos
+            </h2>
+        </div>
+
+        <div class="payments-table">
+
+            <div class="payment-row payment-header">
+                <span>Fecha</span>
+                <span>Cuota</span>
+                <span>Intereses</span>
+                <span>Capital</span>
+                <span>Otros gastos</span>
+                <span>Estado</span>
+                <span>Justificante</span>
+                <span>Acciones</span>
+            </div>
+
+            {% for pago in pagos %}
+
+            <div class="payment-row">
+
+                <span>
+                    {{ pago.fecha|date:"d/m/Y" }}
+                </span>
+
+                <strong>
+                    {{ pago.importe_cuota|floatformat:2 }} €
+                </strong>
+
+                <span>
+                    {{ pago.intereses|floatformat:2 }} €
+                </span>
+
+                <span>
+                    {{ pago.capital_amortizado|floatformat:2 }} €
+                </span>
+
+                <span>
+                    {{ pago.otros_gastos|floatformat:2 }} €
+                </span>
+
+                <span>
+                    {% if pago.estimado %}
+                        <span class="estimated-payment">
+                            Estimado
+                        </span>
+                    {% else %}
+                        <span class="real-payment">
+                            Real
+                        </span>
+                    {% endif %}
+                </span>
+
+                <span>
+                    {% if pago.justificante %}
+                        <a
+                            href="{% url 'hotel:justificante_prestamo' pago.pk %}"
+                            target="_blank"
+                        >
+                            Ver justificante
+                        </a>
+                    {% else %}
+                        —
+                    {% endif %}
+                </span>
+
+                <span class="payment-actions">
+
+                    <a href="{% url 'hotel:editar_pago_prestamo' pago.pk %}">
+                        Editar
+                    </a>
+
+                    <a
+                        href="{% url 'hotel:eliminar_pago_prestamo' pago.pk %}"
+                        class="danger-link"
+                    >
+                        Eliminar
+                    </a>
+
+                </span>
+
+            </div>
+
+            {% empty %}
+
+            <div class="empty-state">
+                Todavía no hay pagos registrados.
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}

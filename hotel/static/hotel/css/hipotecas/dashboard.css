@@ -1,0 +1,407 @@
+
+.danger-link {
+    color: #9c4d4d !important;
+}
+:root {
+    --wine: #745f6d;
+    --wine-dark: #4b2938;
+    --cream: #f5f0e9;
+    --paper: #fffdf9;
+    --text: #352a2f;
+    --soft-text: #756a6e;
+    --gold: #ae8950;
+    --border: rgba(75, 41, 56, .11);
+}
+
+
+/* GENERAL */
+
+.mortgage-dashboard {
+    max-width: 1250px;
+    margin: 0 auto;
+    padding: 48px 28px 80px;
+    color: var(--text);
+}
+
+
+/* HEADER */
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.dashboard-header h1 {
+    margin: 4px 0 8px;
+    font-size: 42px;
+    font-weight: 500;
+}
+
+.dashboard-header p {
+    margin: 0;
+    color: var(--soft-text);
+}
+
+.eyebrow {
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 11px;
+}
+
+
+/* BOTÓN */
+
+.btn-primary {
+    background: var(--wine-dark);
+    color: white;
+    padding: 14px 22px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: .2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    opacity: .9;
+}
+
+
+/* RESUMEN */
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 55px;
+}
+
+.summary-card {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 25px;
+    min-width: 0;
+}
+
+.summary-label {
+    display: block;
+    color: var(--soft-text);
+    font-size: 13px;
+    margin-bottom: 10px;
+}
+
+.summary-value {
+    display: block;
+    font-size: 27px;
+    font-weight: 500;
+    line-height: 1.15;
+    word-break: break-word;
+}
+
+
+/* SECCIONES */
+
+.dashboard-section {
+    margin-top: 50px;
+}
+
+.section-header {
+    margin-bottom: 20px;
+}
+
+.section-header h2 {
+    font-size: 27px;
+    font-weight: 500;
+    margin: 5px 0 0;
+}
+
+
+/* HIPOTECAS */
+
+.mortgage-list {
+    display: grid;
+    gap: 16px;
+}
+
+.mortgage-card {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 25px;
+}
+
+.mortgage-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.bank-name {
+    color: var(--gold);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.mortgage-main h3 {
+    margin: 5px 0;
+    font-size: 23px;
+    font-weight: 500;
+}
+
+
+/* ESTADOS */
+
+.status {
+    display: inline-block;
+    padding: 7px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.status.active {
+    background: #edf5ee;
+    color: #47754d;
+}
+
+.status.inactive {
+    background: #eee;
+    color: #777;
+}
+
+
+/* DATOS HIPOTECA */
+
+.mortgage-data {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px 20px;
+    padding: 25px 0;
+}
+
+.mortgage-data > div {
+    min-width: 0;
+}
+
+.mortgage-data span {
+    display: block;
+    color: var(--soft-text);
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.mortgage-data strong {
+    display: block;
+    font-weight: 500;
+    word-break: break-word;
+}
+
+
+/* ACCIONES */
+
+.mortgage-actions {
+    border-top: 1px solid var(--border);
+    padding-top: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+}
+
+.mortgage-actions a,
+.document-link {
+    color: var(--wine-dark);
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.mortgage-actions a:hover,
+.document-link:hover {
+    text-decoration: underline;
+}
+
+
+/* PAGOS */
+
+.payments-table {
+    background: var(--paper);
+    border-radius: 22px;
+    overflow-x: auto;
+    border: 1px solid var(--border);
+}
+
+.payment-row {
+    display: grid;
+    grid-template-columns:
+        120px
+        minmax(180px, 1fr)
+        130px
+        130px
+        130px
+        180px;
+
+    gap: 12px;
+    padding: 17px 22px;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+    min-width: 920px;
+}
+
+.payment-row:last-child {
+    border-bottom: none;
+}
+
+.payment-header {
+    background: #f8f4ee;
+    font-size: 12px;
+    color: var(--soft-text);
+    font-weight: 500;
+}
+
+.missing-document {
+    color: #b1775d;
+    font-size: 12px;
+}
+
+
+/* EMPTY */
+
+.empty-state {
+    padding: 50px;
+    text-align: center;
+    background: var(--paper);
+    border-radius: 22px;
+}
+
+
+/* TABLET */
+
+@media (max-width: 1100px) {
+
+    .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .mortgage-data {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+}
+
+
+/* MÓVIL */
+
+@media (max-width: 800px) {
+
+    .mortgage-dashboard {
+        padding: 30px 18px 60px;
+    }
+
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .dashboard-header h1 {
+        font-size: 34px;
+    }
+
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .mortgage-data {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .payment-header {
+        display: none;
+    }
+
+    .payments-table {
+        overflow: visible;
+        border: none;
+        background: transparent;
+    }
+
+    .payment-row {
+        min-width: 0;
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin-bottom: 14px;
+        background: var(--paper);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 18px;
+    }
+
+}
+
+@media (max-width: 520px) {
+
+    .mortgage-data {
+        grid-template-columns: 1fr;
+    }
+
+}
+/* ============================
+   SOCIEDADES
+============================ */
+
+.company-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit, minmax(280px, 1fr));
+    gap: 18px;
+}
+
+.company-card {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 24px;
+}
+
+.company-name {
+    display: block;
+    margin-bottom: 20px;
+
+    color: var(--gold);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+.company-data {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.company-data span {
+    display: block;
+    margin-bottom: 5px;
+
+    color: var(--soft-text);
+    font-size: 12px;
+}
+
+.company-data strong {
+    font-size: 17px;
+    font-weight: 500;
+}
+
+@media (max-width: 700px) {
+
+    .company-data {
+        grid-template-columns: 1fr;
+    }
+
+}

@@ -1,10 +1,226 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block content %}
+
+<div class="finance-form-page">
+
+    <div class="form-container">
+
+        <div class="form-header">
+
+            <span class="eyebrow">
+                Hipoteca
+            </span>
+
+            <h1>
+                Registrar pago
+            </h1>
+
+            {% if hipoteca %}
+
+            <p>
+                {{ hipoteca.banco }} · {{ hipoteca.flat }}
+            </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <form
+            method="post"
+            enctype="multipart/form-data"
+        >
+
+            {% csrf_token %}
+
+
+            <div class="payment-highlight">
+
+                {% if hipoteca %}
+
+                <span>
+                    Cuota prevista
+                </span>
+
+                <strong>
+                    {{ hipoteca.cuota_mensual|floatformat:2 }} €
+                </strong>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="form-grid">
+
+                {% for field in form %}
+
+                <div class="form-group">
+
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+
+                    {{ field }}
+
+
+                    {% for error in field.errors %}
+
+                    <div class="field-error">
+                        {{ error }}
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <a
+                    href="../"
+                    class="btn-secondary"
+                >
+                    Cancelar
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn-primary"
+                >
+                    Registrar pago
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<style>
+
+.finance-form-page {
+    max-width: 750px;
+    margin: 0 auto;
+    padding: 50px 25px;
+}
+
+.form-container {
+    background: #fffdf9;
+    border-radius: 26px;
+    border: 1px solid rgba(75,41,56,.11);
+    padding: 40px;
+}
+
+.eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #ae8950;
+    font-size: 11px;
+}
+
+.form-header h1 {
+    font-size: 34px;
+    font-weight: 500;
+    margin: 6px 0;
+}
+
+.form-header p {
+    color: #756a6e;
+}
+
+.payment-highlight {
+    margin: 30px 0;
+    background: #f5f0e9;
+    border-radius: 16px;
+    padding: 20px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.payment-highlight span {
+    color: #756a6e;
+}
+
+.payment-highlight strong {
+    font-size: 23px;
+    font-weight: 500;
+}
+
+.form-grid {
+    display: grid;
+    gap: 22px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    color: #756a6e;
+    font-size: 12px;
+    margin-bottom: 7px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 13px;
+    border-radius: 12px;
+    border: 1px solid rgba(75,41,56,.15);
+    background: white;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #745f6d;
+}
+
+.field-error {
+    color: #a75555;
+    margin-top: 5px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+
+    border-top: 1px solid rgba(75,41,56,.1);
+    padding-top: 25px;
+    margin-top: 35px;
+}
+
+.btn-primary {
+    border: none;
+    background: #4b2938;
+    color: white;
+    padding: 13px 22px;
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    text-decoration: none;
+    color: #4b2938;
+    padding: 13px 20px;
+}
+
+</style>
+
+{% endblock %}

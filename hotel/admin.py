@@ -1,10 +1,11 @@
 
-from .models import Flat, Inquilino, ContratoAlquiler, Gasto, Inventario, Iteminventario, Hipoteca, PagoHipoteca
+from .models import Flat, Inquilino, ContratoAlquiler, Gasto, Inventario, Iteminventario, Prestamo, PagoPrestamo, \
+    Sociedad
 from .models import Habitacion, MultimediaHabitacion, Planta, EventoPlanta, ComentarioPlanta
 from .models import Proveedor, IngresoPropiedad
 from django.contrib import admin
 class PagoHipotecaInline(admin.TabularInline):
-    model = PagoHipoteca
+    model = PagoPrestamo
     extra = 0
     ordering = ["-fecha"]
 
@@ -19,7 +20,7 @@ class PagoHipotecaInline(admin.TabularInline):
     ]
 
 
-@admin.register(Hipoteca)
+@admin.register(Prestamo)
 class HipotecaAdmin(admin.ModelAdmin):
 
     list_display = [
@@ -48,26 +49,31 @@ class HipotecaAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(PagoHipoteca)
-class PagoHipotecaAdmin(admin.ModelAdmin):
+@admin.register(PagoPrestamo)
+class PagoPrestamoAdmin(admin.ModelAdmin):
 
-    list_display = [
-        "hipoteca",
+    list_display = (
+        "prestamo",
         "fecha",
         "importe_cuota",
         "intereses",
         "capital_amortizado",
-    ]
+        "otros_gastos",
+    )
 
-    list_filter = [
+    list_filter = (
         "fecha",
-        "hipoteca",
-    ]
+        "prestamo",
+    )
 
-    search_fields = [
-        "hipoteca__entidad",
-        "hipoteca__propiedad__nombre",
-    ]
+    search_fields = (
+        "prestamo__entidad",
+        "prestamo__referencia",
+    )
+
+    ordering = (
+        "-fecha",
+    )
 
 @admin.register(IngresoPropiedad)
 class IngresoPropiedadAdmin(admin.ModelAdmin):
@@ -98,6 +104,25 @@ class IngresoPropiedadAdmin(admin.ModelAdmin):
         "-fecha_creacion",
     ]
 
+@admin.register(Sociedad)
+class SociedadAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "nombre",
+        "pais",
+        "moneda",
+        "activa",
+    )
+
+    list_filter = (
+        "pais",
+        "activa",
+    )
+
+    search_fields = (
+        "nombre",
+        "pais",
+    )
 
 class AdminInquilino(admin.ModelAdmin):
     list_display = ['id', 'nombre']
@@ -189,8 +214,6 @@ class HabitacionAdmin(admin.ModelAdmin):
     inlines = [
         MultimediaHabitacionInline,
     ]
-
-
 
 
 class EventoPlantaInline(admin.TabularInline):

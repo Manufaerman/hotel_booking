@@ -13,6 +13,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views import View
+from django.views.decorators.http import require_POST
 from django.views.generic import DetailView
 from django.http import HttpResponseRedirect
 from pathlib import Path
@@ -21,16 +22,24 @@ from dateutil.relativedelta import relativedelta
 from django.db.models import Q, Sum
 from django.utils import timezone
 from .services.cotizaciones import aplicar_conversion_gasto, CotizacionNoDisponible
+from django.urls import reverse_lazy
+from django.views.generic import (
+    CreateView,
+    UpdateView,
+    DeleteView,
+)
+from django.shortcuts import get_object_or_404
 from .forms import (
-    AvalContratoForm, HipotecaForm, PagoHipotecaForm,
+    AvalContratoForm,
     ContratoAlquilerForm,
     CrearProcesoFormalizacionForm,
-    InquilinoForm, GastoForm, CompletarGastoPendienteForm, EditarGastoRecurrenteForm, ProyectoForm, IngresoPropiedadForm
+    InquilinoForm, GastoForm, CompletarGastoPendienteForm, EditarGastoRecurrenteForm, ProyectoForm,
+    IngresoPropiedadForm, PrestamoForm, PagoPrestamoForm
 )
 
 from .models import (
-    AvalContrato, Hipoteca,
-    ContratoAlquiler, PagoHipoteca,
+    AvalContrato, Prestamo,
+    ContratoAlquiler, PagoPrestamo,
     Flat,
     Gasto,
     Habitacion,
@@ -110,6 +119,8 @@ def proveedores_por_pais(request):
         }
     )
 
+@login_required
+@require_POST
 def finalizar_contrato(request, id):
     contrato = get_object_or_404(ContratoAlquiler, id=id)
     if request.method == 'POST':
@@ -118,7 +129,7 @@ def finalizar_contrato(request, id):
 
     return redirect('hotel:contratos')
 
-
+@login_required
 def eliminar_contrato(request, id):
     contrato = get_object_or_404(ContratoAlquiler, id=id)
     if request.method == 'POST':
@@ -128,7 +139,7 @@ def eliminar_contrato(request, id):
 
     return render(request, 'hotel/confirmar_eliminar_contrato.html', {'contrato': contrato})
 
-
+@login_required
 def modificar_contrato(request, id):
     contrato = get_object_or_404(
         ContratoAlquiler.objects.select_related(
@@ -183,7 +194,7 @@ def modificar_contrato(request, id):
         },
     )
 
-
+@login_required
 def modificar_inquilino(request, id, contrato_id,):
     contrato = get_object_or_404(
         ContratoAlquiler,
@@ -487,6 +498,7 @@ def flat_detail(request, id):
         },
     )
 
+@login_required
 def visitas_view(request):
     periodo = request.GET.get(
         "periodo",
@@ -694,7 +706,7 @@ def visitas_view(request):
     )
 
 """ for the charts using jquery and js"""
-
+@login_required
 def chart_data(request):
     hoy = timezone.localdate()
     inicio_mes_actual = hoy.replace(day=1)
@@ -1268,7 +1280,7 @@ def habitaciones(request, id):
         },
     )
 
-
+@login_required
 def habitaciones_dashboard(request):
     propiedad_id = request.GET.get(
         "propiedad",
@@ -1469,6 +1481,7 @@ def habitaciones_dashboard(request):
         },
     )
 
+@login_required
 def contratos(request):
     propiedad_id = request.GET.get("propiedad", "")
     estado_seleccionado = request.GET.get("estado", "")
@@ -1822,6 +1835,7 @@ class NewContractView(LoginRequiredMixin, View,):
             },
         )
 
+@login_required
 def contrato_pdf(request, contrato_id):
     contrato = get_object_or_404(
         ContratoAlquiler,
@@ -2381,6 +2395,12 @@ class DescargarContratoFormalizacionView(View):
         borrador = construir_borrador_contrato(proceso)
 
         response = HttpResponse(content_type="application/pdf")
+        response["Cache-Control"] = (
+            "private, no-store, no-cache, must-revalidate"
+        )
+
+        response["Pragma"] = "no-cache"
+        response["Expires"] = "0"
         response["Content-Disposition"] = (
             "attachment; "
             f'filename="contrato_formalizacion_{proceso.pk}.pdf"'
@@ -6985,7 +7005,7 @@ class IngresosDashboardView(
         )
 
         pagos_hipoteca_mes = (
-            PagoHipoteca.objects
+            PagoPrestamo.objects
             .filter(
                 fecha__year=hoy.year,
                 fecha__month=hoy.month,
@@ -7093,12 +7113,12 @@ class IngresosDashboardView(
         )
 
         deuda_total = (
-            Hipoteca.objects
-            .filter(activa=True)
-            .aggregate(
+                Prestamo.objects
+                .filter(activa=True)
+                .aggregate(
                 total=Sum("deuda_pendiente"),
             ).get("total")
-            or Decimal("0.00")
+                or Decimal("0.00")
         )
 
         ingresos_totales = sum(
@@ -7338,58 +7358,139 @@ class HipotecasDashboardView(
     LoginRequiredMixin,
     View,
 ):
-    template_name = (
-        "hotel/hipotecas/dashboard.html"
-    )
+    template_name = "hotel/hipotecas/dashboard.html"
 
     def get(self, request):
 
         hoy = timezone.localdate()
 
-        hipotecas = (
-            Hipoteca.objects
+        # ==========================
+        # PRÉSTAMOS ACTIVOS
+        # ==========================
+
+        prestamos = (
+            Prestamo.objects
             .filter(activa=True)
             .select_related("propiedad")
             .prefetch_related("pagos")
         )
+        resumen_sociedades = (
+            Prestamo.objects
+            .filter(
+                activa=True,
+                sociedad__isnull=False,
+            )
+            .values(
+                "sociedad__id",
+                "sociedad__nombre",
+                "sociedad__moneda",
+            )
+            .annotate(
+                prestamos_total=Count("id"),
+                deuda_total=Sum("deuda_pendiente"),
+                cuotas_mensuales=Sum("cuota_mensual"),
+            )
+            .order_by("sociedad__nombre")
+        )
+        # ==========================
+        # PAGOS DEL MES
+        # ==========================
 
         pagos_mes = (
-            PagoHipoteca.objects
+            PagoPrestamo.objects
             .filter(
+                prestamo__activa=True,
                 fecha__year=hoy.year,
                 fecha__month=hoy.month,
             )
             .select_related(
-                "hipoteca",
-                "hipoteca__propiedad",
+                "prestamo",
+                "prestamo__propiedad",
+            )
+            .order_by("-fecha")
+        )
+
+        # ==========================
+        # PAGOS DEL AÑO
+        # ==========================
+
+        pagos_ano = (
+            PagoPrestamo.objects
+            .filter(
+                prestamo__activa=True,
+                fecha__year=hoy.year,
+            )
+            .select_related(
+                "prestamo",
+                "prestamo__propiedad",
             )
         )
 
+        # ==========================
+        # RESUMEN GENERAL
+        # ==========================
+
         deuda_total = (
-            hipotecas.aggregate(
+            prestamos.aggregate(
                 total=Sum("deuda_pendiente"),
-            ).get("total")
+            )["total"]
             or Decimal("0.00")
         )
+
+        cuotas_mensuales = (
+            prestamos.aggregate(
+                total=Sum("cuota_mensual"),
+            )["total"]
+            or Decimal("0.00")
+        )
+
+        # ==========================
+        # MES ACTUAL
+        # ==========================
 
         cuotas_mes = (
             pagos_mes.aggregate(
                 total=Sum("importe_cuota"),
-            ).get("total")
+            )["total"]
             or Decimal("0.00")
         )
 
         intereses_mes = (
             pagos_mes.aggregate(
                 total=Sum("intereses"),
-            ).get("total")
+            )["total"]
             or Decimal("0.00")
         )
 
         capital_amortizado_mes = (
             pagos_mes.aggregate(
                 total=Sum("capital_amortizado"),
-            ).get("total")
+            )["total"]
+            or Decimal("0.00")
+        )
+
+        # ==========================
+        # AÑO ACTUAL
+        # ==========================
+
+        pagado_prestamos_ano = (
+            pagos_ano.aggregate(
+                total=Sum("importe_cuota"),
+            )["total"]
+            or Decimal("0.00")
+        )
+
+        intereses_ano = (
+            pagos_ano.aggregate(
+                total=Sum("intereses"),
+            )["total"]
+            or Decimal("0.00")
+        )
+
+        capital_amortizado_ano = (
+            pagos_ano.aggregate(
+                total=Sum("capital_amortizado"),
+            )["total"]
             or Decimal("0.00")
         )
 
@@ -7398,62 +7499,59 @@ class HipotecasDashboardView(
             self.template_name,
             {
                 "hoy": hoy,
-                "hipotecas": hipotecas,
-                "pagos_mes": pagos_mes,
+
+                "prestamos": prestamos,
+
                 "deuda_total": deuda_total,
+                "cuotas_mensuales": cuotas_mensuales,
+                "resumen_sociedades": resumen_sociedades,
+
                 "cuotas_mes": cuotas_mes,
                 "intereses_mes": intereses_mes,
                 "capital_amortizado_mes": (
                     capital_amortizado_mes
                 ),
+
+                "pagado_prestamos_ano": (
+                    pagado_prestamos_ano
+                ),
+                "intereses_ano": intereses_ano,
+                "capital_amortizado_ano": (
+                    capital_amortizado_ano
+                ),
+
+                "pagos_mes": pagos_mes,
+                "pagos_ano": pagos_ano,
             },
         )
 
 class CrearHipotecaView(
     LoginRequiredMixin,
-    View,
+    CreateView,
 ):
+    model = Prestamo
+    form_class = PrestamoForm
+
     template_name = (
         "hotel/hipotecas/hipoteca_form.html"
     )
 
-    def get(self, request):
-        form = HipotecaForm()
+    success_url = reverse_lazy(
+        "hotel:hipotecas_dashboard"
+    )
 
-        return render(
-            request,
-            self.template_name,
-            {
-                "form": form,
-                "titulo": "Nueva hipoteca",
-                "texto_boton": "Guardar hipoteca",
-            },
+    def form_valid(self, form):
+
+        form.instance.activa = True
+
+        response = super().form_valid(form)
+
+        messages.success(
+            self.request,
+            "El préstamo se ha registrado correctamente.",
         )
 
-    def post(self, request):
-        form = HipotecaForm(request.POST)
-
-        if form.is_valid():
-            form.save()
-
-            messages.success(
-                request,
-                "La hipoteca se ha registrado correctamente.",
-            )
-
-            return redirect(
-                "hotel:hipotecas_dashboard"
-            )
-
-        return render(
-            request,
-            self.template_name,
-            {
-                "form": form,
-                "titulo": "Nueva hipoteca",
-                "texto_boton": "Guardar hipoteca",
-            },
-        )
+        return response
 
 
 class CrearPagoHipotecaView(
@@ -7464,31 +7562,51 @@ class CrearPagoHipotecaView(
         "hotel/hipotecas/pago_form.html"
     )
 
-    def get(self, request):
-        form = PagoHipotecaForm()
+    def get(self, request, pk):
+
+        prestamo = get_object_or_404(
+            Prestamo,
+            pk=pk,
+        )
+
+        form = PagoPrestamoForm(
+            initial={
+                "importe_cuota": prestamo.cuota_mensual,
+            }
+        )
 
         return render(
             request,
             self.template_name,
             {
                 "form": form,
-                "titulo": "Registrar pago hipotecario",
+                "prestamo": prestamo,
+                "titulo": "Registrar pago de préstamo",
                 "texto_boton": "Guardar pago",
             },
         )
 
-    def post(self, request):
-        form = PagoHipotecaForm(
+    def post(self, request, pk):
+
+        prestamo = get_object_or_404(
+            Prestamo,
+            pk=pk,
+        )
+
+        form = PagoPrestamoForm(
             request.POST,
             request.FILES,
         )
 
         if form.is_valid():
-            form.save()
+
+            pago = form.save(commit=False)
+            pago.prestamo = prestamo
+            pago.save()
 
             messages.success(
                 request,
-                "El pago hipotecario se ha registrado correctamente.",
+                "El pago del préstamo se ha registrado correctamente.",
             )
 
             return redirect(
@@ -7500,7 +7618,240 @@ class CrearPagoHipotecaView(
             self.template_name,
             {
                 "form": form,
-                "titulo": "Registrar pago hipotecario",
+                "prestamo": prestamo,
+                "titulo": "Registrar pago de préstamo",
                 "texto_boton": "Guardar pago",
             },
         )
+
+class EditarPrestamoView(
+    LoginRequiredMixin,
+    UpdateView,
+):
+    model = Prestamo
+    form_class = PrestamoForm
+
+    template_name = (
+        "hotel/hipotecas/hipoteca_form.html"
+    )
+
+    success_url = reverse_lazy(
+        "hotel:hipotecas_dashboard"
+    )
+
+    def form_valid(self, form):
+
+        messages.success(
+            self.request,
+            "El préstamo se ha actualizado correctamente.",
+        )
+
+        return super().form_valid(form)
+
+class EliminarPrestamoView(
+    LoginRequiredMixin,
+    DeleteView,
+):
+    model = Prestamo
+
+    template_name = (
+        "hotel/hipotecas/prestamo_confirm_delete.html"
+    )
+
+    success_url = reverse_lazy(
+        "hotel:hipotecas_dashboard"
+    )
+
+    def form_valid(self, form):
+
+        messages.success(
+            self.request,
+            "El préstamo se ha eliminado correctamente.",
+        )
+
+        return super().form_valid(form)
+
+from django.views.generic import DetailView
+
+
+class DetallePrestamoView(
+    LoginRequiredMixin,
+    DetailView,
+):
+    model = Prestamo
+    template_name = "hotel/hipotecas/detalle.html"
+    context_object_name = "prestamo"
+
+    def get_queryset(self):
+        return (
+            Prestamo.objects
+            .select_related(
+                "propiedad",
+                "sociedad",
+            )
+            .prefetch_related("pagos")
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        prestamo = self.object
+        hoy = timezone.localdate()
+
+        pagos = (
+            prestamo.pagos
+            .all()
+            .order_by("fecha")
+        )
+
+        pagos_ano = pagos.filter(
+            fecha__year=hoy.year
+        )
+
+        total_pagado = (
+            pagos.aggregate(
+                total=Sum("importe_cuota")
+            )["total"]
+            or Decimal("0.00")
+        )
+
+        total_intereses = (
+            pagos.aggregate(
+                total=Sum("intereses")
+            )["total"]
+            or Decimal("0.00")
+        )
+
+        total_capital = (
+            pagos.aggregate(
+                total=Sum("capital_amortizado")
+            )["total"]
+            or Decimal("0.00")
+        )
+
+        pagado_ano = (
+            pagos_ano.aggregate(
+                total=Sum("importe_cuota")
+            )["total"]
+            or Decimal("0.00")
+        )
+
+        intereses_ano = (
+            pagos_ano.aggregate(
+                total=Sum("intereses")
+            )["total"]
+            or Decimal("0.00")
+        )
+
+        capital_ano = (
+            pagos_ano.aggregate(
+                total=Sum("capital_amortizado")
+            )["total"]
+            or Decimal("0.00")
+        )
+
+        capital_amortizado_total = (
+            prestamo.capital_inicial
+            - prestamo.deuda_pendiente
+        )
+
+        porcentaje_amortizado = Decimal("0.00")
+
+        if prestamo.capital_inicial:
+            porcentaje_amortizado = (
+                capital_amortizado_total
+                / prestamo.capital_inicial
+                * Decimal("100")
+            )
+
+        context.update({
+            "hoy": hoy,
+            "pagos": pagos,
+
+            "total_pagado": total_pagado,
+            "total_intereses": total_intereses,
+            "total_capital": total_capital,
+
+            "pagado_ano": pagado_ano,
+            "intereses_ano": intereses_ano,
+            "capital_ano": capital_ano,
+
+            "capital_amortizado_total": (
+                capital_amortizado_total
+            ),
+            "porcentaje_amortizado": (
+                porcentaje_amortizado
+            ),
+        })
+
+        return context
+
+class EditarPagoPrestamoView(
+    LoginRequiredMixin,
+    UpdateView,
+):
+    model = PagoPrestamo
+    form_class = PagoPrestamoForm
+    template_name = "hotel/hipotecas/pago_form.html"
+
+    def get_success_url(self):
+        return reverse_lazy(
+            "hotel:detalle_prestamo",
+            kwargs={
+                "pk": self.object.prestamo.pk
+            },
+        )
+
+    def form_valid(self, form):
+        messages.success(
+            self.request,
+            "El pago se ha actualizado correctamente.",
+        )
+        return super().form_valid(form)
+
+
+class EliminarPagoPrestamoView(
+    LoginRequiredMixin,
+    DeleteView,
+):
+    model = PagoPrestamo
+    template_name = (
+        "hotel/hipotecas/pago_confirm_delete.html"
+    )
+
+    def get_success_url(self):
+        return reverse_lazy(
+            "hotel:detalle_prestamo",
+            kwargs={
+                "pk": self.object.prestamo.pk
+            },
+        )
+
+    def form_valid(self, form):
+        messages.success(
+            self.request,
+            "El pago se ha eliminado correctamente.",
+        )
+        return super().form_valid(form)
+
+
+
+
+@login_required
+def ver_justificante_prestamo(request, pk):
+
+    pago = get_object_or_404(
+        PagoPrestamo,
+        pk=pk,
+    )
+
+    if not pago.justificante:
+        raise Http404(
+            "Este pago no tiene justificante."
+        )
+
+    return FileResponse(
+        pago.justificante.open("rb"),
+        as_attachment=False,
+        filename=pago.justificante.name.split("/")[-1],
+    )

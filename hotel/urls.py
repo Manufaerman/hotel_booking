@@ -4,7 +4,8 @@ from django.contrib.sitemaps.views import sitemap
 from django.urls import path
 from django.views.generic import TemplateView
 from .views import service_worker, IngresosDashboardView, CrearPagoHipotecaView, CrearHipotecaView, \
-    HipotecasDashboardView
+    HipotecasDashboardView, EditarPrestamoView, EliminarPrestamoView, DetallePrestamoView, EditarPagoPrestamoView, \
+    EliminarPagoPrestamoView, ver_justificante_prestamo
 from hotel.sitemaps import StaticViewSitemap
 
 from .views import (
@@ -371,9 +372,45 @@ path(
 ),
 
 path(
-    "dashboard/hipotecas/pago/nuevo/",
+    "dashboard/hipotecas/<int:pk>/pago/",
     CrearPagoHipotecaView.as_view(),
     name="crear_pago_hipoteca",
+),
+
+path(
+    "dashboard/hipotecas/<int:pk>/editar/",
+    EditarPrestamoView.as_view(),
+    name="editar_prestamo",
+),
+
+path(
+    "dashboard/hipotecas/<int:pk>/eliminar/",
+    EliminarPrestamoView.as_view(),
+    name="eliminar_prestamo",
+),
+
+path(
+    "dashboard/hipotecas/<int:pk>/",
+    DetallePrestamoView.as_view(),
+    name="detalle_prestamo",
+),
+
+path(
+    "dashboard/hipotecas/pago/<int:pk>/editar/",
+    EditarPagoPrestamoView.as_view(),
+    name="editar_pago_prestamo",
+),
+
+path(
+    "dashboard/hipotecas/pago/<int:pk>/eliminar/",
+    EliminarPagoPrestamoView.as_view(),
+    name="eliminar_pago_prestamo",
+),
+
+path(
+    "dashboard/hipotecas/pago/<int:pk>/justificante/",
+    ver_justificante_prestamo,
+    name="justificante_prestamo",
 ),
 
 

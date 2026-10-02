@@ -1,10 +1,676 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base_dashboard.html" %}
+{% load static %}
 
-</body>
-</html>
+{% block extra-head %}
+<link rel="stylesheet" href="{% static 'hotel/css/hipotecas/dashboard.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+<div class="mortgage-dashboard">
+
+    <!-- ==================================================
+         HEADER
+    ================================================== -->
+
+    <div class="dashboard-header">
+
+        <div>
+            <span class="eyebrow">
+                Finanzas
+            </span>
+
+            <h1>
+                Financiación
+            </h1>
+
+            <p>
+                Control de préstamos, cuotas, intereses y amortización.
+            </p>
+        </div>
+
+        <a
+            href="{% url 'hotel:crear_hipoteca' %}"
+            class="btn-primary"
+        >
+            + Nuevo préstamo
+        </a>
+
+    </div>
+
+
+    <!-- ==================================================
+         RESUMEN GENERAL
+    ================================================== -->
+
+    <div class="summary-grid">
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                Préstamos activos
+            </span>
+
+            <strong class="summary-value">
+                {{ prestamos|length }}
+            </strong>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                Deuda pendiente
+            </span>
+
+            <strong class="summary-value">
+                {{ deuda_total|floatformat:2 }} €
+            </strong>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                Cuotas mensuales
+            </span>
+
+            <strong class="summary-value">
+                {{ cuotas_mensuales|floatformat:2 }} €
+            </strong>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                Pagado este mes
+            </span>
+
+            <strong class="summary-value">
+                {{ cuotas_mes|floatformat:2 }} €
+            </strong>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                Intereses este mes
+            </span>
+
+            <strong class="summary-value">
+                {{ intereses_mes|floatformat:2 }} €
+            </strong>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <span class="summary-label">
+                Capital amortizado este mes
+            </span>
+
+            <strong class="summary-value">
+                {{ capital_amortizado_mes|floatformat:2 }} €
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==================================================
+         RESUMEN ANUAL
+    ================================================== -->
+
+    <section class="dashboard-section">
+
+        <div class="section-header">
+
+            <div>
+
+                <span class="eyebrow">
+                    Año {{ hoy.year }}
+                </span>
+
+                <h2>
+                    Evolución de la deuda
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="summary-grid annual-summary">
+
+            <div class="summary-card">
+
+                <span class="summary-label">
+                    Pagado este año
+                </span>
+
+                <strong class="summary-value">
+                    {{ pagado_prestamos_ano|floatformat:2 }} €
+                </strong>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <span class="summary-label">
+                    Intereses este año
+                </span>
+
+                <strong class="summary-value">
+                    {{ intereses_ano|floatformat:2 }} €
+                </strong>
+
+            </div>
+
+
+            <div class="summary-card">
+
+                <span class="summary-label">
+                    Capital amortizado este año
+                </span>
+
+                <strong class="summary-value">
+                    {{ capital_amortizado_ano|floatformat:2 }} €
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    {% if resumen_sociedades %}
+
+<section class="dashboard-section">
+
+    <div class="section-header">
+        <div>
+            <span class="eyebrow">
+                Estructura
+            </span>
+
+            <h2>
+                Por sociedad
+            </h2>
+        </div>
+    </div>
+
+    <div class="company-grid">
+
+        {% for sociedad in resumen_sociedades %}
+
+        <div class="company-card">
+
+            <span class="company-name">
+                {{ sociedad.sociedad__nombre }}
+            </span>
+
+            <div class="company-data">
+
+                <div>
+                    <span>Préstamos</span>
+                    <strong>
+                        {{ sociedad.prestamos_total }}
+                    </strong>
+                </div>
+
+                <div>
+                    <span>Deuda</span>
+                    <strong>
+                        {{ sociedad.deuda_total|floatformat:2 }}
+                        {{ sociedad.sociedad__moneda }}
+                    </strong>
+                </div>
+
+                <div>
+                    <span>Cuotas mensuales</span>
+                    <strong>
+                        {{ sociedad.cuotas_mensuales|floatformat:2 }}
+                        {{ sociedad.sociedad__moneda }}
+                    </strong>
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+{% endif %}
+
+
+    <!-- ==================================================
+         PRÉSTAMOS
+    ================================================== -->
+
+    <section class="dashboard-section">
+
+        <div class="section-header">
+
+            <div>
+
+                <span class="eyebrow">
+                    Financiación
+                </span>
+
+                <h2>
+                    Mis préstamos
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="mortgage-list">
+
+            {% for prestamo in prestamos %}
+
+            <div class="mortgage-card">
+
+                <!-- CABECERA -->
+
+                <div class="mortgage-main">
+
+                    <div>
+
+                        <span class="bank-name">
+
+                            {{ prestamo.entidad }}
+
+                            ·
+
+                            {{ prestamo.get_tipo_display }}
+
+                        </span>
+
+                        <h3>
+
+                            {% if prestamo.propiedad %}
+
+                                {{ prestamo.propiedad }}
+
+                            {% else %}
+
+                                {{ prestamo.get_tipo_display }}
+
+                            {% endif %}
+
+                        </h3>
+
+                    </div>
+
+
+                    <div class="mortgage-status">
+
+                        {% if prestamo.activa %}
+
+                            <span class="status active">
+                                Activo
+                            </span>
+
+                        {% else %}
+
+                            <span class="status inactive">
+                                Finalizado
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <!-- DATOS -->
+
+                <div class="mortgage-data">
+
+                    <div>
+
+                        <span>
+                            Deuda pendiente
+                        </span>
+
+                        <strong>
+                            {{ prestamo.deuda_pendiente|floatformat:2 }} €
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Cuota mensual
+                        </span>
+
+                        <strong>
+                            {{ prestamo.cuota_mensual|floatformat:2 }} €
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Tipo vigente
+                        </span>
+
+                        <strong>
+
+                            {% if prestamo.tipo_interes %}
+
+                                {{ prestamo.tipo_interes|floatformat:3 }} %
+
+                            {% else %}
+
+                                —
+
+                            {% endif %}
+
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Tipo
+                        </span>
+
+                        <strong>
+                            {{ prestamo.get_tipo_tasa_display }}
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Día de cobro
+                        </span>
+
+                        <strong>
+                            {{ prestamo.dia_cobro }}
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Próxima revisión
+                        </span>
+
+                        <strong>
+
+                            {% if prestamo.fecha_proxima_revision %}
+
+                                {{ prestamo.fecha_proxima_revision|date:"d/m/Y" }}
+
+                            {% else %}
+
+                                —
+
+                            {% endif %}
+
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Diferencial
+                        </span>
+
+                        <strong>
+
+                            {% if prestamo.diferencial != None %}
+
+                                {{ prestamo.diferencial|floatformat:3 }} %
+
+                            {% else %}
+
+                                —
+
+                            {% endif %}
+
+                        </strong>
+
+                    </div>
+
+
+                    <div>
+
+                        <span>
+                            Finaliza
+                        </span>
+
+                        <strong>
+
+                            {% if prestamo.fecha_fin %}
+
+                                {{ prestamo.fecha_fin|date:"d/m/Y" }}
+
+                            {% else %}
+
+                                —
+
+                            {% endif %}
+
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ACCIONES -->
+
+                <div class="mortgage-actions">
+
+                    <a
+                        href="{% url 'hotel:detalle_prestamo' prestamo.pk %}"
+                    >
+                        Ver detalle
+                    </a>
+
+
+                    <a
+                        href="{% url 'hotel:crear_pago_hipoteca' prestamo.pk %}"
+                    >
+                        Registrar pago
+                    </a>
+
+
+                    <a
+                        href="{% url 'hotel:editar_prestamo' prestamo.pk %}"
+                    >
+                        Editar
+                    </a>
+
+
+                    <a
+                        href="{% url 'hotel:eliminar_prestamo' prestamo.pk %}"
+                        class="danger-link"
+                    >
+                        Eliminar
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            {% empty %}
+
+            <div class="empty-state">
+
+                <h3>
+                    No hay préstamos activos
+                </h3>
+
+                <p>
+                    Cuando añadas un préstamo aparecerá aquí.
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    <!-- ==================================================
+         PAGOS DEL MES
+    ================================================== -->
+
+    {% if pagos_mes %}
+
+    <section class="dashboard-section">
+
+        <div class="section-header">
+
+            <div>
+
+                <span class="eyebrow">
+                    {{ hoy|date:"F Y" }}
+                </span>
+
+                <h2>
+                    Pagos del mes
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="payments-table">
+
+            <div class="payment-row payment-header">
+
+                <span>
+                    Fecha
+                </span>
+
+                <span>
+                    Préstamo
+                </span>
+
+                <span>
+                    Cuota
+                </span>
+
+                <span>
+                    Intereses
+                </span>
+
+                <span>
+                    Capital
+                </span>
+
+                <span>
+                    Justificante
+                </span>
+
+            </div>
+
+
+            {% for pago in pagos_mes %}
+
+            <div class="payment-row">
+
+                <span>
+                    {{ pago.fecha|date:"d/m/Y" }}
+                </span>
+
+
+                <span>
+                    {{ pago.prestamo }}
+                </span>
+
+
+                <strong>
+                    {{ pago.importe_cuota|floatformat:2 }} €
+                </strong>
+
+
+                <span>
+                    {{ pago.intereses|floatformat:2 }} €
+                </span>
+
+
+                <span>
+                    {{ pago.capital_amortizado|floatformat:2 }} €
+                </span>
+
+
+                <span>
+
+                    {% if pago.justificante %}
+
+                        <a
+                            href="{% url 'hotel:justificante_prestamo' pago.pk %}"
+                            target="_blank"
+                            class="document-link"
+                        >
+                            Ver documento
+                        </a>
+
+                    {% elif pago.estimado %}
+
+                        <span class="estimated-payment">
+                            Estimado
+                        </span>
+
+                    {% else %}
+
+                        <span class="missing-document">
+                            Falta justificante
+                        </span>
+
+                    {% endif %}
+
+                </span>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

@@ -62,12 +62,19 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
+
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+
+    # Allauth necesita request.user
+    "allauth.account.middleware.AccountMiddleware",
+
+    # Protección de todo el dashboard
+    "hotel.middleware.DashboardLoginRequiredMiddleware",
+
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 
-    "allauth.account.middleware.AccountMiddleware",
-
+    # Estadísticas públicas
     "hotel.middleware.VisitorLoggingMiddleware",
 ]
 

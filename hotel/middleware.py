@@ -5,7 +5,8 @@ import re
 
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
-
+from django.shortcuts import redirect
+from django.urls import reverse
 from django.core.cache import cache
 from django.utils.timezone import now
 
@@ -295,3 +296,41 @@ class VisitorLoggingMiddleware:
             pass
 
         return response
+
+class DashboardLoginRequiredMiddleware:
+    """
+    Obliga a iniciar sesión para acceder
+    a cualquier URL interna del dashboard.
+    """
+
+    PROTECTED_PREFIXES = (
+        "/dashboard/",
+        "/habitaciones_dashboard/",
+        "/contratos/",
+        "/visitas/",
+        "/formalizaciones/",
+        "/formalizacion/",
+        "/user_profile/",
+    )
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+
+        path = request.path
+
+        if path.startswith(self.PROTECTED_PREFIXES):
+
+            if not request.user.is_authenticated:
+
+                login_url = reverse(
+                    "account_login"
+                )
+
+                return redirect(
+                    f"{login_url}"
+                    f"?next={request.get_full_path()}"
+                )
+
+        return self.get_response(request)

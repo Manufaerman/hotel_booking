@@ -1,10 +1,214 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block content %}
+
+<div class="finance-form-page">
+
+    <div class="form-container">
+
+        <div class="form-header">
+
+            <span class="eyebrow">
+                Finanzas
+            </span>
+
+            <h1>
+                {% if form.instance.pk %}
+                    Editar hipoteca
+                {% else %}
+                    Nueva hipoteca
+                {% endif %}
+            </h1>
+
+            <p>
+                Añade los datos financieros de la operación.
+            </p>
+
+        </div>
+
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <div class="form-grid">
+
+                {% for field in form %}
+
+                <div class="form-group">
+
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+
+                    {{ field }}
+
+                    {% if field.help_text %}
+                    <small>
+                        {{ field.help_text }}
+                    </small>
+                    {% endif %}
+
+
+                    {% for error in field.errors %}
+                    <div class="field-error">
+                        {{ error }}
+                    </div>
+                    {% endfor %}
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <a
+                    href="../"
+                    class="btn-secondary"
+                >
+                    Cancelar
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn-primary"
+                >
+                    Guardar hipoteca
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<style>
+
+.finance-form-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 50px 25px 80px;
+}
+
+.form-container {
+    background: #fffdf9;
+    border: 1px solid rgba(75,41,56,.11);
+    border-radius: 26px;
+    padding: 40px;
+}
+
+.form-header {
+    margin-bottom: 35px;
+}
+
+.form-header h1 {
+    font-size: 34px;
+    font-weight: 500;
+    margin: 6px 0;
+}
+
+.form-header p {
+    color: #756a6e;
+}
+
+.eyebrow {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #ae8950;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 12px;
+    margin-bottom: 8px;
+    color: #756a6e;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid rgba(75,41,56,.15);
+    border-radius: 12px;
+    background: #fff;
+    color: #352a2f;
+    box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #745f6d;
+}
+
+.form-group small {
+    margin-top: 6px;
+    color: #8a8084;
+    font-size: 11px;
+}
+
+.field-error {
+    color: #a75555;
+    margin-top: 6px;
+    font-size: 12px;
+}
+
+.form-actions {
+    margin-top: 40px;
+    border-top: 1px solid rgba(75,41,56,.1);
+    padding-top: 25px;
+
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.btn-primary {
+    border: 0;
+    background: #4b2938;
+    color: white;
+    padding: 13px 22px;
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    color: #4b2938;
+    text-decoration: none;
+    padding: 13px 22px;
+}
+
+@media (max-width: 700px) {
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-container {
+        padding: 25px 20px;
+    }
+
+}
+
+</style>
+
+{% endblock %}
