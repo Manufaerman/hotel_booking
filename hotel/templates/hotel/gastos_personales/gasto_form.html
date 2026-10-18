@@ -1,0 +1,334 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block title %}
+    {{ titulo }}
+{% endblock %}
+
+{% block extra-head %}
+<link
+    rel="stylesheet"
+    href="{% static 'hotel/css/gastos_personales.css' %}"
+>
+
+<script
+    src="{% static 'hotel/js/gastos_personales.js' %}"
+    defer
+></script>
+{% endblock %}
+
+
+{% block content %}
+
+<main class="personal-form-page">
+
+    <header class="personal-form-header">
+
+        <span class="personal-eyebrow">
+            Finanzas personales
+        </span>
+
+        <h1>
+            {{ titulo }}
+        </h1>
+
+        <p>
+            {{ subtitulo }}
+        </p>
+
+    </header>
+
+
+    <section class="personal-form-card">
+
+        <form
+            method="post"
+            enctype="multipart/form-data"
+            data-personal-form
+            novalidate
+        >
+            {% csrf_token %}
+
+
+            {% if form.non_field_errors %}
+                <div class="personal-form-errors">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
+
+
+            <!-- LUGAR -->
+
+            <section class="personal-form-section">
+
+                <header>
+                    <span>01</span>
+
+                    <div>
+                        <h2>
+                            Lugar
+                        </h2>
+
+                        <p>
+                            Selecciona dónde realizaste el gasto.
+                        </p>
+                    </div>
+                </header>
+
+
+                <div class="personal-country-selector">
+
+                    <button
+                        type="button"
+                        class="personal-country-button"
+                        data-country-value="ES"
+                    >
+                        <span>🇪🇸</span>
+                        España
+                    </button>
+
+                    <button
+                        type="button"
+                        class="personal-country-button"
+                        data-country-value="AR"
+                    >
+                        <span>🇦🇷</span>
+                        Argentina
+                    </button>
+
+                </div>
+
+
+                <div class="personal-native-country">
+                    {{ form.pais }}
+                </div>
+
+                {% for error in form.pais.errors %}
+                    <span class="personal-field-error">
+                        {{ error }}
+                    </span>
+                {% endfor %}
+
+
+                <div class="personal-form-grid personal-form-grid-place">
+
+                    <div class="personal-form-group">
+
+                        <label for="{{ form.ciudad.id_for_label }}">
+                            {{ form.ciudad.label }}
+                        </label>
+
+                        {{ form.ciudad }}
+
+                        {% for error in form.ciudad.errors %}
+                            <span class="personal-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div
+                        class="personal-form-group"
+                        data-exchange-group
+                    >
+
+                        <label for="{{ form.cotizacion_eur.id_for_label }}">
+                            {{ form.cotizacion_eur.label }}
+                        </label>
+
+                        {{ form.cotizacion_eur }}
+
+                        <small>
+                            Pesos argentinos equivalentes a un euro.
+                        </small>
+
+                        {% for error in form.cotizacion_eur.errors %}
+                            <span class="personal-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- INFORMACIÓN -->
+
+            <section class="personal-form-section">
+
+                <header>
+                    <span>02</span>
+
+                    <div>
+                        <h2>
+                            Información
+                        </h2>
+
+                        <p>
+                            Describe el movimiento y su importe.
+                        </p>
+                    </div>
+                </header>
+
+
+                <div class="personal-form-grid">
+
+                    <div class="personal-form-group">
+
+                        <label for="{{ form.concepto.id_for_label }}">
+                            {{ form.concepto.label }}
+                        </label>
+
+                        {{ form.concepto }}
+
+                        {% for error in form.concepto.errors %}
+                            <span class="personal-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="personal-form-group">
+
+                        <label for="{{ form.categoria.id_for_label }}">
+                            {{ form.categoria.label }}
+                        </label>
+
+                        {{ form.categoria }}
+
+                        {% for error in form.categoria.errors %}
+                            <span class="personal-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="personal-form-group">
+
+                        <label for="{{ form.importe.id_for_label }}">
+                            {{ form.importe.label }}
+                        </label>
+
+                        <div class="personal-money-control">
+                            {{ form.importe }}
+
+                            <span data-currency-label>
+                                €
+                            </span>
+                        </div>
+
+                        {% for error in form.importe.errors %}
+                            <span class="personal-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="personal-form-group">
+
+                        <label for="{{ form.fecha.id_for_label }}">
+                            {{ form.fecha.label }}
+                        </label>
+
+                        {{ form.fecha }}
+
+                        {% for error in form.fecha.errors %}
+                            <span class="personal-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="personal-form-group">
+
+                        <label for="{{ form.metodo_pago.id_for_label }}">
+                            {{ form.metodo_pago.label }}
+                        </label>
+
+                        {{ form.metodo_pago }}
+
+                        {% for error in form.metodo_pago.errors %}
+                            <span class="personal-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="personal-form-group">
+
+                        <label for="{{ form.justificante.id_for_label }}">
+                            {{ form.justificante.label }}
+                        </label>
+
+                        {{ form.justificante }}
+
+                        {% for error in form.justificante.errors %}
+                            <span class="personal-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="personal-form-group personal-form-full">
+
+                        <label for="{{ form.notas.id_for_label }}">
+                            {{ form.notas.label }}
+                        </label>
+
+                        {{ form.notas }}
+
+                        {% for error in form.notas.errors %}
+                            <span class="personal-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <div class="personal-form-actions">
+
+                <a
+                    href="{% url 'hotel:gastos_personales' %}"
+                    class="personal-form-back"
+                >
+                    Cancelar
+                </a>
+
+                <button
+                    type="submit"
+                    class="personal-form-submit"
+                >
+                    {{ texto_boton }}
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+</main>
+
+{% endblock %}

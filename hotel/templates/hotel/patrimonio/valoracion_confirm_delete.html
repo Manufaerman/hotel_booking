@@ -1,0 +1,67 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+{% block extra-head %}
+<link rel="stylesheet" href="{% static 'hotel/css/patrimonio/patrimonio_dashboard.css' %}">
+{% endblock%}
+
+
+{% block title %}
+    Eliminar valoración | By Colección
+{% endblock %}
+
+{% block content %}
+
+<main class="patrimonio-dashboard">
+
+    <section class="patrimonio-form-card">
+
+        <span class="patrimonio-eyebrow">
+            Confirmación
+        </span>
+
+        <h1>
+            Eliminar valoración
+        </h1>
+
+        <p>
+            ¿Quieres eliminar la valoración de
+            <strong>
+                {{ valoracion.propiedad.nombre }}
+            </strong>
+            por
+            <strong>
+                {{ valoracion.valor|floatformat:2 }} €
+            </strong>
+            registrada el
+            <strong>
+                {{ valoracion.fecha|date:"d/m/Y" }}
+            </strong>?
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="patrimonio-form-actions">
+
+                <a
+                    href="{% url 'hotel:valoraciones_propiedad' %}"
+                    class="patrimonio-cancel-button"
+                >
+                    Cancelar
+                </a>
+
+                <button
+                    type="submit"
+                    class="patrimonio-delete-button"
+                >
+                    Eliminar valoración
+                </button>
+
+            </div>
+        </form>
+
+    </section>
+
+</main>
+
+{% endblock %}

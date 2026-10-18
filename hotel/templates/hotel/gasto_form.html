@@ -500,6 +500,47 @@
 
                     </div>
 
+                    <div
+                        class="gasto-form-group"
+                        id="tipo-gestion-group"
+                        hidden
+                    >
+                        <label>
+                            Tipo de gestión
+                        </label>
+
+                        <div class="tipo-gestion-buttons">
+
+                            <button
+                                type="button"
+                                class="tipo-gestion-button"
+                                data-tipo-gestion="pago_socio"
+                            >
+                                Pago al socio
+                            </button>
+
+                            <button
+                                type="button"
+                                class="tipo-gestion-button"
+                                data-tipo-gestion="gasto_gestion"
+                            >
+                                Gastos de gestión
+                            </button>
+
+                        </div>
+
+                        <div hidden>
+                            {{ form.tipo_gestion }}
+                        </div>
+
+                        {% for error in form.tipo_gestion.errors %}
+                            <span class="gasto-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+                    </div>
+
+
 
                     <!-- DATOS DEL SUMINISTRO -->
 
@@ -929,8 +970,118 @@
     </section>
 
 </main>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
 
+    const categoria = document.getElementById(
+        "id_categoria"
+    );
 
+    const grupoGestion = document.getElementById(
+        "tipo-gestion-group"
+    );
+
+    const selectGestion = document.getElementById(
+        "id_tipo_gestion"
+    );
+
+    const botones = document.querySelectorAll(
+        "[data-tipo-gestion]"
+    );
+
+    if (!categoria || !grupoGestion || !selectGestion) {
+        return;
+    }
+
+    function actualizarVisibilidad() {
+        const mostrar = (
+            categoria.value === "gestion_ejecutiva"
+        );
+
+        grupoGestion.hidden = !mostrar;
+
+        if (!mostrar) {
+            selectGestion.value = "";
+
+            botones.forEach((boton) => {
+                boton.classList.remove("is-selected");
+            });
+        }
+    }
+
+    botones.forEach((boton) => {
+        boton.addEventListener("click", function () {
+
+            const valor = this.dataset.tipoGestion;
+
+            selectGestion.value = valor;
+
+            botones.forEach((item) => {
+                item.classList.toggle(
+                    "is-selected",
+                    item === this
+                );
+            });
+        });
+    });
+
+    categoria.addEventListener(
+        "change",
+        actualizarVisibilidad
+    );
+
+    actualizarVisibilidad();
+
+    if (selectGestion.value) {
+        botones.forEach((boton) => {
+            boton.classList.toggle(
+                "is-selected",
+                boton.dataset.tipoGestion
+                === selectGestion.value
+            );
+        });
+    }
+});
+</script>
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+    const categoria = document.getElementById(
+        "id_categoria"
+    );
+
+    const grupoGestion = document.getElementById(
+        "tipo-gestion-group"
+    );
+
+    const tipoGestion = document.getElementById(
+        "id_tipo_gestion"
+    );
+
+    if (!categoria || !grupoGestion) {
+        return;
+    }
+
+    function actualizarTipoGestion() {
+        const mostrar = (
+            categoria.value === "gestion_ejecutiva"
+        );
+
+        grupoGestion.hidden = !mostrar;
+
+        if (!mostrar && tipoGestion) {
+            tipoGestion.value = "";
+        }
+    }
+
+    categoria.addEventListener(
+        "change",
+        actualizarTipoGestion
+    );
+
+    actualizarTipoGestion();
+});
+</script>
 <script>
 document.addEventListener(
     "DOMContentLoaded",

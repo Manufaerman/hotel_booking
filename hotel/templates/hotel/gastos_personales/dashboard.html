@@ -1,0 +1,436 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block title %}
+    Gastos personales
+{% endblock %}
+
+{% block extra-head %}
+<link
+    rel="stylesheet"
+    href="{% static 'hotel/css/gastos_personales/gastos_personales.css' %}"
+>
+
+<script
+    src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"
+    defer
+></script>
+
+<script
+    src="{% static 'hotel/js/gastos_personales.js' %}"
+    defer
+></script>
+{% endblock %}
+
+
+{% block content %}
+
+<main class="personal-dashboard">
+
+    <header class="personal-header">
+
+        <div>
+            <span class="personal-eyebrow">
+                Finanzas personales
+            </span>
+
+            <h1>
+                Gastos personales
+            </h1>
+
+            <p>
+                {{ mes_actual }}
+            </p>
+        </div>
+
+
+        <a
+            href="{% url 'hotel:crear_gasto_personal' %}"
+            class="personal-add-button"
+        >
+            <span>
+                <i
+                    class="fa fa-plus"
+                    aria-hidden="true"
+                ></i>
+            </span>
+
+            Añadir gasto
+        </a>
+
+    </header>
+
+
+    <!-- RESUMEN -->
+
+    <section class="personal-summary">
+
+        <article class="personal-summary-card personal-summary-total">
+            <span>
+                Total equivalente
+            </span>
+
+            <strong>
+                {{ total_eur|floatformat:2 }} €
+            </strong>
+
+            <small>
+                Gastos del mes convertidos a euros
+            </small>
+        </article>
+
+
+        <article class="personal-summary-card personal-summary-spain">
+            <span>
+                España
+            </span>
+
+            <strong>
+                {{ total_espana|floatformat:2 }} €
+            </strong>
+
+            <small>
+                Gastos realizados en euros
+            </small>
+        </article>
+
+
+        <article class="personal-summary-card personal-summary-argentina">
+            <span>
+                Argentina
+            </span>
+
+            <strong>
+                {{ total_argentina|floatformat:2 }} ARS
+            </strong>
+
+            <small>
+                Gastos realizados en pesos
+            </small>
+        </article>
+
+
+        <article class="personal-summary-card">
+            <span>
+                Movimientos
+            </span>
+
+            <strong>
+                {{ movimientos_mes }}
+            </strong>
+
+            <small>
+                Registrados durante este mes
+            </small>
+        </article>
+
+    </section>
+
+
+    <!-- GRÁFICOS -->
+
+    <section class="personal-charts">
+
+        <article class="personal-chart-card">
+
+            <header>
+                <span>
+                    Últimos 12 meses
+                </span>
+
+                <h2>
+                    Evolución mensual
+                </h2>
+            </header>
+
+            <div class="personal-chart-wrapper">
+                <canvas id="personalEvolutionChart"></canvas>
+            </div>
+
+        </article>
+
+
+        <article class="personal-chart-card">
+
+            <header>
+                <span>
+                    Mes actual
+                </span>
+
+                <h2>
+                    Por categoría
+                </h2>
+            </header>
+
+            <div class="personal-chart-wrapper">
+                <canvas id="personalCategoryChart"></canvas>
+            </div>
+
+        </article>
+
+    </section>
+
+
+    <!-- MOVIMIENTOS -->
+
+    <section class="personal-movements">
+
+        <header class="personal-section-heading">
+
+            <div>
+                <span class="personal-eyebrow">
+                    Movimientos
+                </span>
+
+                <h2>
+                    Gastos registrados
+                </h2>
+            </div>
+
+        </header>
+
+
+        <form
+            method="get"
+            class="personal-filters"
+            data-personal-filters
+        >
+
+            <div class="personal-country-filters">
+
+                <button
+                    type="submit"
+                    name="pais"
+                    value=""
+                    class="
+                        personal-country-filter
+                        {% if not filtro_pais %}
+                            is-active
+                        {% endif %}
+                    "
+                >
+                    Todos
+                </button>
+
+                <button
+                    type="submit"
+                    name="pais"
+                    value="ES"
+                    class="
+                        personal-country-filter
+                        {% if filtro_pais == 'ES' %}
+                            is-active
+                        {% endif %}
+                    "
+                >
+                    🇪🇸 España
+                </button>
+
+                <button
+                    type="submit"
+                    name="pais"
+                    value="AR"
+                    class="
+                        personal-country-filter
+                        {% if filtro_pais == 'AR' %}
+                            is-active
+                        {% endif %}
+                    "
+                >
+                    🇦🇷 Argentina
+                </button>
+
+            </div>
+
+
+            <div class="personal-filter-fields">
+
+                <div>
+                    <label for="personal-periodo">
+                        Periodo
+                    </label>
+
+                    <input
+                        id="personal-periodo"
+                        type="month"
+                        name="periodo"
+                        value="{{ filtro_periodo }}"
+                        class="personal-filter-control"
+                    >
+                </div>
+
+
+                <div>
+                    <label for="personal-categoria">
+                        Categoría
+                    </label>
+
+                    <select
+                        id="personal-categoria"
+                        name="categoria"
+                        class="personal-filter-control"
+                    >
+                        <option value="">
+                            Todas
+                        </option>
+
+                        {% for valor, nombre in categorias %}
+                            <option
+                                value="{{ valor }}"
+                                {% if filtro_categoria == valor %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ nombre }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="personal-filter-submit"
+                >
+                    Filtrar
+                </button>
+
+
+                <a
+                    href="{% url 'hotel:gastos_personales' %}"
+                    class="personal-filter-clear"
+                >
+                    Limpiar
+                </a>
+
+            </div>
+
+        </form>
+
+
+        <div class="personal-movement-list">
+
+            {% for gasto in movimientos %}
+
+                <article class="personal-movement-card">
+
+                    <div class="personal-movement-main">
+
+                        <div class="personal-movement-icon">
+                            {% if gasto.pais == "ES" %}
+                                🇪🇸
+                            {% else %}
+                                🇦🇷
+                            {% endif %}
+                        </div>
+
+
+                        <div>
+                            <span class="personal-movement-date">
+                                {{ gasto.fecha|date:"d/m/Y" }}
+                            </span>
+
+                            <h3>
+                                {{ gasto.concepto }}
+                            </h3>
+
+                            <p>
+                                {{ gasto.get_categoria_display }}
+
+                                {% if gasto.ciudad %}
+                                    · {{ gasto.ciudad }}
+                                {% endif %}
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="personal-movement-amount">
+
+                        <strong>
+                            {{ gasto.importe|floatformat:2 }}
+                            {{ gasto.moneda }}
+                        </strong>
+
+                        {% if gasto.moneda == "ARS" %}
+                            <small>
+                                {{ gasto.importe_eur|floatformat:2 }} €
+                            </small>
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="personal-movement-payment">
+                        <span>
+                            {{ gasto.get_metodo_pago_display }}
+                        </span>
+
+                        {% if gasto.justificante %}
+                            <a
+                                href="{{ gasto.justificante.url }}"
+                                target="_blank"
+                                rel="noopener"
+                            >
+                                Ver justificante
+                            </a>
+                        {% endif %}
+                    </div>
+
+
+                    <div class="personal-movement-actions">
+
+                        <a
+                            href="{% url 'hotel:editar_gasto_personal' gasto.pk %}"
+                            aria-label="Editar gasto"
+                        >
+                            <i
+                                class="fa fa-pencil"
+                                aria-hidden="true"
+                            ></i>
+                        </a>
+
+                        <a
+                            href="{% url 'hotel:eliminar_gasto_personal' gasto.pk %}"
+                            class="personal-delete-action"
+                            aria-label="Eliminar gasto"
+                        >
+                            <i
+                                class="fa fa-trash"
+                                aria-hidden="true"
+                            ></i>
+                        </a>
+
+                    </div>
+
+                </article>
+
+            {% empty %}
+
+                <div class="personal-empty">
+                    <span>
+                        Sin movimientos
+                    </span>
+
+                    <p>
+                        No hay gastos personales con estos filtros.
+                    </p>
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+</main>
+
+
+{{ grafico_evolucion_labels|json_script:"personal-evolution-labels" }}
+{{ grafico_evolucion_valores|json_script:"personal-evolution-values" }}
+
+{{ grafico_categoria_labels|json_script:"personal-category-labels" }}
+{{ grafico_categoria_valores|json_script:"personal-category-values" }}
+
+{% endblock %}

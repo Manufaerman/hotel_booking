@@ -1,0 +1,79 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block title %}
+    Eliminar gasto personal
+{% endblock %}
+
+{% block extra-head %}
+<link
+    rel="stylesheet"
+    href="{% static 'hotel/css/gastos_personales/gastos_personales.css' %}"
+>
+{% endblock %}
+
+
+{% block content %}
+
+<main class="personal-delete-page">
+
+    <section class="personal-delete-card">
+
+        <div class="personal-delete-icon">
+            <i
+                class="fa fa-trash"
+                aria-hidden="true"
+            ></i>
+        </div>
+
+        <span class="personal-eyebrow">
+            Gastos personales
+        </span>
+
+        <h1>
+            Eliminar movimiento
+        </h1>
+
+        <p>
+            Vas a eliminar
+            <strong>{{ gasto.concepto }}</strong>
+            por
+            <strong>
+                {{ gasto.importe|floatformat:2 }}
+                {{ gasto.moneda }}
+            </strong>.
+        </p>
+
+        <p class="personal-delete-warning">
+            Esta acción no se puede deshacer.
+        </p>
+
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="personal-delete-actions">
+
+                <a
+                    href="{% url 'hotel:gastos_personales' %}"
+                    class="personal-form-back"
+                >
+                    Cancelar
+                </a>
+
+                <button
+                    type="submit"
+                    class="personal-delete-submit"
+                >
+                    Eliminar gasto
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+</main>
+
+{% endblock %}

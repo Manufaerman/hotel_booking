@@ -3564,3 +3564,49 @@
         font-size: 0.78rem;
     }
 }
+.tipo-gestion-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.tipo-gestion-button {
+    min-height: 38px;
+    padding: 0 14px;
+
+    border: 1px solid rgba(81, 52, 62, 0.16);
+    border-radius: 11px;
+
+    background: #fffdf9;
+    color: #51343e;
+
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 800;
+
+    cursor: pointer;
+    transition:
+        background 160ms ease,
+        color 160ms ease,
+        border-color 160ms ease,
+        transform 160ms ease;
+}
+
+.tipo-gestion-button:hover {
+    border-color: #806874;
+    transform: translateY(-1px);
+}
+
+.tipo-gestion-button.is-selected {
+    border-color: #51343e;
+    background: #51343e;
+    color: #fffdf9;
+}
+
+@media (max-width: 620px) {
+    .tipo-gestion-button {
+        flex: 1 1 0;
+        min-height: 43px;
+    }
+}

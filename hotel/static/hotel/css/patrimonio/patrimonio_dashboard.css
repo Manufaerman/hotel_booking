@@ -1,0 +1,837 @@
+:root {
+    --patrimonio-vino: #51343e;
+    --patrimonio-malva: #806874;
+    --patrimonio-sage: #72a5a1;
+    --patrimonio-oro: #b08b62;
+    --patrimonio-crema: #f5f0e9;
+    --patrimonio-card: #fffdf9;
+    --patrimonio-texto: #3d3036;
+    --patrimonio-muted: #786d71;
+    --patrimonio-border: rgba(81, 52, 62, 0.12);
+}
+
+
+/* =========================================================
+   CONTENEDOR
+========================================================= */
+
+.patrimonio-dashboard {
+    width: min(1180px, 100%);
+    margin: 0 auto;
+    padding: 42px 28px 80px;
+    color: var(--patrimonio-texto);
+}
+
+
+/* =========================================================
+   CABECERA
+========================================================= */
+
+.patrimonio-header {
+    margin-bottom: 34px;
+}
+
+.patrimonio-eyebrow,
+.patrimonio-section-header > span {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--patrimonio-sage);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+.patrimonio-header h1 {
+    margin: 0;
+    color: var(--patrimonio-vino);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    font-weight: 500;
+    line-height: 0.98;
+}
+
+.patrimonio-header p {
+    margin: 16px 0 0;
+    color: var(--patrimonio-muted);
+    font-size: 1rem;
+}
+
+
+/* =========================================================
+   TARJETAS PRINCIPALES
+========================================================= */
+
+.patrimonio-kpis {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.patrimonio-kpi {
+    min-height: 150px;
+    padding: 24px;
+    border: 1px solid var(--patrimonio-border);
+    border-radius: 24px;
+    background: var(--patrimonio-card);
+    box-shadow: 0 14px 32px rgba(81, 52, 62, 0.07);
+}
+
+.patrimonio-kpi span {
+    display: block;
+    color: var(--patrimonio-muted);
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+.patrimonio-kpi strong {
+    display: block;
+    margin-top: 24px;
+    color: var(--patrimonio-vino);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(1.7rem, 3vw, 2.5rem);
+    font-weight: 500;
+    line-height: 1;
+}
+
+.patrimonio-kpi-deuda {
+    background: #fff8ed;
+}
+
+.patrimonio-kpi-deuda strong {
+    color: var(--patrimonio-oro);
+}
+
+.patrimonio-kpi-total {
+    background: #eef6f3;
+}
+
+.patrimonio-kpi-total strong {
+    color: var(--patrimonio-sage);
+}
+
+
+/* =========================================================
+   SECCIONES
+========================================================= */
+
+.patrimonio-section {
+    margin-top: 26px;
+    padding: 30px;
+    border: 1px solid var(--patrimonio-border);
+    border-radius: 28px;
+    background: var(--patrimonio-card);
+    box-shadow: 0 14px 34px rgba(81, 52, 62, 0.06);
+}
+
+.patrimonio-section-header {
+    margin-bottom: 24px;
+}
+
+.patrimonio-section-header h2 {
+    margin: 0;
+    color: var(--patrimonio-vino);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(1.7rem, 3vw, 2.5rem);
+    font-weight: 500;
+}
+
+.patrimonio-section-header p {
+    margin: 8px 0 0;
+    color: var(--patrimonio-muted);
+}
+
+
+/* =========================================================
+   GRÁFICO
+========================================================= */
+
+.patrimonio-chart-wrapper {
+    position: relative;
+    width: 100%;
+    height: 390px;
+}
+
+
+/* =========================================================
+   PROPIEDADES
+========================================================= */
+
+.patrimonio-properties {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.patrimonio-property-card {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 18px;
+    min-height: 125px;
+    padding: 22px;
+    border: 1px solid var(--patrimonio-border);
+    border-radius: 20px;
+    background: #faf6f1;
+}
+
+.patrimonio-property-card small {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--patrimonio-muted);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.patrimonio-property-card h3 {
+    margin: 0;
+    color: var(--patrimonio-vino);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.35rem;
+    font-weight: 500;
+}
+
+.patrimonio-property-card strong {
+    flex: 0 0 auto;
+    color: var(--patrimonio-vino);
+    font-size: 1.15rem;
+}
+
+
+/* =========================================================
+   LIQUIDEZ
+========================================================= */
+
+.patrimonio-liquidez {
+    display: grid;
+    gap: 10px;
+}
+
+.patrimonio-liquidez-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 17px 20px;
+    border-bottom: 1px solid var(--patrimonio-border);
+}
+
+.patrimonio-liquidez-row:last-child {
+    border-bottom: 0;
+}
+
+.patrimonio-liquidez-row strong {
+    display: block;
+    color: var(--patrimonio-vino);
+    font-size: 0.98rem;
+}
+
+.patrimonio-liquidez-row small {
+    display: block;
+    margin-top: 4px;
+    color: var(--patrimonio-muted);
+}
+
+.patrimonio-liquidez-row > span {
+    color: var(--patrimonio-sage);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.35rem;
+}
+
+
+/* =========================================================
+   ESTADO VACÍO
+========================================================= */
+
+.patrimonio-empty {
+    margin: 0;
+    padding: 24px;
+    border: 1px dashed var(--patrimonio-border);
+    border-radius: 16px;
+    color: var(--patrimonio-muted);
+    text-align: center;
+}
+
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
+@media (max-width: 900px) {
+    .patrimonio-kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .patrimonio-properties {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 620px) {
+    .patrimonio-dashboard {
+        padding: 28px 14px 60px;
+    }
+
+    .patrimonio-header {
+        margin-bottom: 24px;
+    }
+
+    .patrimonio-kpis {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .patrimonio-kpi {
+        min-height: 125px;
+        padding: 17px;
+        border-radius: 18px;
+    }
+
+    .patrimonio-kpi strong {
+        margin-top: 18px;
+        font-size: 1.45rem;
+    }
+
+    .patrimonio-section {
+        margin-top: 18px;
+        padding: 19px 15px;
+        border-radius: 21px;
+    }
+
+    .patrimonio-chart-wrapper {
+        height: 290px;
+        margin-inline: -5px;
+    }
+
+    .patrimonio-properties {
+        grid-template-columns: 1fr;
+    }
+
+    .patrimonio-property-card {
+        min-height: 105px;
+    }
+
+    .patrimonio-liquidez-row {
+        padding-inline: 4px;
+    }
+}
+
+/* =========================================================
+   CABECERA CON ACCIÓN
+========================================================= */
+
+.patrimonio-header-with-action {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.patrimonio-add-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    min-height: 48px;
+    padding: 0 20px;
+
+    border-radius: 16px;
+
+    background: linear-gradient(
+        145deg,
+        #62384b,
+        #422333
+    );
+
+    color: #fffdf9;
+    font-size: 0.88rem;
+    font-weight: 800;
+    text-decoration: none;
+
+    box-shadow:
+        0 12px 25px rgba(66, 35, 51, 0.2);
+
+    transition:
+        transform 160ms ease,
+        box-shadow 160ms ease;
+}
+
+.patrimonio-add-button span {
+    display: grid;
+    place-items: center;
+
+    width: 27px;
+    height: 27px;
+
+    border-radius: 9px;
+
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff4c8;
+    font-size: 1.35rem;
+    line-height: 1;
+}
+
+.patrimonio-add-button:hover {
+    color: #fffdf9;
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 16px 30px rgba(66, 35, 51, 0.28);
+}
+
+.patrimonio-add-button:focus-visible {
+    outline: 4px solid rgba(114, 165, 161, 0.35);
+    outline-offset: 3px;
+}
+
+
+/* =========================================================
+   FORMULARIO DE VALORACIÓN
+========================================================= */
+
+.patrimonio-form-card {
+    max-width: 760px;
+    margin-top: 28px;
+    padding: 32px;
+
+    border: 1px solid var(--patrimonio-border);
+    border-radius: 28px;
+
+    background: var(--patrimonio-card);
+
+    box-shadow:
+        0 18px 38px rgba(81, 52, 62, 0.08);
+}
+
+.patrimonio-form-card form {
+    display: grid;
+    gap: 20px;
+}
+
+.patrimonio-form-group {
+    display: grid;
+    gap: 8px;
+}
+
+.patrimonio-form-group label {
+    color: var(--patrimonio-vino);
+    font-size: 0.82rem;
+    font-weight: 800;
+}
+
+.patrimonio-form-group small {
+    color: var(--patrimonio-muted);
+    font-size: 0.76rem;
+    line-height: 1.4;
+}
+
+.patrimonio-control {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 14px;
+
+    box-sizing: border-box;
+
+    border: 1px solid rgba(81, 52, 62, 0.16);
+    border-radius: 13px;
+
+    background: #fffefa;
+    color: var(--patrimonio-texto);
+
+    font: inherit;
+
+    transition:
+        border-color 160ms ease,
+        box-shadow 160ms ease,
+        background 160ms ease;
+}
+
+textarea.patrimonio-control {
+    min-height: 115px;
+    resize: vertical;
+}
+
+.patrimonio-control:hover {
+    border-color: rgba(81, 52, 62, 0.28);
+}
+
+.patrimonio-control:focus {
+    outline: none;
+    border-color: var(--patrimonio-sage);
+
+    background: #ffffff;
+
+    box-shadow:
+        0 0 0 4px rgba(114, 165, 161, 0.16);
+}
+
+.patrimonio-form-errors {
+    padding: 13px 15px;
+
+    border: 1px solid rgba(167, 85, 85, 0.28);
+    border-radius: 13px;
+
+    background: #fff3f1;
+    color: #9b4e4e;
+
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+.patrimonio-field-error {
+    color: #a75555;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.patrimonio-form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+
+    margin-top: 10px;
+    padding-top: 22px;
+
+    border-top: 1px solid var(--patrimonio-border);
+}
+
+.patrimonio-cancel-button,
+.patrimonio-submit-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 46px;
+    padding: 0 20px;
+
+    border-radius: 14px;
+
+    font-size: 0.86rem;
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.patrimonio-cancel-button {
+    border: 1px solid var(--patrimonio-border);
+    background: #fffdf9;
+    color: var(--patrimonio-vino);
+}
+
+.patrimonio-cancel-button:hover {
+    color: var(--patrimonio-vino);
+    background: #faf3ee;
+}
+
+.patrimonio-submit-button {
+    border: 0;
+    background: var(--patrimonio-vino);
+    color: #fffdf9;
+
+    box-shadow:
+        0 10px 20px rgba(81, 52, 62, 0.18);
+}
+
+.patrimonio-submit-button:hover {
+    background: #422333;
+}
+
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
+@media (max-width: 620px) {
+
+    .patrimonio-header-with-action {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .patrimonio-add-button {
+        align-self: stretch;
+        justify-content: center;
+        min-height: 52px;
+    }
+
+    .patrimonio-form-card {
+        margin-top: 18px;
+        padding: 20px 16px;
+        border-radius: 21px;
+    }
+
+    .patrimonio-form-actions {
+        align-items: stretch;
+        flex-direction: column-reverse;
+    }
+
+    .patrimonio-cancel-button,
+    .patrimonio-submit-button {
+        width: 100%;
+        min-height: 50px;
+    }
+}
+.patrimonio-header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.patrimonio-secondary-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 48px;
+    padding: 0 18px;
+
+    border: 1px solid rgba(81, 52, 62, 0.18);
+    border-radius: 15px;
+
+    background: #fffdf9;
+    color: #51343e;
+
+    font-size: 0.84rem;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.patrimonio-secondary-button:hover {
+    background: #faf3ee;
+    color: #51343e;
+}
+
+@media (max-width: 620px) {
+    .patrimonio-header-actions {
+        width: 100%;
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .patrimonio-secondary-button,
+    .patrimonio-add-button {
+        width: 100%;
+    }
+}
+/* =========================================================
+   BOTÓN VER VALORACIONES
+========================================================= */
+
+.patrimonio-secondary-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 48px;
+    padding: 0 19px;
+
+    border: 1px solid rgba(81, 52, 62, 0.18);
+    border-radius: 15px;
+
+    background: #fffdf9;
+    color: #51343e;
+
+    font-size: 0.84rem;
+    font-weight: 800;
+    text-decoration: none;
+
+    transition:
+        background 160ms ease,
+        border-color 160ms ease,
+        transform 160ms ease;
+}
+
+.patrimonio-secondary-button:hover {
+    border-color: rgba(81, 52, 62, 0.3);
+    background: #faf3ee;
+    color: #51343e;
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   LISTADO DE VALORACIONES
+========================================================= */
+
+.patrimonio-valuations-list {
+    display: grid;
+    gap: 13px;
+}
+
+.patrimonio-valuation-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 22px;
+
+    padding: 20px 22px;
+
+    border: 1px solid rgba(81, 52, 62, 0.12);
+    border-radius: 20px;
+
+    background: #faf6f1;
+
+    transition:
+        border-color 160ms ease,
+        box-shadow 160ms ease,
+        transform 160ms ease;
+}
+
+.patrimonio-valuation-card:hover {
+    border-color: rgba(81, 52, 62, 0.24);
+
+    box-shadow:
+        0 10px 24px rgba(81, 52, 62, 0.07);
+
+    transform: translateY(-1px);
+}
+
+.patrimonio-valuation-card small {
+    display: block;
+    margin-bottom: 7px;
+
+    color: #927783;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.patrimonio-valuation-card h2 {
+    margin: 0;
+
+    color: #51343e;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.38rem;
+    font-weight: 500;
+}
+
+.patrimonio-valuation-card p {
+    margin: 5px 0 0;
+
+    color: #786d71;
+    font-size: 0.82rem;
+}
+
+.patrimonio-valuation-card > strong {
+    color: #51343e;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.35rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   ACCIONES EDITAR / ELIMINAR
+========================================================= */
+
+.patrimonio-valuation-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.patrimonio-edit-button,
+.patrimonio-delete-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 38px;
+    padding: 0 13px;
+
+    border-radius: 11px;
+
+    font-size: 0.76rem;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+
+    transition:
+        background 160ms ease,
+        color 160ms ease,
+        border-color 160ms ease,
+        transform 160ms ease;
+}
+
+.patrimonio-edit-button {
+    border: 1px solid rgba(81, 52, 62, 0.16);
+    background: #fffdf9;
+    color: #51343e;
+}
+
+.patrimonio-edit-button:hover {
+    background: #51343e;
+    color: #fffdf9;
+    transform: translateY(-1px);
+}
+
+.patrimonio-delete-button {
+    border: 1px solid rgba(167, 85, 85, 0.25);
+    background: #fff5f2;
+    color: #a75555;
+}
+
+.patrimonio-delete-button:hover {
+    border-color: #a75555;
+    background: #a75555;
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   BOTÓN DE BORRADO EN FORMULARIO
+========================================================= */
+
+button.patrimonio-delete-button {
+    cursor: pointer;
+    font: inherit;
+}
+
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .patrimonio-valuation-card {
+        grid-template-columns: 1fr auto;
+        gap: 15px;
+        padding: 18px;
+    }
+
+    .patrimonio-valuation-card > strong {
+        grid-column: 2;
+        grid-row: 1;
+        font-size: 1.15rem;
+    }
+
+    .patrimonio-valuation-actions {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+
+    .patrimonio-edit-button,
+    .patrimonio-delete-button {
+        flex: 1 1 0;
+        min-height: 44px;
+    }
+}
+
+@media (max-width: 620px) {
+
+    .patrimonio-secondary-button,
+    .patrimonio-add-button {
+        width: 100%;
+    }
+}

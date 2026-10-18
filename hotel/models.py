@@ -567,7 +567,7 @@ class Gasto(models.Model):
         ("impuestos", "Impuestos y tasas"),
         ("reparaciones", "Reparaciones y mantenimiento"),
         ("mejoras", "Mejoras e inversión"),
-        ("gestion", "Gestión y direccion ejecutiva"),
+        ("gestion_ejecutiva", "Direccion ejecutiva"),
         ("gestion_remota", "Gestión remota"),
         ("hipotecas_seguros", "Hipotecas y seguros"),
         ("otros", "Otros"),
@@ -619,10 +619,21 @@ class Gasto(models.Model):
         ("ARS", "Peso argentino"),
     ]
 
+    TIPOS_GESTION = [
+        ("pago_socio", "Pago al socio"),
+        ("gasto_gestion", "Gastos de gestión"),
+    ]
+
     moneda = models.CharField(
         max_length=3,
         choices=MONEDAS,
         default="EUR",
+    )
+
+    tipo_gestion = models.CharField(
+        max_length=30,
+        choices=TIPOS_GESTION,
+        blank=True,
     )
 
     cotizacion_usd = models.DecimalField(
@@ -867,6 +878,19 @@ class Gasto(models.Model):
         super().clean()
 
         errores = {}
+
+        if self.categoria == "gestion_ejecutiva":
+            if not self.tipo_gestion:
+                raise ValidationError(
+                    {
+                        "tipo_gestion": (
+                            "Selecciona si es un pago al socio "
+                            "o un gasto de gestión."
+                        )
+                    }
+                )
+        else:
+            self.tipo_gestion = None
 
         if (
             self.importe is not None
@@ -2241,6 +2265,12 @@ class Prestamo(models.Model):
         ("otro", "Otro"),
     ]
 
+    ESTADOS = [
+        ("activo", "Activo"),
+        ("cancelado", "Cancelado"),
+        ("finalizado", "Finalizado"),
+    ]
+
     TIPO_TASA = [
         ("fijo", "Fijo"),
         ("variable", "Variable"),
@@ -2372,6 +2402,30 @@ class Prestamo(models.Model):
 
     fecha_creacion = models.DateTimeField(
         auto_now_add=True,
+    )
+
+    estado = models.CharField(
+        max_length=20,
+        choices=ESTADOS,
+        default="activo",
+    )
+
+    fecha_cancelacion = models.DateField(
+        null=True,
+        blank=True,
+    )
+
+    motivo_cancelacion = models.CharField(
+        max_length=150,
+        blank=True,
+    )
+
+    prestamo_sustituido_por = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="prestamos_sustituidos",
     )
 
     class Meta:
@@ -2565,11 +2619,24 @@ class Prestamo(models.Model):
 
 class PagoPrestamo(models.Model):
 
+    TIPOS = [
+        ("cuota", "Cuota mensual"),
+        ("amortizacion_extra", "Amortización extraordinaria"),
+        ("cancelacion", "Cancelación"),
+        ("refinanciacion", "Refinanciación"),
+    ]
+
     prestamo = models.ForeignKey(
         Prestamo,
         on_delete=models.CASCADE,
         related_name="pagos",
         verbose_name="Préstamo",
+    )
+
+    tipo = models.CharField(
+        max_length=30,
+        choices=TIPOS,
+        default="cuota",
     )
 
     fecha = models.DateField(
@@ -2654,4 +2721,251 @@ class PagoPrestamo(models.Model):
             f"{self.prestamo} · "
             f"{self.fecha:%d/%m/%Y} · "
             f"{self.importe_cuota:.2f} €"
+        )
+
+class ValoracionPropiedad(models.Model):
+    propiedad = models.ForeignKey(
+        Flat,
+        on_delete=models.CASCADE,
+        related_name="valoraciones",
+    )
+
+    valor = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+    )
+
+    fecha = models.DateField(
+        default=timezone.localdate,
+    )
+
+    fuente = models.CharField(
+        max_length=150,
+        blank=True,
+    )
+
+    notas = models.TextField(
+        blank=True,
+    )
+
+class Liquidez(models.Model):
+    nombre = models.CharField(
+        max_length=120,
+    )
+
+    importe = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+    )
+
+    fecha = models.DateField(
+        default=timezone.localdate,
+    )
+
+    entidad = models.CharField(
+        max_length=120,
+        blank=True,
+    )
+
+    activa = models.BooleanField(
+        default=True,
+    )
+
+    notas = models.TextField(
+        blank=True,
+    )
+
+class GastoPersonal(models.Model):
+
+    PAISES = [
+        ("ES", "España"),
+        ("AR", "Argentina"),
+    ]
+
+    MONEDAS = [
+        ("EUR", "Euro"),
+        ("ARS", "Peso argentino"),
+    ]
+
+    CATEGORIAS = [
+        ("vivienda", "Vivienda"),
+        ("alimentacion", "Alimentación"),
+        ("transporte", "Transporte"),
+        ("salud", "Salud"),
+        ("ocio", "Ocio"),
+        ("viajes", "Viajes"),
+        ("suscripciones", "Suscripciones"),
+        ("compras", "Compras personales"),
+        ("impuestos", "Impuestos"),
+        ("otros", "Otros"),
+    ]
+
+    METODOS_PAGO = [
+        ("tarjeta", "Tarjeta"),
+        ("efectivo", "Efectivo"),
+        ("transferencia", "Transferencia"),
+        ("debito", "Débito automático"),
+        ("otro", "Otro"),
+    ]
+
+    pais = models.CharField(
+        max_length=2,
+        choices=PAISES,
+        verbose_name="Lugar",
+    )
+
+    ciudad = models.CharField(
+        max_length=100,
+        blank=True,
+    )
+
+    moneda = models.CharField(
+        max_length=3,
+        choices=MONEDAS,
+        default="EUR",
+    )
+
+    concepto = models.CharField(
+        max_length=160,
+    )
+
+    categoria = models.CharField(
+        max_length=30,
+        choices=CATEGORIAS,
+        default="otros",
+    )
+
+    importe = models.DecimalField(
+        max_digits=14,
+        decimal_places=2,
+        verbose_name="Importe original",
+    )
+
+    cotizacion_eur = models.DecimalField(
+        max_digits=18,
+        decimal_places=6,
+        null=True,
+        blank=True,
+        verbose_name="Unidades de moneda por euro",
+        help_text=(
+            "Para pesos argentinos, indica cuántos "
+            "pesos equivalen a un euro."
+        ),
+    )
+
+    importe_eur = models.DecimalField(
+        max_digits=14,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        editable=False,
+        verbose_name="Importe equivalente en euros",
+    )
+
+    fecha = models.DateField(
+        default=timezone.localdate,
+    )
+
+    metodo_pago = models.CharField(
+        max_length=20,
+        choices=METODOS_PAGO,
+        default="tarjeta",
+    )
+
+    justificante = models.FileField(
+        upload_to="gastos_personales/%Y/%m/",
+        null=True,
+        blank=True,
+    )
+
+    notas = models.TextField(
+        blank=True,
+    )
+
+    fecha_creacion = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    class Meta:
+        ordering = [
+            "-fecha",
+            "-fecha_creacion",
+        ]
+
+        verbose_name = "Gasto personal"
+        verbose_name_plural = "Gastos personales"
+
+        indexes = [
+            models.Index(
+                fields=[
+                    "pais",
+                    "fecha",
+                ],
+            ),
+            models.Index(
+                fields=[
+                    "categoria",
+                    "fecha",
+                ],
+            ),
+        ]
+
+    def clean(self):
+        super().clean()
+
+        errores = {}
+
+        if (
+            self.importe is not None
+            and self.importe <= 0
+        ):
+            errores["importe"] = (
+                "El importe debe ser superior a cero."
+            )
+
+        if self.pais == "ES":
+            self.moneda = "EUR"
+
+        elif self.pais == "AR":
+            self.moneda = "ARS"
+
+            if (
+                self.cotizacion_eur is None
+                or self.cotizacion_eur <= 0
+            ):
+                errores["cotizacion_eur"] = (
+                    "Indica la cotización del peso "
+                    "argentino respecto al euro."
+                )
+
+        if errores:
+            raise ValidationError(errores)
+
+    def save(self, *args, **kwargs):
+        if self.pais == "ES":
+            self.moneda = "EUR"
+            self.cotizacion_eur = Decimal("1")
+            self.importe_eur = self.importe
+
+        elif (
+            self.pais == "AR"
+            and self.cotizacion_eur
+            and self.cotizacion_eur > 0
+        ):
+            self.moneda = "ARS"
+
+            self.importe_eur = (
+                self.importe
+                / self.cotizacion_eur
+            ).quantize(
+                Decimal("0.01")
+            )
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return (
+            f"{self.concepto} · "
+            f"{self.importe:.2f} "
+            f"{self.moneda}"
         )

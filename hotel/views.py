@@ -1,4 +1,5 @@
 import calendar
+from calendar import monthrange
 from collections import defaultdict
 from datetime import  date
 from decimal import Decimal, ROUND_HALF_UP
@@ -6,9 +7,9 @@ from urllib.parse import quote
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.db.models import Count
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db import transaction
-from django.db.models import Exists, OuterRef, Sum, Prefetch, Q
+from django.db.models import Exists, OuterRef, Sum, Prefetch, Q, OuterRef, Subquery, DecimalField
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -34,7 +35,7 @@ from .forms import (
     ContratoAlquilerForm,
     CrearProcesoFormalizacionForm,
     InquilinoForm, GastoForm, CompletarGastoPendienteForm, EditarGastoRecurrenteForm, ProyectoForm,
-    IngresoPropiedadForm, PrestamoForm, PagoPrestamoForm
+    IngresoPropiedadForm, PrestamoForm, PagoPrestamoForm, ValoracionPropiedadForm, GastoPersonalForm
 )
 
 from .models import (
@@ -50,7 +51,7 @@ from .models import (
     EventoPlanta,
     ComentarioPlanta,
     MultimediaHabitacion,
-    GastoRecurrente, GastoPendiente, Proyecto, Proveedor, IngresoPropiedad
+    GastoRecurrente, GastoPendiente, Proyecto, Proveedor, IngresoPropiedad, ValoracionPropiedad, Liquidez, GastoPersonal
 )
 
 from .services.contrato_pdf import generar_contrato_pdf
@@ -1102,13 +1103,15 @@ def chart_data(request):
 
 @login_required
 def dashboard(request):
+
     hoy = timezone.localdate()
-    limite_vencimiento = hoy + timedelta(days=30)
+
+    limite_vencimiento = (
+        hoy + timedelta(days=30)
+    )
 
     rooms = Flat.objects.all()
 
-    # En este CRM, activo=True determina si el contrato
-    # está actualmente en vigor.
     contratos_activos = (
         ContratoAlquiler.objects
         .filter(activo=True)
@@ -1146,50 +1149,178 @@ def dashboard(request):
         else 0
     )
 
+    # =====================================================
+    # INGRESOS
+    # =====================================================
+
     facturacion_contratos = (
-            contratos_activos
-            .aggregate(
-                total=Sum("precio_mensual"),
-            )
-            .get("total")
-            or Decimal("0.00")
+        contratos_activos
+        .aggregate(
+            total=Sum("precio_mensual"),
+        )
+        .get("total")
+        or Decimal("0.00")
     )
 
     ingresos_puntuales_mes = (
-            IngresoPropiedad.objects
-            .filter(
-                fecha__year=hoy.year,
-                fecha__month=hoy.month,
-            )
-            .aggregate(
-                total=Sum("importe"),
-            )
-            .get("total")
-            or Decimal("0.00")
+        IngresoPropiedad.objects
+        .filter(
+            fecha__year=hoy.year,
+            fecha__month=hoy.month,
+        )
+        .aggregate(
+            total=Sum("importe"),
+        )
+        .get("total")
+        or Decimal("0.00")
     )
 
     facturacion_mensual = (
-            facturacion_contratos
-            + ingresos_puntuales_mes
-    )
-    gastos_del_mes = (
-            Gasto.objects
-            .filter(
-                fecha__year=hoy.year,
-                fecha__month=hoy.month,
-                anulado=False,
-                pais="ES",
-            )
-            .aggregate(
-                total=Sum("importe"),
-            )
-            .get("total")
-            or Decimal("0.00")
+        facturacion_contratos
+        + ingresos_puntuales_mes
     )
 
-    resultado_neto = (
-            facturacion_mensual
-            - gastos_del_mes
+    # =====================================================
+    # GASTOS OPERATIVOS
+    # =====================================================
+
+    gastos_mes_queryset = (
+        Gasto.objects
+        .filter(
+            fecha__year=hoy.year,
+            fecha__month=hoy.month,
+            anulado=False,
+            pais="ES",
+        )
+        .exclude(
+            categoria="gestion_ejecutiva",
+            tipo_gestion="pago_socio",
+        )
+        .exclude(
+            categoria__in=[
+                "prestamos",
+                "hipoteca",
+            ],
+        )
+    )
+
+    gastos_del_mes = (
+        gastos_mes_queryset
+        .aggregate(
+            total=Sum("importe"),
+        )
+        .get("total")
+        or Decimal("0.00")
+    )
+
+    # =====================================================
+    # PAGOS AL SOCIO
+    # =====================================================
+
+    pagos_socio_mes = (
+        Gasto.objects
+        .filter(
+            fecha__year=hoy.year,
+            fecha__month=hoy.month,
+            anulado=False,
+            pais="ES",
+            categoria="gestion_ejecutiva",
+            tipo_gestion="pago_socio",
+        )
+        .aggregate(
+            total=Sum("importe"),
+        )
+        .get("total")
+        or Decimal("0.00")
+    )
+
+    # =====================================================
+    # PRÉSTAMOS
+    # =====================================================
+
+    prestamos_activos = (
+        Prestamo.objects
+        .filter(activa=True)
+        .select_related(
+            "propiedad",
+            "sociedad",
+        )
+    )
+
+    pagos_prestamos_mes = (
+        PagoPrestamo.objects
+        .filter(
+            fecha__year=hoy.year,
+            fecha__month=hoy.month,
+            prestamo__activa=True,
+        )
+    )
+
+    cuotas_prestamos_mes = (
+        pagos_prestamos_mes
+        .aggregate(
+            total=Sum("importe_cuota"),
+        )
+        .get("total")
+        or Decimal("0.00")
+    )
+
+    intereses_prestamos_mes = (
+        pagos_prestamos_mes
+        .aggregate(
+            total=Sum("intereses"),
+        )
+        .get("total")
+        or Decimal("0.00")
+    )
+
+    capital_amortizado_mes = (
+        pagos_prestamos_mes
+        .aggregate(
+            total=Sum("capital_amortizado"),
+        )
+        .get("total")
+        or Decimal("0.00")
+    )
+
+    deuda_total = (
+        prestamos_activos
+        .aggregate(
+            total=Sum("deuda_pendiente"),
+        )
+        .get("total")
+        or Decimal("0.00")
+    )
+
+    capital_inicial_total = (
+        prestamos_activos
+        .aggregate(
+            total=Sum("capital_inicial"),
+        )
+        .get("total")
+        or Decimal("0.00")
+    )
+
+    capital_amortizado_total = max(
+        capital_inicial_total
+        - deuda_total,
+        Decimal("0.00"),
+    )
+
+    # =====================================================
+    # RESULTADOS
+    # =====================================================
+
+    beneficio_operativo = (
+        facturacion_mensual
+        - gastos_del_mes
+    )
+
+    flujo_caja = (
+        facturacion_mensual
+        - gastos_del_mes
+        - cuotas_prestamos_mes
+        - pagos_socio_mes
     )
 
     porcentaje_gastos = (
@@ -1204,6 +1335,291 @@ def dashboard(request):
         if facturacion_mensual
         else 0
     )
+
+    porcentaje_cuotas = (
+        round(
+            float(
+                cuotas_prestamos_mes
+                / facturacion_mensual
+                * 100
+            ),
+            1,
+        )
+        if facturacion_mensual
+        else 0
+    )
+
+    # =====================================================
+    # PATRIMONIO ACTUAL
+    # =====================================================
+
+    ultima_valoracion = (
+        ValoracionPropiedad.objects
+        .filter(
+            propiedad=OuterRef("pk"),
+            fecha__lte=hoy,
+        )
+        .order_by(
+            "-fecha",
+            "-id",
+        )
+    )
+
+    propiedades_valoradas = (
+        Flat.objects
+        .annotate(
+            valor_actual=Subquery(
+                ultima_valoracion.values(
+                    "valor"
+                )[:1],
+                output_field=DecimalField(
+                    max_digits=12,
+                    decimal_places=2,
+                ),
+            ),
+        )
+    )
+
+    valor_propiedades = (
+        propiedades_valoradas
+        .aggregate(
+            total=Sum("valor_actual"),
+        )
+        .get("total")
+        or Decimal("0.00")
+    )
+
+    liquidez_total = (
+        Liquidez.objects
+        .filter(activa=True)
+        .aggregate(
+            total=Sum("importe"),
+        )
+        .get("total")
+        or Decimal("0.00")
+    )
+
+    patrimonio_neto = (
+        valor_propiedades
+        + liquidez_total
+        - deuda_total
+    )
+
+    # =====================================================
+    # GRÁFICO DE GASTOS
+    # =====================================================
+
+    categorias_dict = dict(
+        Gasto.CATEGORIAS
+    )
+
+    gastos_por_categoria = (
+        gastos_mes_queryset
+        .values("categoria")
+        .annotate(
+            total=Sum("importe"),
+        )
+        .order_by("-total")
+    )
+
+    colores = {
+        "suministros": "#72a5a1",
+        "comunidad": "#c9a7ad",
+        "impuestos": "#b08b62",
+        "reparacion": "#d18b72",
+        "mobiliario": "#927783",
+        "equipamiento": "#d4ae62",
+        "limpieza": "#8ebeb9",
+        "gestion_ejecutiva": "#806874",
+        "otros": "#aaa0a4",
+    }
+
+    grafico_gastos_labels = []
+    grafico_gastos_valores = []
+    grafico_gastos_colores = []
+
+    for fila in gastos_por_categoria:
+
+        categoria = fila["categoria"]
+
+        grafico_gastos_labels.append(
+            categorias_dict.get(
+                categoria,
+                categoria,
+            )
+        )
+
+        grafico_gastos_valores.append(
+            float(
+                fila["total"]
+                or Decimal("0.00")
+            )
+        )
+
+        grafico_gastos_colores.append(
+            colores.get(
+                categoria,
+                "#aaa0a4",
+            )
+        )
+
+    if cuotas_prestamos_mes > 0:
+
+        grafico_gastos_labels.append(
+            "Préstamos"
+        )
+
+        grafico_gastos_valores.append(
+            float(cuotas_prestamos_mes)
+        )
+
+        grafico_gastos_colores.append(
+            "#51343e"
+        )
+
+    # =====================================================
+    # GRÁFICO CAPITAL / DEUDA
+    # =====================================================
+
+    grafico_deuda_labels = [
+        "Capital amortizado",
+        "Deuda pendiente",
+    ]
+
+    grafico_deuda_valores = [
+        float(capital_amortizado_total),
+        float(deuda_total),
+    ]
+
+    grafico_deuda_colores = [
+        "#72a5a1",
+        "#806874",
+    ]
+
+    # =====================================================
+    # HISTÓRICO DE PATRIMONIO Y DEUDA
+    # =====================================================
+
+    meses_historico = 24
+
+    inicio_historico = (
+        hoy.replace(day=1)
+        - relativedelta(
+            months=meses_historico - 1,
+        )
+    )
+
+    patrimonio_historico_labels = []
+    patrimonio_historico_valores = []
+    deuda_historica_valores = []
+
+    cursor = inicio_historico
+
+    pagos_historicos = (
+        PagoPrestamo.objects
+        .filter(
+            fecha__lte=hoy,
+        )
+        .select_related("prestamo")
+    )
+
+    while cursor <= hoy.replace(day=1):
+
+        ultimo_dia = date(
+            cursor.year,
+            cursor.month,
+            monthrange(
+                cursor.year,
+                cursor.month,
+            )[1],
+        )
+
+        patrimonio_historico_labels.append(
+            cursor.strftime("%b %Y").capitalize()
+        )
+
+        valor_propiedades_mes = (
+            Decimal("0.00")
+        )
+
+        for propiedad in Flat.objects.all():
+
+            valoracion = (
+                ValoracionPropiedad.objects
+                .filter(
+                    propiedad=propiedad,
+                    fecha__lte=ultimo_dia,
+                )
+                .order_by(
+                    "-fecha",
+                    "-id",
+                )
+                .first()
+            )
+
+            if valoracion:
+                valor_propiedades_mes += (
+                    valoracion.valor
+                    or Decimal("0.00")
+                )
+
+        deuda_mes = Decimal("0.00")
+
+        for prestamo in prestamos_activos:
+
+            if (
+                prestamo.fecha_inicio
+                and prestamo.fecha_inicio
+                > ultimo_dia
+            ):
+                continue
+
+            capital_inicial = (
+                prestamo.capital_inicial
+                or Decimal("0.00")
+            )
+
+            amortizado = (
+                pagos_historicos
+                .filter(
+                    prestamo=prestamo,
+                    fecha__lte=ultimo_dia,
+                )
+                .aggregate(
+                    total=Sum(
+                        "capital_amortizado"
+                    ),
+                )
+                .get("total")
+                or Decimal("0.00")
+            )
+
+            deuda_mes += max(
+                capital_inicial - amortizado,
+                Decimal("0.00"),
+            )
+
+        patrimonio_mes = (
+            valor_propiedades_mes
+            + liquidez_total
+            - deuda_mes
+        )
+
+        patrimonio_historico_valores.append(
+            float(patrimonio_mes)
+        )
+
+        deuda_historica_valores.append(
+            float(deuda_mes)
+        )
+
+        cursor += relativedelta(
+            months=1,
+        )
+
+    # =====================================================
+    # DATOS RESTANTES
+    # =====================================================
 
     facturacion_potencial = (
         Habitacion.objects
@@ -1233,19 +1649,101 @@ def dashboard(request):
                 hoy.strftime("%B %Y")
                 .capitalize()
             ),
-            "habitaciones_totales": habitaciones_totales,
+            "habitaciones_totales": (
+                habitaciones_totales
+            ),
             "ocupadas": ocupadas,
             "disponibles": disponibles,
-            "porcentaje_ocupacion": porcentaje_ocupacion,
-            "facturacion_mensual": facturacion_mensual,
-            "facturacion_potencial": facturacion_potencial,
-            "contratos_por_vencer": contratos_por_vencer,
+            "porcentaje_ocupacion": (
+                porcentaje_ocupacion
+            ),
+            "facturacion_mensual": (
+                facturacion_mensual
+            ),
+            "facturacion_potencial": (
+                facturacion_potencial
+            ),
+            "contratos_por_vencer": (
+                contratos_por_vencer
+            ),
             "gastos_del_mes": gastos_del_mes,
-            "resultado_neto": resultado_neto,
-            "porcentaje_gastos": porcentaje_gastos,
-            "facturacion_contratos": facturacion_contratos,
-            "ingresos_puntuales_mes": ingresos_puntuales_mes,
-            "facturacion_mensual": facturacion_mensual,
+            "resultado_neto": flujo_caja,
+            "porcentaje_gastos": (
+                porcentaje_gastos
+            ),
+            "facturacion_contratos": (
+                facturacion_contratos
+            ),
+            "ingresos_puntuales_mes": (
+                ingresos_puntuales_mes
+            ),
+
+            "beneficio_operativo": (
+                beneficio_operativo
+            ),
+            "flujo_caja": flujo_caja,
+            "pagos_socio_mes": (
+                pagos_socio_mes
+            ),
+            "cuotas_prestamos_mes": (
+                cuotas_prestamos_mes
+            ),
+            "intereses_prestamos_mes": (
+                intereses_prestamos_mes
+            ),
+            "capital_amortizado_mes": (
+                capital_amortizado_mes
+            ),
+            "porcentaje_cuotas": (
+                porcentaje_cuotas
+            ),
+
+            "valor_propiedades": (
+                valor_propiedades
+            ),
+            "liquidez_total": (
+                liquidez_total
+            ),
+            "deuda_total": deuda_total,
+            "capital_inicial_total": (
+                capital_inicial_total
+            ),
+            "capital_amortizado_total": (
+                capital_amortizado_total
+            ),
+            "patrimonio_neto": (
+                patrimonio_neto
+            ),
+
+            "grafico_gastos_labels": (
+                grafico_gastos_labels
+            ),
+            "grafico_gastos_valores": (
+                grafico_gastos_valores
+            ),
+            "grafico_gastos_colores": (
+                grafico_gastos_colores
+            ),
+
+            "grafico_deuda_labels": (
+                grafico_deuda_labels
+            ),
+            "grafico_deuda_valores": (
+                grafico_deuda_valores
+            ),
+            "grafico_deuda_colores": (
+                grafico_deuda_colores
+            ),
+
+            "patrimonio_historico_labels": (
+                patrimonio_historico_labels
+            ),
+            "patrimonio_historico_valores": (
+                patrimonio_historico_valores
+            ),
+            "deuda_historica_valores": (
+                deuda_historica_valores
+            ),
         },
     )
 
@@ -2922,6 +3420,7 @@ class ConfirmarFormalizacionView(
 
 class GastosDashboardView(
     LoginRequiredMixin,
+    PermissionRequiredMixin,
     View,
 ):
     template_name = "hotel/gastos/dashboard.html"
@@ -2961,6 +3460,7 @@ class GastosDashboardView(
 
     DIVISORES_FRECUENCIA = {
         "mensual": Decimal("1"),
+        "bimensual": Decimal("2"),
         "bimestral": Decimal("2"),
         "trimestral": Decimal("3"),
         "semestral": Decimal("6"),
@@ -2969,6 +3469,7 @@ class GastosDashboardView(
 
     MESES_FRECUENCIA = {
         "mensual": 1,
+        "bimensual": 2,
         "bimestral": 2,
         "trimestral": 3,
         "semestral": 6,
@@ -3530,6 +4031,15 @@ class GastosDashboardView(
             )
         )
 
+        (
+            gastos_recurrentes_prorrateados_mes,
+            gastos_recurrentes_este_mes,
+        ) = self.calcular_resumen_recurrentes(
+            recurrentes=gastos_recurrentes_activos,
+            fecha=hoy,
+            pais=pais_actual,
+        )
+
         # =====================================================
         # PREVISIÓN DEL MES ACTUAL
         # =====================================================
@@ -3990,6 +4500,13 @@ class GastosDashboardView(
             "tipo_suministro_seleccionado": (
                 tipo_suministro_seleccionado
             ),
+            "gastos_recurrentes_prorrateados_mes": (
+                gastos_recurrentes_prorrateados_mes
+            ),
+
+            "gastos_recurrentes_este_mes": (
+                gastos_recurrentes_este_mes
+            ),
             # Espacio financiero
             "pais_actual": pais_actual,
             "es_espana": es_espana,
@@ -4292,6 +4809,95 @@ class GastosDashboardView(
 
         return total.quantize(
             Decimal("0.01")
+        )
+
+    def calcular_resumen_recurrentes(
+            self,
+            recurrentes,
+            fecha,
+            pais,
+    ):
+        prorrateado = Decimal("0.00")
+        corresponde_este_mes = Decimal("0.00")
+
+        primer_dia_mes = fecha.replace(day=1)
+
+        for recurrente in recurrentes:
+
+            if not recurrente.activo:
+                continue
+
+            if (
+                    recurrente.fecha_inicio
+                    and recurrente.fecha_inicio
+                    > primer_dia_mes
+            ):
+                continue
+
+            if (
+                    recurrente.fecha_fin
+                    and recurrente.fecha_fin
+                    < primer_dia_mes
+            ):
+                continue
+
+            importe = self.obtener_importe_recurrente(
+                recurrente=recurrente,
+                pais=pais,
+            )
+
+            if importe is None:
+                continue
+
+            importe = Decimal(importe)
+
+            divisor = (
+                self.DIVISORES_FRECUENCIA.get(
+                    recurrente.frecuencia,
+                    Decimal("1"),
+                )
+            )
+
+            intervalo = (
+                self.MESES_FRECUENCIA.get(
+                    recurrente.frecuencia,
+                    1,
+                )
+            )
+
+            # Todos los recurrentes convertidos
+            # a coste mensual equivalente.
+            prorrateado += (
+                    importe / divisor
+            )
+
+            # Comprobar si el recibo cae este mes.
+            if not recurrente.fecha_inicio:
+                continue
+
+            inicio = recurrente.fecha_inicio.replace(
+                day=1,
+            )
+
+            diferencia_meses = (
+                    (fecha.year - inicio.year) * 12
+                    + fecha.month
+                    - inicio.month
+            )
+
+            if (
+                    diferencia_meses >= 0
+                    and diferencia_meses % intervalo == 0
+            ):
+                corresponde_este_mes += importe
+
+        return (
+            prorrateado.quantize(
+                Decimal("0.01")
+            ),
+            corresponde_este_mes.quantize(
+                Decimal("0.01")
+            ),
         )
 
     def obtener_importe_recurrente(
@@ -6752,6 +7358,7 @@ def crear_ingreso_propiedad(request):
 
 class IngresosDashboardView(
     LoginRequiredMixin,
+    PermissionRequiredMixin,
     View,
 ):
     template_name = (
@@ -7091,14 +7698,14 @@ class IngresosDashboardView(
             + gastos_empresa
         )
 
-        cuotas_hipotecarias_mes = (
+        cuotas_prestamos_mes = (
             pagos_hipoteca_mes.aggregate(
                 total=Sum("importe_cuota"),
             ).get("total")
             or Decimal("0.00")
         )
 
-        intereses_hipotecarios_mes = (
+        intereses_prestamos_mes = (
             pagos_hipoteca_mes.aggregate(
                 total=Sum("intereses"),
             ).get("total")
@@ -7129,19 +7736,19 @@ class IngresosDashboardView(
         flujo_caja_previsto = (
             ingresos_totales
             - gastos_normales_previstos
-            - cuotas_hipotecarias_mes
+            - cuotas_prestamos_mes
         )
 
         flujo_caja_real = (
             ingresos_totales
             - gastos_normales_reales_mes
-            - cuotas_hipotecarias_mes
+            - cuotas_prestamos_mes
         )
 
         beneficio_contable = (
-            ingresos_totales
-            - gastos_operativos
-            - intereses_hipotecarios_mes
+                ingresos_totales
+                - gastos_operativos
+                - intereses_prestamos_mes
         )
 
         ingresos_por_habitacion = []
@@ -7310,12 +7917,12 @@ class IngresosDashboardView(
                     gastos_operativos
                 ),
 
-                "cuotas_hipotecarias_mes": (
-                    cuotas_hipotecarias_mes
+                "cuotas_prestamos_mes": (
+                    cuotas_prestamos_mes
                 ),
 
-                "intereses_hipotecarios_mes": (
-                    intereses_hipotecarios_mes
+                "intereses_prestamos_mes": (
+                    intereses_prestamos_mes
                 ),
 
                 "capital_amortizado_mes": (
@@ -7354,26 +7961,32 @@ class IngresosDashboardView(
 
 
 
-class HipotecasDashboardView(
+class PrestamoDashboardView(
     LoginRequiredMixin,
     View,
 ):
     template_name = "hotel/hipotecas/dashboard.html"
 
     def get(self, request):
-
         hoy = timezone.localdate()
 
-        # ==========================
-        # PRÉSTAMOS ACTIVOS
-        # ==========================
-
-        prestamos = (
+        prestamos_todos = (
             Prestamo.objects
-            .filter(activa=True)
-            .select_related("propiedad")
+            .all()
+            .select_related("propiedad", "sociedad")
             .prefetch_related("pagos")
         )
+
+        for prestamo in prestamos_todos:
+            prestamo.generar_historico_pagos(
+                meses_maximos=48,
+            )
+
+        prestamos = (
+            prestamos_todos
+            .filter(activa=True)
+        )
+
         resumen_sociedades = (
             Prestamo.objects
             .filter(
@@ -7390,7 +8003,9 @@ class HipotecasDashboardView(
                 deuda_total=Sum("deuda_pendiente"),
                 cuotas_mensuales=Sum("cuota_mensual"),
             )
-            .order_by("sociedad__nombre")
+            .order_by(
+                "sociedad__nombre"
+            )
         )
         # ==========================
         # PAGOS DEL MES
@@ -7493,6 +8108,98 @@ class HipotecasDashboardView(
             )["total"]
             or Decimal("0.00")
         )
+        # ==========================================
+        # HISTÓRICO DE DEUDA
+        # ==========================================
+
+        prestamos_historico = list(
+            prestamos_todos
+        )
+
+        fechas_inicio = [
+            prestamo.fecha_inicio
+            for prestamo in prestamos_historico
+            if prestamo.fecha_inicio
+        ]
+
+        if fechas_inicio:
+
+            primera_fecha = min(fechas_inicio).replace(
+                day=1
+            )
+
+        else:
+
+            primera_fecha = hoy.replace(day=1)
+
+        deuda_historica_labels = []
+        deuda_historica_valores = []
+
+        cursor = primera_fecha
+        mes_actual = hoy.replace(day=1)
+
+        while cursor <= mes_actual:
+
+            ultimo_dia_mes = calendar.monthrange(
+                cursor.year,
+                cursor.month,
+            )[1]
+
+            fecha_corte = date(
+                cursor.year,
+                cursor.month,
+                ultimo_dia_mes,
+            )
+
+            deuda_mes = Decimal("0.00")
+
+            for prestamo in prestamos_historico:
+
+                if (
+                        not prestamo.fecha_inicio
+                        or prestamo.fecha_inicio > fecha_corte
+                ):
+                    continue
+
+                # Si fue cancelado, deja de formar parte
+                # de la deuda a partir de esa fecha.
+                if (
+                        prestamo.fecha_cancelacion
+                        and prestamo.fecha_cancelacion <= fecha_corte
+                ):
+                    continue
+
+                capital_pagado = (
+                        prestamo.pagos
+                        .filter(
+                            fecha__lte=fecha_corte,
+                        )
+                        .aggregate(
+                            total=Sum("capital_amortizado"),
+                        )
+                        .get("total")
+                        or Decimal("0.00")
+                )
+
+                deuda_prestamo = (
+                        prestamo.capital_inicial
+                        - capital_pagado
+                )
+
+                if deuda_prestamo < Decimal("0.00"):
+                    deuda_prestamo = Decimal("0.00")
+
+                deuda_mes += deuda_prestamo
+
+            deuda_historica_labels.append(
+                cursor.strftime("%b %Y").capitalize()
+            )
+
+            deuda_historica_valores.append(
+                float(deuda_mes)
+            )
+
+            cursor += relativedelta(months=1)
 
         return render(
             request,
@@ -7525,7 +8232,7 @@ class HipotecasDashboardView(
             },
         )
 
-class CrearHipotecaView(
+class CrearPrestamoView(
     LoginRequiredMixin,
     CreateView,
 ):
@@ -7537,7 +8244,7 @@ class CrearHipotecaView(
     )
 
     success_url = reverse_lazy(
-        "hotel:hipotecas_dashboard"
+        "hotel:prestamos_dashboard"
     )
 
     def form_valid(self, form):
@@ -7554,7 +8261,7 @@ class CrearHipotecaView(
         return response
 
 
-class CrearPagoHipotecaView(
+class CrearPagoPrestamoView(
     LoginRequiredMixin,
     View,
 ):
@@ -7610,7 +8317,7 @@ class CrearPagoHipotecaView(
             )
 
             return redirect(
-                "hotel:hipotecas_dashboard"
+                "hotel:prestamos_dashboard"
             )
 
         return render(
@@ -7636,7 +8343,7 @@ class EditarPrestamoView(
     )
 
     success_url = reverse_lazy(
-        "hotel:hipotecas_dashboard"
+        "hotel:prestamos_dashboard"
     )
 
     def form_valid(self, form):
@@ -7659,7 +8366,7 @@ class EliminarPrestamoView(
     )
 
     success_url = reverse_lazy(
-        "hotel:hipotecas_dashboard"
+        "hotel:prestamos_dashboard"
     )
 
     def form_valid(self, form):
@@ -7834,7 +8541,654 @@ class EliminarPagoPrestamoView(
         )
         return super().form_valid(form)
 
+class PatrimonioDashboardView(
+    LoginRequiredMixin,
+    View,
+):
+    template_name = (
+        "hotel/patrimonio/dashboard.html"
+    )
 
+    MESES_HISTORICO = 24
+
+    DIVISORES_FRECUENCIA = {
+        "mensual": Decimal("1"),
+        "bimensual": Decimal("2"),
+        "bimestral": Decimal("2"),
+        "trimestral": Decimal("3"),
+        "semestral": Decimal("6"),
+        "anual": Decimal("12"),
+    }
+
+    INTERVALOS_FRECUENCIA = {
+        "mensual": 1,
+        "bimensual": 2,
+        "bimestral": 2,
+        "trimestral": 3,
+        "semestral": 6,
+        "anual": 12,
+    }
+
+    def recurrente_activo_en_mes(
+        self,
+        recurrente,
+        primer_dia,
+        ultimo_dia,
+    ):
+        if (
+            recurrente.fecha_inicio
+            and recurrente.fecha_inicio
+            > ultimo_dia
+        ):
+            return False
+
+        if (
+            recurrente.fecha_fin
+            and recurrente.fecha_fin
+            < primer_dia
+        ):
+            return False
+
+        return True
+
+    def recurrente_corresponde_al_mes(
+        self,
+        recurrente,
+        fecha_mes,
+    ):
+        if not recurrente.fecha_inicio:
+            return False
+
+        intervalo = self.INTERVALOS_FRECUENCIA.get(
+            recurrente.frecuencia,
+            1,
+        )
+
+        inicio = recurrente.fecha_inicio.replace(
+            day=1,
+        )
+
+        diferencia = (
+            (fecha_mes.year - inicio.year) * 12
+            + fecha_mes.month
+            - inicio.month
+        )
+
+        return (
+            diferencia >= 0
+            and diferencia % intervalo == 0
+        )
+
+    def calcular_gastos_mes(
+        self,
+        year,
+        month,
+        recurrentes,
+    ):
+        primer_dia = date(year, month, 1)
+
+        ultimo_dia = date(
+            year,
+            month,
+            calendar.monthrange(year, month)[1],
+        )
+
+        gastos_reales = (
+            Gasto.objects
+            .filter(
+                fecha__year=year,
+                fecha__month=month,
+                anulado=False,
+            )
+            .exclude(
+                categoria="gestion_ejecutiva",
+                tipo_gestion="pago_socio",
+            )
+            .aggregate(
+                total=Sum("importe"),
+            )
+            .get("total")
+            or Decimal("0.00")
+        )
+
+        gastos_recurrentes_prorrateados = (
+            Decimal("0.00")
+        )
+
+        gastos_recurrentes_reales = (
+            Decimal("0.00")
+        )
+
+        for recurrente in recurrentes:
+
+            if not self.recurrente_activo_en_mes(
+                recurrente,
+                primer_dia,
+                ultimo_dia,
+            ):
+                continue
+
+            importe = (
+                recurrente.importe
+                or Decimal("0.00")
+            )
+
+            divisor = (
+                self.DIVISORES_FRECUENCIA.get(
+                    recurrente.frecuencia,
+                    Decimal("1"),
+                )
+            )
+
+            gastos_recurrentes_prorrateados += (
+                importe / divisor
+            )
+
+            if self.recurrente_corresponde_al_mes(
+                recurrente,
+                primer_dia,
+            ):
+                gastos_recurrentes_reales += (
+                    importe
+                )
+
+        gastos_normales = (
+            gastos_reales
+            + gastos_recurrentes_reales
+        )
+
+        gastos_prorrateados = (
+            gastos_reales
+            + gastos_recurrentes_prorrateados
+        )
+
+        return (
+            gastos_normales,
+            gastos_prorrateados,
+        )
+
+    def get(self, request):
+
+        hoy = timezone.localdate()
+
+        # =====================================================
+        # PROPIEDADES
+        # =====================================================
+
+        ultima_valoracion = (
+            ValoracionPropiedad.objects
+            .filter(
+                propiedad=OuterRef("pk"),
+                fecha__lte=hoy,
+            )
+            .order_by(
+                "-fecha",
+                "-id",
+            )
+        )
+
+        propiedades = (
+            Flat.objects
+            .annotate(
+                valor_actual=Subquery(
+                    ultima_valoracion.values(
+                        "valor"
+                    )[:1],
+                    output_field=DecimalField(
+                        max_digits=12,
+                        decimal_places=2,
+                    ),
+                ),
+            )
+            .order_by("nombre")
+        )
+
+        propiedades_con_valor = []
+
+        for propiedad in propiedades:
+
+            propiedades_con_valor.append(
+                {
+                    "propiedad": propiedad,
+                    "valor": (
+                        propiedad.valor_actual
+                        or Decimal("0.00")
+                    ),
+                }
+            )
+
+        valor_propiedades = sum(
+            (
+                item["valor"]
+                for item in propiedades_con_valor
+            ),
+            Decimal("0.00"),
+        )
+
+        # =====================================================
+        # LIQUIDEZ
+        # =====================================================
+
+        liquidez_cuentas = (
+            Liquidez.objects
+            .filter(activa=True)
+            .order_by("nombre")
+        )
+
+        liquidez_total = (
+            liquidez_cuentas
+            .aggregate(
+                total=Sum("importe"),
+            )
+            .get("total")
+            or Decimal("0.00")
+        )
+
+        # =====================================================
+        # PAGOS AL SOCIO
+        # =====================================================
+
+        pagos_socio = (
+            Gasto.objects
+            .filter(
+                categoria="gestion_ejecutiva",
+                tipo_gestion="pago_socio",
+                anulado=False,
+            )
+        )
+
+        pagos_socio_total = (
+            pagos_socio
+            .aggregate(
+                total=Sum("importe"),
+            )
+            .get("total")
+            or Decimal("0.00")
+        )
+
+        pagos_socio_mes = (
+            pagos_socio
+            .filter(
+                fecha__year=hoy.year,
+                fecha__month=hoy.month,
+            )
+            .aggregate(
+                total=Sum("importe"),
+            )
+            .get("total")
+            or Decimal("0.00")
+        )
+
+        pagos_socio_ano = (
+            pagos_socio
+            .filter(
+                fecha__year=hoy.year,
+            )
+            .aggregate(
+                total=Sum("importe"),
+            )
+            .get("total")
+            or Decimal("0.00")
+        )
+
+        # =====================================================
+        # PRÉSTAMOS
+        # =====================================================
+
+        prestamos = (
+            Prestamo.objects
+            .filter(activa=True)
+            .select_related(
+                "propiedad",
+                "sociedad",
+            )
+            .prefetch_related("pagos")
+        )
+
+        deuda_total = (
+            prestamos
+            .aggregate(
+                total=Sum("deuda_pendiente"),
+            )
+            .get("total")
+            or Decimal("0.00")
+        )
+
+        patrimonio_neto = (
+            valor_propiedades
+            + liquidez_total
+            - deuda_total
+        )
+
+        # =====================================================
+        # RECURRENTES
+        # =====================================================
+
+        recurrentes = (
+            GastoRecurrente.objects
+            .filter(activo=True)
+            .select_related(
+                "propiedad",
+                "habitacion",
+                "proyecto",
+            )
+        )
+
+        # =====================================================
+        # HISTÓRICO
+        # =====================================================
+
+        inicio_historico = (
+            hoy.replace(day=1)
+            - relativedelta(
+                months=self.MESES_HISTORICO - 1,
+            )
+        )
+
+        contratos = (
+            ContratoAlquiler.objects
+            .filter(
+                fecha_inicio__lte=hoy,
+            )
+            .select_related("habitacion")
+        )
+
+        ingresos_temporales = (
+            IngresoPropiedad.objects
+            .filter(
+                fecha__gte=inicio_historico,
+                fecha__lte=hoy,
+            )
+        )
+
+        pagos_prestamos = (
+            PagoPrestamo.objects
+            .filter(
+                fecha__gte=inicio_historico,
+                fecha__lte=hoy,
+            )
+            .select_related("prestamo")
+        )
+
+        labels = []
+        ingresos_historicos = []
+        gastos_historicos = []
+        gastos_prorrateados_historicos = []
+        valores_propiedades_historicos = []
+        deuda_historica = []
+        patrimonio_historico = []
+        pagos_socio_historicos = []
+
+        cursor = inicio_historico
+
+        while cursor <= hoy.replace(day=1):
+
+            ultimo_dia = date(
+                cursor.year,
+                cursor.month,
+                calendar.monthrange(
+                    cursor.year,
+                    cursor.month,
+                )[1],
+            )
+
+            labels.append(
+                cursor.strftime(
+                    "%b %Y"
+                ).capitalize()
+            )
+
+            # -------------------------------------------------
+            # INGRESOS
+            # -------------------------------------------------
+
+            ingresos_mes = Decimal("0.00")
+
+            for contrato in contratos:
+
+                activo_en_mes = (
+                    contrato.fecha_inicio
+                    <= ultimo_dia
+                    and (
+                        not contrato.fecha_fin
+                        or contrato.fecha_fin
+                        >= cursor
+                    )
+                )
+
+                if activo_en_mes:
+                    ingresos_mes += (
+                        contrato.precio_mensual
+                        or Decimal("0.00")
+                    )
+
+            ingresos_mes += (
+                ingresos_temporales
+                .filter(
+                    fecha__year=cursor.year,
+                    fecha__month=cursor.month,
+                )
+                .aggregate(
+                    total=Sum("importe"),
+                )
+                .get("total")
+                or Decimal("0.00")
+            )
+
+            ingresos_historicos.append(
+                float(ingresos_mes)
+            )
+
+            # -------------------------------------------------
+            # GASTOS
+            # -------------------------------------------------
+
+            (
+                gastos_normales_mes,
+                gastos_prorrateados_mes,
+            ) = self.calcular_gastos_mes(
+                year=cursor.year,
+                month=cursor.month,
+                recurrentes=recurrentes,
+            )
+
+            gastos_historicos.append(
+                float(gastos_normales_mes)
+            )
+
+            gastos_prorrateados_historicos.append(
+                float(gastos_prorrateados_mes)
+            )
+
+            # -------------------------------------------------
+            # VALOR PROPIEDADES
+            # -------------------------------------------------
+
+            valor_mes = Decimal("0.00")
+
+            for propiedad in propiedades:
+
+                valoracion = (
+                    ValoracionPropiedad.objects
+                    .filter(
+                        propiedad=propiedad,
+                        fecha__lte=ultimo_dia,
+                    )
+                    .order_by(
+                        "-fecha",
+                        "-id",
+                    )
+                    .first()
+                )
+
+                if valoracion:
+                    valor_mes += (
+                        valoracion.valor
+                        or Decimal("0.00")
+                    )
+
+            valores_propiedades_historicos.append(
+                float(valor_mes)
+            )
+
+            # -------------------------------------------------
+            # DEUDA
+            # -------------------------------------------------
+
+            deuda_mes = Decimal("0.00")
+
+            for prestamo in prestamos:
+
+                if (
+                    prestamo.fecha_inicio
+                    and prestamo.fecha_inicio
+                    > ultimo_dia
+                ):
+                    continue
+
+                capital_inicial = (
+                    prestamo.capital_inicial
+                    or Decimal("0.00")
+                )
+
+                amortizado = (
+                    pagos_prestamos
+                    .filter(
+                        prestamo=prestamo,
+                        fecha__lte=ultimo_dia,
+                    )
+                    .aggregate(
+                        total=Sum(
+                            "capital_amortizado"
+                        ),
+                    )
+                    .get("total")
+                    or Decimal("0.00")
+                )
+
+                deuda_mes += max(
+                    capital_inicial - amortizado,
+                    Decimal("0.00"),
+                )
+
+            deuda_historica.append(
+                float(deuda_mes)
+            )
+
+            # -------------------------------------------------
+            # PAGOS AL SOCIO
+            # -------------------------------------------------
+
+            pagos_socio_mes_historico = (
+                pagos_socio
+                .filter(
+                    fecha__year=cursor.year,
+                    fecha__month=cursor.month,
+                )
+                .aggregate(
+                    total=Sum("importe"),
+                )
+                .get("total")
+                or Decimal("0.00")
+            )
+
+            pagos_socio_historicos.append(
+                float(
+                    pagos_socio_mes_historico
+                )
+            )
+
+            # -------------------------------------------------
+            # PATRIMONIO
+            # -------------------------------------------------
+
+            patrimonio_mes = (
+                valor_mes
+                + liquidez_total
+                - deuda_mes
+            )
+
+            patrimonio_historico.append(
+                float(patrimonio_mes)
+            )
+
+            cursor += relativedelta(
+                months=1,
+            )
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "hoy": hoy,
+
+                "propiedades": (
+                    propiedades_con_valor
+                ),
+
+                "liquidez_cuentas": (
+                    liquidez_cuentas
+                ),
+
+                "prestamos": prestamos,
+
+                "valor_propiedades": (
+                    valor_propiedades
+                ),
+
+                "liquidez_total": (
+                    liquidez_total
+                ),
+
+                "deuda_total": (
+                    deuda_total
+                ),
+
+                "patrimonio_neto": (
+                    patrimonio_neto
+                ),
+
+                "pagos_socio_total": (
+                    pagos_socio_total
+                ),
+
+                "pagos_socio_mes": (
+                    pagos_socio_mes
+                ),
+
+                "pagos_socio_ano": (
+                    pagos_socio_ano
+                ),
+
+                "grafico_labels": labels,
+
+                "grafico_ingresos": (
+                    ingresos_historicos
+                ),
+
+                "grafico_gastos": (
+                    gastos_historicos
+                ),
+
+                "grafico_gastos_prorrateados": (
+                    gastos_prorrateados_historicos
+                ),
+
+                "grafico_valor_propiedades": (
+                    valores_propiedades_historicos
+                ),
+
+                "grafico_deuda": deuda_historica,
+
+                "grafico_patrimonio": (
+                    patrimonio_historico
+                ),
+
+                "grafico_pagos_socio": (
+                    pagos_socio_historicos
+                ),
+            },
+        )
 
 
 @login_required
@@ -7855,3 +9209,678 @@ def ver_justificante_prestamo(request, pk):
         as_attachment=False,
         filename=pago.justificante.name.split("/")[-1],
     )
+
+class CrearValoracionPropiedadView(
+    LoginRequiredMixin,
+    View,
+):
+    template_name = (
+        "hotel/patrimonio/valoracion_form.html"
+    )
+
+    def get(self, request):
+        form = ValoracionPropiedadForm()
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "form": form,
+                "titulo": "Nueva valoración",
+                "subtitulo": (
+                    "Actualiza el valor estimado de una propiedad."
+                ),
+                "texto_boton": "Guardar valoración",
+            },
+        )
+
+    def post(self, request):
+        form = ValoracionPropiedadForm(
+            request.POST,
+        )
+
+        if form.is_valid():
+            valoracion = form.save()
+
+            messages.success(
+                request,
+                (
+                    f"Valoración de "
+                    f"{valoracion.propiedad} "
+                    "guardada correctamente."
+                ),
+            )
+
+            return redirect(
+                "hotel:patrimonio_dashboard"
+            )
+
+        messages.error(
+            request,
+            "Revisa los campos señalados.",
+        )
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "form": form,
+                "titulo": "Nueva valoración",
+                "subtitulo": (
+                    "Actualiza el valor estimado de una propiedad."
+                ),
+                "texto_boton": "Guardar valoración",
+            },
+        )
+
+
+class ValoracionesPropiedadView(
+    LoginRequiredMixin,
+    View,
+):
+    template_name = (
+        "hotel/patrimonio/valoraciones.html"
+    )
+
+    def get(self, request):
+        valoraciones = (
+            ValoracionPropiedad.objects
+            .select_related("propiedad")
+            .order_by(
+                "-fecha",
+                "-id",
+            )
+        )
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "valoraciones": valoraciones,
+            },
+        )
+
+
+class EditarValoracionPropiedadView(
+    LoginRequiredMixin,
+    View,
+):
+    template_name = (
+        "hotel/patrimonio/valoracion_form.html"
+    )
+
+    def get_valoracion(self, pk):
+        return get_object_or_404(
+            ValoracionPropiedad,
+            pk=pk,
+        )
+
+    def get(self, request, pk):
+        valoracion = self.get_valoracion(pk)
+
+        form = ValoracionPropiedadForm(
+            instance=valoracion,
+        )
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "form": form,
+                "valoracion": valoracion,
+                "titulo": "Editar valoración",
+                "subtitulo": (
+                    "Actualiza el valor de la propiedad."
+                ),
+                "texto_boton": "Guardar cambios",
+            },
+        )
+
+    def post(self, request, pk):
+        valoracion = self.get_valoracion(pk)
+
+        form = ValoracionPropiedadForm(
+            request.POST,
+            instance=valoracion,
+        )
+
+        if form.is_valid():
+            form.save()
+
+            messages.success(
+                request,
+                "La valoración se ha actualizado.",
+            )
+
+            return redirect(
+                "hotel:valoraciones_propiedad"
+            )
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "form": form,
+                "valoracion": valoracion,
+                "titulo": "Editar valoración",
+                "subtitulo": (
+                    "Actualiza el valor de la propiedad."
+                ),
+                "texto_boton": "Guardar cambios",
+            },
+        )
+
+
+class EliminarValoracionPropiedadView(
+    LoginRequiredMixin,
+    View,
+):
+    template_name = (
+        "hotel/patrimonio/valoracion_confirm_delete.html"
+    )
+
+    def get_valoracion(self, pk):
+        return get_object_or_404(
+            ValoracionPropiedad,
+            pk=pk,
+        )
+
+    def get(self, request, pk):
+        valoracion = self.get_valoracion(pk)
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "valoracion": valoracion,
+            },
+        )
+
+    def post(self, request, pk):
+        valoracion = self.get_valoracion(pk)
+        valoracion.delete()
+
+        messages.success(
+            request,
+            "La valoración se ha eliminado.",
+        )
+
+        return redirect(
+            "hotel:valoraciones_propiedad"
+        )
+
+
+class GastosPersonalesDashboardView(
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    View,
+):
+    template_name = (
+        "hotel/gastos_personales/dashboard.html"
+    )
+
+    MESES = [
+        "Ene",
+        "Feb",
+        "Mar",
+        "Abr",
+        "May",
+        "Jun",
+        "Jul",
+        "Ago",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dic",
+    ]
+
+    def get(self, request):
+        hoy = timezone.localdate()
+
+        inicio_mes = hoy.replace(
+            day=1
+        )
+
+        # -----------------------------------------
+        # GASTOS DEL MES ACTUAL
+        # -----------------------------------------
+
+        gastos_mes = (
+            GastoPersonal.objects
+            .filter(
+                fecha__year=hoy.year,
+                fecha__month=hoy.month,
+            )
+        )
+
+        total_espana = (
+            gastos_mes
+            .filter(pais="ES")
+            .aggregate(
+                total=Sum("importe"),
+            )
+            .get("total")
+            or Decimal("0.00")
+        )
+
+        total_argentina = (
+            gastos_mes
+            .filter(pais="AR")
+            .aggregate(
+                total=Sum("importe"),
+            )
+            .get("total")
+            or Decimal("0.00")
+        )
+
+        total_eur = (
+            gastos_mes
+            .aggregate(
+                total=Sum("importe_eur"),
+            )
+            .get("total")
+            or Decimal("0.00")
+        )
+
+        movimientos_mes = (
+            gastos_mes.count()
+        )
+
+        # -----------------------------------------
+        # DISTRIBUCIÓN POR CATEGORÍAS
+        # -----------------------------------------
+
+        categorias = (
+            gastos_mes
+            .values("categoria")
+            .annotate(
+                total=Sum("importe_eur"),
+            )
+            .order_by("-total")
+        )
+
+        categorias_dict = dict(
+            GastoPersonal.CATEGORIAS
+        )
+
+        grafico_categoria_labels = []
+        grafico_categoria_valores = []
+
+        for categoria in categorias:
+            grafico_categoria_labels.append(
+                categorias_dict.get(
+                    categoria["categoria"],
+                    categoria["categoria"],
+                )
+            )
+
+            grafico_categoria_valores.append(
+                float(
+                    categoria["total"]
+                    or Decimal("0.00")
+                )
+            )
+
+        # -----------------------------------------
+        # EVOLUCIÓN DE LOS ÚLTIMOS 12 MESES
+        # -----------------------------------------
+
+        grafico_evolucion_labels = []
+        grafico_evolucion_valores = []
+
+        for desplazamiento in range(
+            11,
+            -1,
+            -1,
+        ):
+            mes = (
+                inicio_mes
+                - relativedelta(
+                    months=desplazamiento,
+                )
+            )
+
+            total_mes = (
+                GastoPersonal.objects
+                .filter(
+                    fecha__year=mes.year,
+                    fecha__month=mes.month,
+                )
+                .aggregate(
+                    total=Sum("importe_eur"),
+                )
+                .get("total")
+                or Decimal("0.00")
+            )
+
+            grafico_evolucion_labels.append(
+                (
+                    f"{self.MESES[mes.month - 1]} "
+                    f"{mes.year}"
+                )
+            )
+
+            grafico_evolucion_valores.append(
+                float(total_mes)
+            )
+
+        # -----------------------------------------
+        # FILTROS DEL LISTADO
+        # -----------------------------------------
+
+        pais = request.GET.get(
+            "pais",
+            "",
+        )
+
+        categoria = request.GET.get(
+            "categoria",
+            "",
+        )
+
+        periodo = request.GET.get(
+            "periodo",
+            "",
+        )
+
+        movimientos = (
+            GastoPersonal.objects
+            .all()
+        )
+
+        if pais in {
+            valor
+            for valor, nombre
+            in GastoPersonal.PAISES
+        }:
+            movimientos = movimientos.filter(
+                pais=pais
+            )
+
+        if categoria in {
+            valor
+            for valor, nombre
+            in GastoPersonal.CATEGORIAS
+        }:
+            movimientos = movimientos.filter(
+                categoria=categoria
+            )
+
+        if periodo:
+            try:
+                year, month = periodo.split(
+                    "-"
+                )
+
+                movimientos = movimientos.filter(
+                    fecha__year=int(year),
+                    fecha__month=int(month),
+                )
+
+            except (
+                ValueError,
+                TypeError,
+            ):
+                periodo = ""
+
+        movimientos = movimientos[:30]
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "hoy": hoy,
+                "mes_actual": (
+                    hoy.strftime("%B %Y")
+                    .capitalize()
+                ),
+
+                "total_espana": total_espana,
+                "total_argentina": total_argentina,
+                "total_eur": total_eur,
+                "movimientos_mes": movimientos_mes,
+
+                "movimientos": movimientos,
+
+                "paises": GastoPersonal.PAISES,
+                "categorias": (
+                    GastoPersonal.CATEGORIAS
+                ),
+
+                "filtro_pais": pais,
+                "filtro_categoria": categoria,
+                "filtro_periodo": periodo,
+
+                "grafico_categoria_labels": (
+                    grafico_categoria_labels
+                ),
+                "grafico_categoria_valores": (
+                    grafico_categoria_valores
+                ),
+
+                "grafico_evolucion_labels": (
+                    grafico_evolucion_labels
+                ),
+                "grafico_evolucion_valores": (
+                    grafico_evolucion_valores
+                ),
+            },
+        )
+
+
+class CrearGastoPersonalView(
+    LoginRequiredMixin,
+    View,
+):
+    template_name = (
+        "hotel/gastos_personales/gasto_form.html"
+    )
+
+    def get(self, request):
+        form = GastoPersonalForm(
+            initial={
+                "pais": request.GET.get(
+                    "pais",
+                    "ES",
+                ),
+                "fecha": timezone.localdate(),
+            },
+        )
+
+        return self.render_form(
+            request=request,
+            form=form,
+        )
+
+    def post(self, request):
+        form = GastoPersonalForm(
+            request.POST,
+            request.FILES,
+        )
+
+        if form.is_valid():
+            gasto = form.save()
+
+            messages.success(
+                request,
+                (
+                    f'El gasto personal '
+                    f'"{gasto.concepto}" se ha '
+                    "registrado correctamente."
+                ),
+            )
+
+            return redirect(
+                "hotel:gastos_personales"
+            )
+
+        messages.error(
+            request,
+            (
+                "No se pudo registrar el gasto. "
+                "Revisa los campos señalados."
+            ),
+        )
+
+        return self.render_form(
+            request=request,
+            form=form,
+        )
+
+    def render_form(
+        self,
+        request,
+        form,
+    ):
+        return render(
+            request,
+            self.template_name,
+            {
+                "form": form,
+                "titulo": "Registrar gasto personal",
+                "subtitulo": (
+                    "Añade un movimiento realizado "
+                    "en España o Argentina."
+                ),
+                "texto_boton": "Guardar gasto",
+            },
+        )
+
+
+class EditarGastoPersonalView(
+    LoginRequiredMixin,
+    View,
+):
+    template_name = (
+        "hotel/gastos_personales/gasto_form.html"
+    )
+
+    def obtener_gasto(self, pk):
+        return get_object_or_404(
+            GastoPersonal,
+            pk=pk,
+        )
+
+    def get(self, request, pk):
+        gasto = self.obtener_gasto(
+            pk
+        )
+
+        form = GastoPersonalForm(
+            instance=gasto,
+        )
+
+        return self.render_form(
+            request=request,
+            form=form,
+            gasto=gasto,
+        )
+
+    def post(self, request, pk):
+        gasto = self.obtener_gasto(
+            pk
+        )
+
+        form = GastoPersonalForm(
+            request.POST,
+            request.FILES,
+            instance=gasto,
+        )
+
+        if form.is_valid():
+            gasto = form.save()
+
+            messages.success(
+                request,
+                (
+                    f'El gasto personal '
+                    f'"{gasto.concepto}" se ha '
+                    "actualizado correctamente."
+                ),
+            )
+
+            return redirect(
+                "hotel:gastos_personales"
+            )
+
+        messages.error(
+            request,
+            (
+                "No se pudieron guardar los cambios. "
+                "Revisa los campos señalados."
+            ),
+        )
+
+        return self.render_form(
+            request=request,
+            form=form,
+            gasto=gasto,
+        )
+
+    def render_form(
+        self,
+        request,
+        form,
+        gasto,
+    ):
+        return render(
+            request,
+            self.template_name,
+            {
+                "form": form,
+                "gasto": gasto,
+                "titulo": "Editar gasto personal",
+                "subtitulo": gasto.concepto,
+                "texto_boton": "Guardar cambios",
+            },
+        )
+
+
+class EliminarGastoPersonalView(
+    LoginRequiredMixin,
+    View,
+):
+    template_name = (
+        "hotel/gastos_personales/"
+        "gasto_confirm_delete.html"
+    )
+
+    def obtener_gasto(self, pk):
+        return get_object_or_404(
+            GastoPersonal,
+            pk=pk,
+        )
+
+    def get(self, request, pk):
+        gasto = self.obtener_gasto(
+            pk
+        )
+
+        return render(
+            request,
+            self.template_name,
+            {
+                "gasto": gasto,
+            },
+        )
+
+    def post(self, request, pk):
+        gasto = self.obtener_gasto(
+            pk
+        )
+
+        concepto = gasto.concepto
+
+        gasto.delete()
+
+        messages.success(
+            request,
+            (
+                f'El gasto personal "{concepto}" '
+                "se ha eliminado."
+            ),
+        )
+
+        return redirect(
+            "hotel:gastos_personales"
+        )

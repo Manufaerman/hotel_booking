@@ -1,14 +1,12 @@
 {% extends 'base_dashboard.html' %}
 {% load static %}
-{% block title %} <title> Dashboard </title> {% endblock %}
+{% block title %} Dashboard {% endblock %}
 {% block extra-head %}
-<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
 <link rel="stylesheet" href= "{% static 'hotel/css/dashboard.css' %}">
 <link rel="icon" href="data:;base64,iVBORw0KGgo=">
 {% endblock %}
 
 {% block content %}
-
 <section class="dashboard-section">
 
  <div class="dashboard-header">
@@ -19,34 +17,40 @@
     </div>
 
 
-    <div class="dashboard-finance-actions">
+<div class="dashboard-finance-actions">
 
     <a
         href="{% url 'hotel:crear_ingreso_propiedad' %}"
         class="dashboard-finance-action dashboard-finance-action-income"
         aria-label="Añadir ingreso"
     >
-        <i class="fas fa-arrow-trend-up" aria-hidden="true"></i>
+        <span class="dashboard-finance-action-icon">
+            <i class="fa fa-plus" aria-hidden="true"></i>
+        </span>
 
-        <span>
-            Añadir ingreso
+        <span class="dashboard-finance-action-copy">
+            <strong>Añadir ingreso</strong>
+            <small>Cobro temporal</small>
         </span>
     </a>
+
 
     <a
         href="{% url 'hotel:crear_gasto' %}"
         class="dashboard-finance-action dashboard-finance-action-expense"
         aria-label="Añadir gasto"
     >
-        <i class="fas fa-arrow-trend-down" aria-hidden="true"></i>
+        <span class="dashboard-finance-action-icon">
+            <i class="fa fa-plus" aria-hidden="true"></i>
+        </span>
 
-        <span>
-            Añadir gasto
+        <span class="dashboard-finance-action-copy">
+            <strong>Añadir gasto</strong>
+            <small>Puntual o recurrente</small>
         </span>
     </a>
 
 </div>
-
 </div>
 
     <div class="dashboard-kpis">
@@ -168,7 +172,355 @@
     </div>
 
 </div>
-    <section class="dashboard-chart-card dashboard-chart-card-wide">
+
+
+</section>
+
+<section class="dashboard-finance-overview">
+
+    <header class="dashboard-finance-heading">
+
+        <div>
+            <span>
+                Situación financiera
+            </span>
+
+            <h2>
+                Deuda, liquidez y patrimonio
+            </h2>
+        </div>
+
+        <small>
+            {{ mes_actual }}
+        </small>
+
+    </header>
+
+
+    <div class="dashboard-finance-grid">
+
+        <article class="dashboard-finance-item finance-benefit">
+            <span>
+                Beneficio operativo
+            </span>
+
+            <strong>
+                {{ beneficio_operativo|floatformat:2 }} €
+            </strong>
+
+            <small>
+                Ingresos menos gastos operativos
+            </small>
+        </article>
+
+
+        <article class="dashboard-finance-item finance-cashflow">
+            <span>
+                Flujo de caja
+            </span>
+
+            <strong>
+                {{ flujo_caja|floatformat:2 }} €
+            </strong>
+
+            <small>
+                Ingresos menos todas las salidas
+            </small>
+        </article>
+
+
+        <article class="dashboard-finance-item finance-loans">
+            <span>
+                Cuotas de préstamos
+            </span>
+
+            <strong>
+                {{ cuotas_prestamos_mes|floatformat:2 }} €
+            </strong>
+
+            <small>
+                Pagos completos del mes
+            </small>
+        </article>
+
+
+        <article class="dashboard-finance-item finance-debt">
+            <span>
+                Deuda pendiente
+            </span>
+
+            <strong>
+                {{ deuda_total|floatformat:2 }} €
+            </strong>
+
+            <small>
+                Capital pendiente de los préstamos
+            </small>
+        </article>
+
+
+        <article class="dashboard-finance-item finance-networth">
+            <span>
+                Patrimonio neto
+            </span>
+
+            <strong>
+                {{ patrimonio_neto|floatformat:2 }} €
+            </strong>
+
+            <small>
+                Propiedades + liquidez − deuda
+            </small>
+        </article>
+
+
+        <article class="dashboard-finance-item finance-interest">
+            <span>
+                Intereses pagados
+            </span>
+
+            <strong>
+                {{ intereses_prestamos_mes|floatformat:2 }} €
+            </strong>
+
+            <small>
+                Durante este mes
+            </small>
+        </article>
+
+
+        <article class="dashboard-finance-item finance-capital">
+            <span>
+                Capital amortizado
+            </span>
+
+            <strong>
+                {{ capital_amortizado_mes|floatformat:2 }} €
+            </strong>
+
+            <small>
+                Reducción real de la deuda
+            </small>
+        </article>
+
+
+        <article class="dashboard-finance-item finance-owner">
+            <span>
+                Pagos al socio
+            </span>
+
+            <strong>
+                {{ pagos_socio_mes|floatformat:2 }} €
+            </strong>
+
+            <small>
+                Salidas de liquidez del mes
+            </small>
+        </article>
+
+    </div>
+
+</section>
+
+<section class="dashboard-charts-area">
+
+    <header class="dashboard-charts-header">
+        <div>
+            <span class="dashboard-eyebrow">
+                Análisis financiero
+            </span>
+
+            <h2>
+                Evolución y distribución
+            </h2>
+        </div>
+    </header>
+
+
+    <!-- SLIDER 1 -->
+
+    <section class="dashboard-slider-block">
+
+        <div class="dashboard-slider-heading">
+            <h3>
+                Ingresos y gastos
+            </h3>
+
+            <div class="dashboard-slider-controls">
+                <button
+                    type="button"
+                    class="dashboard-slider-button"
+                    data-slider-prev="ingresos-slider"
+                    aria-label="Anterior"
+                >
+                    ‹
+                </button>
+
+                <button
+                    type="button"
+                    class="dashboard-slider-button"
+                    data-slider-next="ingresos-slider"
+                    aria-label="Siguiente"
+                >
+                    ›
+                </button>
+            </div>
+        </div>
+
+
+        <div
+            class="dashboard-slider"
+            id="ingresos-slider"
+        >
+
+            <article class="dashboard-chart-card">
+                <header>
+                    <span>
+                        Propiedades
+                    </span>
+
+                    <h4>
+                        Ingresos por propiedad
+                    </h4>
+                </header>
+
+                <div class="dashboard-chart-wrapper">
+                    <canvas id="incomeByPropertyChart"></canvas>
+                </div>
+            </article>
+
+
+            <article class="dashboard-chart-card">
+                <header>
+                    <span>
+                        Evolución
+                    </span>
+
+                    <h4>
+                        Evolución mensual
+                    </h4>
+                </header>
+
+                <div class="dashboard-chart-wrapper">
+                    <canvas id="monthlyIncomeChart"></canvas>
+                </div>
+            </article>
+
+
+            <article class="dashboard-chart-card">
+                <header>
+                    <span>
+                        Categorías
+                    </span>
+
+                    <h4>
+                        Gastos por categoría
+                    </h4>
+                </header>
+
+                <div class="dashboard-chart-wrapper">
+                    <canvas id="expensesChart"></canvas>
+                </div>
+            </article>
+
+        </div>
+
+    </section>
+
+
+    <!-- SLIDER 2 -->
+
+    <section class="dashboard-slider-block">
+
+        <div class="dashboard-slider-heading">
+            <h3>
+                Patrimonio y deuda
+            </h3>
+
+            <div class="dashboard-slider-controls">
+                <button
+                    type="button"
+                    class="dashboard-slider-button"
+                    data-slider-prev="patrimonio-slider"
+                    aria-label="Anterior"
+                >
+                    ‹
+                </button>
+
+                <button
+                    type="button"
+                    class="dashboard-slider-button"
+                    data-slider-next="patrimonio-slider"
+                    aria-label="Siguiente"
+                >
+                    ›
+                </button>
+            </div>
+        </div>
+
+
+        <div
+            class="dashboard-slider"
+            id="patrimonio-slider"
+        >
+
+            <article class="dashboard-chart-card dashboard-chart-card-wide">
+                <header>
+                    <span>
+                        Evolución patrimonial
+                    </span>
+
+                    <h4>
+                        Patrimonio y deuda
+                    </h4>
+                </header>
+
+                <div class="dashboard-chart-wrapper">
+                    <canvas id="dashboardPatrimonioChart"></canvas>
+                </div>
+            </article>
+
+
+            <article class="dashboard-chart-card">
+                <header>
+                    <span>
+                        Distribución
+                    </span>
+
+                    <h4>
+                        Dónde se va el dinero
+                    </h4>
+                </header>
+
+                <div class="dashboard-chart-wrapper">
+                    <canvas id="dashboardGastosChart"></canvas>
+                </div>
+            </article>
+
+
+            <article class="dashboard-chart-card">
+                <header>
+                    <span>
+                        Financiación
+                    </span>
+
+                    <h4>
+                        Capital y deuda pendiente
+                    </h4>
+                </header>
+
+                <div class="dashboard-chart-wrapper">
+                    <canvas id="dashboardDeudaChart"></canvas>
+                </div>
+            </article>
+
+        </div>
+
+    </section>
+
+</section>
+
+<section class="dashboard-chart-card dashboard-chart-card-wide">
 
     <header class="dashboard-chart-header">
 
@@ -245,52 +597,49 @@
 
 </section>
 
-    <div class="dashboard-grid">
 
-        <div class="chart-card">
-            <div class="chart-header">
-                <div>
-                    <h3>Ingresos por propiedad</h3>
-                    <p>Qué inmueble genera más dinero.</p>
-                </div>
-            </div>
-            <canvas id="incomeByPropertyChart"></canvas>
-        </div>
-
-        <div class="chart-card">
-            <div class="chart-header">
-                <div>
-                    <h3>Evolución mensual</h3>
-                    <p>Facturación acumulada por mes.</p>
-                </div>
-            </div>
-            <canvas id="monthlyIncomeChart"></canvas>
-        </div>
-
-        <div class="chart-card">
-
-    <div class="chart-header">
-        <div>
-            <h3>
-                Gastos por categoría
-            </h3>
-
-            <p>
-                Distribución de los gastos de este mes.
-            </p>
-        </div>
-    </div>
-
-    <canvas id="expensesChart"></canvas>
-
-</div>
-
-    </div>
-
-</section>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7"></script>
+<script>
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+        document
+            .querySelectorAll(
+                "[data-slider-prev], [data-slider-next]"
+            )
+            .forEach(function (button) {
+                button.addEventListener(
+                    "click",
+                    function () {
+                        const sliderId =
+                            button.dataset.sliderPrev ||
+                            button.dataset.sliderNext;
 
+                        const slider =
+                            document.getElementById(sliderId);
+
+                        if (!slider) {
+                            return;
+                        }
+
+                        const direction =
+                            button.dataset.sliderNext
+                                ? 1
+                                : -1;
+
+                        slider.scrollBy({
+                            left:
+                                direction *
+                                slider.clientWidth,
+                            behavior: "smooth",
+                        });
+                    }
+                );
+            });
+    }
+);
+</script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -854,9 +1203,272 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 });
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    if (typeof Chart === "undefined") {
+        return;
+    }
+
+    function leerDatos(id) {
+        const elemento = document.getElementById(id);
+
+        if (!elemento) {
+            return [];
+        }
+
+        return JSON.parse(elemento.textContent);
+    }
+
+
+    const gastosCanvas = document.getElementById(
+        "dashboardGastosChart"
+    );
+
+    if (gastosCanvas) {
+        new Chart(gastosCanvas, {
+            type: "doughnut",
+
+            data: {
+                labels: leerDatos(
+                    "dashboard-gastos-labels"
+                ),
+
+                datasets: [
+                    {
+                        data: leerDatos(
+                            "dashboard-gastos-valores"
+                        ),
+
+                        backgroundColor: leerDatos(
+                            "dashboard-gastos-colores"
+                        ),
+
+                        borderWidth: 3,
+                        borderColor: "#fffdf9",
+                    },
+                ],
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+
+                plugins: {
+                    legend: {
+                        position: "bottom",
+                        labels: {
+                            usePointStyle: true,
+                            padding: 16,
+                        },
+                    },
+
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return (
+                                    context.label
+                                    + ": "
+                                    + Number(
+                                        context.raw
+                                    ).toLocaleString(
+                                        "es-ES",
+                                        {
+                                            minimumFractionDigits: 2,
+                                            maximumFractionDigits: 2,
+                                        }
+                                    )
+                                    + " €"
+                                );
+                            },
+                        },
+                    },
+                },
+            },
+        });
+    }
+
+
+    const deudaCanvas = document.getElementById(
+        "dashboardDeudaChart"
+    );
+
+    if (deudaCanvas) {
+        new Chart(deudaCanvas, {
+            type: "doughnut",
+
+            data: {
+                labels: leerDatos(
+                    "dashboard-deuda-labels"
+                ),
+
+                datasets: [
+                    {
+                        data: leerDatos(
+                            "dashboard-deuda-valores"
+                        ),
+
+                        backgroundColor: leerDatos(
+                            "dashboard-deuda-colores"
+                        ),
+
+                        borderWidth: 3,
+                        borderColor: "#fffdf9",
+                    },
+                ],
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+
+                cutout: "64%",
+
+                plugins: {
+                    legend: {
+                        position: "bottom",
+                        labels: {
+                            usePointStyle: true,
+                            padding: 16,
+                        },
+                    },
+
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return (
+                                    context.label
+                                    + ": "
+                                    + Number(
+                                        context.raw
+                                    ).toLocaleString(
+                                        "es-ES",
+                                        {
+                                            minimumFractionDigits: 2,
+                                            maximumFractionDigits: 2,
+                                        }
+                                    )
+                                    + " €"
+                                );
+                            },
+                        },
+                    },
+                },
+            },
+        });
+    }
+
+});
+</script>
+
+{{ patrimonio_historico_labels|json_script:"patrimonio-historico-labels" }}
+{{ patrimonio_historico_valores|json_script:"patrimonio-historico-valores" }}
+{{ deuda_historica_valores|json_script:"deuda-historica-valores" }}
+
+{{ grafico_gastos_labels|json_script:"dashboard-gastos-labels" }}
+{{ grafico_gastos_valores|json_script:"dashboard-gastos-valores" }}
+{{ grafico_gastos_colores|json_script:"dashboard-gastos-colores" }}
+
+{{ grafico_deuda_labels|json_script:"dashboard-deuda-labels" }}
+{{ grafico_deuda_valores|json_script:"dashboard-deuda-valores" }}
+{{ grafico_deuda_colores|json_script:"dashboard-deuda-colores" }}
 {% endblock %}
 
 {% block jquery %}
+{{ patrimonio_historico_labels|json_script:"patrimonio-historico-labels" }}
+{{ patrimonio_historico_valores|json_script:"patrimonio-historico-valores" }}
+{{ deuda_historica_valores|json_script:"deuda-historica-valores" }}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const canvas = document.getElementById(
+        "dashboardPatrimonioChart"
+    );
+
+    if (!canvas || typeof Chart === "undefined") {
+        return;
+    }
+
+    const leerDatos = (id) => {
+        const elemento = document.getElementById(id);
+
+        if (!elemento) {
+            return [];
+        }
+
+        try {
+            return JSON.parse(elemento.textContent);
+        } catch (error) {
+            return [];
+        }
+    };
+
+    const labels = leerDatos(
+        "patrimonio-historico-labels"
+    );
+
+    const patrimonio = leerDatos(
+        "patrimonio-historico-valores"
+    );
+
+    const deuda = leerDatos(
+        "deuda-historica-valores"
+    );
+
+    new Chart(canvas, {
+        type: "line",
+
+        data: {
+            labels: labels,
+
+            datasets: [
+                {
+                    label: "Patrimonio neto",
+                    data: patrimonio,
+                    borderColor: "#51343e",
+                    backgroundColor: "rgba(81, 52, 62, 0.12)",
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.35,
+                },
+                {
+                    label: "Deuda pendiente",
+                    data: deuda,
+                    borderColor: "#806874",
+                    backgroundColor: "rgba(128, 104, 116, 0.10)",
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.35,
+                },
+            ],
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                legend: {
+                    position: "bottom",
+                },
+            },
+
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function (value) {
+                            return Number(value).toLocaleString(
+                                "es-ES"
+                            ) + " €";
+                        },
+                    },
+                },
+            },
+        },
+    });
+});
+</script>
 
 {% endblock %}
 

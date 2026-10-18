@@ -1,79 +1,98 @@
-{% extends "base.html" %}
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block title %}
+    Registrar pago | By Colección
+{% endblock %}
+
+{% block extra-head %}
+<link
+    rel="stylesheet"
+    href="{% static 'hotel/css/hipotecas/pago_form.css' %}"
+>
+{% endblock %}
 
 {% block content %}
 
-<div class="finance-form-page">
+<main class="finance-form-page">
 
-    <div class="form-container">
+    <section class="form-container">
 
-        <div class="form-header">
+        <header class="form-header">
 
             <span class="eyebrow">
-                Hipoteca
+                Préstamo
             </span>
 
             <h1>
                 Registrar pago
             </h1>
 
-            {% if hipoteca %}
-
-            <p>
-                {{ hipoteca.banco }} · {{ hipoteca.flat }}
-            </p>
-
+            {% if prestamo %}
+                <p>
+                    {{ prestamo.entidad }}
+                    {% if prestamo.propiedad %}
+                        · {{ prestamo.propiedad }}
+                    {% endif %}
+                </p>
             {% endif %}
 
-        </div>
+        </header>
+
+
+        {% if form.non_field_errors %}
+            <div class="form-errors">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
 
 
         <form
             method="post"
             enctype="multipart/form-data"
         >
-
             {% csrf_token %}
 
+            {% if prestamo %}
+                <div class="payment-highlight">
 
-            <div class="payment-highlight">
+                    <span>
+                        Cuota prevista
+                    </span>
 
-                {% if hipoteca %}
+                    <strong>
+                        {{ prestamo.cuota_mensual|floatformat:2 }} €
+                    </strong>
 
-                <span>
-                    Cuota prevista
-                </span>
-
-                <strong>
-                    {{ hipoteca.cuota_mensual|floatformat:2 }} €
-                </strong>
-
-                {% endif %}
-
-            </div>
+                </div>
+            {% endif %}
 
 
             <div class="form-grid">
 
                 {% for field in form %}
 
-                <div class="form-group">
+                    <div class="form-group">
 
-                    <label for="{{ field.id_for_label }}">
-                        {{ field.label }}
-                    </label>
+                        <label for="{{ field.id_for_label }}">
+                            {{ field.label }}
+                        </label>
 
-                    {{ field }}
+                        {{ field }}
 
+                        {% if field.help_text %}
+                            <small>
+                                {{ field.help_text }}
+                            </small>
+                        {% endif %}
 
-                    {% for error in field.errors %}
+                        {% for error in field.errors %}
+                            <div class="field-error">
+                                {{ error }}
+                            </div>
+                        {% endfor %}
 
-                    <div class="field-error">
-                        {{ error }}
                     </div>
-
-                    {% endfor %}
-
-                </div>
 
                 {% endfor %}
 
@@ -83,7 +102,7 @@
             <div class="form-actions">
 
                 <a
-                    href="../"
+                    href="{% url 'hotel:prestamos_dashboard' %}"
                     class="btn-secondary"
                 >
                     Cancelar
@@ -100,127 +119,8 @@
 
         </form>
 
-    </div>
+    </section>
 
-</div>
-
-
-<style>
-
-.finance-form-page {
-    max-width: 750px;
-    margin: 0 auto;
-    padding: 50px 25px;
-}
-
-.form-container {
-    background: #fffdf9;
-    border-radius: 26px;
-    border: 1px solid rgba(75,41,56,.11);
-    padding: 40px;
-}
-
-.eyebrow {
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: #ae8950;
-    font-size: 11px;
-}
-
-.form-header h1 {
-    font-size: 34px;
-    font-weight: 500;
-    margin: 6px 0;
-}
-
-.form-header p {
-    color: #756a6e;
-}
-
-.payment-highlight {
-    margin: 30px 0;
-    background: #f5f0e9;
-    border-radius: 16px;
-    padding: 20px;
-
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.payment-highlight span {
-    color: #756a6e;
-}
-
-.payment-highlight strong {
-    font-size: 23px;
-    font-weight: 500;
-}
-
-.form-grid {
-    display: grid;
-    gap: 22px;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-}
-
-.form-group label {
-    color: #756a6e;
-    font-size: 12px;
-    margin-bottom: 7px;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-    box-sizing: border-box;
-    width: 100%;
-    padding: 13px;
-    border-radius: 12px;
-    border: 1px solid rgba(75,41,56,.15);
-    background: white;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    outline: none;
-    border-color: #745f6d;
-}
-
-.field-error {
-    color: #a75555;
-    margin-top: 5px;
-}
-
-.form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-
-    border-top: 1px solid rgba(75,41,56,.1);
-    padding-top: 25px;
-    margin-top: 35px;
-}
-
-.btn-primary {
-    border: none;
-    background: #4b2938;
-    color: white;
-    padding: 13px 22px;
-    border-radius: 25px;
-    cursor: pointer;
-}
-
-.btn-secondary {
-    text-decoration: none;
-    color: #4b2938;
-    padding: 13px 20px;
-}
-
-</style>
+</main>
 
 {% endblock %}

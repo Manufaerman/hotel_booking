@@ -1,7 +1,7 @@
 import re
 from django.contrib.auth.models import User
 from hotel.models import Inquilino, ContratoAlquiler, Flat, Habitacion, AvalContrato, Proyecto, IngresoPropiedad, \
-    Prestamo, PagoPrestamo
+    Prestamo, PagoPrestamo, ValoracionPropiedad, GastoPersonal
 from user_profile.models import UserProfile
 from .models import ProcesoFormalizacion
 from decimal import Decimal
@@ -272,6 +272,7 @@ class GastoForm(forms.ModelForm):
             "destino_gestoria",
             "justificante",
             "notas",
+            "tipo_gestion",
         ]
 
         labels = {
@@ -300,6 +301,11 @@ class GastoForm(forms.ModelForm):
         }
 
         widgets = {
+            "tipo_gestion": forms.Select(
+                attrs={
+                    "class": "gastos-control",
+                },
+            ),
             "pais": forms.RadioSelect(
                 attrs={
                     "class": "gastos-country-radio",
@@ -1783,3 +1789,332 @@ class PagoPrestamoForm(forms.ModelForm):
             "justificante": "Justificante",
             "notas": "Notas",
         }
+
+class ValoracionPropiedadForm(forms.ModelForm):
+
+    class Meta:
+        model = ValoracionPropiedad
+
+        fields = [
+            "propiedad",
+            "valor",
+            "fecha",
+            "fuente",
+            "notas",
+        ]
+
+        labels = {
+            "propiedad": "Propiedad",
+            "valor": "Valor estimado",
+            "fecha": "Fecha de valoración",
+            "fuente": "Fuente de la valoración",
+            "notas": "Notas",
+        }
+
+        widgets = {
+            "propiedad": forms.Select(
+                attrs={
+                    "class": "patrimonio-control",
+                },
+            ),
+            "valor": forms.NumberInput(
+                attrs={
+                    "class": "patrimonio-control",
+                    "min": "0.01",
+                    "step": "0.01",
+                    "placeholder": "250000.00",
+                },
+            ),
+            "fecha": forms.DateInput(
+                format="%Y-%m-%d",
+                attrs={
+                    "class": "patrimonio-control",
+                    "type": "date",
+                },
+            ),
+            "fuente": forms.TextInput(
+                attrs={
+                    "class": "patrimonio-control",
+                    "placeholder": (
+                        "Ej. Tasación, mercado, actualización personal"
+                    ),
+                },
+            ),
+            "notas": forms.Textarea(
+                attrs={
+                    "class": "patrimonio-control",
+                    "rows": 4,
+                    "placeholder": "Información adicional",
+                },
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["propiedad"].queryset = (
+            Flat.objects
+            .all()
+            .order_by("nombre")
+        )
+
+        self.fields["fecha"].input_formats = [
+            "%Y-%m-%d",
+        ]
+
+        if not self.is_bound:
+            self.fields["fecha"].initial = (
+                timezone.localdate()
+            )
+
+    def clean_valor(self):
+        valor = self.cleaned_data.get("valor")
+
+        if valor is None or valor <= 0:
+            raise forms.ValidationError(
+                "El valor debe ser superior a cero."
+            )
+
+        return valor
+
+class GastoPersonalForm(forms.ModelForm):
+
+    class Meta:
+        model = GastoPersonal
+
+        fields = [
+            "pais",
+            "ciudad",
+            "concepto",
+            "categoria",
+            "importe",
+            "cotizacion_eur",
+            "fecha",
+            "metodo_pago",
+            "justificante",
+            "notas",
+        ]
+
+        labels = {
+            "pais": "Lugar",
+            "ciudad": "Ciudad",
+            "concepto": "Concepto",
+            "categoria": "Categoría",
+            "importe": "Importe",
+            "cotizacion_eur": "Cotización del euro",
+            "fecha": "Fecha",
+            "metodo_pago": "Método de pago",
+            "justificante": "Factura o justificante",
+            "notas": "Notas",
+        }
+
+        widgets = {
+            "pais": forms.Select(
+                attrs={
+                    "class": "personal-control",
+                    "data-personal-country": "",
+                },
+            ),
+            "ciudad": forms.TextInput(
+                attrs={
+                    "class": "personal-control",
+                    "placeholder": "Ej. Madrid o Buenos Aires",
+                    "autocomplete": "address-level2",
+                },
+            ),
+            "concepto": forms.TextInput(
+                attrs={
+                    "class": "personal-control",
+                    "placeholder": "Ej. Supermercado",
+                },
+            ),
+            "categoria": forms.Select(
+                attrs={
+                    "class": "personal-control",
+                },
+            ),
+            "importe": forms.NumberInput(
+                attrs={
+                    "class": "personal-control",
+                    "min": "0.01",
+                    "step": "0.01",
+                    "inputmode": "decimal",
+                    "placeholder": "0,00",
+                },
+            ),
+            "cotizacion_eur": forms.NumberInput(
+                attrs={
+                    "class": "personal-control",
+                    "min": "0.000001",
+                    "step": "0.000001",
+                    "inputmode": "decimal",
+                    "placeholder": (
+                        "Pesos argentinos por euro"
+                    ),
+                    "data-personal-exchange": "",
+                },
+            ),
+            "fecha": forms.DateInput(
+                format="%Y-%m-%d",
+                attrs={
+                    "class": "personal-control",
+                    "type": "date",
+                },
+            ),
+            "metodo_pago": forms.Select(
+                attrs={
+                    "class": "personal-control",
+                },
+            ),
+            "justificante": forms.ClearableFileInput(
+                attrs={
+                    "class": "personal-file",
+                    "accept": (
+                        ".pdf,.jpg,.jpeg,.png,.webp,"
+                        "image/*,application/pdf"
+                    ),
+                },
+            ),
+            "notas": forms.Textarea(
+                attrs={
+                    "class": (
+                        "personal-control "
+                        "personal-textarea"
+                    ),
+                    "rows": 3,
+                    "placeholder": "Información adicional",
+                },
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(
+            *args,
+            **kwargs,
+        )
+
+        self.fields[
+            "fecha"
+        ].input_formats = [
+            "%Y-%m-%d",
+        ]
+
+        self.fields[
+            "ciudad"
+        ].required = False
+
+        self.fields[
+            "cotizacion_eur"
+        ].required = False
+
+        self.fields[
+            "justificante"
+        ].required = False
+
+        self.fields[
+            "notas"
+        ].required = False
+
+        if (
+            not self.is_bound
+            and not self.instance.pk
+        ):
+            self.fields[
+                "fecha"
+            ].initial = timezone.localdate()
+
+            self.fields[
+                "pais"
+            ].initial = "ES"
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        pais = cleaned_data.get(
+            "pais"
+        )
+
+        importe = cleaned_data.get(
+            "importe"
+        )
+
+        cotizacion_eur = cleaned_data.get(
+            "cotizacion_eur"
+        )
+
+        if (
+            importe is None
+            or importe <= Decimal("0")
+        ):
+            self.add_error(
+                "importe",
+                "El importe debe ser superior a cero.",
+            )
+
+        if pais == "ES":
+            cleaned_data[
+                "cotizacion_eur"
+            ] = Decimal("1")
+
+            self.instance.moneda = "EUR"
+
+        elif pais == "AR":
+            self.instance.moneda = "ARS"
+
+            if (
+                cotizacion_eur is None
+                or cotizacion_eur <= Decimal("0")
+            ):
+                self.add_error(
+                    "cotizacion_eur",
+                    (
+                        "Indica cuántos pesos argentinos "
+                        "equivalen a un euro."
+                    ),
+                )
+
+        return cleaned_data
+
+    def clean_justificante(self):
+        archivo = self.cleaned_data.get(
+            "justificante"
+        )
+
+        if not archivo:
+            return archivo
+
+        extensiones_permitidas = (
+            ".pdf",
+            ".jpg",
+            ".jpeg",
+            ".png",
+            ".webp",
+        )
+
+        nombre = getattr(
+            archivo,
+            "name",
+            "",
+        ).lower()
+
+        if not nombre.endswith(
+            extensiones_permitidas
+        ):
+            raise forms.ValidationError(
+                (
+                    "El justificante debe ser PDF, "
+                    "JPG, PNG o WEBP."
+                )
+            )
+
+        limite = 10 * 1024 * 1024
+
+        if archivo.size > limite:
+            raise forms.ValidationError(
+                (
+                    "El justificante no puede "
+                    "superar los 10 MB."
+                )
+            )
+
+        return archivo

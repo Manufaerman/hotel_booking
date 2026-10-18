@@ -1,0 +1,515 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block title %}
+    Patrimonio | By Colección
+{% endblock %}
+
+{% block extra-head %}
+<link
+    rel="stylesheet"
+    href="{% static 'hotel/css/patrimonio/patrimonio_dashboard.css' %}"
+>
+
+<script
+    src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"
+    defer
+></script>
+{% endblock %}
+
+{% block content %}
+
+<main class="patrimonio-dashboard">
+
+    <header class="patrimonio-header patrimonio-header-with-action">
+
+        <div>
+            <span class="patrimonio-eyebrow">
+                Situación financiera
+            </span>
+
+            <h1>
+                Patrimonio
+            </h1>
+
+            <p>
+                Valor de propiedades, liquidez y deuda pendiente.
+            </p>
+        </div>
+
+        <div class="patrimonio-header-actions">
+
+            <a
+                href="{% url 'hotel:valoraciones_propiedad' %}"
+                class="patrimonio-secondary-button"
+            >
+                Ver valoraciones
+            </a>
+
+            <a
+                href="{% url 'hotel:crear_valoracion_propiedad' %}"
+                class="patrimonio-add-button"
+            >
+                <span>+</span>
+                Nueva valoración
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <section class="patrimonio-kpis">
+
+        <article class="patrimonio-kpi">
+            <span>Valor propiedades</span>
+
+            <strong>
+                {{ valor_propiedades|floatformat:2 }} €
+            </strong>
+        </article>
+
+        <article class="patrimonio-kpi">
+            <span>Liquidez disponible</span>
+
+            <strong>
+                {{ liquidez_total|floatformat:2 }} €
+            </strong>
+        </article>
+
+        <article class="patrimonio-kpi patrimonio-kpi-deuda">
+            <span>Deuda pendiente</span>
+
+            <strong>
+                {{ deuda_total|floatformat:2 }} €
+            </strong>
+        </article>
+
+        <article class="patrimonio-kpi patrimonio-kpi-owner">
+            <span>Pagos al socio</span>
+
+            <strong>
+                {{ pagos_socio_total|floatformat:2 }} €
+            </strong>
+
+            <small>
+                Este mes:
+                {{ pagos_socio_mes|floatformat:2 }} €
+            </small>
+        </article>
+
+        <article class="patrimonio-kpi patrimonio-kpi-total">
+            <span>Patrimonio neto</span>
+
+            <strong>
+                {{ patrimonio_neto|floatformat:2 }} €
+            </strong>
+        </article>
+
+    </section>
+
+
+    <section class="patrimonio-section">
+
+        <header class="patrimonio-section-header">
+            <span>
+                Evolución histórica
+            </span>
+
+            <h2>
+                Evolución financiera
+            </h2>
+
+            <p>
+                Pulsa las leyendas para mostrar u ocultar cada línea.
+            </p>
+        </header>
+
+        <div class="patrimonio-chart-wrapper">
+            <canvas id="patrimonioChart"></canvas>
+        </div>
+
+    </section>
+
+
+    <section class="patrimonio-section">
+
+        <header class="patrimonio-section-header">
+            <span>
+                Propiedades
+            </span>
+
+            <h2>
+                Valor actual
+            </h2>
+        </header>
+
+        <div class="patrimonio-properties">
+
+            {% for item in propiedades %}
+
+                <article class="patrimonio-property-card">
+
+                    <div>
+                        <small>
+                            Propiedad
+                        </small>
+
+                        <h3>
+                            {{ item.propiedad.nombre }}
+                        </h3>
+                    </div>
+
+                    <strong>
+                        {{ item.valor|floatformat:2 }} €
+                    </strong>
+
+                </article>
+
+            {% empty %}
+
+                <p class="patrimonio-empty">
+                    Todavía no hay valoraciones registradas.
+                </p>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    <section class="patrimonio-section">
+
+        <header class="patrimonio-section-header">
+            <span>
+                Liquidez
+            </span>
+
+            <h2>
+                Cuentas y efectivo
+            </h2>
+        </header>
+
+        <div class="patrimonio-liquidez">
+
+            {% for cuenta in liquidez_cuentas %}
+
+                <article class="patrimonio-liquidez-row">
+
+                    <div>
+                        <strong>
+                            {{ cuenta.nombre }}
+                        </strong>
+
+                        {% if cuenta.entidad %}
+                            <small>
+                                {{ cuenta.entidad }}
+                            </small>
+                        {% endif %}
+                    </div>
+
+                    <span>
+                        {{ cuenta.importe|floatformat:2 }} €
+                    </span>
+
+                </article>
+
+            {% empty %}
+
+                <p class="patrimonio-empty">
+                    No hay liquidez registrada.
+                </p>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    <section class="patrimonio-section">
+
+        <header class="patrimonio-section-header">
+            <span>
+                Dirección ejecutiva
+            </span>
+
+            <h2>
+                Pagos al socio
+            </h2>
+
+            <p>
+                Salidas registradas desde la sociedad.
+            </p>
+        </header>
+
+        <div class="patrimonio-owner-summary">
+
+            <div>
+                <small>
+                    Total acumulado
+                </small>
+
+                <strong>
+                    {{ pagos_socio_total|floatformat:2 }} €
+                </strong>
+            </div>
+
+            <div>
+                <small>
+                    Este año
+                </small>
+
+                <strong>
+                    {{ pagos_socio_ano|floatformat:2 }} €
+                </strong>
+            </div>
+
+            <div>
+                <small>
+                    Este mes
+                </small>
+
+                <strong>
+                    {{ pagos_socio_mes|floatformat:2 }} €
+                </strong>
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+{{ grafico_labels|json_script:"patrimonio-labels" }}
+{{ grafico_ingresos|json_script:"patrimonio-ingresos" }}
+{{ grafico_gastos|json_script:"patrimonio-gastos" }}
+{{ grafico_gastos_prorrateados|json_script:"patrimonio-gastos-prorrateados" }}
+{{ grafico_valor_propiedades|json_script:"patrimonio-propiedades" }}
+{{ grafico_deuda|json_script:"patrimonio-deuda" }}
+{{ grafico_patrimonio|json_script:"patrimonio-neto" }}
+{{ grafico_pagos_socio|json_script:"patrimonio-pagos-socio" }}
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const canvas = document.getElementById(
+        "patrimonioChart"
+    );
+
+    if (!canvas || typeof Chart === "undefined") {
+        return;
+    }
+
+    function leerDatos(id) {
+        const elemento = document.getElementById(id);
+
+        if (!elemento) {
+            return [];
+        }
+
+        return JSON.parse(elemento.textContent);
+    }
+
+    const labels = leerDatos(
+        "patrimonio-labels"
+    );
+
+    const ingresos = leerDatos(
+        "patrimonio-ingresos"
+    );
+
+    const gastos = leerDatos(
+        "patrimonio-gastos"
+    );
+
+    const gastosProrrateados = leerDatos(
+        "patrimonio-gastos-prorrateados"
+    );
+
+    const propiedades = leerDatos(
+        "patrimonio-propiedades"
+    );
+
+    const deuda = leerDatos(
+        "patrimonio-deuda"
+    );
+
+    const patrimonio = leerDatos(
+        "patrimonio-neto"
+    );
+
+    const pagosSocio = leerDatos(
+        "patrimonio-pagos-socio"
+    );
+
+    new Chart(canvas, {
+
+        type: "line",
+
+        data: {
+            labels: labels,
+
+            datasets: [
+
+                {
+                    label: "Ingresos",
+                    data: ingresos,
+                    borderColor: "#806874",
+                    backgroundColor:
+                        "rgba(128, 104, 116, 0.08)",
+                    borderWidth: 3,
+                    tension: 0.35,
+                    fill: false,
+                },
+
+                {
+                    label: "Gastos normales",
+                    data: gastos,
+                    borderColor: "#b08b62",
+                    backgroundColor:
+                        "rgba(176, 139, 98, 0.08)",
+                    borderWidth: 3,
+                    tension: 0.35,
+                    fill: false,
+                },
+
+                {
+                    label: "Gastos prorrateados",
+                    data: gastosProrrateados,
+                    borderColor: "#c9aeb8",
+                    backgroundColor:
+                        "rgba(201, 174, 184, 0.08)",
+                    borderWidth: 3,
+                    borderDash: [7, 5],
+                    tension: 0.35,
+                    fill: false,
+                    hidden: true,
+                },
+
+                {
+                    label: "Valor propiedades",
+                    data: propiedades,
+                    borderColor: "#72a5a1",
+                    backgroundColor:
+                        "rgba(114, 165, 161, 0.08)",
+                    borderWidth: 3,
+                    tension: 0.35,
+                    fill: false,
+                },
+
+                {
+                    label: "Deuda",
+                    data: deuda,
+                    borderColor: "#a75555",
+                    backgroundColor:
+                        "rgba(167, 85, 85, 0.08)",
+                    borderWidth: 3,
+                    tension: 0.35,
+                    fill: false,
+                },
+
+                {
+                    label: "Patrimonio neto",
+                    data: patrimonio,
+                    borderColor: "#51343e",
+                    backgroundColor:
+                        "rgba(81, 52, 62, 0.08)",
+                    borderWidth: 4,
+                    tension: 0.35,
+                    fill: false,
+                },
+
+                {
+                    label: "Pagos al socio",
+                    data: pagosSocio,
+                    borderColor: "#927783",
+                    backgroundColor:
+                        "rgba(146, 119, 131, 0.08)",
+                    borderWidth: 2,
+                    borderDash: [4, 4],
+                    tension: 0.35,
+                    fill: false,
+                    hidden: true,
+                },
+
+            ],
+        },
+
+        options: {
+
+            responsive: true,
+            maintainAspectRatio: false,
+
+            interaction: {
+                mode: "index",
+                intersect: false,
+            },
+
+            plugins: {
+
+                legend: {
+                    position: "bottom",
+                    labels: {
+                        usePointStyle: true,
+                        padding: 18,
+                    },
+                },
+
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+
+                            return (
+                                context.dataset.label
+                                + ": "
+                                + Number(
+                                    context.raw
+                                ).toLocaleString(
+                                    "es-ES",
+                                    {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2,
+                                    }
+                                )
+                                + " €"
+                            );
+                        },
+                    },
+                },
+            },
+
+            scales: {
+
+                y: {
+                    beginAtZero: false,
+
+                    ticks: {
+                        callback: function (value) {
+                            return Number(
+                                value
+                            ).toLocaleString(
+                                "es-ES"
+                            ) + " €";
+                        },
+                    },
+                },
+
+                x: {
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 0,
+                    },
+                },
+
+            },
+        },
+    });
+
+});
+</script>
+
+{% endblock %}

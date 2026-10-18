@@ -1,0 +1,112 @@
+{% extends "base_dashboard.html" %}
+{% load static %}
+
+{% block title %}
+    Valoraciones | By Colección
+{% endblock %}
+
+{% block extra-head %}
+<link
+    rel="stylesheet"
+    href="{% static 'hotel/css/patrimonio/patrimonio_dashboard.css' %}"
+>
+{% endblock %}
+
+{% block content %}
+
+<main class="patrimonio-dashboard">
+
+    <header class="patrimonio-header patrimonio-header-with-action">
+
+        <div>
+            <span class="patrimonio-eyebrow">
+                Patrimonio
+            </span>
+
+            <h1>
+                Valoraciones
+            </h1>
+
+            <p>
+                Historial del valor estimado de tus propiedades.
+            </p>
+        </div>
+
+        <a
+            href="{% url 'hotel:crear_valoracion_propiedad' %}"
+            class="patrimonio-add-button"
+        >
+            <span>+</span>
+            Nueva valoración
+        </a>
+
+    </header>
+
+
+    <section class="patrimonio-section">
+
+        {% if valoraciones %}
+
+            <div class="patrimonio-valuations-list">
+
+                {% for valoracion in valoraciones %}
+
+                    <article class="patrimonio-valuation-card">
+
+                        <div>
+                            <small>
+                                {{ valoracion.fecha|date:"d/m/Y" }}
+                            </small>
+
+                            <h2>
+                                {{ valoracion.propiedad.nombre }}
+                            </h2>
+
+                            {% if valoracion.fuente %}
+                                <p>
+                                    {{ valoracion.fuente }}
+                                </p>
+                            {% endif %}
+                        </div>
+
+                        <strong>
+                            {{ valoracion.valor|floatformat:2 }} €
+                        </strong>
+
+                        <div class="patrimonio-valuation-actions">
+
+                            <a
+                                href="{% url 'hotel:editar_valoracion_propiedad' valoracion.pk %}"
+                                class="patrimonio-edit-button"
+                            >
+                                Editar
+                            </a>
+
+                            <a
+                                href="{% url 'hotel:eliminar_valoracion_propiedad' valoracion.pk %}"
+                                class="patrimonio-delete-button"
+                            >
+                                Eliminar
+                            </a>
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <p class="patrimonio-empty">
+                Todavía no hay valoraciones registradas.
+            </p>
+
+        {% endif %}
+
+    </section>
+
+</main>
+
+{% endblock %}

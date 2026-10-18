@@ -31,7 +31,7 @@
         </div>
 
         <a
-            href="{% url 'hotel:crear_hipoteca' %}"
+            href="{% url 'hotel:crear_prestamo' %}"
             class="btn-primary"
         >
             + Nuevo préstamo
@@ -502,7 +502,7 @@
 
 
                     <a
-                        href="{% url 'hotel:crear_pago_hipoteca' prestamo.pk %}"
+                        href="{% url 'hotel:crear_pago_prestamo' prestamo.pk %}"
                     >
                         Registrar pago
                     </a>

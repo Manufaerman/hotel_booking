@@ -1,0 +1,1375 @@
+/* =========================================================
+   GASTOS PERSONALES — BY COLECCIÓN
+========================================================= */
+
+:root {
+    --personal-bg: #f4efe8;
+    --personal-card: #fffdf9;
+    --personal-soft: #f8f3ee;
+
+    --personal-wine: #5a3042;
+    --personal-wine-dark: #40212f;
+    --personal-wine-soft: #806874;
+
+    --personal-sage: #72a5a1;
+    --personal-sage-dark: #568783;
+
+    --personal-gold: #b58a56;
+    --personal-gold-soft: #f6e9cc;
+
+    --personal-text: #3d3538;
+    --personal-muted: #786e72;
+
+    --personal-danger: #ad574e;
+
+    --personal-border: rgba(81, 52, 62, 0.12);
+    --personal-shadow:
+        0 14px 34px rgba(67, 33, 48, 0.08);
+
+    --personal-sans:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+
+    --personal-serif:
+        Georgia,
+        "Times New Roman",
+        serif;
+}
+
+
+/* =========================================================
+   BASE
+========================================================= */
+
+.personal-dashboard,
+.personal-form-page,
+.personal-delete-page {
+    width: 100%;
+    min-width: 0;
+    min-height: 100vh;
+
+    padding: 42px 32px 75px;
+
+    box-sizing: border-box;
+
+    background: var(--personal-bg);
+    color: var(--personal-text);
+
+    font-family: var(--personal-sans);
+}
+
+.personal-dashboard *,
+.personal-form-page *,
+.personal-delete-page * {
+    box-sizing: border-box;
+}
+
+.personal-eyebrow {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: var(--personal-sage);
+
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   CABECERA DEL DASHBOARD
+========================================================= */
+
+.personal-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+
+    width: 100%;
+    max-width: 1180px;
+
+    margin: 0 auto 30px;
+}
+
+.personal-header h1,
+.personal-form-header h1,
+.personal-delete-card h1 {
+    margin: 0;
+
+    color: var(--personal-wine);
+
+    font-family: var(--personal-serif);
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 500;
+    line-height: 0.98;
+}
+
+.personal-header p,
+.personal-form-header p {
+    margin: 12px 0 0;
+
+    color: var(--personal-muted);
+    font-size: 0.92rem;
+}
+
+
+/* =========================================================
+   BOTÓN AÑADIR
+========================================================= */
+
+.personal-add-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    min-height: 52px;
+    padding: 8px 21px 8px 9px;
+
+    border-radius: 17px;
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--personal-wine),
+            var(--personal-wine-dark)
+        );
+
+    color: #ffffff;
+
+    font-size: 0.84rem;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+
+    box-shadow:
+        0 12px 25px rgba(67, 33, 48, 0.2);
+
+    transition:
+        transform 160ms ease,
+        box-shadow 160ms ease;
+}
+
+.personal-add-button span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 36px;
+    height: 36px;
+
+    border-radius: 11px;
+
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.personal-add-button:hover {
+    color: #ffffff;
+    text-decoration: none;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 16px 30px rgba(67, 33, 48, 0.26);
+}
+
+
+/* =========================================================
+   RESUMEN
+========================================================= */
+
+.personal-summary {
+    display: grid;
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+    gap: 15px;
+
+    width: 100%;
+    max-width: 1180px;
+
+    margin: 0 auto 32px;
+}
+
+.personal-summary-card {
+    position: relative;
+
+    min-width: 0;
+    min-height: 155px;
+
+    padding: 22px;
+    overflow: hidden;
+
+    border: 1px solid var(--personal-border);
+    border-radius: 23px;
+
+    background: var(--personal-card);
+    box-shadow: var(--personal-shadow);
+}
+
+.personal-summary-card::after {
+    position: absolute;
+    top: -40px;
+    right: -36px;
+
+    width: 110px;
+    height: 110px;
+
+    border-radius: 50%;
+
+    background: rgba(128, 104, 116, 0.08);
+
+    content: "";
+}
+
+.personal-summary-card > * {
+    position: relative;
+    z-index: 1;
+}
+
+.personal-summary-card span {
+    display: block;
+
+    color: var(--personal-muted);
+
+    font-size: 0.72rem;
+    font-weight: 700;
+}
+
+.personal-summary-card strong {
+    display: block;
+
+    margin: 22px 0 10px;
+
+    color: var(--personal-wine);
+
+    font-size: clamp(1.45rem, 2.4vw, 2.1rem);
+    font-weight: 650;
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+
+    white-space: nowrap;
+}
+
+.personal-summary-card small {
+    display: block;
+
+    color: var(--personal-muted);
+
+    font-size: 0.67rem;
+    line-height: 1.4;
+}
+
+.personal-summary-total {
+    background:
+        linear-gradient(
+            145deg,
+            #f5e8ed,
+            var(--personal-card)
+        );
+}
+
+.personal-summary-spain {
+    background:
+        linear-gradient(
+            145deg,
+            #edf5f2,
+            var(--personal-card)
+        );
+}
+
+.personal-summary-argentina {
+    background:
+        linear-gradient(
+            145deg,
+            #faf0d9,
+            var(--personal-card)
+        );
+}
+
+
+/* =========================================================
+   GRÁFICOS
+========================================================= */
+
+.personal-charts {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    gap: 18px;
+
+    width: 100%;
+    max-width: 1180px;
+
+    margin: 0 auto 34px;
+}
+
+.personal-chart-card {
+    min-width: 0;
+    min-height: 385px;
+
+    padding: 25px;
+
+    border: 1px solid var(--personal-border);
+    border-radius: 25px;
+
+    background: var(--personal-card);
+    box-shadow: var(--personal-shadow);
+}
+
+.personal-chart-card header {
+    margin-bottom: 16px;
+}
+
+.personal-chart-card header span {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: var(--personal-sage);
+
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+.personal-chart-card h2 {
+    margin: 0;
+
+    color: var(--personal-wine);
+
+    font-family: var(--personal-serif);
+    font-size: 1.55rem;
+    font-weight: 500;
+}
+
+.personal-chart-wrapper {
+    position: relative;
+
+    width: 100%;
+    height: 285px;
+    max-height: 285px;
+}
+
+.personal-chart-wrapper canvas {
+    display: block !important;
+
+    width: 100% !important;
+    height: 285px !important;
+    max-height: 285px !important;
+}
+
+
+/* =========================================================
+   MOVIMIENTOS
+========================================================= */
+
+.personal-movements {
+    width: 100%;
+    max-width: 1180px;
+
+    margin: 0 auto;
+    padding: 28px;
+
+    border: 1px solid var(--personal-border);
+    border-radius: 28px;
+
+    background: var(--personal-card);
+    box-shadow: var(--personal-shadow);
+}
+
+.personal-section-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+
+    margin-bottom: 22px;
+}
+
+.personal-section-heading h2 {
+    margin: 0;
+
+    color: var(--personal-wine);
+
+    font-family: var(--personal-serif);
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-weight: 500;
+}
+
+
+/* =========================================================
+   FILTROS
+========================================================= */
+
+.personal-filters {
+    margin-bottom: 24px;
+    padding: 16px;
+
+    border: 1px solid var(--personal-border);
+    border-radius: 20px;
+
+    background: var(--personal-soft);
+}
+
+.personal-country-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    margin-bottom: 14px;
+}
+
+.personal-country-filter {
+    min-height: 38px;
+    padding: 0 16px;
+
+    border: 1px solid var(--personal-border);
+    border-radius: 999px;
+
+    background: var(--personal-card);
+    color: var(--personal-wine);
+
+    font-size: 0.73rem;
+    font-weight: 750;
+
+    cursor: pointer;
+
+    transition:
+        background 150ms ease,
+        color 150ms ease,
+        transform 150ms ease;
+}
+
+.personal-country-filter:hover {
+    transform: translateY(-1px);
+}
+
+.personal-country-filter.is-active {
+    border-color: var(--personal-wine);
+
+    background: var(--personal-wine);
+    color: #ffffff;
+}
+
+.personal-filter-fields {
+    display: grid;
+    grid-template-columns:
+        minmax(160px, 0.8fr)
+        minmax(200px, 1.4fr)
+        auto
+        auto;
+    align-items: end;
+    gap: 10px;
+}
+
+.personal-filter-fields > div {
+    min-width: 0;
+}
+
+.personal-filter-fields label {
+    display: block;
+
+    margin: 0 0 6px 3px;
+
+    color: var(--personal-muted);
+
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.personal-filter-control {
+    width: 100%;
+    min-height: 42px;
+
+    padding: 0 12px;
+
+    border: 1px solid var(--personal-border);
+    border-radius: 12px;
+
+    background: #ffffff;
+    color: var(--personal-text);
+
+    font-family: var(--personal-sans);
+    font-size: 0.82rem;
+}
+
+.personal-filter-control:focus {
+    border-color: var(--personal-sage);
+    outline: 3px solid rgba(114, 165, 161, 0.18);
+}
+
+.personal-filter-submit,
+.personal-filter-clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 42px;
+    padding: 0 17px;
+
+    border-radius: 12px;
+
+    font-size: 0.74rem;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.personal-filter-submit {
+    border: 0;
+
+    background: var(--personal-sage);
+    color: #ffffff;
+
+    cursor: pointer;
+}
+
+.personal-filter-clear {
+    border: 1px solid var(--personal-border);
+
+    background: var(--personal-card);
+    color: var(--personal-wine);
+}
+
+
+/* =========================================================
+   LISTADO
+========================================================= */
+
+.personal-movement-list {
+    display: grid;
+    gap: 9px;
+}
+
+.personal-movement-card {
+    display: grid;
+    grid-template-columns:
+        minmax(260px, 2fr)
+        minmax(150px, 0.8fr)
+        minmax(150px, 0.8fr)
+        auto;
+    align-items: center;
+    gap: 18px;
+
+    min-width: 0;
+    padding: 16px;
+
+    border: 1px solid var(--personal-border);
+    border-radius: 17px;
+
+    background: #fffefa;
+}
+
+.personal-movement-main {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+
+    min-width: 0;
+}
+
+.personal-movement-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 42px;
+
+    width: 42px;
+    height: 42px;
+
+    border-radius: 13px;
+    background: #f1ebe7;
+
+    font-size: 1.1rem;
+}
+
+.personal-movement-main > div:last-child {
+    min-width: 0;
+}
+
+.personal-movement-date {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: var(--personal-muted);
+    font-size: 0.64rem;
+}
+
+.personal-movement-main h3 {
+    overflow: hidden;
+
+    margin: 0 0 4px;
+
+    color: var(--personal-text);
+
+    font-size: 0.88rem;
+    font-weight: 800;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.personal-movement-main p {
+    margin: 0;
+
+    color: var(--personal-muted);
+
+    font-size: 0.68rem;
+}
+
+.personal-movement-amount strong {
+    display: block;
+
+    color: var(--personal-wine);
+
+    font-size: 0.93rem;
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+.personal-movement-amount small {
+    display: block;
+
+    margin-top: 4px;
+
+    color: var(--personal-sage-dark);
+    font-size: 0.68rem;
+    font-weight: 700;
+}
+
+.personal-movement-payment span {
+    display: inline-flex;
+
+    padding: 6px 10px;
+
+    border-radius: 999px;
+
+    background: #e8f2ef;
+    color: var(--personal-sage-dark);
+
+    font-size: 0.65rem;
+    font-weight: 750;
+}
+
+.personal-movement-payment a {
+    display: block;
+
+    margin-top: 6px;
+
+    color: var(--personal-wine);
+
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.personal-movement-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.personal-movement-actions a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 35px;
+    height: 35px;
+
+    border: 1px solid var(--personal-border);
+    border-radius: 11px;
+
+    background: #ffffff;
+    color: var(--personal-wine);
+
+    text-decoration: none;
+}
+
+.personal-movement-actions a:hover {
+    background: var(--personal-wine);
+    color: #ffffff;
+}
+
+.personal-movement-actions .personal-delete-action {
+    color: var(--personal-danger);
+}
+
+.personal-movement-actions .personal-delete-action:hover {
+    background: var(--personal-danger);
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   ESTADO VACÍO
+========================================================= */
+
+.personal-empty {
+    padding: 48px 20px;
+
+    border: 1px dashed var(--personal-border);
+    border-radius: 18px;
+
+    text-align: center;
+}
+
+.personal-empty span {
+    display: block;
+
+    color: var(--personal-wine);
+
+    font-family: var(--personal-serif);
+    font-size: 1.45rem;
+}
+
+.personal-empty p {
+    margin: 8px 0 0;
+
+    color: var(--personal-muted);
+    font-size: 0.8rem;
+}
+
+
+/* =========================================================
+   FORMULARIO
+========================================================= */
+
+.personal-form-page {
+    padding-top: 38px;
+}
+
+.personal-form-header {
+    width: 100%;
+    max-width: 900px;
+
+    margin: 0 auto 25px;
+}
+
+.personal-form-header h1 {
+    font-size: clamp(2.3rem, 5vw, 4rem);
+}
+
+.personal-form-card {
+    width: 100%;
+    max-width: 900px;
+
+    margin: 0 auto;
+    padding: 30px;
+
+    border: 1px solid var(--personal-border);
+    border-radius: 28px;
+
+    background: var(--personal-card);
+    box-shadow: var(--personal-shadow);
+}
+
+.personal-form-errors {
+    margin-bottom: 20px;
+    padding: 13px 15px;
+
+    border: 1px solid rgba(173, 87, 78, 0.25);
+    border-radius: 13px;
+
+    background: rgba(173, 87, 78, 0.08);
+    color: var(--personal-danger);
+
+    font-size: 0.78rem;
+}
+
+.personal-form-section {
+    padding-bottom: 30px;
+}
+
+.personal-form-section + .personal-form-section {
+    padding-top: 30px;
+
+    border-top: 1px solid var(--personal-border);
+}
+
+.personal-form-section > header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+
+    margin-bottom: 24px;
+}
+
+.personal-form-section > header > span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 38px;
+
+    width: 38px;
+    height: 38px;
+
+    border-radius: 12px;
+
+    background: #e3f0ee;
+    color: var(--personal-sage-dark);
+
+    font-size: 0.7rem;
+    font-weight: 800;
+}
+
+.personal-form-section h2 {
+    margin: 0;
+
+    color: var(--personal-wine);
+
+    font-family: var(--personal-serif);
+    font-size: 1.65rem;
+    font-weight: 500;
+}
+
+.personal-form-section header p {
+    margin: 6px 0 0;
+
+    color: var(--personal-muted);
+    font-size: 0.78rem;
+}
+
+
+/* =========================================================
+   SELECTOR DE PAÍS
+========================================================= */
+
+.personal-country-selector {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    gap: 11px;
+
+    margin-bottom: 22px;
+}
+
+.personal-country-button {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+
+    min-height: 62px;
+    padding: 10px 17px;
+
+    border: 1px solid var(--personal-border);
+    border-radius: 17px;
+
+    background: #ffffff;
+    color: var(--personal-text);
+
+    font-size: 0.85rem;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        border 150ms ease,
+        background 150ms ease,
+        box-shadow 150ms ease;
+}
+
+.personal-country-button span {
+    font-size: 1.3rem;
+}
+
+.personal-country-button.is-active {
+    border-color: var(--personal-wine);
+
+    background: var(--personal-wine);
+    color: #ffffff;
+
+    box-shadow:
+        0 10px 22px rgba(81, 52, 62, 0.18);
+}
+
+.personal-native-country {
+    position: absolute;
+
+    width: 1px;
+    height: 1px;
+
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   CAMPOS DEL FORMULARIO
+========================================================= */
+
+.personal-form-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    gap: 19px;
+}
+
+.personal-form-grid-place {
+    margin-top: 4px;
+}
+
+.personal-form-group {
+    min-width: 0;
+}
+
+.personal-form-full {
+    grid-column: 1 / -1;
+}
+
+.personal-form-group[hidden] {
+    display: none !important;
+}
+
+.personal-form-group label {
+    display: block;
+
+    margin: 0 0 7px 3px;
+
+    color: var(--personal-wine);
+
+    font-size: 0.72rem;
+    font-weight: 750;
+}
+
+.personal-control,
+.personal-file {
+    width: 100%;
+    min-height: 48px;
+
+    padding: 0 13px;
+
+    border: 1px solid var(--personal-border);
+    border-radius: 14px;
+
+    background: #ffffff;
+    color: var(--personal-text);
+
+    font-family: var(--personal-sans);
+    font-size: 0.86rem;
+
+    transition:
+        border 150ms ease,
+        box-shadow 150ms ease;
+}
+
+.personal-control:focus,
+.personal-file:focus {
+    border-color: var(--personal-sage);
+    outline: none;
+
+    box-shadow:
+        0 0 0 4px rgba(114, 165, 161, 0.16);
+}
+
+.personal-textarea {
+    min-height: 105px;
+    padding-top: 13px;
+    resize: vertical;
+}
+
+.personal-file {
+    padding: 10px 12px;
+}
+
+.personal-form-group small {
+    display: block;
+
+    margin: 6px 3px 0;
+
+    color: var(--personal-muted);
+    font-size: 0.65rem;
+    line-height: 1.4;
+}
+
+.personal-field-error {
+    display: block;
+
+    margin: 6px 3px 0;
+
+    color: var(--personal-danger);
+    font-size: 0.68rem;
+    font-weight: 700;
+}
+
+.personal-money-control {
+    position: relative;
+}
+
+.personal-money-control .personal-control {
+    padding-right: 52px;
+}
+
+.personal-money-control > span {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+
+    color: var(--personal-wine);
+
+    font-size: 0.8rem;
+    font-weight: 800;
+
+    transform: translateY(-50%);
+}
+
+
+/* =========================================================
+   ACCIONES DEL FORMULARIO
+========================================================= */
+
+.personal-form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 11px;
+
+    padding-top: 25px;
+
+    border-top: 1px solid var(--personal-border);
+}
+
+.personal-form-back,
+.personal-form-submit,
+.personal-delete-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 46px;
+    padding: 0 20px;
+
+    border-radius: 14px;
+
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.personal-form-back {
+    border: 1px solid var(--personal-border);
+
+    background: transparent;
+    color: var(--personal-wine);
+}
+
+.personal-form-submit {
+    border: 0;
+
+    background:
+        linear-gradient(
+            145deg,
+            var(--personal-wine),
+            var(--personal-wine-dark)
+        );
+
+    color: #ffffff;
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   ELIMINAR
+========================================================= */
+
+.personal-delete-page {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+
+    padding-top: 70px;
+}
+
+.personal-delete-card {
+    width: 100%;
+    max-width: 550px;
+
+    padding: 38px;
+
+    border: 1px solid var(--personal-border);
+    border-radius: 28px;
+
+    background: var(--personal-card);
+    box-shadow: var(--personal-shadow);
+
+    text-align: center;
+}
+
+.personal-delete-card h1 {
+    font-size: clamp(2rem, 5vw, 3.3rem);
+}
+
+.personal-delete-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 58px;
+    height: 58px;
+
+    margin: 0 auto 19px;
+
+    border-radius: 18px;
+
+    background: rgba(173, 87, 78, 0.12);
+    color: var(--personal-danger);
+
+    font-size: 1.25rem;
+}
+
+.personal-delete-card > p {
+    margin: 20px 0 0;
+
+    color: var(--personal-muted);
+    line-height: 1.6;
+}
+
+.personal-delete-warning {
+    color: var(--personal-danger) !important;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.personal-delete-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 11px;
+
+    margin-top: 28px;
+}
+
+.personal-delete-submit {
+    border: 0;
+
+    background: var(--personal-danger);
+    color: #ffffff;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1000px) {
+    .personal-summary {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .personal-charts {
+        grid-template-columns: 1fr;
+    }
+
+    .personal-movement-card {
+        grid-template-columns:
+            minmax(230px, 2fr)
+            minmax(140px, 1fr)
+            auto;
+    }
+
+    .personal-movement-payment {
+        display: none;
+    }
+}
+
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
+@media (max-width: 650px) {
+    .personal-dashboard,
+    .personal-form-page,
+    .personal-delete-page {
+        padding: 24px 12px 52px;
+    }
+
+    .personal-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 18px;
+
+        margin-bottom: 23px;
+    }
+
+    .personal-header h1,
+    .personal-form-header h1 {
+        font-size: 2.6rem;
+    }
+
+    .personal-add-button {
+        width: 100%;
+        min-height: 49px;
+    }
+
+    .personal-summary {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 10px;
+        margin-bottom: 25px;
+    }
+
+    .personal-summary-card {
+        min-height: 140px;
+
+        padding: 16px;
+        border-radius: 19px;
+    }
+
+    .personal-summary-card strong {
+        margin: 18px 0 8px;
+
+        font-size: 1.4rem;
+        white-space: normal;
+    }
+
+    .personal-charts {
+        gap: 13px;
+        margin-bottom: 25px;
+    }
+
+    .personal-chart-card {
+        min-height: 330px;
+
+        padding: 18px;
+        border-radius: 20px;
+    }
+
+    .personal-chart-wrapper,
+    .personal-chart-wrapper canvas {
+        height: 235px !important;
+        max-height: 235px !important;
+    }
+
+    .personal-movements {
+        padding: 17px;
+        border-radius: 22px;
+    }
+
+    .personal-section-heading h2 {
+        font-size: 1.85rem;
+    }
+
+    .personal-filter-fields {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .personal-filter-submit,
+    .personal-filter-clear {
+        width: 100%;
+    }
+
+    .personal-movement-card {
+        grid-template-columns:
+            minmax(0, 1fr)
+            auto;
+        gap: 12px;
+
+        padding: 14px;
+    }
+
+    .personal-movement-main {
+        grid-column: 1 / -1;
+    }
+
+    .personal-movement-amount {
+        padding-left: 55px;
+    }
+
+    .personal-movement-actions {
+        justify-content: flex-end;
+    }
+
+    .personal-form-card {
+        padding: 18px;
+        border-radius: 22px;
+    }
+
+    .personal-form-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .personal-form-full {
+        grid-column: auto;
+    }
+
+    .personal-country-selector {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .personal-country-button {
+        justify-content: center;
+
+        min-height: 58px;
+        padding: 9px;
+
+        font-size: 0.78rem;
+    }
+
+    .personal-form-actions {
+        display: grid;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 8px;
+    }
+
+    .personal-form-back,
+    .personal-form-submit {
+        width: 100%;
+    }
+
+    .personal-delete-page {
+        padding-top: 38px;
+    }
+
+    .personal-delete-card {
+        padding: 25px 18px;
+        border-radius: 22px;
+    }
+
+    .personal-delete-actions {
+        display: grid;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+/* =========================================================
+   MÓVIL MUY PEQUEÑO
+========================================================= */
+
+@media (max-width: 390px) {
+    .personal-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .personal-filter-fields {
+        grid-template-columns: 1fr;
+    }
+
+    .personal-country-selector {
+        grid-template-columns: 1fr;
+    }
+}

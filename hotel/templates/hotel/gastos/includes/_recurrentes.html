@@ -17,6 +17,32 @@
             </p>
         </div>
 
+        <div class="gastos-recurrentes-resumen">
+
+    <div class="gasto-recurrente-resumen-item">
+        <span>
+            Prorrateado
+        </span>
+
+        <strong>
+            {{ gastos_recurrentes_prorrateados_mes|floatformat:2 }} €
+        </strong>
+    </div>
+
+    <div class="gasto-recurrente-resumen-item">
+        <span>
+            Este mes
+        </span>
+
+        <strong>
+            {{ gastos_recurrentes_este_mes|floatformat:2 }} €
+        </strong>
+    </div>
+
+</div>
+
+
+
         <a
             href="{% url 'hotel:crear_gasto' %}?pais={{ pais_actual }}{% if proyecto_actual %}&proyecto={{ proyecto_actual.pk }}{% endif %}"
             class="gastos-create-button"

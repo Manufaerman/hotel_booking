@@ -3,9 +3,11 @@ from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
 from django.urls import path
 from django.views.generic import TemplateView
-from .views import service_worker, IngresosDashboardView, CrearPagoHipotecaView, CrearHipotecaView, \
-    HipotecasDashboardView, EditarPrestamoView, EliminarPrestamoView, DetallePrestamoView, EditarPagoPrestamoView, \
-    EliminarPagoPrestamoView, ver_justificante_prestamo
+from .views import service_worker, IngresosDashboardView, CrearPagoPrestamoView, CrearPrestamoView, \
+    PrestamoDashboardView, EditarPrestamoView, EliminarPrestamoView, DetallePrestamoView, EditarPagoPrestamoView, \
+    EliminarPagoPrestamoView, ver_justificante_prestamo, PatrimonioDashboardView, CrearValoracionPropiedadView, \
+    EliminarValoracionPropiedadView, EditarValoracionPropiedadView, ValoracionesPropiedadView, \
+    EliminarGastoPersonalView, EditarGastoPersonalView, CrearGastoPersonalView, GastosPersonalesDashboardView
 from hotel.sitemaps import StaticViewSitemap
 
 from .views import (
@@ -360,60 +362,116 @@ path(
     name="ingresos_dashboard",
 ),
 path(
-    "dashboard/hipotecas/",
-    HipotecasDashboardView.as_view(),
-    name="hipotecas_dashboard",
+    "dashboard/prestamos/",
+    PrestamoDashboardView.as_view(),
+    name="prestamos_dashboard",
 ),
 
 path(
-    "dashboard/hipotecas/nueva/",
-    CrearHipotecaView.as_view(),
-    name="crear_hipoteca",
+    "dashboard/prestamos/nueva/",
+    CrearPrestamoView.as_view(),
+    name="crear_prestamo",
 ),
 
 path(
-    "dashboard/hipotecas/<int:pk>/pago/",
-    CrearPagoHipotecaView.as_view(),
-    name="crear_pago_hipoteca",
+    "dashboard/prestamos/<int:pk>/pago/",
+    CrearPagoPrestamoView.as_view(),
+    name="crear_pago_prestamo",
 ),
 
 path(
-    "dashboard/hipotecas/<int:pk>/editar/",
+    "dashboard/prestamos/<int:pk>/editar/",
     EditarPrestamoView.as_view(),
     name="editar_prestamo",
 ),
 
 path(
-    "dashboard/hipotecas/<int:pk>/eliminar/",
+    "dashboard/prestamos/<int:pk>/eliminar/",
     EliminarPrestamoView.as_view(),
     name="eliminar_prestamo",
 ),
 
 path(
-    "dashboard/hipotecas/<int:pk>/",
+    "dashboard/prestamos/<int:pk>/",
     DetallePrestamoView.as_view(),
     name="detalle_prestamo",
 ),
 
 path(
-    "dashboard/hipotecas/pago/<int:pk>/editar/",
+    "dashboard/prestamos/pago/<int:pk>/editar/",
     EditarPagoPrestamoView.as_view(),
     name="editar_pago_prestamo",
 ),
 
 path(
-    "dashboard/hipotecas/pago/<int:pk>/eliminar/",
+    "dashboard/prestamos/pago/<int:pk>/eliminar/",
     EliminarPagoPrestamoView.as_view(),
     name="eliminar_pago_prestamo",
 ),
 
 path(
-    "dashboard/hipotecas/pago/<int:pk>/justificante/",
+    "dashboard/prestamos/pago/<int:pk>/justificante/",
     ver_justificante_prestamo,
     name="justificante_prestamo",
 ),
 
+path(
+    "dashboard/patrimonio/",
+    PatrimonioDashboardView.as_view(),
+    name="patrimonio_dashboard",
+),
+path(
+    "dashboard/patrimonio/valoraciones/nueva/",
+    CrearValoracionPropiedadView.as_view(),
+    name="crear_valoracion_propiedad",
+),
+path(
+    "dashboard/patrimonio/valoraciones/",
+    ValoracionesPropiedadView.as_view(),
+    name="valoraciones_propiedad",
+),
 
+path(
+    "dashboard/patrimonio/valoraciones/<int:pk>/editar/",
+    EditarValoracionPropiedadView.as_view(),
+    name="editar_valoracion_propiedad",
+),
+
+path(
+    "dashboard/patrimonio/valoraciones/<int:pk>/eliminar/",
+    EliminarValoracionPropiedadView.as_view(),
+    name="eliminar_valoracion_propiedad",
+),
+
+path(
+    "dashboard/gastos-personales/",
+    GastosPersonalesDashboardView.as_view(),
+    name="gastos_personales",
+),
+
+path(
+    "dashboard/gastos-personales/nuevo/",
+    CrearGastoPersonalView.as_view(),
+    name="crear_gasto_personal",
+),
+
+path(
+    (
+        "dashboard/gastos-personales/"
+        "<int:pk>/editar/"
+    ),
+    EditarGastoPersonalView.as_view(),
+    name="editar_gasto_personal",
+),
+
+path(
+    (
+        "dashboard/gastos-personales/"
+        "<int:pk>/eliminar/"
+    ),
+    EliminarGastoPersonalView.as_view(),
+    name="eliminar_gasto_personal",
+),
 ]
 
 

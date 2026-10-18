@@ -4,7 +4,7 @@ from .models import Flat, Inquilino, ContratoAlquiler, Gasto, Inventario, Itemin
 from .models import Habitacion, MultimediaHabitacion, Planta, EventoPlanta, ComentarioPlanta
 from .models import Proveedor, IngresoPropiedad
 from django.contrib import admin
-class PagoHipotecaInline(admin.TabularInline):
+class PagoPrestamoInline(admin.TabularInline):
     model = PagoPrestamo
     extra = 0
     ordering = ["-fecha"]
@@ -21,7 +21,7 @@ class PagoHipotecaInline(admin.TabularInline):
 
 
 @admin.register(Prestamo)
-class HipotecaAdmin(admin.ModelAdmin):
+class PrestamoAdmin(admin.ModelAdmin):
 
     list_display = [
         "propiedad",
@@ -45,7 +45,7 @@ class HipotecaAdmin(admin.ModelAdmin):
     ]
 
     inlines = [
-        PagoHipotecaInline,
+        PagoPrestamoInline,
     ]
 
 
