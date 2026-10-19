@@ -638,6 +638,7 @@ class Gasto(models.Model):
         max_length=30,
         choices=TIPOS_GESTION,
         blank=True,
+        default=""
     )
 
     cotizacion_usd = models.DecimalField(
@@ -878,23 +879,29 @@ class Gasto(models.Model):
         verbose_name = "Gasto"
         verbose_name_plural = "Gastos"
 
+    def save(self, *args, **kwargs):
+
+        self.tipo_gestion = (
+                self.tipo_gestion or ""
+        )
+
+        super().save(*args, **kwargs)
+
     def clean(self):
         super().clean()
 
         errores = {}
 
         if self.categoria == "gestion_ejecutiva":
+
             if not self.tipo_gestion:
-                raise ValidationError(
-                    {
-                        "tipo_gestion": (
-                            "Selecciona si es un pago al socio "
-                            "o un gasto de gestión."
-                        )
-                    }
+                errores["tipo_gestion"] = (
+                    "Selecciona si es un pago al socio "
+                    "o un gasto de gestión."
                 )
+
         else:
-            self.tipo_gestion = None
+            self.tipo_gestion = ""
 
         if (
             self.importe is not None
