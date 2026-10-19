@@ -3423,6 +3423,8 @@ class GastosDashboardView(
     PermissionRequiredMixin,
     View,
 ):
+    permission_required = "hotel.view_gasto"
+
     template_name = "hotel/gastos/dashboard.html"
 
     PAISES_VALIDOS = {
@@ -7361,6 +7363,8 @@ class IngresosDashboardView(
     PermissionRequiredMixin,
     View,
 ):
+    permission_required = "hotel.view_ingresopropiedad"
+
     template_name = (
         "hotel/ingresos/ingresos_dashboard.html"
     )
@@ -9413,8 +9417,11 @@ class EliminarValoracionPropiedadView(
 class GastosPersonalesDashboardView(
     LoginRequiredMixin,
     PermissionRequiredMixin,
-    View,
-):
+    View,):
+
+    permission_required = (
+        "hotel.view_gastopersonal"
+    )
     template_name = (
         "hotel/gastos_personales/dashboard.html"
     )
