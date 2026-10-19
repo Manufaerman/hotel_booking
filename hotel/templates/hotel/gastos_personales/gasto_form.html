@@ -8,7 +8,7 @@
 {% block extra-head %}
 <link
     rel="stylesheet"
-    href="{% static 'hotel/css/gastos_personales.css' %}"
+    href="{% static 'hotel/css/gastos_personales/gastos_personales.css' %}"
 >
 
 <script
@@ -110,49 +110,7 @@
                 {% endfor %}
 
 
-                <div class="personal-form-grid personal-form-grid-place">
 
-                    <div class="personal-form-group">
-
-                        <label for="{{ form.ciudad.id_for_label }}">
-                            {{ form.ciudad.label }}
-                        </label>
-
-                        {{ form.ciudad }}
-
-                        {% for error in form.ciudad.errors %}
-                            <span class="personal-field-error">
-                                {{ error }}
-                            </span>
-                        {% endfor %}
-
-                    </div>
-
-
-                    <div
-                        class="personal-form-group"
-                        data-exchange-group
-                    >
-
-                        <label for="{{ form.cotizacion_eur.id_for_label }}">
-                            {{ form.cotizacion_eur.label }}
-                        </label>
-
-                        {{ form.cotizacion_eur }}
-
-                        <small>
-                            Pesos argentinos equivalentes a un euro.
-                        </small>
-
-                        {% for error in form.cotizacion_eur.errors %}
-                            <span class="personal-field-error">
-                                {{ error }}
-                            </span>
-                        {% endfor %}
-
-                    </div>
-
-                </div>
 
             </section>
 

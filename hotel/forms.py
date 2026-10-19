@@ -11,6 +11,10 @@ from .models import (
     Gasto,
     GastoRecurrente,Prestamo, PagoPrestamo
 )
+from .services.cotizaciones import (
+    CotizacionNoDisponible,
+    obtener_euro_blue,
+)
 
 class EditarGastoRecurrenteForm(
     forms.ModelForm,
@@ -1884,7 +1888,6 @@ class GastoPersonalForm(forms.ModelForm):
 
         fields = [
             "pais",
-            "ciudad",
             "concepto",
             "categoria",
             "importe",
@@ -1942,18 +1945,7 @@ class GastoPersonalForm(forms.ModelForm):
                     "placeholder": "0,00",
                 },
             ),
-            "cotizacion_eur": forms.NumberInput(
-                attrs={
-                    "class": "personal-control",
-                    "min": "0.000001",
-                    "step": "0.000001",
-                    "inputmode": "decimal",
-                    "placeholder": (
-                        "Pesos argentinos por euro"
-                    ),
-                    "data-personal-exchange": "",
-                },
-            ),
+            "cotizacion_eur": forms.NumberInput(),
             "fecha": forms.DateInput(
                 format="%Y-%m-%d",
                 attrs={
@@ -2000,10 +1992,6 @@ class GastoPersonalForm(forms.ModelForm):
         ]
 
         self.fields[
-            "ciudad"
-        ].required = False
-
-        self.fields[
             "cotizacion_eur"
         ].required = False
 
@@ -2038,39 +2026,87 @@ class GastoPersonalForm(forms.ModelForm):
             "importe"
         )
 
-        cotizacion_eur = cleaned_data.get(
-            "cotizacion_eur"
+        fecha = cleaned_data.get(
+            "fecha"
         )
 
         if (
-            importe is None
-            or importe <= Decimal("0")
+                importe is None
+                or importe <= Decimal("0")
         ):
             self.add_error(
                 "importe",
-                "El importe debe ser superior a cero.",
+                (
+                    "El importe debe ser "
+                    "superior a cero."
+                ),
             )
 
         if pais == "ES":
+            cotizacion = Decimal(
+                "1.000000"
+            )
+
             cleaned_data[
                 "cotizacion_eur"
-            ] = Decimal("1")
+            ] = cotizacion
 
             self.instance.moneda = "EUR"
+            self.instance.cotizacion_eur = (
+                cotizacion
+            )
 
-        elif pais == "AR":
-            self.instance.moneda = "ARS"
+        elif pais == "AR" and fecha:
 
-            if (
-                cotizacion_eur is None
-                or cotizacion_eur <= Decimal("0")
-            ):
-                self.add_error(
-                    "cotizacion_eur",
-                    (
-                        "Indica cuántos pesos argentinos "
-                        "equivalen a un euro."
-                    ),
+            cotizacion_guardada = getattr(
+                self.instance,
+                "cotizacion_eur",
+                None,
+            )
+
+            debe_actualizar = (
+                    not self.instance.pk
+                    or "pais" in self.changed_data
+                    or "fecha" in self.changed_data
+                    or not cotizacion_guardada
+                    or cotizacion_guardada <= 0
+            )
+
+            if debe_actualizar:
+                try:
+                    resultado = obtener_euro_blue(
+                        fecha
+                    )
+
+                    cotizacion = (
+                        resultado.venta
+                    )
+
+                except CotizacionNoDisponible:
+                    self.add_error(
+                        None,
+                        (
+                            "No se pudo obtener la "
+                            "cotización del euro blue "
+                            "para la fecha indicada."
+                        ),
+                    )
+
+                    cotizacion = None
+
+            else:
+                cotizacion = (
+                    cotizacion_guardada
+                )
+
+            if cotizacion:
+                cleaned_data[
+                    "cotizacion_eur"
+                ] = cotizacion
+
+                self.instance.moneda = "ARS"
+                self.instance.cotizacion_eur = (
+                    cotizacion
                 )
 
         return cleaned_data

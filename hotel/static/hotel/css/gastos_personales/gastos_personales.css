@@ -1373,3 +1373,625 @@
         grid-template-columns: 1fr;
     }
 }
+/* =========================================================
+   FORMULARIO DE GASTOS PERSONALES
+========================================================= */
+
+.personal-form-page {
+    --personal-wine: #5d3042;
+    --personal-wine-dark: #462231;
+    --personal-teal: #72a8a4;
+    --personal-teal-soft: #e7f1ef;
+    --personal-gold: #b58a51;
+    --personal-ink: #352d30;
+    --personal-muted: #756c70;
+    --personal-line: rgba(93, 48, 66, 0.13);
+    --personal-background: #f5f0e9;
+    --personal-card: #fffdf9;
+    --personal-error: #a34d51;
+
+    width: min(100%, 1000px);
+    margin: 0 auto;
+    padding: 48px 28px 80px;
+    box-sizing: border-box;
+
+    color: var(--personal-ink);
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+}
+
+
+/* =========================================================
+   CABECERA
+========================================================= */
+
+.personal-form-header {
+    margin-bottom: 28px;
+}
+
+.personal-eyebrow {
+    display: block;
+    margin-bottom: 8px;
+
+    color: var(--personal-teal);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+.personal-form-header h1 {
+    margin: 0;
+
+    color: var(--personal-wine);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(2.35rem, 5vw, 4rem);
+    font-weight: 500;
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+}
+
+.personal-form-header p {
+    max-width: 620px;
+    margin: 12px 0 0;
+
+    color: var(--personal-muted);
+    font-size: 0.98rem;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   TARJETA
+========================================================= */
+
+.personal-form-card {
+    overflow: hidden;
+
+    padding: 38px;
+
+    border: 1px solid var(--personal-line);
+    border-radius: 28px;
+
+    background: var(--personal-card);
+    box-shadow:
+        0 20px 50px rgba(70, 34, 49, 0.07);
+}
+
+
+/* =========================================================
+   ERRORES GENERALES
+========================================================= */
+
+.personal-form-errors {
+    margin-bottom: 28px;
+    padding: 14px 16px;
+
+    border: 1px solid rgba(163, 77, 81, 0.22);
+    border-radius: 12px;
+
+    background: rgba(163, 77, 81, 0.07);
+    color: var(--personal-error);
+
+    font-size: 0.88rem;
+    line-height: 1.5;
+}
+
+.personal-form-errors ul {
+    margin: 0;
+    padding-left: 18px;
+}
+
+
+/* =========================================================
+   SECCIONES
+========================================================= */
+
+.personal-form-section + .personal-form-section {
+    margin-top: 38px;
+    padding-top: 38px;
+    border-top: 1px solid var(--personal-line);
+}
+
+.personal-form-section > header {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+
+    margin-bottom: 25px;
+}
+
+.personal-form-section > header > span {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+
+    width: 40px;
+    height: 40px;
+
+    border-radius: 50%;
+    background: var(--personal-teal-soft);
+    color: #447b77;
+
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+.personal-form-section > header h2 {
+    margin: 0;
+
+    color: var(--personal-wine);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.55rem;
+    font-weight: 500;
+    line-height: 1.15;
+}
+
+.personal-form-section > header p {
+    margin: 5px 0 0;
+
+    color: var(--personal-muted);
+    font-size: 0.86rem;
+    line-height: 1.45;
+}
+
+
+/* =========================================================
+   SELECTOR DE PAÍS
+========================================================= */
+
+.personal-country-selector {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+
+    margin-bottom: 24px;
+}
+
+.personal-country-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    min-height: 54px;
+    padding: 12px 18px;
+
+    border: 1px solid var(--personal-line);
+    border-radius: 15px;
+
+    background: #ffffff;
+    color: var(--personal-wine);
+
+    font: inherit;
+    font-size: 0.92rem;
+    font-weight: 700;
+
+    cursor: pointer;
+    transition:
+        border-color 180ms ease,
+        background-color 180ms ease,
+        color 180ms ease,
+        transform 180ms ease,
+        box-shadow 180ms ease;
+}
+
+.personal-country-button > span {
+    font-size: 1.3rem;
+}
+
+.personal-country-button:hover {
+    transform: translateY(-1px);
+    border-color: rgba(93, 48, 66, 0.3);
+    box-shadow: 0 7px 18px rgba(70, 34, 49, 0.07);
+}
+
+.personal-country-button.is-active,
+.personal-country-button[aria-pressed="true"] {
+    border-color: var(--personal-wine);
+    background: var(--personal-wine);
+    color: #ffffff;
+    box-shadow: 0 8px 20px rgba(70, 34, 49, 0.15);
+}
+
+.personal-country-button:focus-visible {
+    outline: 3px solid rgba(114, 168, 164, 0.3);
+    outline-offset: 3px;
+}
+
+/* El select real sigue enviándose con el formulario,
+   pero no se muestra visualmente. */
+
+.personal-native-country {
+    position: absolute;
+    overflow: hidden;
+    width: 1px;
+    height: 1px;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   CUADRÍCULA
+========================================================= */
+
+.personal-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.personal-form-grid-place {
+    margin-top: 4px;
+}
+
+.personal-form-group {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+}
+
+.personal-form-full {
+    grid-column: 1 / -1;
+}
+
+.personal-form-group[hidden],
+[data-exchange-group][hidden] {
+    display: none !important;
+}
+
+
+/* =========================================================
+   CAMPOS
+========================================================= */
+
+.personal-form-group label {
+    margin-bottom: 7px;
+
+    color: #665b60;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.055em;
+    text-transform: uppercase;
+}
+
+.personal-form-group input,
+.personal-form-group select,
+.personal-form-group textarea {
+    display: block;
+    width: 100%;
+    min-height: 49px;
+    box-sizing: border-box;
+
+    padding: 12px 14px;
+
+    border: 1px solid rgba(93, 48, 66, 0.17);
+    border-radius: 12px;
+
+    background: #ffffff;
+    color: var(--personal-ink);
+
+    font: inherit;
+    font-size: 0.94rem;
+    line-height: 1.35;
+
+    transition:
+        border-color 180ms ease,
+        box-shadow 180ms ease,
+        background-color 180ms ease;
+}
+
+.personal-form-group textarea {
+    min-height: 118px;
+    resize: vertical;
+}
+
+.personal-form-group input::placeholder,
+.personal-form-group textarea::placeholder {
+    color: #aaa1a4;
+}
+
+.personal-form-group input:hover,
+.personal-form-group select:hover,
+.personal-form-group textarea:hover {
+    border-color: rgba(93, 48, 66, 0.3);
+}
+
+.personal-form-group input:focus,
+.personal-form-group select:focus,
+.personal-form-group textarea:focus {
+    outline: none;
+
+    border-color: var(--personal-teal);
+    background: #ffffff;
+
+    box-shadow:
+        0 0 0 4px rgba(114, 168, 164, 0.14);
+}
+
+.personal-form-group input[aria-invalid="true"],
+.personal-form-group select[aria-invalid="true"],
+.personal-form-group textarea[aria-invalid="true"] {
+    border-color: var(--personal-error);
+}
+
+.personal-form-group small {
+    margin-top: 7px;
+
+    color: var(--personal-muted);
+    font-size: 0.76rem;
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   IMPORTE Y MONEDA
+========================================================= */
+
+.personal-money-control {
+    position: relative;
+}
+
+.personal-money-control input {
+    padding-right: 58px;
+}
+
+.personal-money-control > span {
+    position: absolute;
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 29px;
+    height: 29px;
+    padding: 0 7px;
+
+    border-radius: 8px;
+    background: var(--personal-teal-soft);
+    color: #447b77;
+
+    font-size: 0.79rem;
+    font-weight: 800;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   ARCHIVO
+========================================================= */
+
+.personal-form-group input[type="file"] {
+    min-height: 52px;
+    padding: 7px 9px;
+
+    color: var(--personal-muted);
+    font-size: 0.82rem;
+}
+
+.personal-form-group input[type="file"]::file-selector-button {
+    margin-right: 12px;
+    padding: 9px 13px;
+
+    border: 0;
+    border-radius: 9px;
+
+    background: var(--personal-teal-soft);
+    color: #447b77;
+
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   ERRORES DE CAMPOS
+========================================================= */
+
+.personal-field-error {
+    display: block;
+    margin-top: 6px;
+
+    color: var(--personal-error);
+    font-size: 0.77rem;
+    font-weight: 650;
+    line-height: 1.4;
+}
+
+
+/* =========================================================
+   ACCIONES
+========================================================= */
+
+.personal-form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+
+    margin-top: 38px;
+    padding-top: 26px;
+
+    border-top: 1px solid var(--personal-line);
+}
+
+.personal-form-back,
+.personal-form-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 47px;
+    padding: 0 22px;
+
+    border-radius: 999px;
+
+    font: inherit;
+    font-size: 0.87rem;
+    font-weight: 800;
+    text-decoration: none;
+
+    cursor: pointer;
+    transition:
+        transform 180ms ease,
+        box-shadow 180ms ease,
+        background-color 180ms ease;
+}
+
+.personal-form-back {
+    border: 1px solid var(--personal-line);
+    background: transparent;
+    color: var(--personal-wine);
+}
+
+.personal-form-back:hover {
+    background: rgba(93, 48, 66, 0.05);
+}
+
+.personal-form-submit {
+    min-width: 170px;
+
+    border: 0;
+    background: var(--personal-wine);
+    color: #ffffff;
+
+    box-shadow: 0 9px 20px rgba(70, 34, 49, 0.16);
+}
+
+.personal-form-submit:hover {
+    transform: translateY(-1px);
+    background: var(--personal-wine-dark);
+    box-shadow: 0 12px 24px rgba(70, 34, 49, 0.2);
+}
+
+.personal-form-submit:disabled {
+    opacity: 0.58;
+    cursor: wait;
+    transform: none;
+}
+
+.personal-form-back:focus-visible,
+.personal-form-submit:focus-visible {
+    outline: 3px solid rgba(114, 168, 164, 0.3);
+    outline-offset: 3px;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 820px) {
+    .personal-form-page {
+        padding: 38px 20px 65px;
+    }
+
+    .personal-form-card {
+        padding: 30px;
+        border-radius: 23px;
+    }
+}
+
+
+/* =========================================================
+   MÓVIL
+========================================================= */
+
+@media (max-width: 620px) {
+    .personal-form-page {
+        padding: 28px 14px 50px;
+    }
+
+    .personal-form-header {
+        margin-bottom: 22px;
+    }
+
+    .personal-form-header h1 {
+        font-size: 2.45rem;
+    }
+
+    .personal-form-header p {
+        font-size: 0.9rem;
+    }
+
+    .personal-form-card {
+        padding: 22px 17px;
+        border-radius: 20px;
+    }
+
+    .personal-form-section + .personal-form-section {
+        margin-top: 30px;
+        padding-top: 30px;
+    }
+
+    .personal-form-section > header {
+        gap: 11px;
+        margin-bottom: 20px;
+    }
+
+    .personal-form-section > header > span {
+        width: 35px;
+        height: 35px;
+    }
+
+    .personal-form-section > header h2 {
+        font-size: 1.35rem;
+    }
+
+    .personal-form-section > header p {
+        font-size: 0.8rem;
+    }
+
+    .personal-country-selector,
+    .personal-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .personal-country-selector {
+        gap: 9px;
+    }
+
+    .personal-country-button {
+        justify-content: flex-start;
+        min-height: 50px;
+        padding-inline: 16px;
+    }
+
+    .personal-form-full {
+        grid-column: auto;
+    }
+
+    .personal-form-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+
+        margin-top: 30px;
+        padding-top: 22px;
+    }
+
+    .personal-form-submit {
+        order: 1;
+        width: 100%;
+    }
+
+    .personal-form-back {
+        order: 2;
+        width: 100%;
+        box-sizing: border-box;
+    }
+}

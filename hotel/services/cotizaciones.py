@@ -25,6 +25,16 @@ FUENTE_AUTOMATICA = (
     "ArgentinaDatos · dólar blue venta"
 )
 
+API_EUR_USD_URL = (
+    "https://api.frankfurter.dev/"
+    "v2/rate/eur/usd?date={fecha}"
+)
+
+FUENTE_EURO_BLUE = (
+    "ArgentinaDatos dólar blue × "
+    "Frankfurter EUR/USD"
+)
+
 DIAS_RETROCESO = 7
 TIMEOUT_SEGUNDOS = 8
 
@@ -186,6 +196,154 @@ def obtener_dolar_blue(fecha):
         )
     )
 
+@dataclass(frozen=True)
+class CotizacionEuroBlue:
+    fecha: object
+    venta: Decimal
+    fuente: str
+
+
+def _consultar_eur_usd(fecha):
+
+    fecha_url = fecha.strftime(
+        "%Y-%m-%d"
+    )
+
+    url = API_EUR_USD_URL.format(
+        fecha=fecha_url,
+    )
+
+    request = Request(
+        url,
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "ByColeccionCRM/1.0",
+        },
+    )
+
+    try:
+        with urlopen(
+            request,
+            timeout=TIMEOUT_SEGUNDOS,
+        ) as response:
+            contenido = response.read()
+
+    except HTTPError as error:
+        raise CotizacionNoDisponible(
+            (
+                "El servicio EUR/USD respondió "
+                f"con el error {error.code}."
+            )
+        ) from error
+
+    except (
+        URLError,
+        TimeoutError,
+        OSError,
+    ) as error:
+        raise CotizacionNoDisponible(
+            (
+                "No se pudo obtener el cambio "
+                "histórico entre el euro "
+                "y el dólar."
+            )
+        ) from error
+
+    try:
+        datos = json.loads(
+            contenido.decode("utf-8")
+        )
+
+    except (
+        json.JSONDecodeError,
+        UnicodeDecodeError,
+    ) as error:
+        raise CotizacionNoDisponible(
+            (
+                "La respuesta del servicio "
+                "EUR/USD no se pudo interpretar."
+            )
+        ) from error
+
+    if not isinstance(datos, dict):
+        raise CotizacionNoDisponible(
+            (
+                "El servicio EUR/USD devolvió "
+                "una respuesta inesperada."
+            )
+        )
+
+    return _convertir_decimal(
+        datos.get("rate")
+    )
+
+
+def obtener_euro_blue(fecha):
+
+    dolar_blue = obtener_dolar_blue(
+        fecha
+    )
+
+    cambio_eur_usd = _consultar_eur_usd(
+        dolar_blue.fecha
+    )
+
+    cotizacion_euro = (
+        dolar_blue.venta
+        * cambio_eur_usd
+    ).quantize(
+        Decimal("0.000001"),
+        rounding=ROUND_HALF_UP,
+    )
+
+    return CotizacionEuroBlue(
+        fecha=dolar_blue.fecha,
+        venta=cotizacion_euro,
+        fuente=FUENTE_EURO_BLUE,
+    )
+
+
+def aplicar_conversion_gasto_personal(
+    gasto,
+):
+    if gasto.pais != "AR":
+        gasto.moneda = "EUR"
+        gasto.cotizacion_eur = Decimal(
+            "1.000000"
+        )
+
+        gasto.importe_eur = (
+            Decimal(gasto.importe)
+        ).quantize(
+            Decimal("0.01"),
+            rounding=ROUND_HALF_UP,
+        )
+
+        return gasto
+
+    if gasto.importe is None:
+        raise CotizacionNoDisponible(
+            "El gasto no tiene un importe."
+        )
+
+    resultado = obtener_euro_blue(
+        gasto.fecha
+    )
+
+    gasto.moneda = "ARS"
+    gasto.cotizacion_eur = (
+        resultado.venta
+    )
+
+    gasto.importe_eur = (
+        Decimal(gasto.importe)
+        / resultado.venta
+    ).quantize(
+        Decimal("0.01"),
+        rounding=ROUND_HALF_UP,
+    )
+
+    return gasto
 
 def aplicar_conversion_gasto(
     gasto,

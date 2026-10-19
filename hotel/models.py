@@ -12,6 +12,10 @@ from django.utils import timezone
 from django.db import models, transaction
 from django.utils.text import slugify
 from django.core.exceptions import ValidationError
+from decimal import (
+    Decimal,
+    ROUND_HALF_UP,
+)
 class Visit(models.Model):
     ip = models.GenericIPAddressField()
 
@@ -2814,11 +2818,6 @@ class GastoPersonal(models.Model):
         verbose_name="Lugar",
     )
 
-    ciudad = models.CharField(
-        max_length=100,
-        blank=True,
-    )
-
     moneda = models.CharField(
         max_length=3,
         choices=MONEDAS,
@@ -2942,23 +2941,33 @@ class GastoPersonal(models.Model):
             raise ValidationError(errores)
 
     def save(self, *args, **kwargs):
+
         if self.pais == "ES":
             self.moneda = "EUR"
-            self.cotizacion_eur = Decimal("1")
-            self.importe_eur = self.importe
+            self.cotizacion_eur = Decimal(
+                "1.000000"
+            )
+
+            self.importe_eur = (
+                Decimal(self.importe)
+            ).quantize(
+                Decimal("0.01"),
+                rounding=ROUND_HALF_UP,
+            )
 
         elif (
-            self.pais == "AR"
-            and self.cotizacion_eur
-            and self.cotizacion_eur > 0
+                self.pais == "AR"
+                and self.cotizacion_eur
+                and self.cotizacion_eur > 0
         ):
             self.moneda = "ARS"
 
             self.importe_eur = (
-                self.importe
-                / self.cotizacion_eur
+                    Decimal(self.importe)
+                    / self.cotizacion_eur
             ).quantize(
-                Decimal("0.01")
+                Decimal("0.01"),
+                rounding=ROUND_HALF_UP,
             )
 
         super().save(*args, **kwargs)
