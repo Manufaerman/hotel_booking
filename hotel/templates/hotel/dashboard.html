@@ -71,11 +71,11 @@
         </h2>
 
         <p>
-    Contratos:
-    {{ facturacion_contratos|floatformat:2 }} €
-    · Temporales:
-    {{ ingresos_puntuales_mes|floatformat:2 }} €
-</p>
+            Contratos:
+            {{ facturacion_contratos|floatformat:2 }} €
+            · Temporales:
+            {{ ingresos_puntuales_mes|floatformat:2 }} €
+        </p>
     </div>
 
 </div>
@@ -102,6 +102,89 @@
 
 </div>
 
+    <button
+    type="button"
+    class="kpi-card kpi-card-toggle"
+    data-gastos-fijos-toggle
+    data-gastos-fijos-real="{{ gastos_fijos_mes|floatformat:'2u' }}"
+    data-gastos-fijos-prorrateado="{{ gastos_fijos_prorrateados_mes|floatformat:'2u' }}"
+    aria-pressed="false"
+>
+    <div class="kpi-icon">
+        <i
+            class="fa fa-balance-scale"
+            aria-hidden="true"
+        ></i>
+    </div>
+
+    <div class="kpi-content">
+        <span>
+            Gastos fijos
+        </span>
+
+        <h2 data-gastos-fijos-valor>
+            {{ gastos_fijos_mes|floatformat:2 }} €
+        </h2>
+
+        <p data-gastos-fijos-descripcion>
+            Vencimientos del mes + préstamos
+        </p>
+
+        <small class="kpi-toggle-hint">
+            <span data-gastos-fijos-accion>
+                Ver prorrateado
+            </span>
+
+            <i
+                class="fa fa-exchange"
+                aria-hidden="true"
+            ></i>
+        </small>
+    </div>
+</button>
+
+    <button
+    type="button"
+    class="kpi-card kpi-card-toggle kpi-card-benefit"
+    data-beneficio-fijos-toggle
+    data-beneficio-fijos-mes="{{ beneficio_con_gastos_fijos_mes|floatformat:'2u' }}"
+    data-beneficio-fijos-prorrateado="{{ beneficio_con_gastos_fijos_prorrateados|floatformat:'2u' }}"
+    aria-pressed="false"
+    >
+        <div class="kpi-icon">
+            <i
+                class="fa fa-line-chart"
+                aria-hidden="true"
+            ></i>
+        </div>
+
+        <div class="kpi-content">
+            <span>
+                Beneficio tras gastos fijos
+            </span>
+
+            <h2 data-beneficio-fijos-valor>
+                {{ beneficio_con_gastos_fijos_mes|floatformat:2 }} €
+            </h2>
+
+            <p data-beneficio-fijos-descripcion>
+                Ingresos − vencimientos del mes − préstamos
+            </p>
+
+            <small class="kpi-toggle-hint">
+                <span data-beneficio-fijos-accion>
+                    Ver prorrateado
+                </span>
+
+                <i
+                    class="fa fa-exchange"
+                    aria-hidden="true"
+                ></i>
+            </small>
+        </div>
+    </button>
+
+        <!-- ocupacion y contratos -->
 
     <div class="kpi-card">
 
@@ -125,60 +208,6 @@
 
     </div>
 
-
-
-
-   <button
-    type="button"
-    class="kpi-card kpi-card-toggle"
-    data-result-toggle
-    data-result-real="{{ resultado_recurrente_mes|floatformat:'2u' }}"
-    data-result-prorrateado="{{ resultado_recurrente_prorrateado|floatformat:'2u' }}"
-    data-result-mode="real"
-    aria-pressed="false">
-
-        <div class="kpi-icon">
-            <i
-                class="fa fa-balance-scale"
-                aria-hidden="true"
-            ></i>
-        </div>
-
-        <div class="kpi-content">
-
-            <span data-result-title>
-                Margen recurrente
-            </span>
-
-            <h2
-                data-result-value
-                aria-live="polite"
-            >
-                {{ resultado_recurrente_mes|floatformat:2 }} €
-            </h2>
-
-            <p data-result-description>
-                Recurrentes del mes + hipotecas
-            </p>
-
-            <small class="kpi-toggle-hint">
-                <span data-result-action>
-                    Ver prorrateado
-                </span>
-
-                <i
-                    class="fa fa-exchange"
-                    aria-hidden="true"
-                ></i>
-            </small>
-
-        </div>
-
-    </button>
-
-
-
-
     <div class="kpi-card warning">
 
         <div class="kpi-icon">
@@ -199,9 +228,7 @@
             </p>
         </div>
 
-    </div>
-
-</div>
+    </div></div>
 
 
 </section>
@@ -706,52 +733,27 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7"></script>
-<script>
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
-        document
-            .querySelectorAll(
-                "[data-slider-prev], [data-slider-next]"
-            )
-            .forEach(function (button) {
-                button.addEventListener(
-                    "click",
-                    function () {
-                        const sliderId =
-                            button.dataset.sliderPrev ||
-                            button.dataset.sliderNext;
 
-                        const slider =
-                            document.getElementById(sliderId);
 
-                        if (!slider) {
-                            return;
-                        }
+{{ patrimonio_historico_labels|json_script:"patrimonio-historico-labels" }}
+{{ patrimonio_historico_valores|json_script:"patrimonio-historico-valores" }}
+{{ deuda_historica_valores|json_script:"deuda-historica-valores" }}
 
-                        const direction =
-                            button.dataset.sliderNext
-                                ? 1
-                                : -1;
+{{ grafico_gastos_labels|json_script:"dashboard-gastos-labels" }}
+{{ grafico_gastos_valores|json_script:"dashboard-gastos-valores" }}
+{{ grafico_gastos_colores|json_script:"dashboard-gastos-colores" }}
 
-                        slider.scrollBy({
-                            left:
-                                direction *
-                                slider.clientWidth,
-                            behavior: "smooth",
-                        });
-                    }
-                );
-            });
-    }
-);
-</script>
+{{ grafico_deuda_labels|json_script:"dashboard-deuda-labels" }}
+{{ grafico_deuda_valores|json_script:"dashboard-deuda-valores" }}
+{{ grafico_deuda_colores|json_script:"dashboard-deuda-colores" }}
+{% endblock %}
+
+{% block jquery %}
+{{ patrimonio_historico_labels|json_script:"patrimonio-historico-labels" }}
+{{ patrimonio_historico_valores|json_script:"patrimonio-historico-valores" }}
+{{ deuda_historica_valores|json_script:"deuda-historica-valores" }}
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-
-    const dataUrl =
-        "{% url 'hotel:dashboard_chart_data' %}";
-
     const colores = {
         vino: "#745f6d",
         vinoOscuro: "#4b2938",
@@ -759,54 +761,381 @@ document.addEventListener("DOMContentLoaded", function () {
         verde: "#72a5a1",
         verdeOscuro: "#527f7b",
         amarillo: "#e0c36f",
-        crema: "#f5f0e9"
+        dorado: "#c19a5b",
+        crema: "#f5f0e9",
+        rejilla: "rgba(81, 52, 62, 0.08)"
     };
+
+    const dataUrl =
+        "{% url 'hotel:dashboard_chart_data' %}";
 
     let historicoFinanciero = {};
     let graficoIngresosGastos = null;
+    let graficoFlujoCaja = null;
+
+
+    /* =====================================================
+       FUNCIONES GENERALES
+    ===================================================== */
 
     function obtenerCanvas(id) {
         return document.getElementById(id);
     }
 
-    function hayValores(valores) {
-        return (
-            Array.isArray(valores)
-            && valores.some(function (valor) {
-                return Number(valor) !== 0;
-            })
-        );
+    function normalizarValores(valores) {
+        if (!Array.isArray(valores)) {
+            return [];
+        }
+
+        return valores.map(function (valor) {
+            const numero = Number(valor);
+
+            return Number.isFinite(numero)
+                ? numero
+                : 0;
+        });
     }
 
-    function euros(valor) {
-        return Number(valor || 0).toLocaleString(
+    function hayValores(valores) {
+        return normalizarValores(
+            valores
+        ).some(function (valor) {
+            return valor !== 0;
+        });
+    }
+
+    function euros(valor, decimales = 0) {
+        const numero = Number(valor);
+
+        return (
+            Number.isFinite(numero)
+                ? numero
+                : 0
+        ).toLocaleString(
             "es-ES",
             {
                 style: "currency",
                 currency: "EUR",
-                maximumFractionDigits: 0
+                minimumFractionDigits: decimales,
+                maximumFractionDigits: decimales
             }
         );
     }
 
-    function mostrarVacio(canvas, texto) {
-        if (!canvas) {
+    function leerDatos(id) {
+        const elemento = document.getElementById(id);
+
+        if (!elemento) {
+            return [];
+        }
+
+        try {
+            return JSON.parse(
+                elemento.textContent
+            );
+        } catch (error) {
+            console.error(
+                "No se pudieron leer los datos de " + id,
+                error
+            );
+
+            return [];
+        }
+    }
+
+    function destruirGrafico(canvas) {
+        if (
+            !canvas
+            || typeof Chart === "undefined"
+        ) {
             return;
         }
 
-        canvas.style.display = "none";
+        const graficoAnterior =
+            Chart.getChart(canvas);
 
-        const mensaje = document.createElement("div");
+        if (graficoAnterior) {
+            graficoAnterior.destroy();
+        }
+    }
 
-        mensaje.className =
-            "chart-empty-message";
+    function mostrarVacio(canvas, texto) {
+        if (!canvas || !canvas.parentElement) {
+            return;
+        }
+
+        canvas.hidden = true;
+
+        const contenedor = canvas.parentElement;
+
+        let mensaje = contenedor.querySelector(
+            '[data-empty-chart="' + canvas.id + '"]'
+        );
+
+        if (!mensaje) {
+            mensaje = document.createElement("div");
+            mensaje.className =
+                "chart-empty-message";
+
+            mensaje.dataset.emptyChart =
+                canvas.id;
+
+            contenedor.appendChild(mensaje);
+        }
 
         mensaje.textContent = texto;
+        mensaje.hidden = false;
+    }
 
-        canvas.parentElement.appendChild(
-            mensaje
+    function mostrarCanvas(canvas) {
+        if (!canvas || !canvas.parentElement) {
+            return;
+        }
+
+        canvas.hidden = false;
+        canvas.style.display = "";
+
+        const mensaje =
+            canvas.parentElement.querySelector(
+                '[data-empty-chart="' +
+                canvas.id +
+                '"]'
+            );
+
+        if (mensaje) {
+            mensaje.hidden = true;
+        }
+    }
+
+
+    /* =====================================================
+       SLIDERS
+    ===================================================== */
+
+    function activarSliders() {
+        document.querySelectorAll(
+            "[data-slider-prev], [data-slider-next]"
+        ).forEach(function (button) {
+            button.addEventListener(
+                "click",
+                function () {
+                    const sliderId = (
+                        button.dataset.sliderPrev
+                        || button.dataset.sliderNext
+                    );
+
+                    const slider =
+                        document.getElementById(
+                            sliderId
+                        );
+
+                    if (!slider) {
+                        return;
+                    }
+
+                    const direccion =
+                        button.dataset.sliderNext
+                            ? 1
+                            : -1;
+
+                    slider.scrollBy({
+                        left:
+                            direccion
+                            * slider.clientWidth,
+                        behavior: "smooth"
+                    });
+                }
+            );
+        });
+    }
+
+
+    /* =====================================================
+       TARJETA DE GASTOS FIJOS
+    ===================================================== */
+
+    function activarTarjetaGastosFijos() {
+        const tarjeta = document.querySelector(
+            "[data-gastos-fijos-toggle]"
+        );
+
+        if (!tarjeta) {
+            return;
+        }
+
+        const valorElemento = tarjeta.querySelector(
+            "[data-gastos-fijos-valor]"
+        );
+
+        const descripcionElemento =
+            tarjeta.querySelector(
+                "[data-gastos-fijos-descripcion]"
+            );
+
+        const accionElemento = tarjeta.querySelector(
+            "[data-gastos-fijos-accion]"
+        );
+
+        const importeReal = Number.parseFloat(
+            tarjeta.dataset.gastosFijosReal
+            || "0"
+        );
+
+        const importeProrrateado =
+            Number.parseFloat(
+                tarjeta.dataset
+                    .gastosFijosProrrateado
+                || "0"
+            );
+
+        let mostrandoProrrateado = false;
+
+        function actualizarTarjeta() {
+            const importe = mostrandoProrrateado
+                ? importeProrrateado
+                : importeReal;
+
+            if (valorElemento) {
+                valorElemento.textContent = euros(
+                    importe,
+                    2
+                );
+            }
+
+            if (descripcionElemento) {
+                descripcionElemento.textContent = (
+                    mostrandoProrrateado
+                        ? "Recurrentes prorrateados + préstamos"
+                        : "Vencimientos del mes + préstamos"
+                );
+            }
+
+            if (accionElemento) {
+                accionElemento.textContent = (
+                    mostrandoProrrateado
+                        ? "Ver vencimientos del mes"
+                        : "Ver prorrateado"
+                );
+            }
+
+            tarjeta.setAttribute(
+                "aria-pressed",
+                String(mostrandoProrrateado)
+            );
+
+            tarjeta.classList.toggle(
+                "is-prorated",
+                mostrandoProrrateado
+            );
+        }
+
+        tarjeta.addEventListener(
+            "click",
+            function (event) {
+                event.preventDefault();
+
+                mostrandoProrrateado =
+                    !mostrandoProrrateado;
+
+                actualizarTarjeta();
+            }
+        );
+
+        actualizarTarjeta();
+    }
+    function activarTarjetaBeneficioGastosFijos() {
+    const tarjeta = document.querySelector(
+        "[data-beneficio-fijos-toggle]"
+    );
+
+    if (!tarjeta) {
+        return;
+    }
+
+    const valorElemento = tarjeta.querySelector(
+        "[data-beneficio-fijos-valor]"
+    );
+
+    const descripcionElemento =
+        tarjeta.querySelector(
+            "[data-beneficio-fijos-descripcion]"
+        );
+
+    const accionElemento = tarjeta.querySelector(
+        "[data-beneficio-fijos-accion]"
+    );
+
+    const beneficioMes = Number.parseFloat(
+        tarjeta.dataset.beneficioFijosMes
+        || "0"
+    );
+
+    const beneficioProrrateado =
+        Number.parseFloat(
+            tarjeta.dataset
+                .beneficioFijosProrrateado
+            || "0"
+        );
+
+    let mostrandoProrrateado = false;
+
+    function actualizarTarjeta() {
+        const importe = mostrandoProrrateado
+            ? beneficioProrrateado
+            : beneficioMes;
+
+        if (valorElemento) {
+            valorElemento.textContent = euros(
+                importe,
+                2
+            );
+        }
+
+        if (descripcionElemento) {
+            descripcionElemento.textContent = (
+                mostrandoProrrateado
+                    ? "Ingresos − recurrentes prorrateados − préstamos"
+                    : "Ingresos − vencimientos del mes − préstamos"
+            );
+        }
+
+        if (accionElemento) {
+            accionElemento.textContent = (
+                mostrandoProrrateado
+                    ? "Ver vencimientos del mes"
+                    : "Ver prorrateado"
+            );
+        }
+
+        tarjeta.setAttribute(
+            "aria-pressed",
+            String(mostrandoProrrateado)
+        );
+
+        tarjeta.classList.toggle(
+            "is-prorated",
+            mostrandoProrrateado
         );
     }
+
+    tarjeta.addEventListener(
+        "click",
+        function (event) {
+            event.preventDefault();
+
+            mostrandoProrrateado =
+                !mostrandoProrrateado;
+
+            actualizarTarjeta();
+        }
+    );
+
+    actualizarTarjeta();
+}
+
+    /* =====================================================
+       INGRESOS POR PROPIEDAD
+    ===================================================== */
 
     function crearIngresosPorPropiedad(data) {
         const canvas = obtenerCanvas(
@@ -817,11 +1146,11 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        if (
-            !hayValores(
-                data.ingresos_por_propiedad
-            )
-        ) {
+        const valores = normalizarValores(
+            data.ingresos_por_propiedad
+        );
+
+        if (!hayValores(valores)) {
             mostrarVacio(
                 canvas,
                 "Todavía no hay ingresos para mostrar."
@@ -830,74 +1159,74 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        new Chart(
-            canvas,
-            {
-                type: "bar",
+        mostrarCanvas(canvas);
+        destruirGrafico(canvas);
 
-                data: {
-                    labels: data.labels,
+        new Chart(canvas, {
+            type: "bar",
 
-                    datasets: [
-                        {
-                            label: "Ingresos mensuales",
+            data: {
+                labels: data.labels || [],
 
-                            data:
-                                data.ingresos_por_propiedad,
+                datasets: [
+                    {
+                        label: "Ingresos mensuales",
+                        data: valores,
+                        backgroundColor: colores.verde,
+                        borderColor:
+                            colores.verdeOscuro,
+                        borderWidth: 1,
+                        borderRadius: 8
+                    }
+                ]
+            },
 
-                            backgroundColor:
-                                colores.verde,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
 
-                            borderColor:
-                                colores.verdeOscuro,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
 
-                            borderWidth: 1,
-                            borderRadius: 8
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return euros(
+                                    context.parsed.y,
+                                    2
+                                );
+                            }
                         }
-                    ]
+                    }
                 },
 
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
 
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-
-                        tooltip: {
-                            callbacks: {
-                                label: function (context) {
-                                    return euros(
-                                        context.parsed.y
-                                    );
-                                }
+                        ticks: {
+                            callback: function (value) {
+                                return euros(value);
                             }
                         }
                     },
 
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-
-                            ticks: {
-                                callback: function (value) {
-                                    return euros(value);
-                                }
-                            }
-                        },
-
-                        x: {
-                            grid: {
-                                display: false
-                            }
+                    x: {
+                        grid: {
+                            display: false
                         }
                     }
                 }
             }
-        );
+        });
     }
+
+
+    /* =====================================================
+       EVOLUCIÓN MENSUAL
+    ===================================================== */
 
     function crearEvolucionMensual(data) {
         const canvas = obtenerCanvas(
@@ -908,11 +1237,11 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        if (
-            !hayValores(
-                data.facturacion_mensual
-            )
-        ) {
+        const valores = normalizarValores(
+            data.facturacion_mensual
+        );
+
+        if (!hayValores(valores)) {
             mostrarVacio(
                 canvas,
                 "Todavía no hay evolución mensual."
@@ -921,79 +1250,86 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        new Chart(
-            canvas,
-            {
-                type: "line",
+        mostrarCanvas(canvas);
+        destruirGrafico(canvas);
 
-                data: {
-                    labels: data.labels_meses,
+        new Chart(canvas, {
+            type: "line",
 
-                    datasets: [
-                        {
-                            label: "Ingresos",
+            data: {
+                labels: data.labels_meses || [],
 
-                            data:
-                                data.facturacion_mensual,
+                datasets: [
+                    {
+                        label: "Ingresos",
+                        data: valores,
+                        borderColor: colores.vino,
+                        backgroundColor:
+                            "rgba(116, 95, 109, 0.14)",
+                        pointBackgroundColor:
+                            colores.vino,
+                        pointBorderColor: "#ffffff",
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        borderWidth: 3,
+                        tension: 0.35,
+                        fill: true
+                    }
+                ]
+            },
 
-                            borderColor:
-                                colores.vino,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
 
-                            backgroundColor:
-                                "rgba(116, 95, 109, 0.14)",
+                plugins: {
+                    legend: {
+                        display: false
+                    },
 
-                            pointBackgroundColor:
-                                colores.vino,
-
-                            pointBorderColor:
-                                "#ffffff",
-
-                            pointBorderWidth: 2,
-                            pointRadius: 4,
-                            borderWidth: 3,
-
-                            tension: 0.35,
-                            fill: true
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return euros(
+                                    context.raw,
+                                    2
+                                );
+                            }
                         }
-                    ]
+                    }
                 },
 
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
 
-                    plugins: {
-                        legend: {
-                            display: false
+                        ticks: {
+                            callback: function (value) {
+                                return euros(value);
+                            }
                         }
                     },
 
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-
-                            ticks: {
-                                callback: function (value) {
-                                    return euros(value);
-                                }
-                            }
-                        },
-
-                        x: {
-                            grid: {
-                                display: false
-                            }
+                    x: {
+                        grid: {
+                            display: false
                         }
                     }
                 }
             }
-        );
+        });
     }
 
+
+    /* =====================================================
+       INGRESOS FRENTE A GASTOS
+    ===================================================== */
+
     function crearComparativa(
-            periodo = "6",
-            modo = "real"
-        ) {
+        periodo = "6",
+        modo = "real"
+    ) {
         const canvas = obtenerCanvas(
             "incomeExpensesChart"
         );
@@ -1006,21 +1342,37 @@ document.addEventListener("DOMContentLoaded", function () {
             historicoFinanciero[periodo];
 
         if (!datos) {
+            mostrarVacio(
+                canvas,
+                "No hay información para este periodo."
+            );
+
             return;
         }
 
-        const gastos = modo === "prorrateado"
-            ? datos.gastos_prorrateados
-            : datos.gastos;
+        const ingresos = normalizarValores(
+            datos.ingresos
+        );
 
-        const nombreGastos = modo === "prorrateado"
-            ? "Gastos prorrateados"
-            : "Gastos reales";
+        const gastos = normalizarValores(
+            modo === "prorrateado"
+                ? datos.gastos_prorrateados
+                : datos.gastos
+        );
 
+        const nombreGastos = (
+            modo === "prorrateado"
+                ? "Gastos prorrateados"
+                : "Gastos reales"
+        );
+
+        mostrarCanvas(canvas);
 
         if (graficoIngresosGastos) {
             graficoIngresosGastos.destroy();
         }
+
+        destruirGrafico(canvas);
 
         graficoIngresosGastos = new Chart(
             canvas,
@@ -1028,57 +1380,42 @@ document.addEventListener("DOMContentLoaded", function () {
                 type: "line",
 
                 data: {
-                    labels: datos.labels,
+                    labels: datos.labels || [],
 
                     datasets: [
                         {
                             label: "Ingresos",
-
-                            data: datos.ingresos,
-
+                            data: ingresos,
                             borderColor:
                                 colores.vino,
-
                             backgroundColor:
                                 "rgba(116, 95, 109, 0.14)",
-
                             pointBackgroundColor:
                                 colores.vino,
-
                             pointBorderColor:
                                 "#ffffff",
-
                             pointBorderWidth: 2,
                             pointRadius: 4,
                             pointHoverRadius: 6,
                             borderWidth: 3,
-
                             tension: 0.35,
                             fill: true
                         },
-
                         {
                             label: nombreGastos,
-
                             data: gastos,
-
                             borderColor:
                                 colores.verde,
-
                             backgroundColor:
                                 "rgba(114, 165, 161, 0.16)",
-
                             pointBackgroundColor:
                                 colores.verde,
-
                             pointBorderColor:
                                 "#ffffff",
-
                             pointBorderWidth: 2,
                             pointRadius: 4,
                             pointHoverRadius: 6,
                             borderWidth: 3,
-
                             tension: 0.35,
                             fill: true
                         }
@@ -1111,7 +1448,10 @@ document.addEventListener("DOMContentLoaded", function () {
                                     return (
                                         context.dataset.label
                                         + ": "
-                                        + euros(context.raw)
+                                        + euros(
+                                            context.raw,
+                                            2
+                                        )
                                     );
                                 }
                             }
@@ -1145,6 +1485,49 @@ document.addEventListener("DOMContentLoaded", function () {
         );
     }
 
+    function activarPeriodosComparativa() {
+        const botones = document.querySelectorAll(
+            ".dashboard-chart-period"
+        );
+
+        botones.forEach(function (boton) {
+            boton.addEventListener(
+                "click",
+                function () {
+                    botones.forEach(function (otro) {
+                        otro.classList.remove(
+                            "is-active"
+                        );
+
+                        otro.setAttribute(
+                            "aria-pressed",
+                            "false"
+                        );
+                    });
+
+                    boton.classList.add(
+                        "is-active"
+                    );
+
+                    boton.setAttribute(
+                        "aria-pressed",
+                        "true"
+                    );
+
+                    crearComparativa(
+                        boton.dataset.periodo || "6",
+                        boton.dataset.modo || "real"
+                    );
+                }
+            );
+        });
+    }
+
+
+    /* =====================================================
+       GASTOS POR CATEGORÍA
+    ===================================================== */
+
     function crearGastosPorCategoria(data) {
         const canvas = obtenerCanvas(
             "expensesChart"
@@ -1154,11 +1537,11 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        if (
-            !hayValores(
-                data.categorias_valores
-            )
-        ) {
+        const valores = normalizarValores(
+            data.categorias_valores
+        );
+
+        if (!hayValores(valores)) {
             mostrarVacio(
                 canvas,
                 "Todavía no hay gastos registrados."
@@ -1167,36 +1550,542 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        new Chart(
-            canvas,
+        mostrarCanvas(canvas);
+        destruirGrafico(canvas);
+
+        new Chart(canvas, {
+            type: "doughnut",
+
+            data: {
+                labels:
+                    data.categorias_labels || [],
+
+                datasets: [
+                    {
+                        data: valores,
+
+                        backgroundColor: [
+                            colores.vino,
+                            colores.verde,
+                            colores.rosa,
+                            colores.amarillo,
+                            "#9b8996",
+                            "#89aaa6",
+                            "#b7977e",
+                            "#d8c7b5"
+                        ],
+
+                        borderColor: colores.crema,
+                        borderWidth: 3,
+                        hoverOffset: 7
+                    }
+                ]
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: "62%",
+
+                plugins: {
+                    legend: {
+                        position: "bottom",
+
+                        labels: {
+                            usePointStyle: true,
+                            boxWidth: 10,
+                            padding: 15
+                        }
+                    },
+
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return (
+                                    context.label
+                                    + ": "
+                                    + euros(
+                                        context.raw,
+                                        2
+                                    )
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+
+    /* =====================================================
+       GRÁFICOS DE DATOS LOCALES
+    ===================================================== */
+
+    function crearDonaLocal(configuracion) {
+        const canvas = obtenerCanvas(
+            configuracion.canvasId
+        );
+
+        if (!canvas) {
+            return;
+        }
+
+        const labels = leerDatos(
+            configuracion.labelsId
+        );
+
+        const valores = normalizarValores(
+            leerDatos(
+                configuracion.valoresId
+            )
+        );
+
+        const coloresGrafico = leerDatos(
+            configuracion.coloresId
+        );
+
+        if (!hayValores(valores)) {
+            mostrarVacio(
+                canvas,
+                configuracion.mensajeVacio
+            );
+
+            return;
+        }
+
+        mostrarCanvas(canvas);
+        destruirGrafico(canvas);
+
+        new Chart(canvas, {
+            type: "doughnut",
+
+            data: {
+                labels: labels,
+
+                datasets: [
+                    {
+                        data: valores,
+                        backgroundColor:
+                            coloresGrafico,
+                        borderWidth: 3,
+                        borderColor: "#fffdf9"
+                    }
+                ]
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout:
+                    configuracion.cutout
+                    || "62%",
+
+                plugins: {
+                    legend: {
+                        position: "bottom",
+
+                        labels: {
+                            usePointStyle: true,
+                            padding: 16
+                        }
+                    },
+
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return (
+                                    context.label
+                                    + ": "
+                                    + euros(
+                                        context.raw,
+                                        2
+                                    )
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function crearGraficosLocales() {
+        crearDonaLocal({
+            canvasId: "dashboardGastosChart",
+            labelsId: "dashboard-gastos-labels",
+            valoresId: "dashboard-gastos-valores",
+            coloresId: "dashboard-gastos-colores",
+            cutout: "62%",
+            mensajeVacio:
+                "Todavía no hay gastos para mostrar."
+        });
+
+        crearDonaLocal({
+            canvasId: "dashboardDeudaChart",
+            labelsId: "dashboard-deuda-labels",
+            valoresId: "dashboard-deuda-valores",
+            coloresId: "dashboard-deuda-colores",
+            cutout: "64%",
+            mensajeVacio:
+                "Todavía no hay datos de deuda."
+        });
+    }
+
+
+    /* =====================================================
+       PATRIMONIO Y DEUDA
+    ===================================================== */
+
+    function crearGraficoPatrimonio() {
+        const canvas = obtenerCanvas(
+            "dashboardPatrimonioChart"
+        );
+
+        if (!canvas) {
+            return;
+        }
+
+        const labels = leerDatos(
+            "patrimonio-historico-labels"
+        );
+
+        const patrimonio = normalizarValores(
+            leerDatos(
+                "patrimonio-historico-valores"
+            )
+        );
+
+        const deuda = normalizarValores(
+            leerDatos(
+                "deuda-historica-valores"
+            )
+        );
+
+        if (!labels.length) {
+            mostrarVacio(
+                canvas,
+                "Todavía no hay histórico patrimonial."
+            );
+
+            return;
+        }
+
+        mostrarCanvas(canvas);
+        destruirGrafico(canvas);
+
+        new Chart(canvas, {
+            type: "line",
+
+            data: {
+                labels: labels,
+
+                datasets: [
+                    {
+                        label: "Patrimonio neto",
+                        data: patrimonio,
+                        borderColor:
+                            colores.vinoOscuro,
+                        backgroundColor:
+                            "rgba(81, 52, 62, 0.12)",
+                        pointBackgroundColor:
+                            colores.vinoOscuro,
+                        pointRadius: 3,
+                        pointHoverRadius: 5,
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.35
+                    },
+                    {
+                        label: "Deuda pendiente",
+                        data: deuda,
+                        borderColor: "#806874",
+                        backgroundColor:
+                            "rgba(128, 104, 116, 0.10)",
+                        pointBackgroundColor:
+                            "#806874",
+                        pointRadius: 3,
+                        pointHoverRadius: 5,
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.35
+                    }
+                ]
+            },
+
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+
+                interaction: {
+                    mode: "index",
+                    intersect: false
+                },
+
+                plugins: {
+                    legend: {
+                        position: "bottom",
+
+                        labels: {
+                            usePointStyle: true,
+                            padding: 16
+                        }
+                    },
+
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return (
+                                    context.dataset.label
+                                    + ": "
+                                    + euros(
+                                        context.raw,
+                                        2
+                                    )
+                                );
+                            }
+                        }
+                    }
+                },
+
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    },
+
+                    y: {
+                        beginAtZero: true,
+
+                        grid: {
+                            color: colores.rejilla
+                        },
+
+                        ticks: {
+                            callback: function (value) {
+                                return euros(value);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+
+    /* =====================================================
+       FLUJO DE CAJA
+    ===================================================== */
+
+    function obtenerElementosFlujo() {
+        const section = document.querySelector(
+            "[data-cashflow-chart]"
+        );
+
+        if (!section) {
+            return null;
+        }
+
+        return {
+            section: section,
+
+            canvas: section.querySelector(
+                "#dashboardCashflowChart"
+            ),
+
+            message: section.querySelector(
+                "[data-cashflow-message]"
+            ),
+
+            buttons: section.querySelectorAll(
+                "[data-cashflow-period]"
+            )
+        };
+    }
+
+    function mostrarErrorFlujo(texto) {
+        const elementos =
+            obtenerElementosFlujo();
+
+        if (!elementos) {
+            return;
+        }
+
+        if (graficoFlujoCaja) {
+            graficoFlujoCaja.destroy();
+            graficoFlujoCaja = null;
+        }
+
+        if (elementos.canvas) {
+            elementos.canvas.hidden = true;
+        }
+
+        if (elementos.message) {
+            elementos.message.textContent = texto;
+            elementos.message.hidden = false;
+        }
+    }
+
+    function actualizarBotonesFlujo(
+        botones,
+        periodo
+    ) {
+        botones.forEach(function (button) {
+            const activo = (
+                button.dataset.cashflowPeriod
+                === periodo
+            );
+
+            button.classList.toggle(
+                "is-active",
+                activo
+            );
+
+            button.setAttribute(
+                "aria-pressed",
+                String(activo)
+            );
+        });
+    }
+
+    function crearGraficoFlujo(periodo = "6") {
+        const elementos =
+            obtenerElementosFlujo();
+
+        if (
+            !elementos
+            || !elementos.canvas
+        ) {
+            return;
+        }
+
+        const datos =
+            historicoFinanciero[periodo];
+
+        if (!datos) {
+            mostrarErrorFlujo(
+                "No hay datos para este periodo."
+            );
+
+            return;
+        }
+
+        const labels = Array.isArray(
+            datos.labels
+        )
+            ? datos.labels
+            : [];
+
+        if (!labels.length) {
+            mostrarErrorFlujo(
+                "Todavía no hay movimientos para mostrar."
+            );
+
+            return;
+        }
+
+        const flujoCaja = normalizarValores(
+            datos.flujo_caja
+        );
+
+        const margenRecurrente =
+            normalizarValores(
+                datos.margen_recurrente
+            );
+
+        const margenProrrateado =
+            normalizarValores(
+                datos.margen_prorrateado
+            );
+
+        elementos.canvas.hidden = false;
+
+        if (elementos.message) {
+            elementos.message.hidden = true;
+            elementos.message.textContent = "";
+        }
+
+        actualizarBotonesFlujo(
+            elementos.buttons,
+            periodo
+        );
+
+        if (graficoFlujoCaja) {
+            graficoFlujoCaja.destroy();
+        }
+
+        destruirGrafico(
+            elementos.canvas
+        );
+
+        graficoFlujoCaja = new Chart(
+            elementos.canvas,
             {
-                type: "doughnut",
+                type: "line",
 
                 data: {
-                    labels:
-                        data.categorias_labels,
+                    labels: labels,
 
                     datasets: [
                         {
-                            data:
-                                data.categorias_valores,
-
-                            backgroundColor: [
-                                colores.vino,
-                                colores.verde,
-                                colores.rosa,
-                                colores.amarillo,
-                                "#9b8996",
-                                "#89aaa6",
-                                "#b7977e",
-                                "#d8c7b5"
-                            ],
-
+                            label: "Flujo de caja",
+                            data: flujoCaja,
                             borderColor:
-                                colores.crema,
-
+                                colores.vinoOscuro,
+                            backgroundColor:
+                                "rgba(75, 41, 56, 0.10)",
+                            pointBackgroundColor:
+                                colores.vinoOscuro,
+                            pointBorderColor:
+                                "#fffdf9",
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
                             borderWidth: 3,
-                            hoverOffset: 7
+                            tension: 0.35,
+                            fill: true
+                        },
+                        {
+                            label:
+                                "Margen con vencimientos",
+                            data:
+                                margenRecurrente,
+                            borderColor:
+                                colores.verde,
+                            backgroundColor:
+                                "transparent",
+                            pointBackgroundColor:
+                                colores.verde,
+                            pointBorderColor:
+                                "#fffdf9",
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            borderWidth: 3,
+                            tension: 0.35,
+                            fill: false
+                        },
+                        {
+                            label:
+                                "Margen prorrateado",
+                            data:
+                                margenProrrateado,
+                            borderColor:
+                                colores.dorado,
+                            backgroundColor:
+                                "transparent",
+                            pointBackgroundColor:
+                                colores.dorado,
+                            pointBorderColor:
+                                "#fffdf9",
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            borderWidth: 3,
+                            borderDash: [7, 5],
+                            tension: 0.35,
+                            fill: false
                         }
                     ]
                 },
@@ -1204,7 +2093,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    cutout: "62%",
+
+                    interaction: {
+                        mode: "index",
+                        intersect: false
+                    },
 
                     plugins: {
                         legend: {
@@ -1212,8 +2105,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             labels: {
                                 usePointStyle: true,
-                                boxWidth: 10,
-                                padding: 15
+                                pointStyle: "circle",
+                                boxWidth: 9,
+                                padding: 18,
+                                color: "#594a4f",
+
+                                font: {
+                                    size: 12,
+                                    weight: "600"
+                                }
                             }
                         },
 
@@ -1221,10 +2121,44 @@ document.addEventListener("DOMContentLoaded", function () {
                             callbacks: {
                                 label: function (context) {
                                     return (
-                                        context.label
+                                        context.dataset.label
                                         + ": "
-                                        + euros(context.raw)
+                                        + euros(
+                                            context.raw,
+                                            2
+                                        )
                                     );
+                                }
+                            }
+                        }
+                    },
+
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+
+                            ticks: {
+                                color: "#74686c",
+                                maxRotation: 0,
+                                autoSkip: true,
+                                maxTicksLimit: 12
+                            }
+                        },
+
+                        y: {
+                            beginAtZero: true,
+
+                            grid: {
+                                color: colores.rejilla
+                            },
+
+                            ticks: {
+                                color: "#74686c",
+
+                                callback: function (value) {
+                                    return euros(value);
                                 }
                             }
                         }
@@ -1234,838 +2168,20 @@ document.addEventListener("DOMContentLoaded", function () {
         );
     }
 
-    function activarPeriodos() {
-        document
-            .querySelectorAll(
-                ".dashboard-chart-period"
-            )
-            .forEach(function (boton) {
+    function activarPeriodosFlujo() {
+        const elementos =
+            obtenerElementosFlujo();
 
-                boton.addEventListener(
-                    "click",
-                    function () {
-
-                        document
-                            .querySelectorAll(
-                                ".dashboard-chart-period"
-                            )
-                            .forEach(function (otro) {
-                                otro.classList.remove(
-                                    "is-active"
-                                );
-                            });
-
-                        boton.classList.add(
-                            "is-active"
-                        );
-
-                        crearComparativa(
-                            boton.dataset.periodo,
-                            boton.dataset.modo || "real"
-                        );
-                    }
-                );
-            });
-    }
-
-    fetch(dataUrl)
-        .then(function (respuesta) {
-
-            if (!respuesta.ok) {
-                throw new Error(
-                    "No se pudieron cargar los gráficos."
-                );
-            }
-
-            return respuesta.json();
-        })
-        .then(function (data) {
-
-            historicoFinanciero =
-                data.historico_financiero || {};
-
-            crearIngresosPorPropiedad(data);
-
-            crearEvolucionMensual(data);
-
-            crearComparativa("6", "real");
-
-            crearGastosPorCategoria(data);
-
-            activarPeriodos();
-        })
-        .catch(function (error) {
-
-            console.error(error);
-
-            document
-                .querySelectorAll("canvas")
-                .forEach(function (canvas) {
-                    mostrarVacio(
-                        canvas,
-                        "No se pudieron cargar los datos."
-                    );
-                });
-        });
-});
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-
-    if (typeof Chart === "undefined") {
-        return;
-    }
-
-    function leerDatos(id) {
-        const elemento = document.getElementById(id);
-
-        if (!elemento) {
-            return [];
-        }
-
-        return JSON.parse(elemento.textContent);
-    }
-
-
-    const gastosCanvas = document.getElementById(
-        "dashboardGastosChart"
-    );
-
-    if (gastosCanvas) {
-        new Chart(gastosCanvas, {
-            type: "doughnut",
-
-            data: {
-                labels: leerDatos(
-                    "dashboard-gastos-labels"
-                ),
-
-                datasets: [
-                    {
-                        data: leerDatos(
-                            "dashboard-gastos-valores"
-                        ),
-
-                        backgroundColor: leerDatos(
-                            "dashboard-gastos-colores"
-                        ),
-
-                        borderWidth: 3,
-                        borderColor: "#fffdf9",
-                    },
-                ],
-            },
-
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-
-                plugins: {
-                    legend: {
-                        position: "bottom",
-                        labels: {
-                            usePointStyle: true,
-                            padding: 16,
-                        },
-                    },
-
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                return (
-                                    context.label
-                                    + ": "
-                                    + Number(
-                                        context.raw
-                                    ).toLocaleString(
-                                        "es-ES",
-                                        {
-                                            minimumFractionDigits: 2,
-                                            maximumFractionDigits: 2,
-                                        }
-                                    )
-                                    + " €"
-                                );
-                            },
-                        },
-                    },
-                },
-            },
-        });
-    }
-
-
-    const deudaCanvas = document.getElementById(
-        "dashboardDeudaChart"
-    );
-
-    if (deudaCanvas) {
-        new Chart(deudaCanvas, {
-            type: "doughnut",
-
-            data: {
-                labels: leerDatos(
-                    "dashboard-deuda-labels"
-                ),
-
-                datasets: [
-                    {
-                        data: leerDatos(
-                            "dashboard-deuda-valores"
-                        ),
-
-                        backgroundColor: leerDatos(
-                            "dashboard-deuda-colores"
-                        ),
-
-                        borderWidth: 3,
-                        borderColor: "#fffdf9",
-                    },
-                ],
-            },
-
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-
-                cutout: "64%",
-
-                plugins: {
-                    legend: {
-                        position: "bottom",
-                        labels: {
-                            usePointStyle: true,
-                            padding: 16,
-                        },
-                    },
-
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                return (
-                                    context.label
-                                    + ": "
-                                    + Number(
-                                        context.raw
-                                    ).toLocaleString(
-                                        "es-ES",
-                                        {
-                                            minimumFractionDigits: 2,
-                                            maximumFractionDigits: 2,
-                                        }
-                                    )
-                                    + " €"
-                                );
-                            },
-                        },
-                    },
-                },
-            },
-        });
-    }
-
-});
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
-        const card = document.querySelector(
-            "[data-result-toggle]"
-        );
-
-        if (!card) {
+        if (!elementos) {
             return;
         }
 
-        const valueElement = card.querySelector(
-            "[data-result-value]"
-        );
-
-        const titleElement = card.querySelector(
-            "[data-result-title]"
-        );
-
-        const descriptionElement = card.querySelector(
-            "[data-result-description]"
-        );
-
-        const actionElement = card.querySelector(
-            "[data-result-action]"
-        );
-
-        const formatter = new Intl.NumberFormat(
-            "es-ES",
-            {
-                style: "currency",
-                currency: "EUR",
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-            }
-        );
-
-        function actualizarTarjeta(
-            mostrarProrrateado
-        ) {
-            const valorTexto = (
-                mostrarProrrateado
-                    ? card.dataset.resultProrrateado
-                    : card.dataset.resultReal
-            );
-
-            const valor = Number.parseFloat(
-                valorTexto
-            );
-
-            valueElement.textContent = (
-                formatter.format(
-                    Number.isFinite(valor)
-                        ? valor
-                        : 0
-                )
-            );
-
-            if (mostrarProrrateado) {
-                titleElement.textContent = (
-                    "Margen prorrateado"
-                );
-
-                descriptionElement.textContent = (
-                    "Recurrentes prorrateados "
-                    + "+ hipotecas"
-                );
-
-                actionElement.textContent = (
-                    "Ver vencimientos del mes"
-                );
-
-                card.dataset.resultMode = (
-                    "prorrateado"
-                );
-
-            } else {
-                titleElement.textContent = (
-                    "Margen recurrente"
-                );
-
-                descriptionElement.textContent = (
-                    "Recurrentes del mes "
-                    + "+ hipotecas"
-                );
-
-                actionElement.textContent = (
-                    "Ver prorrateado"
-                );
-
-                card.dataset.resultMode = "real";
-            }
-
-            card.setAttribute(
-                "aria-pressed",
-                String(mostrarProrrateado)
-            );
-
-            card.classList.toggle(
-                "is-prorated",
-                mostrarProrrateado
-            );
-        }
-
-        card.addEventListener(
-            "click",
-            function () {
-                const mostrarProrrateado = (
-                    card.dataset.resultMode
-                    !== "prorrateado"
-                );
-
-                actualizarTarjeta(
-                    mostrarProrrateado
-                );
-            }
-        );
-
-        actualizarTarjeta(false);
-    }
-);
-</script>
-
-{{ patrimonio_historico_labels|json_script:"patrimonio-historico-labels" }}
-{{ patrimonio_historico_valores|json_script:"patrimonio-historico-valores" }}
-{{ deuda_historica_valores|json_script:"deuda-historica-valores" }}
-
-{{ grafico_gastos_labels|json_script:"dashboard-gastos-labels" }}
-{{ grafico_gastos_valores|json_script:"dashboard-gastos-valores" }}
-{{ grafico_gastos_colores|json_script:"dashboard-gastos-colores" }}
-
-{{ grafico_deuda_labels|json_script:"dashboard-deuda-labels" }}
-{{ grafico_deuda_valores|json_script:"dashboard-deuda-valores" }}
-{{ grafico_deuda_colores|json_script:"dashboard-deuda-colores" }}
-{% endblock %}
-
-{% block jquery %}
-{{ patrimonio_historico_labels|json_script:"patrimonio-historico-labels" }}
-{{ patrimonio_historico_valores|json_script:"patrimonio-historico-valores" }}
-{{ deuda_historica_valores|json_script:"deuda-historica-valores" }}
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const canvas = document.getElementById(
-        "dashboardPatrimonioChart"
-    );
-
-    if (!canvas || typeof Chart === "undefined") {
-        return;
-    }
-
-    const leerDatos = (id) => {
-        const elemento = document.getElementById(id);
-
-        if (!elemento) {
-            return [];
-        }
-
-        try {
-            return JSON.parse(elemento.textContent);
-        } catch (error) {
-            return [];
-        }
-    };
-
-    const labels = leerDatos(
-        "patrimonio-historico-labels"
-    );
-
-    const patrimonio = leerDatos(
-        "patrimonio-historico-valores"
-    );
-
-    const deuda = leerDatos(
-        "deuda-historica-valores"
-    );
-
-    new Chart(canvas, {
-        type: "line",
-
-        data: {
-            labels: labels,
-
-            datasets: [
-                {
-                    label: "Patrimonio neto",
-                    data: patrimonio,
-                    borderColor: "#51343e",
-                    backgroundColor: "rgba(81, 52, 62, 0.12)",
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.35,
-                },
-                {
-                    label: "Deuda pendiente",
-                    data: deuda,
-                    borderColor: "#806874",
-                    backgroundColor: "rgba(128, 104, 116, 0.10)",
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.35,
-                },
-            ],
-        },
-
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-
-            plugins: {
-                legend: {
-                    position: "bottom",
-                },
-            },
-
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function (value) {
-                            return Number(value).toLocaleString(
-                                "es-ES"
-                            ) + " €";
-                        },
-                    },
-                },
-            },
-        },
-    });
-});
-
-
-</script>
-<script>
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
-        const section = document.querySelector(
-            "[data-cashflow-chart]"
-        );
-
-        if (!section) {
-            return;
-        }
-
-        const canvas = section.querySelector(
-            "#dashboardCashflowChart"
-        );
-
-        const message = section.querySelector(
-            "[data-cashflow-message]"
-        );
-
-        const buttons = section.querySelectorAll(
-            "[data-cashflow-period]"
-        );
-
-        const dataUrl = section.dataset.chartUrl;
-
-        if (!canvas || !dataUrl) {
-            return;
-        }
-
-        if (typeof Chart === "undefined") {
-            mostrarError(
-                "No se pudo cargar el gráfico."
-            );
-
-            return;
-        }
-
-        const colores = {
-            flujo: "#4b2938",
-            recurrente: "#72a5a1",
-            prorrateado: "#c19a5b",
-            fondoFlujo:
-                "rgba(75, 41, 56, 0.10)",
-            rejilla:
-                "rgba(81, 52, 62, 0.08)",
-        };
-
-        const formatoEuro = new Intl.NumberFormat(
-            "es-ES",
-            {
-                style: "currency",
-                currency: "EUR",
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-            }
-        );
-
-        let historico = {};
-        let chart = null;
-
-
-        function normalizarValores(valores) {
-            if (!Array.isArray(valores)) {
-                return [];
-            }
-
-            return valores.map(
-                function (valor) {
-                    const numero = Number(valor);
-
-                    return Number.isFinite(numero)
-                        ? numero
-                        : 0;
-                }
-            );
-        }
-
-
-        function mostrarError(texto) {
-            if (chart) {
-                chart.destroy();
-                chart = null;
-            }
-
-            canvas.hidden = true;
-
-            if (message) {
-                message.textContent = texto;
-                message.hidden = false;
-            }
-        }
-
-
-        function ocultarError() {
-            canvas.hidden = false;
-
-            if (message) {
-                message.hidden = true;
-                message.textContent = "";
-            }
-        }
-
-
-        function actualizarBotones(periodo) {
-            buttons.forEach(
-                function (button) {
-                    const activo = (
-                        button.dataset.cashflowPeriod
-                        === periodo
-                    );
-
-                    button.classList.toggle(
-                        "is-active",
-                        activo
-                    );
-
-                    button.setAttribute(
-                        "aria-pressed",
-                        activo
-                            ? "true"
-                            : "false"
-                    );
-                }
-            );
-        }
-
-
-        function crearGrafico(periodo) {
-            const datos = historico[periodo];
-
-            if (!datos) {
-                mostrarError(
-                    "No hay datos para este periodo."
-                );
-
-                return;
-            }
-
-            const labels = Array.isArray(
-                datos.labels
-            )
-                ? datos.labels
-                : [];
-
-            const flujoCaja = normalizarValores(
-                datos.flujo_caja
-            );
-
-            const margenRecurrente = (
-                normalizarValores(
-                    datos.margen_recurrente
-                )
-            );
-
-            const margenProrrateado = (
-                normalizarValores(
-                    datos.margen_prorrateado
-                )
-            );
-
-            if (!labels.length) {
-                mostrarError(
-                    "Todavía no hay movimientos para mostrar."
-                );
-
-                return;
-            }
-
-            ocultarError();
-            actualizarBotones(periodo);
-
-            if (chart) {
-                chart.destroy();
-            }
-
-            const chartAnterior = (
-                Chart.getChart(canvas)
-            );
-
-            if (chartAnterior) {
-                chartAnterior.destroy();
-            }
-
-            chart = new Chart(
-                canvas,
-                {
-                    type: "line",
-
-                    data: {
-                        labels: labels,
-
-                        datasets: [
-                            {
-                                label: "Flujo de caja",
-                                data: flujoCaja,
-
-                                borderColor:
-                                    colores.flujo,
-
-                                backgroundColor:
-                                    colores.fondoFlujo,
-
-                                pointBackgroundColor:
-                                    colores.flujo,
-
-                                pointBorderColor:
-                                    "#fffdf9",
-
-                                pointBorderWidth: 2,
-                                pointRadius: 4,
-                                pointHoverRadius: 6,
-                                borderWidth: 3,
-
-                                tension: 0.35,
-                                fill: true,
-                            },
-                            {
-                                label:
-                                    "Margen con vencimientos",
-
-                                data:
-                                    margenRecurrente,
-
-                                borderColor:
-                                    colores.recurrente,
-
-                                backgroundColor:
-                                    "transparent",
-
-                                pointBackgroundColor:
-                                    colores.recurrente,
-
-                                pointBorderColor:
-                                    "#fffdf9",
-
-                                pointBorderWidth: 2,
-                                pointRadius: 4,
-                                pointHoverRadius: 6,
-                                borderWidth: 3,
-
-                                tension: 0.35,
-                                fill: false,
-                            },
-                            {
-                                label:
-                                    "Margen prorrateado",
-
-                                data:
-                                    margenProrrateado,
-
-                                borderColor:
-                                    colores.prorrateado,
-
-                                backgroundColor:
-                                    "transparent",
-
-                                pointBackgroundColor:
-                                    colores.prorrateado,
-
-                                pointBorderColor:
-                                    "#fffdf9",
-
-                                pointBorderWidth: 2,
-                                pointRadius: 4,
-                                pointHoverRadius: 6,
-                                borderWidth: 3,
-                                borderDash: [
-                                    7,
-                                    5,
-                                ],
-
-                                tension: 0.35,
-                                fill: false,
-                            },
-                        ],
-                    },
-
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-
-                        interaction: {
-                            mode: "index",
-                            intersect: false,
-                        },
-
-                        plugins: {
-                            legend: {
-                                position: "bottom",
-
-                                labels: {
-                                    usePointStyle: true,
-                                    pointStyle: "circle",
-                                    boxWidth: 9,
-                                    boxHeight: 9,
-                                    padding: 18,
-                                    color: "#594a4f",
-
-                                    font: {
-                                        size: 12,
-                                        weight: "600",
-                                    },
-                                },
-                            },
-
-                            tooltip: {
-                                callbacks: {
-                                    label(context) {
-                                        return (
-                                            context.dataset.label
-                                            + ": "
-                                            + formatoEuro.format(
-                                                context.raw || 0
-                                            )
-                                        );
-                                    },
-                                },
-                            },
-                        },
-
-                        scales: {
-                            x: {
-                                grid: {
-                                    display: false,
-                                },
-
-                                ticks: {
-                                    color: "#74686c",
-                                    maxRotation: 0,
-                                    autoSkip: true,
-                                    maxTicksLimit: 12,
-                                },
-                            },
-
-                            y: {
-                                beginAtZero: true,
-
-                                grid: {
-                                    color:
-                                        colores.rejilla,
-                                },
-
-                                ticks: {
-                                    color: "#74686c",
-
-                                    callback(value) {
-                                        return (
-                                            formatoEuro.format(
-                                                value
-                                            )
-                                        );
-                                    },
-                                },
-                            },
-                        },
-                    },
-                }
-            );
-        }
-
-
-        buttons.forEach(
+        elementos.buttons.forEach(
             function (button) {
                 button.addEventListener(
                     "click",
                     function () {
-                        crearGrafico(
+                        crearGraficoFlujo(
                             button.dataset
                                 .cashflowPeriod
                         );
@@ -2073,43 +2189,94 @@ document.addEventListener(
                 );
             }
         );
+    }
 
 
-        fetch(
-            dataUrl,
-            {
-                headers: {
-                    "X-Requested-With":
-                        "XMLHttpRequest",
-                },
+    /* =====================================================
+       INICIALIZACIÓN
+    ===================================================== */
+
+    activarSliders();
+    activarTarjetaGastosFijos();
+    activarTarjetaBeneficioGastosFijos();
+
+    if (typeof Chart === "undefined") {
+        console.error(
+            "Chart.js no está cargado."
+        );
+
+        mostrarErrorFlujo(
+            "No se pudo cargar el gráfico."
+        );
+
+        return;
+    }
+
+    crearGraficosLocales();
+    crearGraficoPatrimonio();
+    activarPeriodosComparativa();
+    activarPeriodosFlujo();
+
+
+    /* =====================================================
+       ÚNICA PETICIÓN DE DATOS
+    ===================================================== */
+
+    fetch(
+        dataUrl,
+        {
+            headers: {
+                "X-Requested-With":
+                    "XMLHttpRequest"
             }
-        )
-            .then(function (response) {
-                if (!response.ok) {
-                    throw new Error(
+        }
+    )
+        .then(function (response) {
+            if (!response.ok) {
+                throw new Error(
+                    "No se pudieron cargar los datos."
+                );
+            }
+
+            return response.json();
+        })
+        .then(function (data) {
+            historicoFinanciero = (
+                data.historico_financiero
+                || {}
+            );
+
+            crearIngresosPorPropiedad(data);
+            crearEvolucionMensual(data);
+            crearComparativa("6", "real");
+            crearGastosPorCategoria(data);
+            crearGraficoFlujo("6");
+        })
+        .catch(function (error) {
+            console.error(error);
+
+            [
+                "incomeByPropertyChart",
+                "monthlyIncomeChart",
+                "incomeExpensesChart",
+                "expensesChart"
+            ].forEach(function (id) {
+                const canvas =
+                    obtenerCanvas(id);
+
+                if (canvas) {
+                    mostrarVacio(
+                        canvas,
                         "No se pudieron cargar los datos."
                     );
                 }
-
-                return response.json();
-            })
-            .then(function (data) {
-                historico = (
-                    data.historico_financiero
-                    || {}
-                );
-
-                crearGrafico("6");
-            })
-            .catch(function (error) {
-                console.error(error);
-
-                mostrarError(
-                    "No se pudieron cargar los datos financieros."
-                );
             });
-    }
-);
+
+            mostrarErrorFlujo(
+                "No se pudieron cargar los datos financieros."
+            );
+        });
+});
 </script>
 
 {% endblock %}
