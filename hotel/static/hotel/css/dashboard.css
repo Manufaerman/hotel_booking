@@ -6,33 +6,25 @@
     --dashboard-bg: #f4efe8;
     --dashboard-card: #fffdfa;
     --dashboard-card-soft: #faf5f1;
-
     --dashboard-wine: #5a3042;
     --dashboard-wine-dark: #40212f;
     --dashboard-wine-soft: #806874;
-
     --dashboard-sage: #72a5a1;
     --dashboard-sage-dark: #568783;
-
     --dashboard-gold: #b58a56;
     --dashboard-gold-soft: #f7ecd8;
-
     --dashboard-text: #3d3538;
     --dashboard-muted: #776e71;
-
     --dashboard-border: rgba(81, 52, 62, 0.11);
     --dashboard-shadow:
         0 14px 34px rgba(67, 33, 48, 0.08);
-
     --dashboard-radius: 24px;
-
     --dashboard-sans:
         Inter,
         -apple-system,
         BlinkMacSystemFont,
         "Segoe UI",
         sans-serif;
-
     --dashboard-serif:
         Georgia,
         "Times New Roman",
@@ -47,14 +39,16 @@
 .dashboard-section,
 .dashboard-finance-overview,
 .dashboard-charts-area,
-.dashboard-chart-card-wide {
+.dashboard-chart-card-wide,
+.dashboard-cashflow-chart {
     box-sizing: border-box;
 }
 
 .dashboard-section *,
 .dashboard-finance-overview *,
 .dashboard-charts-area *,
-.dashboard-chart-card-wide * {
+.dashboard-chart-card-wide *,
+.dashboard-cashflow-chart * {
     box-sizing: border-box;
 }
 
@@ -234,7 +228,6 @@
 
     width: 100%;
     max-width: 1180px;
-
     margin: 0 auto;
 }
 
@@ -267,9 +260,7 @@
     height: 112px;
 
     border-radius: 50%;
-
-    background:
-        rgba(128, 104, 116, 0.07);
+    background: rgba(128, 104, 116, 0.07);
 
     content: "";
 }
@@ -386,6 +377,46 @@
 }
 
 
+/* Tarjeta interactiva */
+
+button.kpi-card {
+    width: 100%;
+
+    appearance: none;
+
+    color: inherit;
+    font: inherit;
+    text-align: left;
+}
+
+.kpi-card-toggle {
+    cursor: pointer;
+}
+
+.kpi-card-toggle.is-prorated {
+    background:
+        linear-gradient(
+            145deg,
+            #edf7f5,
+            #fffdf9
+        );
+}
+
+.kpi-toggle-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    margin-top: 8px;
+
+    color: var(--dashboard-sage);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+
 /* =========================================================
    SITUACIÓN FINANCIERA
 ========================================================= */
@@ -417,7 +448,6 @@
 
 .dashboard-finance-heading span {
     display: block;
-
     margin-bottom: 7px;
 
     color: var(--dashboard-sage);
@@ -479,7 +509,6 @@
     height: 94px;
 
     border-radius: 50%;
-
     background: rgba(128, 104, 116, 0.08);
 
     content: "";
@@ -562,6 +591,173 @@
             #f7e8ed,
             #fffdfa
         );
+}
+
+
+/* =========================================================
+   FLUJO DE CAJA Y MARGEN RECURRENTE
+========================================================= */
+
+.dashboard-cashflow-chart {
+    width: calc(100% - 60px);
+    max-width: 1180px;
+
+    margin: 28px auto 34px;
+    padding: 28px;
+
+    border: 1px solid var(--dashboard-border);
+    border-radius: 28px;
+
+    background: var(--dashboard-card);
+    box-shadow: var(--dashboard-shadow);
+
+    color: var(--dashboard-text);
+    font-family: var(--dashboard-sans);
+}
+
+.dashboard-cashflow-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 28px;
+
+    margin-bottom: 24px;
+}
+
+.dashboard-cashflow-header > div:first-child {
+    min-width: 0;
+}
+
+.dashboard-cashflow-header > div:first-child > span {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: var(--dashboard-sage);
+
+    font-size: 0.68rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.dashboard-cashflow-header h2 {
+    margin: 0;
+
+    color: var(--dashboard-wine);
+
+    font-family: var(--dashboard-serif);
+    font-size: clamp(1.75rem, 3vw, 2.45rem);
+    font-weight: 500;
+    line-height: 1.05;
+}
+
+.dashboard-cashflow-header p {
+    max-width: 650px;
+    margin: 9px 0 0;
+
+    color: var(--dashboard-muted);
+
+    font-size: 0.83rem;
+    line-height: 1.45;
+}
+
+.dashboard-cashflow-periods {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 7px;
+
+    padding: 4px;
+
+    border: 1px solid var(--dashboard-border);
+    border-radius: 999px;
+
+    background: #f8f3ee;
+}
+
+.dashboard-cashflow-period {
+    min-width: 82px;
+    min-height: 38px;
+    padding: 0 15px;
+
+    border: 0;
+    border-radius: 999px;
+
+    background: transparent;
+    color: var(--dashboard-wine);
+
+    font: inherit;
+    font-size: 0.72rem;
+    font-weight: 750;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+        color 180ms ease,
+        background-color 180ms ease,
+        box-shadow 180ms ease,
+        transform 180ms ease;
+}
+
+.dashboard-cashflow-period:hover {
+    background: rgba(112, 68, 86, 0.08);
+}
+
+.dashboard-cashflow-period.is-active {
+    background: var(--dashboard-wine);
+    color: #ffffff;
+
+    box-shadow:
+        0 6px 14px rgba(81, 52, 62, 0.18);
+}
+
+.dashboard-cashflow-period:active {
+    transform: scale(0.97);
+}
+
+.dashboard-cashflow-period:focus-visible {
+    outline: 3px solid rgba(114, 165, 161, 0.35);
+    outline-offset: 2px;
+}
+
+.dashboard-cashflow-canvas {
+    position: relative;
+
+    width: 100%;
+    height: 370px;
+    min-height: 370px;
+}
+
+.dashboard-cashflow-canvas canvas {
+    display: block !important;
+
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.dashboard-cashflow-message {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0;
+    padding: 24px;
+
+    color: var(--dashboard-muted);
+
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.dashboard-cashflow-message[hidden] {
+    display: none;
 }
 
 
@@ -886,7 +1082,6 @@
 
 .dashboard-chart-period {
     min-height: 36px;
-
     padding: 0 14px;
 
     border: 1px solid var(--dashboard-border);
@@ -964,6 +1159,26 @@
 
     .dashboard-chart-periods {
         justify-content: flex-start;
+    }
+}
+
+@media (max-width: 900px) {
+    .dashboard-cashflow-chart {
+        padding: 24px;
+    }
+
+    .dashboard-cashflow-header {
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .dashboard-cashflow-periods {
+        align-self: flex-start;
+    }
+
+    .dashboard-cashflow-canvas {
+        height: 340px;
+        min-height: 340px;
     }
 }
 
@@ -1074,7 +1289,8 @@
 
     .dashboard-finance-overview,
     .dashboard-charts-area,
-    .dashboard-chart-card-wide {
+    .dashboard-chart-card-wide,
+    .dashboard-cashflow-chart {
         width: calc(100% - 24px);
     }
 
@@ -1120,6 +1336,50 @@
 
     .dashboard-finance-item small {
         font-size: 0.6rem;
+    }
+
+    .dashboard-cashflow-chart {
+        margin: 22px auto 28px;
+        padding: 19px;
+
+        border-radius: 22px;
+    }
+
+    .dashboard-cashflow-header {
+        gap: 15px;
+        margin-bottom: 18px;
+    }
+
+    .dashboard-cashflow-header h2 {
+        font-size: 1.72rem;
+    }
+
+    .dashboard-cashflow-header p {
+        font-size: 0.73rem;
+    }
+
+    .dashboard-cashflow-periods {
+        display: grid;
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+        width: 100%;
+        gap: 6px;
+    }
+
+    .dashboard-cashflow-period {
+        width: 100%;
+        min-width: 0;
+        min-height: 35px;
+
+        padding: 0 7px;
+
+        font-size: 0.66rem;
+    }
+
+    .dashboard-cashflow-canvas {
+        height: 290px;
+        min-height: 290px;
     }
 
     .dashboard-charts-area {
@@ -1239,6 +1499,19 @@
 
     .dashboard-finance-grid {
         grid-template-columns: 1fr;
+    }
+
+    .dashboard-cashflow-chart {
+        padding: 15px 11px;
+    }
+
+    .dashboard-cashflow-periods {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-cashflow-canvas {
+        height: 270px;
+        min-height: 270px;
     }
 
     .dashboard-chart-periods {

@@ -710,7 +710,9 @@ def visitas_view(request):
 @login_required
 def chart_data(request):
     hoy = timezone.localdate()
+
     inicio_mes_actual = hoy.replace(day=1)
+
     final_mes_actual = (
         inicio_mes_actual
         + relativedelta(months=1)
@@ -718,28 +720,60 @@ def chart_data(request):
     )
 
     meses_cortos = [
-        "Ene", "Feb", "Mar", "Abr", "May", "Jun",
-        "Jul", "Ago", "Sep", "Oct", "Nov", "Dic",
+        "Ene",
+        "Feb",
+        "Mar",
+        "Abr",
+        "May",
+        "Jun",
+        "Jul",
+        "Ago",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dic",
     ]
 
-    propiedades = Flat.objects.all().order_by("nombre")
+    intervalos_recurrentes = {
+        "mensual": Decimal("1"),
+        "bimensual": Decimal("2"),
+        "bimestral": Decimal("2"),
+        "trimestral": Decimal("3"),
+        "cuatrimestral": Decimal("4"),
+        "semestral": Decimal("6"),
+        "anual": Decimal("12"),
+    }
+
+    propiedades = (
+        Flat.objects
+        .all()
+        .order_by("nombre")
+    )
 
     labels_propiedades = []
     ingresos_por_propiedad = []
     gastos_por_propiedad = []
 
-    gastos_actuales = Gasto.objects.filter(
-        fecha__gte=inicio_mes_actual,
-        fecha__lte=final_mes_actual,
-        anulado=False,
-        pais="ES",
+    gastos_actuales = (
+        Gasto.objects
+        .filter(
+            fecha__gte=inicio_mes_actual,
+            fecha__lte=final_mes_actual,
+            anulado=False,
+            pais="ES",
+        )
     )
 
+    # =====================================================
+    # INGRESOS Y GASTOS POR PROPIEDAD
+    # =====================================================
+
     for propiedad in propiedades:
+        labels_propiedades.append(
+            propiedad.nombre
+        )
 
-        labels_propiedades.append(propiedad.nombre)
-
-        ingresos = (
+        ingresos_contratos = (
             ContratoAlquiler.objects
             .filter(
                 activo=True,
@@ -749,7 +783,7 @@ def chart_data(request):
                 total=Sum("precio_mensual"),
             )
             .get("total")
-            or 0
+            or Decimal("0.00")
         )
 
         ingresos_temporales = (
@@ -763,69 +797,101 @@ def chart_data(request):
                 total=Sum("importe"),
             )
             .get("total")
-            or 0
+            or Decimal("0.00")
         )
 
-        gastos = (
+        gastos_propiedad = (
             gastos_actuales
             .filter(propiedad=propiedad)
             .aggregate(
                 total=Sum("importe"),
             )
             .get("total")
-            or 0
+            or Decimal("0.00")
         )
 
         ingresos_por_propiedad.append(
-            float(ingresos + ingresos_temporales)
+            float(
+                ingresos_contratos
+                + ingresos_temporales
+            )
         )
 
         gastos_por_propiedad.append(
-            float(gastos)
+            float(gastos_propiedad)
         )
 
-    def calcular_historico(cantidad_meses):
+    # =====================================================
+    # HISTÓRICO FINANCIERO
+    # =====================================================
 
+    def calcular_historico(cantidad_meses):
         labels = []
         ingresos = []
         gastos = []
         gastos_prorrateados = []
 
-        for desplazamiento in range(
-                cantidad_meses - 1,
-                -1,
-                -1,
-        ):
+        flujos_caja = []
+        margenes_recurrentes = []
+        margenes_prorrateados = []
 
-            inicio_mes = (
-                    inicio_mes_actual
-                    - relativedelta(
-                months=desplazamiento,
+        gastos_recurrentes_historico = []
+        recurrentes_prorrateados_historico = []
+        cuotas_prestamos_historico = []
+        pagos_socio_historico = []
+
+        recurrentes = list(
+            GastoRecurrente.objects
+            .filter(
+                activo=True,
+                pais="ES",
             )
+        )
+
+        for desplazamiento in range(
+            cantidad_meses - 1,
+            -1,
+            -1,
+        ):
+            inicio_mes = (
+                inicio_mes_actual
+                - relativedelta(
+                    months=desplazamiento,
+                )
             )
 
             final_mes = (
-                    inicio_mes
-                    + relativedelta(months=1)
-                    - timedelta(days=1)
+                inicio_mes
+                + relativedelta(months=1)
+                - timedelta(days=1)
+            )
+
+            inicio_anio = inicio_mes.replace(
+                month=1,
+                day=1,
+            )
+
+            final_anio = inicio_mes.replace(
+                month=12,
+                day=31,
             )
 
             es_mes_actual = (
-                    inicio_mes.year == hoy.year
-                    and inicio_mes.month == hoy.month
+                inicio_mes.year == hoy.year
+                and inicio_mes.month == hoy.month
             )
 
-            if es_mes_actual:
+            # ---------------------------------------------
+            # INGRESOS
+            # ---------------------------------------------
 
+            if es_mes_actual:
                 contratos = (
                     ContratoAlquiler.objects
-                    .filter(
-                        activo=True,
-                    )
+                    .filter(activo=True)
                 )
 
             else:
-
                 contratos = (
                     ContratoAlquiler.objects
                     .filter(
@@ -833,99 +899,299 @@ def chart_data(request):
                     )
                     .filter(
                         Q(fecha_fin__isnull=True)
-                        | Q(fecha_fin__gte=inicio_mes)
+                        | Q(
+                            fecha_fin__gte=inicio_mes
+                        )
                     )
                 )
 
             ingresos_contratos = (
-                    contratos
-                    .aggregate(
-                        total=Sum("precio_mensual"),
-                    )
-                    .get("total")
-                    or 0
+                contratos
+                .aggregate(
+                    total=Sum("precio_mensual"),
+                )
+                .get("total")
+                or Decimal("0.00")
             )
 
             ingresos_temporales = (
-                    IngresoPropiedad.objects
-                    .filter(
-                        fecha__gte=inicio_mes,
-                        fecha__lte=final_mes,
-                    )
-                    .aggregate(
-                        total=Sum("importe"),
-                    )
-                    .get("total")
-                    or 0
-            )
-
-            gastos_mes = (
-                    Gasto.objects
-                    .filter(
-                        fecha__gte=inicio_mes,
-                        fecha__lte=final_mes,
-                        anulado=False,
-                        pais="ES",
-                    )
-                    .aggregate(
-                        total=Sum("importe"),
-                    )
-                    .get("total")
-                    or 0
-            )
-
-            gastos_prorrateados_mes = Decimal(
-                "0.00"
-            )
-
-            recurrentes = (
-                GastoRecurrente.objects
+                IngresoPropiedad.objects
                 .filter(
-                    activo=True,
+                    fecha__gte=inicio_mes,
+                    fecha__lte=final_mes,
+                )
+                .aggregate(
+                    total=Sum("importe"),
+                )
+                .get("total")
+                or Decimal("0.00")
+            )
+
+            ingresos_mes = (
+                ingresos_contratos
+                + ingresos_temporales
+            )
+
+            # ---------------------------------------------
+            # PRÉSTAMOS
+            # ---------------------------------------------
+
+            pagos_prestamos_mes = (
+                PagoPrestamo.objects
+                .filter(
+                    fecha__gte=inicio_mes,
+                    fecha__lte=final_mes,
+                )
+            )
+
+            cuotas_prestamos_mes = (
+                pagos_prestamos_mes
+                .aggregate(
+                    total=Sum("importe_cuota"),
+                )
+                .get("total")
+                or Decimal("0.00")
+            )
+
+            gastos_prestamo_ids = (
+                pagos_prestamos_mes
+                .exclude(gasto_id__isnull=True)
+                .values_list(
+                    "gasto_id",
+                    flat=True,
+                )
+            )
+
+            # ---------------------------------------------
+            # GASTOS REGISTRADOS
+            # ---------------------------------------------
+
+            gastos_mes_queryset = (
+                Gasto.objects
+                .filter(
+                    fecha__gte=inicio_mes,
+                    fecha__lte=final_mes,
+                    anulado=False,
                     pais="ES",
                 )
             )
 
+
+            gastos_mes = (
+                gastos_mes_queryset
+                .aggregate(
+                    total=Sum("importe"),
+                )
+                .get("total")
+                or Decimal("0.00")
+            )
+
+            # ---------------------------------------------
+            # PAGOS AL SOCIO
+            # ---------------------------------------------
+
+            pagos_socio_mes = (
+                gastos_mes_queryset
+                .filter(
+                    categoria="gestion_ejecutiva",
+                    tipo_gestion="pago_socio",
+                )
+                .aggregate(
+                    total=Sum("importe"),
+                )
+                .get("total")
+                or Decimal("0.00")
+            )
+
+            # ---------------------------------------------
+            # GASTOS OPERATIVOS PARA FLUJO DE CAJA
+            # ---------------------------------------------
+
+            gastos_operativos_queryset = (
+                gastos_mes_queryset
+                .exclude(
+                    categoria="gestion_ejecutiva",
+                    tipo_gestion="pago_socio",
+                )
+                .exclude(
+                    pk__in=gastos_prestamo_ids,
+                )
+            )
+
+            gastos_operativos_mes = (
+                gastos_operativos_queryset
+                .aggregate(
+                    total=Sum("importe"),
+                )
+                .get("total")
+                or Decimal("0.00")
+            )
+
+            # ---------------------------------------------
+            # RECURRENTES QUE CORRESPONDEN AL MES
+            # ---------------------------------------------
+
+            gastos_recurrentes_mes = Decimal(
+                "0.00"
+            )
+
+            gastos_recurrentes_prorrateados_mes = (
+                Decimal("0.00")
+            )
+
             for recurrente in recurrentes:
-
-                if (
-                        recurrente.fecha_inicio
-                        and recurrente.fecha_inicio > final_mes
-                ):
+                if not recurrente.fecha_inicio:
                     continue
 
-                if (
-                        recurrente.fecha_fin
-                        and recurrente.fecha_fin < inicio_mes
-                ):
+                importe = (
+                    recurrente.importe
+                    or Decimal("0.00")
+                )
+
+                intervalo = (
+                    intervalos_recurrentes.get(
+                        recurrente.frecuencia
+                    )
+                )
+
+                if intervalo is None:
                     continue
 
-                divisor = {
-                    "mensual": Decimal("1"),
-                    "bimensual": Decimal("2"),
-                    "bimestral": Decimal("2"),
-                    "trimestral": Decimal("3"),
-                    "semestral": Decimal("6"),
-                    "anual": Decimal("12"),
-                }.get(
-                    recurrente.frecuencia,
-                    Decimal("1"),
+                activo_en_mes = (
+                    recurrente.fecha_inicio
+                    <= final_mes
+                    and (
+                        recurrente.fecha_fin is None
+                        or recurrente.fecha_fin
+                        >= inicio_mes
+                    )
                 )
 
-                gastos_prorrateados_mes += (
-                        recurrente.importe / divisor
+                # Gasto recurrente que vence realmente
+                # durante este mes.
+                if activo_en_mes:
+                    diferencia_meses = (
+                        (
+                            inicio_mes.year
+                            - recurrente.fecha_inicio.year
+                        )
+                        * 12
+                        + inicio_mes.month
+                        - recurrente.fecha_inicio.month
+                    )
+
+                    corresponde_al_mes = (
+                        diferencia_meses >= 0
+                        and (
+                            diferencia_meses
+                            % int(intervalo)
+                            == 0
+                        )
+                    )
+
+                    if corresponde_al_mes:
+                        gastos_recurrentes_mes += (
+                            importe
+                        )
+
+                # Los mensuales solo se cuentan cuando
+                # están activos durante ese mes.
+                if (
+                    recurrente.frecuencia
+                    == "mensual"
+                ):
+                    # Los mensuales solo se cuentan cuando
+                    # están activos durante ese mes.
+                    if recurrente.frecuencia == "mensual":
+                        if activo_en_mes:
+                            gastos_recurrentes_prorrateados_mes += (
+                                importe
+                            )
+
+                        continue
+
+                    # Los gastos de más de un mes se reparten
+                    # durante todo el año al que pertenecen.
+                    activo_en_el_anio = (
+                            recurrente.fecha_inicio
+                            <= final_anio
+                            and (
+                                    recurrente.fecha_fin is None
+                                    or recurrente.fecha_fin
+                                    >= inicio_anio
+                            )
+                    )
+
+                    if activo_en_el_anio:
+                        gastos_recurrentes_prorrateados_mes += (
+                                importe / intervalo
+                        )
+
+                    continue
+
+                # Los gastos de más de un mes se reparten
+                # durante todo el año al que pertenecen,
+                # incluyendo vencimientos futuros.
+                activo_en_el_anio = (
+                    recurrente.fecha_inicio
+                    <= final_anio
+                    and (
+                        recurrente.fecha_fin is None
+                        or recurrente.fecha_fin
+                        >= inicio_anio
+                    )
                 )
+
+                if activo_en_el_anio:
+                    (
+                        gastos_recurrentes_prorrateados_mes
+                    ) += (
+                        importe / intervalo
+                    )
+
+            gastos_recurrentes_prorrateados_mes = (
+                gastos_recurrentes_prorrateados_mes
+                .quantize(
+                    Decimal("0.01")
+                )
+            )
+
+            # ---------------------------------------------
+            # TRES RESULTADOS DEL NUEVO GRÁFICO
+            # ---------------------------------------------
+
+            flujo_caja_mes = (
+                ingresos_mes
+                - gastos_operativos_mes
+                - cuotas_prestamos_mes
+                - pagos_socio_mes
+            )
+
+            margen_recurrente_mes = (
+                ingresos_mes
+                - gastos_recurrentes_mes
+                - cuotas_prestamos_mes
+            )
+
+            margen_prorrateado_mes = (
+                ingresos_mes
+                - gastos_recurrentes_prorrateados_mes
+                - cuotas_prestamos_mes
+            )
+
+            # ---------------------------------------------
+            # GUARDAR LOS RESULTADOS
+            # ---------------------------------------------
 
             labels.append(
-                f"{meses_cortos[inicio_mes.month - 1]} "
-                f"{inicio_mes.year}"
+                (
+                    f"{meses_cortos[inicio_mes.month - 1]} "
+                    f"{inicio_mes.year}"
+                )
             )
 
             ingresos.append(
-                float(
-                    ingresos_contratos
-                    + ingresos_temporales
-                )
+                float(ingresos_mes)
             )
 
             gastos.append(
@@ -933,24 +1199,85 @@ def chart_data(request):
             )
 
             gastos_prorrateados.append(
-                float(gastos_prorrateados_mes)
+                float(
+                    gastos_recurrentes_prorrateados_mes
+                )
+            )
+
+            flujos_caja.append(
+                float(flujo_caja_mes)
+            )
+
+            margenes_recurrentes.append(
+                float(margen_recurrente_mes)
+            )
+
+            margenes_prorrateados.append(
+                float(margen_prorrateado_mes)
+            )
+
+            gastos_recurrentes_historico.append(
+                float(gastos_recurrentes_mes)
+            )
+
+            recurrentes_prorrateados_historico.append(
+                float(
+                    gastos_recurrentes_prorrateados_mes
+                )
+            )
+
+            cuotas_prestamos_historico.append(
+                float(cuotas_prestamos_mes)
+            )
+
+            pagos_socio_historico.append(
+                float(pagos_socio_mes)
             )
 
         return {
+            # Claves que ya utilizaban los gráficos.
             "labels": labels,
             "ingresos": ingresos,
             "gastos": gastos,
             "gastos_prorrateados": (
                 gastos_prorrateados
             ),
+
+            # Nuevas claves.
+            "flujo_caja": flujos_caja,
+            "margen_recurrente": (
+                margenes_recurrentes
+            ),
+            "margen_prorrateado": (
+                margenes_prorrateados
+            ),
+
+            # Desglose adicional para futuras gráficas.
+            "gastos_recurrentes": (
+                gastos_recurrentes_historico
+            ),
+            "recurrentes_prorrateados": (
+                recurrentes_prorrateados_historico
+            ),
+            "cuotas_prestamos": (
+                cuotas_prestamos_historico
+            ),
+            "pagos_socio": (
+                pagos_socio_historico
+            ),
         }
 
     historico_financiero = {
+        "3": calcular_historico(3),
         "6": calcular_historico(6),
         "12": calcular_historico(12),
         "24": calcular_historico(24),
         "48": calcular_historico(48),
     }
+
+    # =====================================================
+    # DATOS DEL GRÁFICO ACTUAL DE SEIS MESES
+    # =====================================================
 
     historico_seis_meses = (
         historico_financiero["6"]
@@ -969,12 +1296,16 @@ def chart_data(request):
     )
 
     resultado_mensual = [
-        ingresos - gastos
-        for ingresos, gastos in zip(
+        ingreso - gasto
+        for ingreso, gasto in zip(
             facturacion_mensual,
             gastos_mensuales,
         )
     ]
+
+    # =====================================================
+    # GASTOS POR CATEGORÍA
+    # =====================================================
 
     gastos_agrupados = (
         gastos_actuales
@@ -993,7 +1324,6 @@ def chart_data(request):
     categorias_valores = []
 
     for grupo in gastos_agrupados:
-
         categoria = grupo["categoria"]
 
         categorias_labels.append(
@@ -1007,7 +1337,10 @@ def chart_data(request):
         )
 
         categorias_valores.append(
-            float(grupo["total"] or 0)
+            float(
+                grupo["total"]
+                or Decimal("0.00")
+            )
         )
 
     ingresos_mes_actual = sum(
@@ -1020,7 +1353,7 @@ def chart_data(request):
             total=Sum("importe"),
         )
         .get("total")
-        or 0
+        or Decimal("0.00")
     )
 
     resultado_mes_actual = (
@@ -1041,30 +1374,29 @@ def chart_data(request):
         else 0
     )
 
+    # =====================================================
+    # RESPUESTA
+    # =====================================================
+
     return JsonResponse(
         {
             "labels": labels_propiedades,
-
             "datos": ingresos_por_propiedad,
 
             "ingresos_por_propiedad": (
                 ingresos_por_propiedad
             ),
-
             "gastos_por_propiedad": (
                 gastos_por_propiedad
             ),
 
             "labels_meses": labels_meses,
-
             "facturacion_mensual": (
                 facturacion_mensual
             ),
-
             "gastos_mensuales": (
                 gastos_mensuales
             ),
-
             "resultado_mensual": (
                 resultado_mensual
             ),
@@ -1076,7 +1408,6 @@ def chart_data(request):
             "categorias_labels": (
                 categorias_labels
             ),
-
             "categorias_valores": (
                 categorias_valores
             ),
@@ -1084,15 +1415,10 @@ def chart_data(request):
             "ingresos_mes_actual": (
                 ingresos_mes_actual
             ),
-
-            "gastos_mes": (
-                gastos_mes_actual
-            ),
-
+            "gastos_mes": gastos_mes_actual,
             "resultado_mes_actual": (
                 resultado_mes_actual
             ),
-
             "porcentaje_gastos": (
                 porcentaje_gastos
             ),
@@ -1306,21 +1632,162 @@ def dashboard(request):
         - deuda_total,
         Decimal("0.00"),
     )
+    # =====================================================
+    # GASTOS RECURRENTES DEL MES
+    # =====================================================
 
+    inicio_mes = hoy.replace(
+        day=1
+    )
+
+    fin_mes = date(
+        hoy.year,
+        hoy.month,
+        monthrange(
+            hoy.year,
+            hoy.month,
+        )[1],
+    )
+
+    inicio_anio = date(
+        hoy.year,
+        1,
+        1,
+    )
+
+    fin_anio = date(
+        hoy.year,
+        12,
+        31,
+    )
+
+    # Gastos recurrentes que realmente corresponden
+    # al mes actual.
+
+    gastos_recurrentes_mes = (
+            gastos_mes_queryset
+            .filter(
+                gasto_recurrente__isnull=False,
+            )
+            .aggregate(
+                total=Sum("importe"),
+            )
+            .get("total")
+            or Decimal("0.00")
+    )
+
+    # Gastos recurrentes distribuidos mensualmente.
+    #
+    # Mensuales: importe completo.
+    # Bimensuales: importe / 2.
+    # Trimestrales: importe / 3.
+    # Semestrales: importe / 6.
+    # Anuales: importe / 12.
+
+    divisores_frecuencia = {
+        "mensual": Decimal("1"),
+        "bimensual": Decimal("2"),
+        "bimestral": Decimal("2"),
+        "trimestral": Decimal("3"),
+        "cuatrimestral": Decimal("4"),
+        "semestral": Decimal("6"),
+        "anual": Decimal("12"),
+    }
+
+    recurrentes_del_anio = (
+        GastoRecurrente.objects
+        .filter(
+            activo=True,
+            pais="ES",
+            fecha_inicio__lte=fin_anio,
+        )
+        .exclude(
+            fecha_fin__lt=inicio_anio,
+        )
+        .exclude(
+            categoria__in=[
+                "prestamos",
+                "hipoteca",
+            ],
+        )
+    )
+
+    gastos_recurrentes_prorrateados_mes = (
+        Decimal("0.00")
+    )
+
+    for recurrente in recurrentes_del_anio:
+
+        importe = (
+                recurrente.importe
+                or Decimal("0.00")
+        )
+
+        frecuencia = (
+                recurrente.frecuencia
+                or ""
+        )
+
+        divisor = divisores_frecuencia.get(
+            frecuencia
+        )
+
+        if divisor is None:
+            continue
+
+        if frecuencia == "mensual":
+
+            esta_activo_en_el_mes = (
+                    recurrente.fecha_inicio
+                    <= fin_mes
+                    and (
+                            recurrente.fecha_fin is None
+                            or recurrente.fecha_fin
+                            >= inicio_mes
+                    )
+            )
+
+            if esta_activo_en_el_mes:
+                gastos_recurrentes_prorrateados_mes += (
+                    importe
+                )
+
+        else:
+            gastos_recurrentes_prorrateados_mes += (
+                    importe / divisor
+            )
+
+    gastos_recurrentes_prorrateados_mes = (
+        gastos_recurrentes_prorrateados_mes.quantize(
+            Decimal("0.01")
+        )
+    )
     # =====================================================
     # RESULTADOS
     # =====================================================
 
+    resultado_recurrente_mes = (
+            facturacion_mensual
+            - gastos_recurrentes_mes
+            - cuotas_prestamos_mes
+    )
+
+    resultado_recurrente_prorrateado = (
+            facturacion_mensual
+            - gastos_recurrentes_prorrateados_mes
+            - cuotas_prestamos_mes
+    )
+
     beneficio_operativo = (
-        facturacion_mensual
-        - gastos_del_mes
+            facturacion_mensual
+            - gastos_del_mes
     )
 
     flujo_caja = (
-        facturacion_mensual
-        - gastos_del_mes
-        - cuotas_prestamos_mes
-        - pagos_socio_mes
+            facturacion_mensual
+            - gastos_del_mes
+            - cuotas_prestamos_mes
+            - pagos_socio_mes
     )
 
     porcentaje_gastos = (
@@ -1648,6 +2115,18 @@ def dashboard(request):
             "mes_actual": (
                 hoy.strftime("%B %Y")
                 .capitalize()
+            ),
+            "gastos_recurrentes_mes": (
+                gastos_recurrentes_mes
+            ),
+            "gastos_recurrentes_prorrateados_mes": (
+                gastos_recurrentes_prorrateados_mes
+            ),
+            "resultado_recurrente_mes": (
+                resultado_recurrente_mes
+            ),
+            "resultado_recurrente_prorrateado": (
+                resultado_recurrente_prorrateado
             ),
             "habitaciones_totales": (
                 habitaciones_totales

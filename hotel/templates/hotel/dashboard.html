@@ -126,27 +126,57 @@
     </div>
 
 
-    <div class="kpi-card">
 
-    <div class="kpi-icon">
-        <i class="fa fa-balance-scale"></i>
-    </div>
 
-    <div>
-        <span>
-            Resultado del mes
-        </span>
+   <button
+    type="button"
+    class="kpi-card kpi-card-toggle"
+    data-result-toggle
+    data-result-real="{{ resultado_recurrente_mes|floatformat:'2u' }}"
+    data-result-prorrateado="{{ resultado_recurrente_prorrateado|floatformat:'2u' }}"
+    data-result-mode="real"
+    aria-pressed="false">
 
-        <h2>
-            {{ resultado_neto|floatformat:2 }} €
-        </h2>
+        <div class="kpi-icon">
+            <i
+                class="fa fa-balance-scale"
+                aria-hidden="true"
+            ></i>
+        </div>
 
-        <p>
-            Ingresos menos gastos
-        </p>
-    </div>
+        <div class="kpi-content">
 
-</div>
+            <span data-result-title>
+                Margen recurrente
+            </span>
+
+            <h2
+                data-result-value
+                aria-live="polite"
+            >
+                {{ resultado_recurrente_mes|floatformat:2 }} €
+            </h2>
+
+            <p data-result-description>
+                Recurrentes del mes + hipotecas
+            </p>
+
+            <small class="kpi-toggle-hint">
+                <span data-result-action>
+                    Ver prorrateado
+                </span>
+
+                <i
+                    class="fa fa-exchange"
+                    aria-hidden="true"
+                ></i>
+            </small>
+
+        </div>
+
+    </button>
+
+
 
 
     <div class="kpi-card warning">
@@ -317,6 +347,82 @@
                 Salidas de liquidez del mes
             </small>
         </article>
+
+    </div>
+
+</section>
+
+<section
+    class="dashboard-cashflow-chart"
+    data-cashflow-chart
+    data-chart-url="{% url 'hotel:dashboard_chart_data' %}"
+>
+    <header class="dashboard-cashflow-header">
+
+        <div>
+            <span>
+                Evolución financiera
+            </span>
+
+            <h2>
+                Flujo y margen recurrente
+            </h2>
+
+            <p>
+                Flujo real, vencimientos recurrentes y gastos prorrateados.
+                Las dos líneas de margen incluyen las cuotas de préstamos.
+            </p>
+        </div>
+
+
+        <div
+            class="dashboard-cashflow-periods"
+            role="group"
+            aria-label="Periodo del gráfico"
+        >
+            <button
+                type="button"
+                class="dashboard-cashflow-period"
+                data-cashflow-period="3"
+                aria-pressed="false"
+            >
+                3 meses
+            </button>
+
+            <button
+                type="button"
+                class="dashboard-cashflow-period is-active"
+                data-cashflow-period="6"
+                aria-pressed="true"
+            >
+                6 meses
+            </button>
+
+            <button
+                type="button"
+                class="dashboard-cashflow-period"
+                data-cashflow-period="12"
+                aria-pressed="false"
+            >
+                1 año
+            </button>
+        </div>
+
+    </header>
+
+
+    <div class="dashboard-cashflow-canvas">
+
+        <canvas
+            id="dashboardCashflowChart"
+            aria-label="Evolución del flujo de caja y los márgenes recurrentes"
+        ></canvas>
+
+        <p
+            class="dashboard-cashflow-message"
+            data-cashflow-message
+            hidden
+        ></p>
 
     </div>
 
@@ -1359,6 +1465,127 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 });
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+        const card = document.querySelector(
+            "[data-result-toggle]"
+        );
+
+        if (!card) {
+            return;
+        }
+
+        const valueElement = card.querySelector(
+            "[data-result-value]"
+        );
+
+        const titleElement = card.querySelector(
+            "[data-result-title]"
+        );
+
+        const descriptionElement = card.querySelector(
+            "[data-result-description]"
+        );
+
+        const actionElement = card.querySelector(
+            "[data-result-action]"
+        );
+
+        const formatter = new Intl.NumberFormat(
+            "es-ES",
+            {
+                style: "currency",
+                currency: "EUR",
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            }
+        );
+
+        function actualizarTarjeta(
+            mostrarProrrateado
+        ) {
+            const valorTexto = (
+                mostrarProrrateado
+                    ? card.dataset.resultProrrateado
+                    : card.dataset.resultReal
+            );
+
+            const valor = Number.parseFloat(
+                valorTexto
+            );
+
+            valueElement.textContent = (
+                formatter.format(
+                    Number.isFinite(valor)
+                        ? valor
+                        : 0
+                )
+            );
+
+            if (mostrarProrrateado) {
+                titleElement.textContent = (
+                    "Margen prorrateado"
+                );
+
+                descriptionElement.textContent = (
+                    "Recurrentes prorrateados "
+                    + "+ hipotecas"
+                );
+
+                actionElement.textContent = (
+                    "Ver vencimientos del mes"
+                );
+
+                card.dataset.resultMode = (
+                    "prorrateado"
+                );
+
+            } else {
+                titleElement.textContent = (
+                    "Margen recurrente"
+                );
+
+                descriptionElement.textContent = (
+                    "Recurrentes del mes "
+                    + "+ hipotecas"
+                );
+
+                actionElement.textContent = (
+                    "Ver prorrateado"
+                );
+
+                card.dataset.resultMode = "real";
+            }
+
+            card.setAttribute(
+                "aria-pressed",
+                String(mostrarProrrateado)
+            );
+
+            card.classList.toggle(
+                "is-prorated",
+                mostrarProrrateado
+            );
+        }
+
+        card.addEventListener(
+            "click",
+            function () {
+                const mostrarProrrateado = (
+                    card.dataset.resultMode
+                    !== "prorrateado"
+                );
+
+                actualizarTarjeta(
+                    mostrarProrrateado
+                );
+            }
+        );
+
+        actualizarTarjeta(false);
+    }
+);
 </script>
 
 {{ patrimonio_historico_labels|json_script:"patrimonio-historico-labels" }}
@@ -1468,6 +1695,421 @@ document.addEventListener("DOMContentLoaded", function () {
         },
     });
 });
+
+
+</script>
+<script>
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+        const section = document.querySelector(
+            "[data-cashflow-chart]"
+        );
+
+        if (!section) {
+            return;
+        }
+
+        const canvas = section.querySelector(
+            "#dashboardCashflowChart"
+        );
+
+        const message = section.querySelector(
+            "[data-cashflow-message]"
+        );
+
+        const buttons = section.querySelectorAll(
+            "[data-cashflow-period]"
+        );
+
+        const dataUrl = section.dataset.chartUrl;
+
+        if (!canvas || !dataUrl) {
+            return;
+        }
+
+        if (typeof Chart === "undefined") {
+            mostrarError(
+                "No se pudo cargar el gráfico."
+            );
+
+            return;
+        }
+
+        const colores = {
+            flujo: "#4b2938",
+            recurrente: "#72a5a1",
+            prorrateado: "#c19a5b",
+            fondoFlujo:
+                "rgba(75, 41, 56, 0.10)",
+            rejilla:
+                "rgba(81, 52, 62, 0.08)",
+        };
+
+        const formatoEuro = new Intl.NumberFormat(
+            "es-ES",
+            {
+                style: "currency",
+                currency: "EUR",
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+            }
+        );
+
+        let historico = {};
+        let chart = null;
+
+
+        function normalizarValores(valores) {
+            if (!Array.isArray(valores)) {
+                return [];
+            }
+
+            return valores.map(
+                function (valor) {
+                    const numero = Number(valor);
+
+                    return Number.isFinite(numero)
+                        ? numero
+                        : 0;
+                }
+            );
+        }
+
+
+        function mostrarError(texto) {
+            if (chart) {
+                chart.destroy();
+                chart = null;
+            }
+
+            canvas.hidden = true;
+
+            if (message) {
+                message.textContent = texto;
+                message.hidden = false;
+            }
+        }
+
+
+        function ocultarError() {
+            canvas.hidden = false;
+
+            if (message) {
+                message.hidden = true;
+                message.textContent = "";
+            }
+        }
+
+
+        function actualizarBotones(periodo) {
+            buttons.forEach(
+                function (button) {
+                    const activo = (
+                        button.dataset.cashflowPeriod
+                        === periodo
+                    );
+
+                    button.classList.toggle(
+                        "is-active",
+                        activo
+                    );
+
+                    button.setAttribute(
+                        "aria-pressed",
+                        activo
+                            ? "true"
+                            : "false"
+                    );
+                }
+            );
+        }
+
+
+        function crearGrafico(periodo) {
+            const datos = historico[periodo];
+
+            if (!datos) {
+                mostrarError(
+                    "No hay datos para este periodo."
+                );
+
+                return;
+            }
+
+            const labels = Array.isArray(
+                datos.labels
+            )
+                ? datos.labels
+                : [];
+
+            const flujoCaja = normalizarValores(
+                datos.flujo_caja
+            );
+
+            const margenRecurrente = (
+                normalizarValores(
+                    datos.margen_recurrente
+                )
+            );
+
+            const margenProrrateado = (
+                normalizarValores(
+                    datos.margen_prorrateado
+                )
+            );
+
+            if (!labels.length) {
+                mostrarError(
+                    "Todavía no hay movimientos para mostrar."
+                );
+
+                return;
+            }
+
+            ocultarError();
+            actualizarBotones(periodo);
+
+            if (chart) {
+                chart.destroy();
+            }
+
+            const chartAnterior = (
+                Chart.getChart(canvas)
+            );
+
+            if (chartAnterior) {
+                chartAnterior.destroy();
+            }
+
+            chart = new Chart(
+                canvas,
+                {
+                    type: "line",
+
+                    data: {
+                        labels: labels,
+
+                        datasets: [
+                            {
+                                label: "Flujo de caja",
+                                data: flujoCaja,
+
+                                borderColor:
+                                    colores.flujo,
+
+                                backgroundColor:
+                                    colores.fondoFlujo,
+
+                                pointBackgroundColor:
+                                    colores.flujo,
+
+                                pointBorderColor:
+                                    "#fffdf9",
+
+                                pointBorderWidth: 2,
+                                pointRadius: 4,
+                                pointHoverRadius: 6,
+                                borderWidth: 3,
+
+                                tension: 0.35,
+                                fill: true,
+                            },
+                            {
+                                label:
+                                    "Margen con vencimientos",
+
+                                data:
+                                    margenRecurrente,
+
+                                borderColor:
+                                    colores.recurrente,
+
+                                backgroundColor:
+                                    "transparent",
+
+                                pointBackgroundColor:
+                                    colores.recurrente,
+
+                                pointBorderColor:
+                                    "#fffdf9",
+
+                                pointBorderWidth: 2,
+                                pointRadius: 4,
+                                pointHoverRadius: 6,
+                                borderWidth: 3,
+
+                                tension: 0.35,
+                                fill: false,
+                            },
+                            {
+                                label:
+                                    "Margen prorrateado",
+
+                                data:
+                                    margenProrrateado,
+
+                                borderColor:
+                                    colores.prorrateado,
+
+                                backgroundColor:
+                                    "transparent",
+
+                                pointBackgroundColor:
+                                    colores.prorrateado,
+
+                                pointBorderColor:
+                                    "#fffdf9",
+
+                                pointBorderWidth: 2,
+                                pointRadius: 4,
+                                pointHoverRadius: 6,
+                                borderWidth: 3,
+                                borderDash: [
+                                    7,
+                                    5,
+                                ],
+
+                                tension: 0.35,
+                                fill: false,
+                            },
+                        ],
+                    },
+
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+
+                        interaction: {
+                            mode: "index",
+                            intersect: false,
+                        },
+
+                        plugins: {
+                            legend: {
+                                position: "bottom",
+
+                                labels: {
+                                    usePointStyle: true,
+                                    pointStyle: "circle",
+                                    boxWidth: 9,
+                                    boxHeight: 9,
+                                    padding: 18,
+                                    color: "#594a4f",
+
+                                    font: {
+                                        size: 12,
+                                        weight: "600",
+                                    },
+                                },
+                            },
+
+                            tooltip: {
+                                callbacks: {
+                                    label(context) {
+                                        return (
+                                            context.dataset.label
+                                            + ": "
+                                            + formatoEuro.format(
+                                                context.raw || 0
+                                            )
+                                        );
+                                    },
+                                },
+                            },
+                        },
+
+                        scales: {
+                            x: {
+                                grid: {
+                                    display: false,
+                                },
+
+                                ticks: {
+                                    color: "#74686c",
+                                    maxRotation: 0,
+                                    autoSkip: true,
+                                    maxTicksLimit: 12,
+                                },
+                            },
+
+                            y: {
+                                beginAtZero: true,
+
+                                grid: {
+                                    color:
+                                        colores.rejilla,
+                                },
+
+                                ticks: {
+                                    color: "#74686c",
+
+                                    callback(value) {
+                                        return (
+                                            formatoEuro.format(
+                                                value
+                                            )
+                                        );
+                                    },
+                                },
+                            },
+                        },
+                    },
+                }
+            );
+        }
+
+
+        buttons.forEach(
+            function (button) {
+                button.addEventListener(
+                    "click",
+                    function () {
+                        crearGrafico(
+                            button.dataset
+                                .cashflowPeriod
+                        );
+                    }
+                );
+            }
+        );
+
+
+        fetch(
+            dataUrl,
+            {
+                headers: {
+                    "X-Requested-With":
+                        "XMLHttpRequest",
+                },
+            }
+        )
+            .then(function (response) {
+                if (!response.ok) {
+                    throw new Error(
+                        "No se pudieron cargar los datos."
+                    );
+                }
+
+                return response.json();
+            })
+            .then(function (data) {
+                historico = (
+                    data.historico_financiero
+                    || {}
+                );
+
+                crearGrafico("6");
+            })
+            .catch(function (error) {
+                console.error(error);
+
+                mostrarError(
+                    "No se pudieron cargar los datos financieros."
+                );
+            });
+    }
+);
 </script>
 
 {% endblock %}

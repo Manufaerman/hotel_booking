@@ -2802,12 +2802,10 @@ class GastoPersonal(models.Model):
         ("vivienda", "Vivienda"),
         ("alimentacion", "Alimentación"),
         ("transporte", "Transporte"),
-        ("salud", "Salud"),
         ("ocio", "Ocio"),
-        ("viajes", "Viajes"),
         ("suscripciones", "Suscripciones"),
         ("compras", "Compras personales"),
-        ("impuestos", "Impuestos"),
+        ("suministros", "suministros"),
         ("otros", "Otros"),
     ]
 
